@@ -1,0 +1,38 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <h:form id="formUsuario">
+        <p:dataTable id="dataTableUsuario" rowsPerPageTemplate="10,15,50" var="usuario" paginator="true" rows="10" selectionMode="single" 
+                     selection="#{usuarioController.selectedUsuario}" rowKey="#{usuario.cedula}"
+                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+           <p:column headerText="Codigo Usuario" sortBy="#{usuario.cedula}">  
+                <p:commandLink value="#{usuario.cedula}" update=":viewUsuarioForm:displayViewUsuario"  oncomplete="PF('viewUsuarioDialog').show()"  title="View">
+                    <f:setPropertyActionListener value="#{usuario}" target="#{usuarioController.selectedUsuario}" />    
+                </p:commandLink>
+            </p:column>
+
+            <p:column headerText="Nombres">
+                <h:outputText value="#{usuario.nombre}" />
+            </p:column>
+            <p:column headerText="Apellidos">
+                <h:outputText value="#{usuario.apellidos}" />
+            </p:column>
+            <p:column headerText="Email">
+                <h:outputText value="#{usuario.email}" />
+            </p:column>
+            <p:column headerText="Direccion">
+                <h:outputText value="#{usuario.direccion}" />
+            </p:column>
+            <p:column headerText="Telefono">
+                <h:outputText value="#{usuario.telefono}" />
+            </p:column>          
+
+        </p:dataTable>
+        <p:growl id="messages" showDetail="true"/>
+
+    </h:form> 
+
+</ui:composition>

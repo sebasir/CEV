@@ -1,0 +1,13 @@
+
+.centrar {
+    alignment-adjust: central
+}
+
+.cursive {
+    font-style: italic;
+}
+
+.ui-widget, .ui-widget .ui-widget, .ui-button-text ui-c {
+    font-size: 90% !important;
+    font-family: 'Source Sans Pro', sans-serif;
+}

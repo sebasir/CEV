@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html	xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+    <head>
+        <title>Colección Entomológica 3D - Bichos</title>
+        <link href="css/sansPro.css" rel="stylesheet" />
+        <link href="css/default.css" rel="stylesheet" type="text/css" media="all" />
+        <link href="css/fonts.css" rel="stylesheet" type="text/css" media="all" />
+        <script src="js/jquery-1.11.3.js" type="text/javascript"></script>
+        <script type="text/javascript" src="js/fancybox/jquery.fancybox.js?v=2.1.5"></script>
+        <link rel="stylesheet" type="text/css" href="js/fancybox/jquery.fancybox.css?v=2.1.5" media="screen" />
+        <script type="text/javascript">
+            $("a.button.fancybox").fancybox({
+                padding: 0,
+                openEffect: 'fade',
+                openSpeed: 250,
+                closeEffect: 'fade',
+                closeSpeed: 250,
+                closeClick: true,
+                helpers: {
+                    overlay: null
+                }
+            });
+
+        </script>
+    </head>
+    <body class="fondo">
+        <div id="header-wrapper">
+            <div id="header" class="container">
+                <div id="logo">
+                    <h1>
+                        <a href="/Bichos">Bichos</a>
+                    </h1>
+                    <h2>
+                        Colección Entomológica del<br/> Centro de Biosistemas de la Universidad Jorge Tadeo Lozano.
+                    </h2>
+                </div>
+                <div id="menu">
+                    <ul>
+                        <li class="current_page_item">
+                            <h:link outcome="Collection.xhtml" onclick="#{specimenBean.displayList()}">Colección 3D</h:link>
+                        </li>
+                        <li><a href="#" accesskey="4" title="">Sobre Nosotros</a></li>
+                        <li><a href="#" accesskey="5" title="">Contáctanos</a></li>
+                        <li><a href="pages/login.xhtml" accesskey="6" title="">Ingreso</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="box" class="box">
+            <div id="portfolio" class="container">
+                <p>
+                    A continuación se presentan los modelos 3D digitalizados desde la Colección Entomológica del Centro de Biosistemas de la Universidad Jorge Tadeo.
+                </p>
+                <h:form>
+                    <h:dataTable id="myList" value="#{specimenBean.allSpecimens}" var="specimen">
+                        <f:facet name="header">
+                            <h:outputText value="Espécimenes de la Colección" />
+                        </f:facet>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Espécimen" />
+                            </f:facet>
+                            <h:outputText value="#{specimen.idTaxonomy.taxonomyName} #{specimen.specificEpithet}" />
+                        </h:column>
+                        <h:column>
+                            <h:outputLink styleClass="button fancybox fancybox.iframe" onclick="#{specimenBean.setSpecimen(specimen)}" value="specimenDetail.xhtml">
+				Ubicación
+			    </h:outputLink>
+                        </h:column>
+			<h:column>
+                            <h:outputLink onclick="#{specimenBean.setSpecimen(specimen)}" value="specimenDetail.xhtml">
+				Visualizar Ubicación de #{specimen.commonName}
+			    </h:outputLink>
+                        </h:column>
+                    </h:dataTable>
+                </h:form>
+            </div>
+        </div>
+        <div id="copyright" class="container">
+            <p>
+                &copy; Proyecto Bichos. Todos los derechos reservados. | Fotos de <a
+                    href="http://www.google.com/images">GOOGLE</a> | Diseño por <a
+                    href="#" rel="nofollow">SMOTAVITAM</a>.
+            </p>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="confirmDialog"  appendTo="@(body)" header="Inactivar usuario"  widgetVar="confirmDelete" modal="true" resizable="false">  
+            <h:form id="inactivarUsuarioForm">
+                <h:panelGrid id="displayInvalideUsuario" columns="2" cellpadding="5" style="margin:0 auto;">  
+                    <h:outputText value="Desea Inactivar el Usuario " />
+                    <h:outputText value="#{usuarioController.selectedUsuario.nombre}" style="font-weight:bold" />
+                    <p:commandButton value="Aceptar" actionListener="#{usuarioController.doInactivarUsuario}" update=":formUsuario:dataTableUsuario, :formUsuario:messages" oncomplete="handleSubmit(xhr, status, args, 'confirmDelete');"/>  
+                    <p:commandButton value="Cancelar" onclick="PF('confirmDelete').hide();" type="button" />  
+                </h:panelGrid>    
+            </h:form>
+        </p:dialog> 
+
+    </ui:composition>
+
+</html>
