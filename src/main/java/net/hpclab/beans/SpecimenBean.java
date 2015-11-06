@@ -1,5 +1,6 @@
 package net.hpclab.beans;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UISelectItem;
 import javax.faces.component.UISelectItems;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import net.hpclab.entities.Author;
@@ -25,7 +27,6 @@ import net.hpclab.entities.Specimen;
 import net.hpclab.entities.Taxonomy;
 import net.hpclab.sessions.CollectionSession;
 import net.hpclab.sessions.SpecimenSession;
-import org.apache.log4j.Logger;
 import org.primefaces.component.calendar.Calendar;
 import org.primefaces.component.column.Column;
 import org.primefaces.component.inputtext.InputText;
@@ -34,6 +35,8 @@ import org.primefaces.component.outputlabel.OutputLabel;
 import org.primefaces.component.panelgrid.PanelGrid;
 import org.primefaces.component.row.Row;
 import org.primefaces.component.selectonemenu.SelectOneMenu;
+import org.primefaces.json.JSONArray;
+import org.primefaces.json.JSONObject;
 
 @ManagedBean
 @SessionScoped
@@ -45,7 +48,7 @@ public class SpecimenBean extends Utilsbean implements Serializable {
     @Inject
     private CollectionSession collectionSession;
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(SpecimenBean.class);
+    //private static final Logger logger = Logger.getLogger(SpecimenBean.class);
     private Specimen specimen;
     private Location location;
     private Taxonomy taxonomy;
@@ -484,5 +487,36 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 
     public void setSelectedCatalog(String selectedCatalog) {
 	   this.selectedCatalog = selectedCatalog;
+    }
+
+    public void specimensJSON() {
+	   try {
+		  FacesContext facesContext = FacesContext.getCurrentInstance();
+		  ExternalContext externalContext = facesContext.getExternalContext();
+		  externalContext.setResponseContentType("application/json");
+		  externalContext.setResponseCharacterEncoding("UTF-8");
+		  allSpecimens = getAllSpecimens();
+		  JSONArray jArray = new JSONArray();
+		  JSONObject jObj;
+		  for (Specimen s : allSpecimens) {
+			 jObj = new JSONObject();
+			 jObj.put("id", s.getIdSpecimen().toString());
+			 jObj.put("sname", s.getIdTaxonomy().getTaxonomyName() + " " + s.getSpecificEpithet());
+			 jObj.put("cname", s.getCommonName());
+			 jObj.put("loc", s.getIdLocation().getIdLoclevel().getLoclevelName() + " de " + s.getIdLocation().getLocationName());
+			 jArray.put(jObj);
+		  }
+		  JSONObject salida = new JSONObject();
+		  salida.put("collection", jArray);
+		  jObj = new JSONObject();
+		  jObj.put("slide_width", 952);
+		  jObj.put("darkslide_width", 794);
+		  jObj.put("specimenSize", allSpecimens.size());
+		  salida.put("settings", jObj);
+		  externalContext.getResponseOutputWriter().write(salida.toString());
+		  facesContext.responseComplete();
+	   } catch (Exception e) {
+		  System.out.println("ERROR" + e.getLocalizedMessage());
+	   }
     }
 }

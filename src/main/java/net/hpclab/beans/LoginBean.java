@@ -8,21 +8,19 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import net.hpclab.entities.Login;
-import org.apache.log4j.Logger;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.MenuModel;
 
 @ManagedBean
 @RequestScoped
-public class LoginController {
+public class LoginBean {
     public static String USER_SESSION_KEY = "UserKey";
     public static String USER_SESSION_KEY_2 = "DataUser";
     public static String USER_SESSION_DIRECTORY = "RootDirectory";
     public static String USER_SESSION_DIRECTORY_GUIA = "RootGuias";
     private String user;
     private String clave;
-    private static final Logger logger = Logger.getLogger(LoginController.class);
     private HttpSession session;
     public Login usuario;
     private MenuModel menu_principal;
@@ -35,7 +33,6 @@ public class LoginController {
     }
 
     public void cargar_sesiones() {
-        logger.debug("--> Entro al metodo cargar_parametros ");
         FacesContext context = FacesContext.getCurrentInstance();
         context.getExternalContext().getSessionMap().put(USER_SESSION_KEY_2, user);
         context.getExternalContext().getSessionMap().put(USER_SESSION_KEY, usuario);
@@ -43,7 +40,7 @@ public class LoginController {
     
     public void cargar_menu() {
         menu_principal = new DefaultMenuModel();
-	   menu_principal.addElement(getItem("Espécimen", "/pages/admin/specimen/specimen.xhtml", null));
+	   menu_principal.addElement(getItem("Espécimen", "specimen.xhtml", null));
 	   menu_principal.addElement(getItem("Usuarios", "/pages/admin/users/index.xhtml", null));
     }
     
@@ -60,17 +57,15 @@ public class LoginController {
         try {
             FacesContext.getCurrentInstance().getExternalContext().redirect(servletRequest.getContextPath() + servletRequest.getServletPath() + logout());
         } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(LoginBean.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public String logout() {
-        logger.debug("--> Entro al metodo logout");
         session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
         if (session != null) {
             session.invalidate();
         }
-        logger.debug("--> Salio del metodo logout");
         return "/pages/login.xhtml?faces-redirect=true";
     }
 

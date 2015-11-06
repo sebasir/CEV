@@ -9,24 +9,24 @@
     <f:view contentType="text/html">
         <h:head>
             <f:facet name="first">
-		<h:outputStylesheet library="css" name="pstyle.css" />
-                <title><ui:insert name="title">Administrador de Reservas</ui:insert></title>
+			 <h:outputStylesheet library="css" name="pstyle.css" />
+                <title><ui:insert name="title">Administrador de Colección Entomológica</ui:insert></title>
             </f:facet>
         </h:head>
 
         <h:body>
             <p:layout fullPage="true">
                 <p:layoutUnit position="north" size="50" resizable="true" closable="true" collapsible="true">
-                    <h:outputText value="Bienvenido Sebastian"/>
+                    <h:outputText value="Bienvenido Administrador"/>
                     <ui:insert name="title"/>                
                 </p:layoutUnit>
 
                 <p:layoutUnit position="west" size="175" header="Menu Principal" collapsible="true">
                     <h:form>
-                        <p:menu model="#{loginController.menu_principal}" />
+                        <p:menu model="#{loginBean.menu_principal}" />
                     </h:form>
                 </p:layoutUnit>
-                
+
                 <p:layoutUnit position="center">
                     <ui:insert name="body"/>
                 </p:layoutUnit>

@@ -1,489 +1,425 @@
 html, body {
-	height: 100%;
+    height: 100%;
 }
 
 body {
-	margin: 0px;
-	padding: 0px;
-	background: #151515 url(images/bg.png) repeat;
-	font-family: 'Source Sans Pro', sans-serif;
-	font-size: 12pt;
-	font-weight: 600;
-	color: rgba(24, 51, 22, 0.99);
+    margin: 0px;
+    padding: 0px;
+    background: #151515 url(images/bg.png) repeat;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 12pt;
+    color: rgba(24, 51, 22, 0.99);
 }
 
 h1, h3 {
-	margin: 0;
-	padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
 h2 {
-	margin: 0;
-	padding: 0;
-	color: rgba(255, 255, 255, 0.75);
+    margin: 0;
+    padding: 0;
+    color: rgba(255, 255, 255, 0.75);
 }
 
 p, ol, ul {
-	margin-top: 0;
+    margin-top: 0;
 }
 
 ol, ul {
-	padding: 0;
-	list-style: none;
+    padding: 0;
+    list-style: none;
 }
 
 strong {
-	
+
 }
 
 a {
-	color: #4da00c;
+    color: #4da00c;
 }
 
 a:hover {
-	text-decoration: none;
+    text-decoration: none;
 }
 
 .container {
-	overflow: hidden;
-	margin: 0em auto;
-	width: 1000px;
+    overflow: hidden;
+    margin: 0em auto;
+    width: 82%;
 }
 
 .fondo {
-	background-image: url("../images/fondo_light.jpg");
-	background-repeat: no-repeat;
+    background-image: url("../images/fondo_light.jpg");
+    background-repeat: no-repeat;
 }
 
 .box {
-	background-color: rgba(232, 255, 195, 0.75);
-	width: 100%;
-	min-height: 65%;
+    background-color: rgba(232, 255, 195, 0.75);
+    width: 100%;
+    min-height: 65%;
 }
-/*********************************************************************************/
-/* Image Style                                                                   */
-/*********************************************************************************/
+
 .image {
-	display: inline-block;
+    display: inline-block;
 }
 
 .image img {
-	display: block;
-	width: 100%;
+    display: block;
+    width: 100%;
 }
 
 .image-full {
-	display: block;
-	width: 100%;
-	margin: 0 0 0 0;
+    display: block;
+    width: 100%;
+    margin: 0 0 0 0;
 }
 
 .image-left {
-	float: left;
-	margin: 0 2em 2em 0;
+    float: left;
+    margin: 0 2em 2em 0;
 }
 
 .image-centered {
-	display: block;
-	margin: 0 0 2em 0;
+    display: block;
+    margin: 0 0 2em 0;
 }
 
 .image-centered img {
-	margin: 0 auto;
-	width: auto;
+    margin: 0 auto;
+    width: auto;
 }
 
-/*********************************************************************************/
-/* List Styles                                                                   */
-/*********************************************************************************/
 ul.style2 {
-	margin: 0;
-	padding-top: 1em;
-	list-style: none;
+    margin: 0;
+    padding-top: 1em;
+    list-style: none;
 }
 
 ul.style2 li {
-	border-top: 1px solid rgba(255, 255, 255, 0.05);
-	padding: 0.80em 0 0.80em 0;
-	font-family: 0.80em;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 0.80em 0 0.80em 0;
+    font-family: 0.8em;
 }
 
 ul.style2 li:before {
-	display: inline-block;
-	padding: 4px;
-	background: #DB3256;
+    display: inline-block;
+    padding: 4px;
+    background: #DB3256;
 }
 
 ul.style2 a {
-	display: inline-block;
-	color: rgb(86, 133, 50);
+    display: inline-block;
+    color: rgb(86, 133, 50);
 }
 
 ul.style2 li:first-child {
-	border-top: 0;
-	padding-top: 0;
+    border-top: 0;
+    padding-top: 0;
 }
 
-/*********************************************************************************/
-/* Social Icon Styles                                                            */
-/*********************************************************************************/
 ul.contact {
-	margin: 0;
-	padding: 0em 0em 0em 0em;
-	list-style: none;
+    margin: 0;
+    padding: 0em 0em 0em 0em;
+    list-style: none;
 }
 
 ul.contact li {
-	display: inline-block;
-	padding: 0em 0.30em;
-	font-size: 1em;
+    display: inline-block;
+    padding: 0em 0.30em;
+    font-size: 1em;
 }
 
 ul.contact li span {
-	display: none;
-	margin: 0;
-	padding: 0;
+    display: none;
+    margin: 0;
+    padding: 0;
 }
 
 ul.contact li a {
-	color: #FFF;
+    color: #FFF;
 }
 
 ul.contact li a:before {
-	display: inline-block;
-	background: #3f3f3f;
-	width: 40px;
-	height: 40px;
-	line-height: 40px;
-	text-align: center;
-	color: #FFFFFF;
+    display: inline-block;
+    background: #3f3f3f;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    color: #FFFFFF;
 }
 
 ul.contact li a.icon-twitter:before {
-	background: #2DAAE4;
+    background: #2DAAE4;
 }
 
 ul.contact li a.icon-facebook:before {
-	background: #39599F;
+    background: #39599F;
 }
 
 ul.contact li a.icon-dribbble:before {
-	background: #C4376B;
+    background: #C4376B;
 }
 
 ul.contact li a.icon-tumblr:before {
-	background: #31516A;
+    background: #31516A;
 }
 
 ul.contact li a.icon-rss:before {
-	background: #F2600B;
+    background: #F2600B;
 }
 
-/*********************************************************************************/
-/* Button Style                                                                  */
-/*********************************************************************************/
 .button {
-	display: inline-block;
-	margin-top: 2em;
-	padding: 1em 2em 1em 2em;
-	background: rgba(42, 146, 7, 0.75);
-	border-radius: 30px;
-	letter-spacing: 0.20em;
-	text-decoration: none;
-	text-transform: uppercase;
-	font-weight: 400;
-	font-size: 0.90em;
-	color: #FFF;
+    display: inline-block;
+    margin-top: 2em;
+    padding: 1em 2em 1em 2em;
+    background: rgba(42, 146, 7, 0.75);
+    border-radius: 30px;
+    letter-spacing: 0.20em;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-weight: 400;
+    font-size: 0.90em;
+    color: #FFF;
 }
 
 .button:before {
-	display: inline-block;
-	background: #FFC31F;
-	margin-right: 1em;
-	width: 40px;
-	height: 40px;
-	line-height: 40px;
-	border-radius: 20px;
-	text-align: center;
-	color: #272925;
+    display: inline-block;
+    background: #FFC31F;
+    margin-right: 1em;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 20px;
+    text-align: center;
+    color: #272925;
 }
 
-/*********************************************************************************/
-/* 4-column                                                                      */
-/*********************************************************************************/
 .box1, .box2, .box3, .box4 {
-	width: 22%;
+    width: 22%;
 }
 
 .box1, .box2, .box3 {
-	float: left;
-	margin-right: 20px;
-	
+    float: left;
+    margin-right: 20px;
+
 }
 
 .box4 {
-	float: right;
+    float: right;
 }
 
-/*********************************************************************************/
-/* 3-column                                                                      */
-/*********************************************************************************/
 .boxA, .boxB, .boxC {
-	width: 320px;
+    width: 320px;
 }
 
 .boxA, .boxB {
-	float: left;
-	margin-right: 20px;
+    float: left;
+    margin-right: 20px;
 }
 
 .boxC {
-	float: right;
+    float: right;
 }
 
-/*********************************************************************************/
-/* 2-column                                                                      */
-/*********************************************************************************/
 .tbox1, .tbox2 {
-	width: 490px;
+    width: 490px;
 }
 
 .tbox1 {
-	float: left;
+    float: left;
 }
 
 .tbox2 {
-	float: right;
+    float: right;
 }
 
-/*********************************************************************************/
-/* Header                                                                        */
-/*********************************************************************************/
 #header-wrapper {
-	overflow: hidden;
-	background: rgba(42, 146, 7, 0.5) url(../images/bg.png) repeat;
-	height: 200px;
+    overflow: hidden;
+    background: rgba(42, 146, 7, 0.5) url(../images/bg.png) repeat;
 }
 
 #header {
-	overflow: hidden;
-	position: relative;
-	padding: 6em 0em;
+    overflow: hidden;
+    position: relative;
+    padding: 5.5em 0em;
 }
 
-/*********************************************************************************/
-/* Logo                                                                          */
-/*********************************************************************************/
 #logo {
-	position: absolute;
-	top: 2.5em;
-	left: 0;
+    position: absolute;
+    top: 1.5em;
 }
 
 #logo h1 {
-	padding: 0.20em 0.50em;
-	letter-spacing: 0.10em;
-	font-size: 2.5em;
-	font-weight: 600;
+    padding: 0.20em 0.50em;
+    letter-spacing: 0.10em;
+    font-size: 2.5em;
+    font-weight: 600;
 }
 
 #logo a {
-	text-decoration: none;
-	text-transform: uppercase;
-	color: #FFF;
+    text-decoration: none;
+    text-transform: uppercase;
+    color: #FFF;
 }
 
-/*********************************************************************************/
-/* Menu                                                                          */
-/*********************************************************************************/
 #menu {
-	position: absolute;
-	top: 4em;
-	right: 0;
+    position: absolute;
+    top: 4em;
+    right: 0;
 }
 
 #menu ul {
-	display: inline-block;
+    display: inline-block;
 }
 
 #menu li {
-	display: block;
-	float: left;
-	text-align: center;
+    display: block;
+    float: left;
+    text-align: center;
 }
 
 #menu li a, #menu li span {
-	padding: 1em 1.5em;
-	letter-spacing: 0.10em;
-	text-decoration: none;
-	text-transform: uppercase;
-	font-size: 0.90em;
-	color: #FFF;
+    padding: 1em 0.5em;
+    letter-spacing: 0.10em;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 0.90em;
+    color: #FFF;
 }
 
 #menu li:hover a, #menu li.active a, #menu li.active span {
-	
+
 }
 
 #menu .current_page_item a {
-	background-color: rgba(185, 208, 148, 0.75);
-	border-radius: 20px;
+    background-color: rgba(185, 208, 148, 0.75);
+    border-radius: 20px;
 }
 
 #menu .icon {
-	
+
 }
 
-/*********************************************************************************/
-/* Banner                                                                        */
-/*********************************************************************************/
 #banner {
-	border-top: 20px solid #FFF;
-	border-left: 20px solid #FFF;
-	border-right: 20px solid #FFF;
+    border-top: 20px solid #FFF;
+    border-left: 20px solid #FFF;
+    border-right: 20px solid #FFF;
 }
 
 #banner img {
-	
+
 }
 
-/*********************************************************************************/
-/* Page                                                                          */
-/*********************************************************************************/
 #page-wrapper {
-	overflow: hidden;
-	padding: 5em 0em;
-	background: #FFF;
+    overflow: hidden;
+    padding: 5em 0em;
+    background: #FFF;
 }
 
 #page {
-	text-align: center;
+    text-align: center;
 }
 
 #page h2 {
-	padding-bottom: 0.50em;
-	text-transform: uppercase;
-	font-size: 2.6em;
-	font-weight: 400;
-	color: rgb(41, 108, 23);
+    padding-bottom: 0.50em;
+    text-transform: uppercase;
+    font-size: 2.6em;
+    font-weight: 400;
+    color: rgb(41, 108, 23);
 }
 
 #page p {
-	color: rgba(0, 0, 0, 0.8);
+    color: rgba(0, 0, 0, 0.8);
 }
 
-/*********************************************************************************/
-/* Content                                                                       */
-/*********************************************************************************/
-#content {
-	
-}
-
-/*********************************************************************************/
-/* Sidebar                                                                       */
-/*********************************************************************************/
-#sidebar {
-	
-}
-
-/*********************************************************************************/
-/* Featured                                                                      */
-/*********************************************************************************/
 #featured {
-	overflow: hidden;
+    overflow: hidden;
 }
 
 #featured h2 {
-	padding-bottom: 1em;
-	text-transform: uppercase;
-	font-size: 1.8em;
-	font-weight: 300;
+    padding-bottom: 1em;
+    text-transform: uppercase;
+    font-size: 1.8em;
+    font-weight: 300;
 }
 
 #featured img {
-	margin-bottom: 2em;
+    margin-bottom: 2em;
 }
 
-/*********************************************************************************/
-/* Portfolio                                                                     */
-/*********************************************************************************/
 #portfolio {
-	overflow: hidden;
-	padding: 2em 0em;
-	width: 80%;
+    overflow: hidden;
+    padding: 2em 0em;
+    width: 80%;
 }
 
 #portfolio h2 {
-	padding-bottom: 1em;
-	text-transform: uppercase;
-	font-size: 1.8em;
-	font-weight: 400;
-	color: rgb(41, 107, 23);
+    padding-bottom: 1em;
+    text-transform: uppercase;
+    font-size: 1.8em;
+    font-weight: 400;
+    color: rgb(41, 107, 23);
 }
 
-/*********************************************************************************/
-/* Footer                                                                        */
-/*********************************************************************************/
 #footer {
-	overflow: hidden;
-	padding: 5em 0em 3em 0em;
-	border-top: 1px solid rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    padding: 5em 0em 3em 0em;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 #footer .boxA, #footer .boxB, #footer .boxC {
-	
+
 }
 
 #footer .boxA {
-	
+
 }
 
 #footer .box {
-	margin-bottom: 4em;
+    margin-bottom: 4em;
 }
 
 #footer img {
-	margin-bottom: 2em;
+    margin-bottom: 2em;
 }
 
 #footer h3 {
-	padding-bottom: 1em;
-	text-transform: uppercase;
-	font-size: 1.8em;
-	font-weight: 300;
-	color: rgba(255, 255, 255, 0.8);
+    padding-bottom: 1em;
+    text-transform: uppercase;
+    font-size: 1.8em;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.8);
 }
 
 #footer .link {
-	display: block;
-	padding-top: 1em;
-	text-transform: uppercase;
-	text-decoration: none;
-	font-weight: 700;
-	color: rgba(0, 0, 0, 0.8);
+    display: block;
+    padding-top: 1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.8);
 }
 
-/*********************************************************************************/
-/* Copyright                                                                     */
-/*********************************************************************************/
 #copyright {
-	overflow: hidden;
-	padding: 1em 0em;
-	border-top: 1px solid rgba(255, 255, 255, 0.05);
-	background-color: rgba(42, 146, 7, 0.5);
-	width: 100%;
-	height: 150px;
+    overflow: hidden;
+    padding: 1em 0em;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background-color: rgba(42, 146, 7, 0.5);
+    width: 100%;
+    height: 150px;
 }
 
 #copyright p {
-	letter-spacing: 0.20em;
-	text-align: center;
-	text-transform: uppercase;
-	font-size: 1em;
-	color: rgb(221, 255, 217);
+    letter-spacing: 0.20em;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 1em;
+    color: rgb(221, 255, 217);
 }
 
 #copyright a {
-	text-decoration: none;
-	color: rgba(199, 255, 192, 0.7);
+    text-decoration: none;
+    color: rgba(199, 255, 192, 0.7);
 }

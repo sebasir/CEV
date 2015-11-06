@@ -3,11 +3,11 @@
 		xmlns:ui="http://java.sun.com/jsf/facelets"
 		xmlns:p="http://primefaces.org/ui"
 		xmlns:f="http://java.sun.com/jsf/core"
-		template="../admin.xhtml">
+		template="admin.xhtml">
     <ui:define name="body">
-	<h:form id="formSpecimen">
-	    <p:dataTable id="dataTableSpecimen" paginator="true" rows="25" value="#{specimenBean.allSpecimens}" var="specimen">
-		<p:column headerText="Nombre Científico">
+	<h:form id="formLocation">
+	    <p:dataTable id="dataTableLocation" paginator="true" rows="25" value="#{locationBean.allLocations}" var="location">
+		<p:column headerText="Nombre Ubicación">
 		    <h:outputText value="#{specimen.idTaxonomy.taxonomyName} #{specimen.specificEpithet}" style=""/>
 		</p:column>
 		<p:column headerText="Nombre Común">

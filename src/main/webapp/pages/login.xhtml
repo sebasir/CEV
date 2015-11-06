@@ -13,11 +13,11 @@
                 <p:panel header="Autenticación de Usuarios" style="width: 400px;" >
                     <h:panelGrid id="loginPanel" columns="2">  
                         <h:outputText value="Usuario:"/>
-                        <p:inputText id="user" value="#{loginController.user}" required="true" requiredMessage="Debe ingresar un nombre de usuario"/>
+                        <p:inputText id="user" value="#{loginBean.user}" required="true" requiredMessage="Debe ingresar un nombre de usuario"/>
                         <h:outputText value="Password:"/>
-                        <p:password id="clave" value="#{loginController.clave}" required="true" requiredMessage="Debe ingresar una contraseña"/>
+                        <p:password id="clave" value="#{loginBean.clave}" required="true" requiredMessage="Debe ingresar una contraseña"/>
                         <p:spacer/>
-                        <p:commandButton action="#{loginController.autenticar}" value="Login" update="loginForm:growl" ajax="true"/>
+                        <p:commandButton action="#{loginBean.autenticar}" value="Login" update="loginForm:growl" ajax="true"/>
                     </h:panelGrid>
                 </p:panel>
             </div>            

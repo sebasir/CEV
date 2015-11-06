@@ -12,7 +12,6 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 import net.hpclab.entities.Usuario;
 import net.hpclab.sessions.UsuarioDAO;
-import org.apache.log4j.Logger;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.LazyDataModel;
@@ -21,7 +20,7 @@ import org.primefaces.model.LazyDataModel;
 @ManagedBean
 public class UsuarioController implements Serializable {
 
-    private static final Logger logger = Logger.getLogger(UsuarioController.class);
+//    private static final Logger logger = Logger.getLogger(UsuarioController.class);
     private @Inject
     UsuarioDAO injectUsuario;
     private List<Usuario> filtrarUsuarios;
@@ -35,7 +34,7 @@ public class UsuarioController implements Serializable {
 
     @PostConstruct
     public void init() {
-	   logger.debug("--> UsuarioController inicializo");
+	   
     }
 
     public void onRowSelect(SelectEvent event) {
@@ -48,28 +47,28 @@ public class UsuarioController implements Serializable {
     }
 
     public void doCrearUsuario(ActionEvent event) {
-	   logger.error("--> Entro al metodo doCrearUsuario");
+	   
 	   selectedUsuario.setFechaCreacion(new Date());
 	   injectUsuario.persist(selectedUsuario);
 	   messageUtil.addSuccessMessage("Se creo el usuario " + selectedUsuario.getNombre());
     }
 
     public void doActualizarUsuario(ActionEvent event) {
-	   logger.debug("--> Entro al metodo doActualizarUsuario");
+	   
 	   injectUsuario.merge(selectedUsuario);
 	   messageUtil.addSuccessMessage("Se edito el usuario " + selectedUsuario.getNombre());
     }
 
     public void doInactivarUsuario(ActionEvent event) {
-	   logger.debug("--> Entro al metodo doInactivarUsuario");
+	   
 	   injectUsuario.merge(selectedUsuario);
 	   messageUtil.addSuccessMessage("Se elimino el producto " + selectedUsuario.getNombre());
     }
 
     public void prepareCreate(ActionEvent event) {
-	   logger.debug("--> Entro al metodo prepareCreate Usuario");
+	   
 	   if (this.selectedUsuario != null) {
-		  logger.debug("--> Entro al metodo prepareCreate Usuario  " + this.selectedUsuario.getCedula());
+		  
 	   }
 
 	   this.selectedUsuario = new Usuario();
