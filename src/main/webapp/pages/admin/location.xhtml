@@ -1,189 +1,76 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-		xmlns:h="http://java.sun.com/jsf/html"
-		xmlns:ui="http://java.sun.com/jsf/facelets"
-		xmlns:p="http://primefaces.org/ui"
-		xmlns:f="http://java.sun.com/jsf/core"
-		template="admin.xhtml">
+			 xmlns:h="http://java.sun.com/jsf/html"
+			 xmlns:ui="http://java.sun.com/jsf/facelets"
+			 xmlns:p="http://primefaces.org/ui"
+			 xmlns:f="http://java.sun.com/jsf/core"
+			 template="admin.xhtml">
     <ui:define name="body">
-	<h:form id="formLocation">
-	    <p:dataTable id="dataTableLocation" paginator="true" rows="25" value="#{locationBean.allLocations}" var="location">
-		<p:column headerText="Nombre Ubicación">
-		    <h:outputText value="#{specimen.idTaxonomy.taxonomyName} #{specimen.specificEpithet}" style=""/>
-		</p:column>
-		<p:column headerText="Nombre Común">
-		    <h:outputText value="#{specimen.commonName}" />
-		</p:column>
-		<p:column headerText="Fecha de Determinación">
-		    <h:outputText value="#{specimenBean.formatDate(specimen.idenDate)}" />
-		</p:column>
-		<p:column headerText="Determinador">
-		    <h:outputText value="#{specimen.idDeterminer.idAuthor.authorName}" />
-		</p:column>
-		<p:column headerText="Fecha de Colecta">
-		    <h:outputText value="#{specimenBean.formatDate(specimen.collectDate)}" />
-		</p:column>
-		<p:column headerText="Colector">
-		    <h:outputText value="#{specimen.idCollector.idAuthor.authorName}" />
-		</p:column>
-		<p:column headerText="Tipo de Muestra">
-		    <h:outputText value="#{specimen.idSaty.satyName}" />
-		</p:column>
-		<p:column headerText="Acciones" style="">
-		    <p:commandButton id="editButton" icon="ui-icon-zoomin" oncomplete="PF('specimenDetail').show()" update=":specimenDetailForm" title="Detalle de #{specimen.commonName}" actionListener="#{specimenBean.setSpecimen(specimen)}"/>
-		    <p:commandButton id="deleteButton" icon="ui-icon-trash" oncomplete="PF('specimenDelete').show()" title="Eliminar #{specimen.commonName}"/>
-		</p:column>
-		<f:facet name="footer">
-		    <p:commandButton id="btnCreate" value="Nuevo Espécimen" oncomplete="PF('specimenCreate').show()" update=":specimenCreateForm" title="Crear Espécimen" actionListener="#{specimenBean.prepareCreate()}"/>
-		</f:facet>
-	    </p:dataTable>
-	    <p:growl id="messages" showDetail="true"/>
-	</h:form>
+	   <h:form id="formLocation">
+		  <p:panel id="data">
+			 <f:facet name="header">
+				<h:outputText value="Ubicaciones" />
+			 </f:facet>
+			 <p:tree id="locTree" value="#{locationBean.root}" var="loc" orientation="vertical" cache="true" selectionMode="single" selection="#{locationBean.selectedNode}" dynamic="true" animate="true">
+				<p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
+				    <h:outputText value="#{loc}" />
+				</p:treeNode>
+			 </p:tree>
+			 <p:contextMenu for="locTree">
+				<p:menuitem value="Agregar Ubicación" update="locTree :createDialog" actionListener="#{locationBean.setTaxfromNode('create')}" icon="ui-icon-plusthick"/>
+				<p:menuitem value="Ver detalle de Especies" update="detailDialog" actionListener="#{locationBean.setTaxfromNode('detail')}" icon="ui-icon-folder-open" />
+				<p:menuitem value="Editar" update="locTree :editDialog :displayEdit" actionListener="#{locationBean.setTaxfromNode('edit')}" icon="ui-icon-pencil"/>
+				<p:menuitem value="Borrar" update="locTree" actionListener="#{locationBean.setTaxfromNode('delete')}" icon="ui-icon-trash"/>
+			 </p:contextMenu>
+		  </p:panel>
+		  <p:growl id="messages" showDetail="true"/>
+	   </h:form>
 
-	<p:dialog id="detailDialog" widgetVar="specimenDetail" modal="true" dynamic="true" resizable="false" appendTo="@(body)" header="#{specimenBean.taxonomy.taxonomyName} #{specimenBean.specimen.specificEpithet}" closeOnEscape="true" > 
-	    <p:outputPanel>
-		<h:form id="specimenDetailForm">
-		    <p:panelGrid id="taxPanelGrid" binding="#{specimenBean.specimenForm}" />
-		    <p:commandButton id="detailSave" value="Guardar" action="#{specimenBean.edit}" update=":formSpecimen"/>
-		    <p:commandButton id="detailClose" value="Cerrar" onclick="PF('specimenDetail').close()"/>
-		</h:form>
-	    </p:outputPanel>
-	</p:dialog>
-	<p:dialog id="createDialog" widgetVar="specimenCreate" modal="true" resizable="false" appendTo="@(body)" header="Nuevo Espécimen" closeOnEscape="true" > 
-	    <h:form id="specimenCreateForm" prependId="false">
-		<p:panelGrid id="displayCreate">
-		    <p:row>
-			<p:column colspan="2">
-			    <p:outputLabel value="Datos de Identificación"/>
-			</p:column>
-		    </p:row>
-		    <p:row>
-			<p:column><p:outputLabel value="Clasificación:" for="taxonomy"/></p:column>
-			<p:column>
-			    <p:selectOneMenu id="taxonomy" value="#{specimenBean.selectedTax}" effect="fade" style="width: 100%" required="true" rendered="true" requiredMessage="Debes escoger una clasificación!">
-				<f:selectItem itemLabel="Selecciona una clasificación" itemValue="" />
-				<f:selectItems value="#{specimenBean.allTaxonomys}" var="tax" itemLabel="#{tax.taxonomyName}" itemValue="#{tax.idTaxonomy}" />
-			    </p:selectOneMenu>
-			</p:column>
-		    </p:row>
-		    <p:row>
-			<p:column><p:outputLabel value="Determinador:" for="determiner" /></p:column>
-			<p:column>
-			    <p:selectOneMenu id="determiner" value="#{specimenBean.selectedDeterminer}" effect="fade" style="width: 100%" required="true" rendered="true" requiredMessage="Debes escoger un Autor Determinador!">
-				<f:selectItem itemLabel="Selecciona un Determinador" itemValue="" />
-				<f:selectItems value="#{specimenBean.allDeterminer}" var="author" itemLabel="#{author.idAuthor.authorName}" itemValue="#{author.idAuro}" />
-			    </p:selectOneMenu>
-			</p:column>
-		    </p:row>
-		    <p:row>
-			<p:column><p:outputLabel value="Epiteto Específico:" for="specificEphitet" /></p:column>
-			<p:column><p:inputText id="specificEphitet" value="#{specimenBean.specimen.specificEpithet}" title="Eptiteto Específico" rendered="true" /></p:column>
-		    </p:row>
-		    <p:row>
-			<p:column><p:outputLabel value="Nombre Común:" for="commonName" /></p:column>
-			<p:column><p:inputText id="commonName" value="#{specimenBean.specimen.commonName}" title="Nombre Común" rendered="true" style="width: 100%" required="true" requiredMessage="Debes definir el nombre común!"/></p:column>
-		    </p:row>
-		    <p:row>
-			<p:column><p:outputLabel value="Fecha:" for="idenDate" /></p:column>
-			<p:column>
-			    <p:calendar id="idenDate" value="#{specimenBean.specimen.idenDate}" pattern="dd-MM-yyyy"/>
-			</p:column>
-		    </p:row>
-		    <p:row>
-			<p:column><p:outputLabel value="Comentarios de Identificación:" for="idenComment" /></p:column>
-			<p:column>
-			    <p:inputTextarea id="idenComment" rows="5" cols="30" value="#{specimenBean.specimen.idenComment}" />
-			</p:column>
-		    </p:row>
-		    <p:row>
-			<p:column colspan="2">
-			    <p:outputLabel value="Datos de Ubicación"/>
-			</p:column>
-		    </p:row>
-		    <p:row>
-			<p:column><p:outputLabel value="Ubicación:" for="locLevel"/></p:column>
-			<p:column>
-			    <p:selectOneMenu id="locLevel" value="#{specimenBean.selectedLoc}" effect="fade" style="width: 100%" required="true" rendered="true" requiredMessage="Debes escoger una ubicación!">
-				<f:selectItem itemLabel="Selecciona una ubicación" itemValue="" />
-				<f:selectItems value="#{specimenBean.allLocations}" var="loc" itemLabel="#{loc.locationName}" itemValue="#{loc.idLocation}" />
-			    </p:selectOneMenu>
-			</p:column>
-		    </p:row>
-		    <p:row>
-			<p:column><p:outputLabel value="Colector:" for="colector" /></p:column>
-			<p:column>
-			    <p:selectOneMenu id="colector" value="#{specimenBean.selectedCollector}" effect="fade" style="width: 100%" required="true" rendered="true" requiredMessage="Debes escoger un Colector!">
-				<f:selectItem itemLabel="Selecciona un colector" itemValue="" />
-				<f:selectItems value="#{specimenBean.allCollector}" var="author" itemLabel="#{author.idAuthor.authorName}" itemValue="#{author.idAuro}" />
-			    </p:selectOneMenu>
-			</p:column>
-		    </p:row>
-		    <p:row>
-			<p:column><p:outputLabel value="Fecha de Colecta:" for="collectDate" /></p:column>
-			<p:column>
-			    <p:calendar id="collectDate" value="#{specimenBean.specimen.collectDate}" pattern="dd-MM-yyyy"/>
-			</p:column>
-		    </p:row>
-		    <p:row>
-			<p:column><p:outputLabel value="Comentarios de Identificación:" for="collectComment" /></p:column>
-			<p:column>
-			    <p:inputTextarea id="collectComment" rows="5" cols="30" value="#{specimenBean.specimen.collectComment}" />
-			</p:column>
-		    </p:row>
-		    <p:row>
-			<p:column colspan="2">
-			    <p:outputLabel value="Datos de Colección"/>
-			</p:column>
-		    </p:row>
-		    <p:row>
-			<p:column><p:outputLabel value="Colección:" for="colectionName" /></p:column>
-			<p:column>
-			    <p:selectOneMenu id="colectionName" value="#{specimenBean.selectedCollection}" effect="fade" style="width: 100%" required="true" rendered="true" requiredMessage="Debes escoger una Colección!">
-				<p:ajax listener="#{specimenBean.filterCatalog()}" update="catalogName" />
-				<f:selectItem itemLabel="Selecciona una colección" itemValue="" />
-				<f:selectItems value="#{specimenBean.allCollection}" var="col" itemLabel="#{col.collectionName} - #{col.companyName}" itemValue="#{col.idCollection}" />
-			    </p:selectOneMenu>
-			</p:column>
-		    </p:row>
-		    <p:row>
-			<p:column><p:outputLabel value="Catálogo:" for="catalogName" /></p:column>
-			<p:column>
-			    <p:selectOneMenu id="catalogName" value="#{specimenBean.selectedCatalog}" effect="fade" style="width: 100%" required="true" rendered="true" requiredMessage="Debes escoger un catálogo!">
-				<f:selectItem itemLabel="Selecciona un catalogo" itemValue="" />
-				<f:selectItems value="#{specimenBean.allCatalog}" var="cat" itemLabel="#{cat.catalogName}" itemValue="#{cat.idCatalog}" />
-			    </p:selectOneMenu>
-			</p:column>
-		    </p:row>
-		    <p:row>
-			<p:column><p:outputLabel value="Tipo de Registro:" for="regType" /></p:column>
-			<p:column>
-			    <p:selectOneMenu id="regType" value="#{specimenBean.selectedRegType}" effect="fade" style="width: 100%" required="true" rendered="true" requiredMessage="Debes escoger un tipo de Registro!">
-				<f:selectItem itemLabel="Selecciona un tipo de Registro" itemValue="" />
-				<f:selectItems value="#{specimenBean.allRegTypes}" var="reg" itemLabel="#{reg.retyName}" itemValue="#{reg.idRety}" />
-			    </p:selectOneMenu>
-			</p:column>
-		    </p:row>
-		    <p:row>
-			<p:column><p:outputLabel value="Tipo de la Muestra:" for="samType" /></p:column>
-			<p:column>
-			    <p:selectOneMenu id="samType" value="#{specimenBean.selectedSampleType}" effect="fade" style="width: 100%" required="true" rendered="true" requiredMessage="Debes escoger un tipo de muestra!">
-				<f:selectItem itemLabel="Selecciona un tipo de muestra" itemValue="" />
-				<f:selectItems value="#{specimenBean.allSampleTypes}" var="sam" itemLabel="#{sam.satyName}" itemValue="#{sam.idSaty}" />
-			    </p:selectOneMenu>
-			</p:column>
-		    </p:row>
-		    <p:row>
-			<p:column><p:outputLabel value="ID del Registro Biológico:" for="idRegBio" /></p:column>
-			<p:column><p:inputText id="idRegBio" value="#{specimenBean.specimen.idBioreg}" title="ID del registro biiológico" rendered="true" /></p:column>
-		    </p:row>
-		</p:panelGrid>
-		<p:commandButton id="createSave" value="Guardar" action="#{specimenBean.persist()}" update=":formSpecimen" oncomplete="PF('specimenCreate').hide()"/>
-	    </h:form>
-	</p:dialog>
-	<p:confirmDialog id="deleteDialog" appendTo="@(body)" widgetVar="specimenDelete" message="¿Está seguro que desea eliminar este registro?" showEffect="fade" hideEffect="fade" header="Confirmar eliminación" severity="alarm">
-	    <h:form id="deleteForm" style=""> 
-		<p:commandButton id="deleteYesButton" value="Eliminar" action="#{specimenBean.delete}" update=":formSpecimen" oncomplete="PF('specimenDelete').hide()" />
-		<p:commandButton id="deleteNoButton" value="Cancelar" onclick="PF('specimenDelete').hide()" type="button" />
-	    </h:form>
-	</p:confirmDialog>
+	   <p:dialog id="detailDialog" width="500px" appendTo="@(body)" widgetVar="locationDetail" modal="true" dynamic="true" resizable="false" header="#{locationBean.location.locationName}" closeOnEscape="true">
+		  <p:dataList id="dataListSpecimen" paginator="true" rows="5" value="#{locationBean.locationSpecimens}" var="specimen" emptyMessage="No se encontraron especímenes asociados a esta ubicación" paginatorPosition="bottom">
+			 #{specimen.commonName} <span style="font-style: italic;">(#{specimen.specificEpithet})</span>
+		  </p:dataList>
+	   </p:dialog>
+
+	   <p:dialog id="editDialog" widgetVar="locationEdit" modal="true" resizable="false" appendTo="@(body)" header="Editar a #{locationBean.location.description}" closeOnEscape="true" > 
+		  <h:form id="locationEditForm" prependId="false">
+			 <p:panelGrid id="displayEdit" columns="2">
+				<p:outputLabel value="Nombre Ubicación:" for="locEName" />
+				<p:inputText id="locEName" value="#{locationBean.location.locationName}" title="Nombre Ubicación" rendered="true" style="width: 100%" required="true" requiredMessage="Debes definir el nombre de la ubicación!"/>
+				<p:outputLabel value="Nivel Ubicación:" for="levelE" />
+				<p:selectOneMenu id="levelE" value="#{locationBean.selectedLevel}" effect="fade" style="width: 100%" required="true" rendered="true" requiredMessage="Debes escoger una jerarquía!">
+				    <f:selectItem itemLabel="Selecciona una jerarquía" itemValue="" />
+				    <f:selectItems value="#{locationBean.allLevels}" var="lev" itemLabel="#{lev.loclevelName}" itemValue="#{lev.idLoclevel}" />
+				</p:selectOneMenu>
+			 </p:panelGrid>
+			 <p:commandButton id="editSave" value="Guardar" action="#{locationBean.edit()}" update=":formLocation" oncomplete="PF('locationEdit').hide()"/>
+		  </h:form>
+	   </p:dialog>
+
+	   <p:dialog id="createDialog" widgetVar="locationCreate" modal="true" resizable="false" appendTo="@(body)" header="Nueva Ubicación" closeOnEscape="true" > 
+		  <h:form id="locationCreateForm" prependId="false">
+			 <p:panelGrid id="displayCreate" columns="2">
+				<p:outputLabel value="Nombre Ubicación:" for="locName" />
+				<p:inputText id="locName" value="#{locationBean.location.locationName}" title="Nombre Ubicación" rendered="true" style="width: 100%" required="true" requiredMessage="Debes definir el nombre de la ubicación!"/>
+				<p:outputLabel value="Longitud:" for="lon" />
+				<p:inputText id="lon" value="#{locationBean.location.longitude}" title="Longitud Decimal" rendered="true" style="width: 100%"/>
+				<p:outputLabel value="Latitud:" for="lat" />
+				<p:inputText id="lat" value="#{locationBean.location.latitude}" title="Latitud Decimal" rendered="true" style="width: 100%"/>
+				<p:outputLabel value="Altitud:" for="alt" />
+				<p:inputText id="alt" value="#{locationBean.location.altitude}" title="Altitud" rendered="true" style="width: 100%"/>
+				<p:outputLabel value="Jerarquía" for="level" />
+				<p:selectOneMenu id="level" value="#{locationBean.selectedLevel}" effect="fade" style="width: 100%" required="true" rendered="true" requiredMessage="Debes escoger una jerarquía!">
+				    <f:selectItem itemLabel="Selecciona una jerarquía" itemValue="" />
+				    <f:selectItems value="#{locationBean.allLevels}" var="lev" itemLabel="#{lev.loclevelName}" itemValue="#{lev.idLoclevel}" />
+				</p:selectOneMenu>
+			 </p:panelGrid>
+			 <p:commandButton id="createSave" value="Guardar" action="#{locationBean.persist()}" update=":formLocation" oncomplete="PF('locationCreate').hide()"/>
+		  </h:form>
+	   </p:dialog>
+	   <p:confirmDialog id="deleteDialog" appendTo="@(body)" widgetVar="locationDelete" message="¿Está seguro que desea eliminar este registro?" showEffect="fade" hideEffect="fade" header="Confirmar eliminación" severity="alarm">
+		  <h:form id="deleteForm" style=""> 
+			 <p:commandButton id="deleteYesButton" value="Eliminar" action="#{locationBean.delete}" update=":formLocation" oncomplete="PF('locationDelete').hide()" />
+			 <p:commandButton id="deleteNoButton" value="Cancelar" onclick="PF('locationDelete').hide()" type="button" />
+		  </h:form>
+	   </p:confirmDialog>
     </ui:define>
 </ui:composition>

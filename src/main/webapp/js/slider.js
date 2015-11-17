@@ -48,7 +48,7 @@ $(function() {
 	   var item = $("<div class='item' />");
 	   item.attr("data-num", specCount);
 	   specCount++;
-	   item.append("<a href='#' title='" + title + "'><img src='images/thumbs/" + spec.id + ".jpg' alt='" + title + "' title='" + title + "' /></a>");
+	   item.append("<a href='#' title='" + title + "'><img src='images/thumbs/" + spec.id + ".jpg' height='80px' width='160px' alt='" + title + "' title='" + title + "' /></a>");
 	   return item;
     }
 

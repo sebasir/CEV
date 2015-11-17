@@ -1,6 +1,5 @@
 package net.hpclab.beans;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +26,7 @@ import net.hpclab.entities.Specimen;
 import net.hpclab.entities.Taxonomy;
 import net.hpclab.sessions.CollectionSession;
 import net.hpclab.sessions.SpecimenSession;
+import net.hpclab.sessions.TaxonomySession;
 import org.primefaces.component.calendar.Calendar;
 import org.primefaces.component.column.Column;
 import org.primefaces.component.inputtext.InputText;
@@ -47,8 +47,10 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 
     @Inject
     private CollectionSession collectionSession;
+    
+    @Inject
+    private TaxonomySession taxonomySession;
     private static final long serialVersionUID = 1L;
-    //private static final Logger logger = Logger.getLogger(SpecimenBean.class);
     private Specimen specimen;
     private Location location;
     private Taxonomy taxonomy;
@@ -111,13 +113,13 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 
     public void prepareCreate() {
 	   specimen = new Specimen();
-	   setAllTaxonomys((List<Taxonomy>) specimenSession.findByQuery("Taxonomy.findOrdered"));
-	   setAllLocations((List<Location>) specimenSession.findByQuery("Location.findOrdered"));
-	   setAllCollector((List<AuthorRole>) specimenSession.findByQuery("AuthorRole.findCollectors"));
-	   setAllDeterminer((List<AuthorRole>) specimenSession.findByQuery("AuthorRole.findDeterminers"));
-	   setAllCollection((List<Collection>) specimenSession.findByQuery("Collection.findAll"));
-	   setAllSampleTypes((List<SampleType>) specimenSession.findByQuery("SampleType.findAll"));
-	   setAllRegTypes((List<RegType>) specimenSession.findByQuery("RegType.findAll"));
+	   setAllTaxonomys((List<Taxonomy>) specimenSession.findListByQuery("Taxonomy.findOrderedAsc", Taxonomy.class));
+	   setAllLocations((List<Location>) specimenSession.findListByQuery("Location.findOrdered", Location.class));
+	   setAllCollector((List<AuthorRole>) specimenSession.findListByQuery("AuthorRole.findCollectors", AuthorRole.class));
+	   setAllDeterminer((List<AuthorRole>) specimenSession.findListByQuery("AuthorRole.findDeterminers", AuthorRole.class));
+	   setAllCollection((List<Collection>) specimenSession.findListByQuery("Collection.findAll", Collection.class));
+	   setAllSampleTypes((List<SampleType>) specimenSession.findListByQuery("SampleType.findAll", SampleType.class));
+	   setAllRegTypes((List<RegType>) specimenSession.findListByQuery("RegType.findAll", RegType.class));
     }
 
     public void edit() {

@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,7 +27,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Taxonomy.findAll", query = "SELECT t FROM Taxonomy t"),
     @NamedQuery(name = "Taxonomy.findByIdTaxonomy", query = "SELECT t FROM Taxonomy t WHERE t.idTaxonomy = :idTaxonomy"),
     @NamedQuery(name = "Taxonomy.findByTaxonomyName", query = "SELECT t FROM Taxonomy t WHERE t.taxonomyName = :taxonomyName"),
-    @NamedQuery(name = "Taxonomy.findOrdered", query = "SELECT t FROM Taxonomy t ORDER BY t.idTaxlevel.taxlevelRank DESC")
+    @NamedQuery(name = "Taxonomy.findOrderedDesc", query = "SELECT t FROM Taxonomy t ORDER BY t.idTaxlevel.taxlevelRank DESC"),
+    @NamedQuery(name = "Taxonomy.findOrderedAsc", query = "SELECT t FROM Taxonomy t ORDER BY t.idTaxlevel.taxlevelRank")
 })
 public class Taxonomy implements entNaming, Serializable {
 
@@ -41,7 +43,7 @@ public class Taxonomy implements entNaming, Serializable {
     @Size(min = 1, max = 64)
     @Column(name = "taxonomy_name")
     private String taxonomyName;
-    @OneToMany(mappedBy = "idTaxonomy")
+    @OneToMany(mappedBy = "idTaxonomy", fetch=FetchType.EAGER)
     private List<Specimen> specimenList;
     @JoinColumn(name = "id_taxlevel", referencedColumnName = "id_taxlevel")
     @ManyToOne
@@ -56,92 +58,93 @@ public class Taxonomy implements entNaming, Serializable {
     }
 
     public Taxonomy(Integer idTaxonomy) {
-	this.idTaxonomy = idTaxonomy;
+	   this.idTaxonomy = idTaxonomy;
     }
 
     public Taxonomy(Integer idTaxonomy, String taxonomyName) {
-	this.idTaxonomy = idTaxonomy;
-	this.taxonomyName = taxonomyName;
+	   this.idTaxonomy = idTaxonomy;
+	   this.taxonomyName = taxonomyName;
     }
 
     public Integer getIdTaxonomy() {
-	return idTaxonomy;
+	   return idTaxonomy;
     }
 
     public void setIdTaxonomy(Integer idTaxonomy) {
-	this.idTaxonomy = idTaxonomy;
+	   this.idTaxonomy = idTaxonomy;
     }
 
     public String getTaxonomyName() {
-	return taxonomyName;
+	   return taxonomyName;
     }
 
     public void setTaxonomyName(String taxonomyName) {
-	this.taxonomyName = taxonomyName;
+	   this.taxonomyName = taxonomyName;
     }
 
     @XmlTransient
     public List<Specimen> getSpecimenList() {
-	return specimenList;
+	   return specimenList;
     }
 
     public void setSpecimenList(List<Specimen> specimenList) {
-	this.specimenList = specimenList;
+	   this.specimenList = specimenList;
     }
 
     public TaxonomyLevel getIdTaxlevel() {
-	return idTaxlevel;
+	   return idTaxlevel;
     }
 
     public void setIdTaxlevel(TaxonomyLevel idTaxlevel) {
-	this.idTaxlevel = idTaxlevel;
+	   this.idTaxlevel = idTaxlevel;
     }
 
     @XmlTransient
     public List<Taxonomy> getTaxonomyList() {
-	return taxonomyList;
+	   return taxonomyList;
     }
 
     public void setTaxonomyList(List<Taxonomy> taxonomyList) {
-	this.taxonomyList = taxonomyList;
+	   this.taxonomyList = taxonomyList;
     }
 
     public Taxonomy getIdContainer() {
-	return idContainer;
+	   return idContainer;
     }
 
     public void setIdContainer(Taxonomy idContainer) {
-	this.idContainer = idContainer;
+	   this.idContainer = idContainer;
     }
 
     @Override
     public int hashCode() {
-	int hash = 0;
-	hash += (idTaxonomy != null ? idTaxonomy.hashCode() : 0);
-	return hash;
+	   int hash = 0;
+	   hash += (idTaxonomy != null ? idTaxonomy.hashCode() : 0);
+	   return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-	if (!(object instanceof Taxonomy))
-	    return false;
-	
-	Taxonomy other = (Taxonomy) object;
-	return (this.idTaxonomy != null || other.idTaxonomy == null) && (this.idTaxonomy == null || this.idTaxonomy.equals(other.idTaxonomy));
+	   if (!(object instanceof Taxonomy)) {
+		  return false;
+	   }
+
+	   Taxonomy other = (Taxonomy) object;
+	   return (this.idTaxonomy != null || other.idTaxonomy == null) && (this.idTaxonomy == null || this.idTaxonomy.equals(other.idTaxonomy));
     }
 
     @Override
     public String toString() {
-	return "net.hpclab.entities.Taxonomy[ idTaxonomy=" + idTaxonomy + " ]";
+	   return getTaxonomyName() + "(" + getIdTaxlevel().getTaxlevelName() + ")";
     }
 
     @Override
     public String getEntityName() {
-	return "Clasificación";
+	   return "Clasificación";
     }
 
     @Override
     public String getDescription() {
-	return getTaxonomyName();
+	   return getTaxonomyName();
     }
 }

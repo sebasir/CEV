@@ -6,7 +6,7 @@
 		template="admin.xhtml">
     <ui:define name="body">
 	<h:form id="formSpecimen">
-	    <p:dataTable id="dataTableSpecimen" paginator="true" rows="25" value="#{specimenBean.allSpecimens}" var="specimen">
+	    <p:dataTable id="dataTableSpecimen" paginator="true" rows="25" value="#{specimenBean.allSpecimens}" var="specimen" emptyMessage="No se encontraron especímenes" paginatorPosition="top">
 		<p:column headerText="Nombre Científico">
 		    <h:outputText value="#{specimen.idTaxonomy.taxonomyName} #{specimen.specificEpithet}" style=""/>
 		</p:column>

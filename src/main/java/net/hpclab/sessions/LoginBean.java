@@ -16,13 +16,13 @@ public class LoginBean extends Generic<Login> {
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("username", usuario);
         parameters.put("password", contrasenia);
-        return super.findByParams("Login.findByIngreso", parameters);
+        return super.findSingleByParams("Login.findByIngreso", parameters);
     }
 
     public Login existeUsuario(String usuario) {
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("username", usuario);
-        return super.findByParams("Login.findByUsername", parameters);
+        return super.findSingleByParams("Login.findByUsername", parameters);
     }
     
     public void editarIntentos(Login login) {

@@ -162,10 +162,10 @@ a:hover {
 
 .wrapper #slide_prev {
     right: 970px;
-    background: url("images/arrow_left.png") top left no-repeat;
+    background: url("../images/arrow_left.png") top left no-repeat;
 }
 
 .wrapper #slide_next {
     left: 970px;
-    background: url("images/arrow_right.png") top left no-repeat;
+    background: url("../images/arrow_right.png") top left no-repeat;
 }
