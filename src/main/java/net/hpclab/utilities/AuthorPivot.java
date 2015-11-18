@@ -3,18 +3,24 @@ package net.hpclab.utilities;
 import java.util.HashMap;
 
 public class AuthorPivot {
+
     private Integer idAuthor;
     private HashMap<Integer, Integer> idTypes;
     private String authorName;
 
-    public AuthorPivot(){
+    public AuthorPivot() {
 	   idTypes = new HashMap<Integer, Integer>();
     }
-    
-    public AuthorPivot(Integer idAuthor){
+
+    public AuthorPivot(Integer idAuthor) {
 	   this.idAuthor = idAuthor;
     }
-    
+
+    public AuthorPivot(Integer idAuthor, String authorName) {
+	   this.idAuthor = idAuthor;
+	   this.authorName = authorName;
+    }
+
     public Integer getIdAuthor() {
 	   return idAuthor;
     }
@@ -24,7 +30,9 @@ public class AuthorPivot {
     }
 
     public HashMap<Integer, Integer> getIdTypes() {
-	   if(idTypes == null) idTypes = new HashMap<Integer, Integer>();
+	   if (idTypes == null) {
+		  idTypes = new HashMap<Integer, Integer>();
+	   }
 	   return idTypes;
     }
 
@@ -42,9 +50,11 @@ public class AuthorPivot {
 
     @Override
     public boolean equals(Object other) {
-	   if (other instanceof AuthorPivot)
-		  if (((AuthorPivot) other).idAuthor.equals(this.idAuthor))
+	   if (other instanceof AuthorPivot) {
+		  if (((AuthorPivot) other).idAuthor.equals(this.idAuthor)) {
 			 return true;
+		  }
+	   }
 	   return false;
     }
 

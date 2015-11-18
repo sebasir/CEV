@@ -13,8 +13,8 @@ import javax.inject.Inject;
 import net.hpclab.entities.Author;
 import net.hpclab.entities.AuthorRole;
 import net.hpclab.entities.AuthorType;
-import net.hpclab.utilities.AuthorPivot;
 import net.hpclab.sessions.AuthorRoleSession;
+import net.hpclab.utilities.AuthorPivot;
 import net.hpclab.sessions.AuthorSession;
 import net.hpclab.sessions.AuthorTypeSession;
 
@@ -26,27 +26,33 @@ public class AuthorBean extends Utilsbean implements Serializable {
     private AuthorSession authorSession;
 
     @Inject
-    private AuthorRoleSession authorRoleSession;
-
-    @Inject
     private AuthorTypeSession authorTypeSession;
-
+    
+    @Inject
+    private AuthorRoleSession authorRoleSession;
+    
     private static final long serialVersionUID = 1L;
+    private AuthorPivot authorPivot;
     private Author author;
+    private AuthorType authorType;
+    private Integer idType;
     private List<AuthorPivot> allAuthors;
+    private List<AuthorType> allAuthorTypes;
+    private List<AuthorRole> allAuthorRoles;
     private HashMap<Integer, String> columns;
     private boolean checked;
+
     public AuthorBean() {
 	   authorSession = new AuthorSession();
-	   authorRoleSession = new AuthorRoleSession();
 	   authorTypeSession = new AuthorTypeSession();
+	   authorRoleSession = new AuthorRoleSession();
     }
 
     @PostConstruct
     public void init() {
     }
 
-    public String persist() {
+    public String persistAuthor() {
 	   try {
 		  setAuthor(authorSession.persist(getAuthor()));
 		  if (getAuthor() != null && getAuthor().getIdAuthor() != null) {
@@ -56,6 +62,21 @@ public class AuthorBean extends Utilsbean implements Serializable {
 		  }
 	   } catch (Exception e) {
 		  FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Actions.createError));
+	   }
+
+	   return findAllAuthors();
+    }
+    
+    public String persistType() {
+	   try {
+		  setAuthorType(authorTypeSession.persist(authorType));
+		  if (authorType != null && authorType.getIdAuty() != null) {
+			 FacesContext.getCurrentInstance().addMessage(null, showMessage(authorType, Actions.createSuccess));
+		  } else {
+			 FacesContext.getCurrentInstance().addMessage(null, showMessage(authorType, Actions.createError));
+		  }
+	   } catch (Exception e) {
+		  FacesContext.getCurrentInstance().addMessage(null, showMessage(authorType, Actions.createError));
 	   }
 
 	   return findAllAuthors();
@@ -70,8 +91,14 @@ public class AuthorBean extends Utilsbean implements Serializable {
 	   }
     }
 
-    public void prepareCreate() {
-	   setAuthor(new Author());
+    public void prepareCreateAuthor() {
+	   author = new Author();
+	   authorType = null;
+    }
+
+    public void prepareCreateType() {
+	   authorType = new AuthorType();
+	   author = null;
     }
 
     public void edit() {
@@ -89,23 +116,27 @@ public class AuthorBean extends Utilsbean implements Serializable {
     }
 
     public String findAllAuthors() {
-	   List<AuthorRole> authorRoles = authorRoleSession.listAll();
-	   List<AuthorType> authorTypes = authorTypeSession.listAll();
-	   if (authorTypes != null && !authorTypes.isEmpty()) {
+	   allAuthorRoles = (List<AuthorRole>) authorSession.findListByQuery("AuthorRole.findAll", AuthorRole.class);
+	   allAuthorTypes = (List<AuthorType>) authorSession.findListByQuery("AuthorType.findAll", AuthorType.class);
+	   List<Author> authors = (List<Author>) authorSession.findListByQuery("Author.findAll", Author.class);
+	   if (allAuthorTypes != null && !allAuthorTypes.isEmpty()) {
 		  columns = new HashMap<Integer, String>();
-		  for (AuthorType a : authorTypes) {
+		  for (AuthorType a : allAuthorTypes) {
 			 columns.put(a.getIdAuty(), a.getAutyName());
 		  }
 	   }
-	   if (authorRoles != null && !authorRoles.isEmpty()) {
+	   if (allAuthorRoles != null && !allAuthorRoles.isEmpty()) {
 		  HashMap<Integer, Integer> idTypes;
 		  allAuthors = new ArrayList<AuthorPivot>();
 		  AuthorPivot pivot;
 		  int index;
-		  for (AuthorRole a : authorRoles) {
+		  for (AuthorRole a : allAuthorRoles) {
 			 idTypes = new HashMap<Integer, Integer>();
 			 idTypes.put(a.getIdAuty().getIdAuty(), a.getIdAuro());
 			 pivot = new AuthorPivot(a.getIdAuthor().getIdAuthor());
+			 if (authors.contains(a.getIdAuthor())) {
+				authors.remove(a.getIdAuthor());
+			 }
 			 index = allAuthors.indexOf(pivot);
 			 if (index < 0) {
 				pivot.setAuthorName(a.getIdAuthor().getAuthorName());
@@ -113,6 +144,9 @@ public class AuthorBean extends Utilsbean implements Serializable {
 				index = allAuthors.size() - 1;
 			 }
 			 allAuthors.get(index).getIdTypes().putAll(idTypes);
+		  }
+		  for (Author a : authors) {
+			 allAuthors.add(new AuthorPivot(a.getIdAuthor(), a.getAuthorName()));
 		  }
 	   }
 	   return null;
@@ -138,25 +172,51 @@ public class AuthorBean extends Utilsbean implements Serializable {
     public Set<Integer> getColumns() {
 	   return columns.keySet();
     }
-    
-    public String getColumn(Integer index){
+
+    public String getColumn(Integer index) {
 	   return columns.get(index);
     }
 
     public void setColumns(HashMap<Integer, String> columns) {
 	   this.columns = columns;
     }
-    
+
     public String editarCheck() {
-	   System.out.println(":::::> ");
 	   return null;
     }
-    
-    public boolean getChecked(){
+
+    public boolean getChecked() {
 	   return checked;
     }
-    
-    public void setChecked(boolean checked){
+
+    public void setChecked(boolean checked) {
 	   this.checked = checked;
+    }
+
+    public AuthorPivot getAuthorPivot() {
+	   return authorPivot;
+    }
+
+    public void setAuthorPivot(AuthorPivot authorPivot) {
+	   this.authorPivot = authorPivot;
+    }
+
+    public AuthorType getAuthorType() {
+	   return authorType;
+    }
+
+    public void setAuthorType(AuthorType authorType) {
+	   this.authorType = authorType;
+    }
+    
+    public void setIdType (Integer idType) {
+	   for(AuthorType a : allAuthorTypes) {
+		  if(a.getIdAuty() == idType)
+			 authorType = a;
+	   }
+    }
+
+    public Integer getIdType() {
+	   return idType;
     }
 }

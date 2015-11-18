@@ -1,4 +1,3 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 			 xmlns:h="http://java.sun.com/jsf/html"
 			 xmlns:ui="http://java.sun.com/jsf/facelets"
@@ -7,25 +6,25 @@
 			 template="admin.xhtml">
     <ui:define name="body">
 	   <h:form id="formAuthor">
-
 		  <p:dataTable id="dataTableAuthor" paginator="true" rows="15" value="#{authorBean.allAuthors}" var="author">
 			 <p:column headerText="Nombre Autor">
 				<h:outputText value="#{author.authorName}" style=""/>
 			 </p:column>
 			 <p:columns value="#{authorBean.columns}" var="idType">
 				<f:facet name="header">
-				    <h:outputText value="#{authorBean.getColumn(idType)}" />
+				    <p:commandButton value="#{authorBean.getColumn(idType)}" update="detailTypeDialog :authorTypeDetailForm" actionListener="#{authorBean.setIdType(idType)}" oncomplete="PF('authorTypeDetail').show()"  title="Ver detalle"/>
 				</f:facet>
-				<p:selectBooleanCheckbox id="checkDinamic" value="#{author.idTypes.get(idType) != null}" >
+				<p:selectBooleanCheckbox id="checkDinamic" value="true" >
 				    <p:ajax listener="#{authorBean.editarCheck}" />
 				</p:selectBooleanCheckbox>
 			 </p:columns>
 			 <p:column headerText="Acciones" style="">
-				<p:commandButton id="editButton" icon="ui-icon-zoomin" oncomplete="PF('authorDetail').show()" update=":authorDetailForm" title="Detalle de #{author.authorName}" actionListener="#{authorBean.setAuthor(author)}"/>
+				<p:commandButton id="editButton" icon="ui-icon-zoomin" oncomplete="PF('authorDetail').show()" update=":authorDetailForm" title="Detalle de #{author.authorName}" actionListener="#{authorBean.setAuthorPivot(author)}"/>
 				<p:commandButton id="deleteButton" icon="ui-icon-trash" oncomplete="PF('authorDelete').show()" title="Eliminar #{author.authorName}"/>
 			 </p:column>
 			 <f:facet name="footer">
-				<p:commandButton id="btnCreate" value="Nuevo Autor" oncomplete="PF('authorCreate').show()" update=":authorCreateForm" title="Crear Ubicación" actionListener="#{authorBean.prepareCreate()}"/>
+				<p:commandButton id="btnCreate" value="Nuevo Autor" oncomplete="PF('authorCreate').show()" update=":authorCreateForm" title="Crear Autor" actionListener="#{authorBean.prepareCreateAuthor()}"/>
+				<p:commandButton id="btnCreateType" value="Nuevo Tipo de Autor" oncomplete="PF('authorTypeCreate').show()" update=":authorTypeCreateForm" title="Crear Tipo de Autor" actionListener="#{authorBean.prepareCreateType()}"/>
 			 </f:facet>
 		  </p:dataTable>
 		  <p:growl id="messages" showDetail="true"/>
@@ -34,21 +33,43 @@
 	   <p:dialog id="detailDialog" widgetVar="authorDetail" modal="true" dynamic="true" resizable="false" appendTo="@(body)" header="#{authorBean.author.authorName}" closeOnEscape="true"> 
 		  <p:outputPanel>
 			 <h:form id="authorDetailForm">
-				<p:commandButton id="detailSave" value="Guardar" action="#{authorBean.edit()}" update=":formAuthor"/>
 				<p:commandButton id="detailClose" value="Cerrar" onclick="PF('authorDetail').close()"/>
 			 </h:form>
 		  </p:outputPanel>
 	   </p:dialog>
 
-	   <p:dialog id="createDialog" widgetVar="authorCreate" modal="true" resizable="false" appendTo="@(body)" header="Nueva Clasificación" closeOnEscape="true" > 
+	   <p:dialog id="detailTypeDialog" widgetVar="authorTypeDetail" modal="true" dynamic="true" resizable="false" appendTo="@(body)" header="#{authorBean.authorType.autyName}" closeOnEscape="true"> 
+		  <p:outputPanel>
+			 <h:form id="authorTypeDetailForm">
+				<p:panelGrid id="displayCreate" columns="2">
+				    <p:outputLabel value="Nombre Autor" for="autName" />
+				    <p:inputText id="autName" value="#{authorBean.author.authorName}" title="Nombre Autor" rendered="true" style="width: 100%" required="true" requiredMessage="Debes definir el nombre del Autor!"/>
+				</p:panelGrid>
+				<p:commandButton id="detailTypeClose" value="Cerrar" onclick="PF('authorTypeDetail').close()"/>
+			 </h:form>
+		  </p:outputPanel>
+	   </p:dialog>
+
+	   <p:dialog id="createDialog" widgetVar="authorCreate" modal="true" resizable="false" appendTo="@(body)" header="Nuevo Autor" closeOnEscape="true" > 
 		  <h:form id="authorCreateForm" prependId="false">
 			 <p:panelGrid id="displayCreate" columns="2">
 				<p:outputLabel value="Nombre Autor" for="autName" />
-				<p:inputText id="autName" value="#{authorBean.author.authorName}" title="Nombre Ubicación" rendered="true" style="width: 100%" required="true" requiredMessage="Debes definir el nombre del Autor!"/>
+				<p:inputText id="autName" value="#{authorBean.author.authorName}" title="Nombre Autor" rendered="true" style="width: 100%" required="true" requiredMessage="Debes definir el nombre del Autor!"/>
 			 </p:panelGrid>
-			 <p:commandButton id="createSave" value="Guardar" action="#{specimenBean.persist()}" update=":formAuthor" oncomplete="PF('authorCreate').hide()"/>
+			 <p:commandButton id="createSave" value="Guardar" action="#{authorBean.persistAuthor()}" update=":formAuthor" oncomplete="PF('authorCreate').hide()"/>
 		  </h:form>
 	   </p:dialog>
+
+	   <p:dialog id="createTypeDialog" widgetVar="authorTypeCreate" modal="true" resizable="false" appendTo="@(body)" header="Nueva Clasificación" closeOnEscape="true" > 
+		  <h:form id="authorTypeCreateForm" prependId="false">
+			 <p:panelGrid id="displayTypeCreate" columns="2">
+				<p:outputLabel value="Tipo de Autor" for="autTypeName" />
+				<p:inputText id="autTypeName" value="#{authorBean.authorType.autyName}" title="Nombre del Tipo de Autor" rendered="true" style="width: 100%" required="true" requiredMessage="Debes definir el nombre del tipo de Autor!"/>
+			 </p:panelGrid>
+			 <p:commandButton id="createTypeSave" value="Guardar" action="#{authorBean.persistType()}" update=":formAuthor" oncomplete="PF('authorTypeCreate').hide()"/>
+		  </h:form>
+	   </p:dialog>
+
 	   <p:confirmDialog id="deleteDialog" appendTo="@(body)" widgetVar="authorDelete" message="¿Está seguro que desea eliminar este registro?" showEffect="fade" hideEffect="fade" header="Confirmar eliminación" severity="alarm">
 		  <h:form id="deleteForm" style=""> 
 			 <p:commandButton id="deleteYesButton" value="Eliminar" action="#{authorBean.delete}" update=":formAuthor" oncomplete="PF('authorDelete').hide()" />
