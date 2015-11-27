@@ -15,7 +15,6 @@ import javax.faces.component.UISelectItems;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
-import net.hpclab.entities.Author;
 import net.hpclab.entities.AuthorRole;
 import net.hpclab.entities.Catalog;
 import net.hpclab.entities.Collection;
@@ -35,6 +34,8 @@ import org.primefaces.component.outputlabel.OutputLabel;
 import org.primefaces.component.panelgrid.PanelGrid;
 import org.primefaces.component.row.Row;
 import org.primefaces.component.selectonemenu.SelectOneMenu;
+import org.primefaces.context.RequestContext;
+import org.primefaces.event.FlowEvent;
 import org.primefaces.json.JSONArray;
 import org.primefaces.json.JSONObject;
 
@@ -47,16 +48,19 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 
     @Inject
     private CollectionSession collectionSession;
-    
-    @Inject
-    private TaxonomySession taxonomySession;
+
     private static final long serialVersionUID = 1L;
+    private FacesContext fCon;
     private Specimen specimen;
     private Location location;
+    private LocationBean locationBean;
     private Taxonomy taxonomy;
+    private TaxonomyBean taxonomyBean;
     private RegType regType;
     private SampleType sampleType;
-    private Author collector, determiner;
+    private Catalog catalog;
+    private Collection collection;
+    private AuthorRole collector, determiner;
     private List<Specimen> allSpecimens;
     private List<Taxonomy> allTaxonomys;
     private List<Location> allLocations;
@@ -67,8 +71,6 @@ public class SpecimenBean extends Utilsbean implements Serializable {
     private List<RegType> allRegTypes;
     private List<SampleType> allSampleTypes;
     private PanelGrid specimenForm;
-    private String selectedTax;
-    private String selectedLoc;
     private String selectedDeterminer;
     private String selectedCollector;
     private String selectedCatalog;
@@ -86,19 +88,25 @@ public class SpecimenBean extends Utilsbean implements Serializable {
     }
 
     public String persist() {
-	   specimen.setIdTaxonomy(new Taxonomy(new Integer(selectedTax)));
-	   specimen.setIdDeterminer(new AuthorRole(new Integer(selectedDeterminer)));
-	   specimen.setIdLocation(new Location(new Integer(selectedLoc)));
-	   specimen.setIdCollector(new AuthorRole(new Integer(selectedCollector)));
-	   specimen.setIdCatalog(new Catalog(new Integer(selectedCatalog)));
-	   specimen.setIdRety(new RegType(new Integer(selectedRegType)));
-	   specimen.setIdSaty(new SampleType(new Integer(selectedSampleType)));
+	   fCon = FacesContext.getCurrentInstance();
+	   locationBean = (LocationBean) fCon.getApplication().getELResolver().getValue(fCon.getELContext(), null, "locationBean");
+	   taxonomyBean = (TaxonomyBean) fCon.getApplication().getELResolver().getValue(fCon.getELContext(), null, "taxonomyBean");
+	   location = (Location) locationBean.getSelectedNode().getData();
+	   taxonomy = (Taxonomy) taxonomyBean.getSelectedNode().getData();
+	   specimen.setIdTaxonomy(taxonomy);
+	   specimen.setIdLocation(location);
+	   specimen.setIdDeterminer(determiner);
+	   specimen.setIdCollector(collector);
+	   specimen.setIdCatalog(catalog);
+	   specimen.setIdRety(regType);
+	   specimen.setIdSaty(sampleType);
 	   specimen = specimenSession.persist(specimen);
 	   if (specimen != null && specimen.getIdSpecimen() != null) {
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(specimen, Actions.createSuccess));
+		  fCon.addMessage(null, showMessage(specimen, Actions.createSuccess));
 	   } else {
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(specimen, Actions.createError));
+		  fCon.addMessage(null, showMessage(specimen, Actions.createError));
 	   }
+	   resetForm();
 	   return findAllSpecimens();
     }
 
@@ -111,15 +119,41 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 	   }
     }
 
-    public void prepareCreate() {
+    private void resetForm() {
 	   specimen = new Specimen();
-	   setAllTaxonomys((List<Taxonomy>) specimenSession.findListByQuery("Taxonomy.findOrderedAsc", Taxonomy.class));
-	   setAllLocations((List<Location>) specimenSession.findListByQuery("Location.findOrdered", Location.class));
+	   selectedCatalog = null;
+	   selectedCollection = null;
+	   selectedCollector = null;
+	   selectedDeterminer = null;
+	   selectedRegType = null;
+	   selectedSampleType = null;
+    }
+
+    private void updateLists() {
 	   setAllCollector((List<AuthorRole>) specimenSession.findListByQuery("AuthorRole.findCollectors", AuthorRole.class));
 	   setAllDeterminer((List<AuthorRole>) specimenSession.findListByQuery("AuthorRole.findDeterminers", AuthorRole.class));
 	   setAllCollection((List<Collection>) specimenSession.findListByQuery("Collection.findAll", Collection.class));
 	   setAllSampleTypes((List<SampleType>) specimenSession.findListByQuery("SampleType.findAll", SampleType.class));
 	   setAllRegTypes((List<RegType>) specimenSession.findListByQuery("RegType.findAll", RegType.class));
+    }
+
+    public void prepareCreate() {
+	   resetForm();
+	   updateLists();
+    }
+
+    public void prepareUpdate(Specimen onEdit) {
+	   RequestContext context = RequestContext.getCurrentInstance();
+	   context.reset("specimenWizardForm");
+	   specimen = onEdit;
+	   selectedCatalog = specimen.getIdCatalog().getIdCatalog().toString();
+	   selectedCollection = specimen.getIdCatalog().getIdCollection().getIdCollection().toString();
+	   filterCatalog();
+	   selectedCollector = specimen.getIdCollector().getIdAuro().toString();
+	   selectedDeterminer = specimen.getIdDeterminer().getIdAuro().toString();
+	   selectedRegType = specimen.getIdRety().getIdRety().toString();
+	   selectedSampleType = specimen.getIdSaty().getIdSaty().toString();
+	   updateLists();
     }
 
     public void edit() {
@@ -129,6 +163,7 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 	   } catch (Exception e) {
 		  FacesContext.getCurrentInstance().addMessage(null, showMessage(specimen, Actions.updateError));
 	   }
+	   resetForm();
     }
 
     private void createSpecimenForm() {
@@ -280,6 +315,86 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 	   }
     }
 
+    private RegType getRegTypeFromList(String idRegType) {
+	   Integer idR;
+	   try {
+		  idR = new Integer(idRegType);
+	   } catch (NumberFormatException e) {
+		  return null;
+	   }
+	   for (RegType r : allRegTypes) {
+		  if (r.getIdRety().equals(idR)) {
+			 return r;
+		  }
+	   }
+	   return null;
+    }
+
+    private SampleType getSamTypeFromList(String idSamType) {
+	   Integer idS;
+	   try {
+		  idS = new Integer(idSamType);
+	   } catch (NumberFormatException e) {
+		  return null;
+	   }
+	   for (SampleType s : allSampleTypes) {
+		  if (s.getIdSaty().equals(idS)) {
+			 return s;
+		  }
+	   }
+	   return null;
+    }
+
+    private Catalog getCatalogFromList(String idCatalog) {
+	   Integer idC;
+	   try {
+		  idC = new Integer(idCatalog);
+	   } catch (NumberFormatException e) {
+		  return null;
+	   }
+	   for (Catalog c : allCatalog) {
+		  if (c.getIdCatalog().equals(idC)) {
+			 return c;
+		  }
+	   }
+	   return null;
+    }
+
+    private Collection getCollectionFromList(String idCollection) {
+	   Integer idC;
+	   try {
+		  idC = new Integer(idCollection);
+	   } catch (NumberFormatException e) {
+		  return null;
+	   }
+	   for (Collection c : allCollection) {
+		  if (c.getIdCollection().equals(idC)) {
+			 return c;
+		  }
+	   }
+	   return null;
+    }
+
+    private AuthorRole getAuthorFromList(String idAuro) {
+	   Integer idA;
+	   try {
+		  idA = new Integer(idAuro);
+	   } catch (NumberFormatException e) {
+		  return null;
+	   }
+	   for (AuthorRole ar : allCollector) {
+		  if (ar.getIdAuro().equals(idA)) {
+			 return ar;
+		  }
+	   }
+	   for (AuthorRole ar : allDeterminer) {
+		  if (ar.getIdAuro().equals(idA)) {
+			 return ar;
+		  }
+	   }
+	   return null;
+    }
+
     public Specimen getSpecimen() {
 	   return specimen;
     }
@@ -320,19 +435,19 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 	   this.sampleType = sampleType;
     }
 
-    public Author getCollector() {
+    public AuthorRole getCollector() {
 	   return collector;
     }
 
-    public void setCollector(Author collector) {
+    public void setCollector(AuthorRole collector) {
 	   this.collector = collector;
     }
 
-    public Author getDeterminer() {
+    public AuthorRole getDeterminer() {
 	   return determiner;
     }
 
-    public void setDeterminer(Author determiner) {
+    public void setDeterminer(AuthorRole determiner) {
 	   this.determiner = determiner;
     }
 
@@ -377,22 +492,6 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 
     public void setAllLocations(List<Location> allLocations) {
 	   this.allLocations = allLocations;
-    }
-
-    public String getSelectedTax() {
-	   return selectedTax;
-    }
-
-    public void setSelectedTax(String selectedTax) {
-	   this.selectedTax = selectedTax;
-    }
-
-    public String getSelectedLoc() {
-	   return selectedLoc;
-    }
-
-    public void setSelectedLoc(String selectedLoc) {
-	   this.selectedLoc = selectedLoc;
     }
 
     public List<AuthorRole> getAllDeterminer() {
@@ -449,6 +548,7 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 
     public void setSelectedDeterminer(String selectedDeterminer) {
 	   this.selectedDeterminer = selectedDeterminer;
+	   this.determiner = getAuthorFromList(selectedDeterminer);
     }
 
     public String getSelectedCollector() {
@@ -457,6 +557,7 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 
     public void setSelectedCollector(String selectedCollector) {
 	   this.selectedCollector = selectedCollector;
+	   this.collector = getAuthorFromList(selectedCollector);
     }
 
     public String getSelectedCollection() {
@@ -465,6 +566,7 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 
     public void setSelectedCollection(String selectedCollection) {
 	   this.selectedCollection = selectedCollection;
+	   this.collection = getCollectionFromList(selectedCollection);
     }
 
     public String getSelectedRegType() {
@@ -473,6 +575,7 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 
     public void setSelectedRegType(String selectedRegType) {
 	   this.selectedRegType = selectedRegType;
+	   this.regType = getRegTypeFromList(selectedRegType);
     }
 
     public String getSelectedSampleType() {
@@ -481,6 +584,7 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 
     public void setSelectedSampleType(String selectedSampleType) {
 	   this.selectedSampleType = selectedSampleType;
+	   this.sampleType = getSamTypeFromList(selectedSampleType);
     }
 
     public String getSelectedCatalog() {
@@ -489,6 +593,32 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 
     public void setSelectedCatalog(String selectedCatalog) {
 	   this.selectedCatalog = selectedCatalog;
+	   this.catalog = getCatalogFromList(selectedCatalog);
+
+    }
+
+    public Catalog getCatalog() {
+	   return catalog;
+    }
+
+    public void setCatalog(Catalog catalog) {
+	   this.catalog = catalog;
+    }
+
+    public Collection getCollection() {
+	   return collection;
+    }
+
+    public void setCollection(Collection collection) {
+	   this.collection = collection;
+    }
+
+    public String onFlowProcess(FlowEvent event) {
+	   return event.getNewStep();
+    }
+
+    public String getHeader() {
+	   return specimen != null && specimen.getIdSpecimen() != null ? "Editar a " + specimen.getCommonName() : "Registrar nuevo espécimen";
     }
 
     public void specimensJSON() {

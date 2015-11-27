@@ -29,6 +29,7 @@ public class TaxonomyBean extends Utilsbean implements Serializable {
     private Taxonomy parentTaxonomy;
     private TreeNode root;
     private TreeNode selectedNode;
+    private HashMap<Integer, TreeNode> tree;
     private List<Taxonomy> allTaxonomys;
     private List<TaxonomyLevel> allLevels;
     private List<Specimen> taxonomySpecimens;
@@ -83,7 +84,7 @@ public class TaxonomyBean extends Utilsbean implements Serializable {
 		  }
 	   }
     }
-    
+
     public void prepareUpdate() {
 	   selectedLevel = taxonomy.getIdTaxlevel().getIdTaxlevel().toString();
 	   List<TaxonomyLevel> taxLevels = (List<TaxonomyLevel>) taxonomySession.findListByQuery("TaxonomyLevel.findAll", TaxonomyLevel.class);
@@ -174,7 +175,7 @@ public class TaxonomyBean extends Utilsbean implements Serializable {
 
     private void createTaxTree() {
 	   List<Taxonomy> taxList = taxonomySession.findListByQuery("Taxonomy.findOrderedAsc");
-	   HashMap<Integer, TreeNode> tree = new HashMap<Integer, TreeNode>();
+	   tree = new HashMap<Integer, TreeNode>();
 	   root = null;
 	   if (taxList != null) {
 		  for (Taxonomy t : taxList) {
@@ -191,11 +192,36 @@ public class TaxonomyBean extends Utilsbean implements Serializable {
 		  } else if (taxonomy != null) {
 			 n = tree.get(taxonomy.getIdTaxonomy());
 		  }
-		  while (n != null) {
-			 n.setExpanded(true);
-			 n = n.getParent();
-		  }
+		  openBranch(n);
 	   }
+    }
+
+    public Taxonomy getNodeName() {
+	   return (Taxonomy) selectedNode.getData();
+    }
+    
+    private void openBranch(TreeNode node) {
+	   if (node == null) {
+		  return;
+	   }
+	   deselectAll();
+	   node.setSelected(true);
+	   while (node != null) {
+		  node.setExpanded(true);
+		  node = node.getParent();
+	   }
+    }
+    
+    public void deselectAll() {
+	   for (TreeNode t : tree.values()) {
+		  t.setSelected(false);
+		  t.setExpanded(false);
+	   }
+    }
+    
+    public void selectNodeFromId(Integer idLocation) {
+	   selectedNode = tree.get(idLocation);
+	   openBranch(selectedNode);
     }
 
     public void setTaxfromNode(String order) {

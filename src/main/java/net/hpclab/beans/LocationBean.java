@@ -20,12 +20,13 @@ import org.primefaces.model.TreeNode;
 @ManagedBean
 @SessionScoped
 public class LocationBean extends Utilsbean implements Serializable {
-
+    
     @Inject
     private LocationSession locationSession;
     private static final long serialVersionUID = 1L;
     private Location location;
     private Location parentLocation;
+    private HashMap<Integer, TreeNode> tree;
     private TreeNode root;
     private TreeNode selectedNode;
     private List<Specimen> locationSpecimens;
@@ -33,16 +34,16 @@ public class LocationBean extends Utilsbean implements Serializable {
     private List<LocationLevel> allLevels;
     private String selectedCont;
     private String selectedLevel;
-
+    
     public LocationBean() {
 	   locationSession = new LocationSession();
     }
-
+    
     @PostConstruct
     public void init() {
 	   createLocTree();
     }
-
+    
     public String persist() {
 	   try {
 		  location.setIdContainer(new Location(parentLocation.getIdLocation()));
@@ -58,10 +59,10 @@ public class LocationBean extends Utilsbean implements Serializable {
 		  e.printStackTrace();
 		  FacesContext.getCurrentInstance().addMessage(null, showMessage(location, Actions.createError));
 	   }
-
+	   
 	   return findAllLocations();
     }
-
+    
     public void delete() {
 	   try {
 		  locationSession.delete(getLocation());
@@ -71,7 +72,7 @@ public class LocationBean extends Utilsbean implements Serializable {
 		  FacesContext.getCurrentInstance().addMessage(null, showMessage(getLocation(), Actions.deleteError));
 	   }
     }
-
+    
     public void prepareCreate() {
 	   parentLocation = location;
 	   location = new Location();
@@ -83,7 +84,7 @@ public class LocationBean extends Utilsbean implements Serializable {
 		  }
 	   }
     }
-
+    
     public void edit() {
 	   try {
 		  setLocation(locationSession.merge(getLocation()));
@@ -92,7 +93,7 @@ public class LocationBean extends Utilsbean implements Serializable {
 		  FacesContext.getCurrentInstance().addMessage(null, showMessage(getLocation(), Actions.updateError));
 	   }
     }
-
+    
     public void prepareUpdate() {
 	   selectedLevel = location.getIdLoclevel().getIdLoclevel().toString();
 	   List<LocationLevel> taxLevels = (List<LocationLevel>) locationSession.findListByQuery("LocationLevel.findAll", LocationLevel.class);
@@ -103,85 +104,85 @@ public class LocationBean extends Utilsbean implements Serializable {
 		  }
 	   }
     }
-
+    
     public String displayList() {
 	   findAllLocations();
 	   return "specimen";
     }
-
+    
     public String findAllLocations() {
 	   setAllLocations(locationSession.listAll());
 	   return null;
     }
-
+    
     public Location getLocation() {
 	   return location;
     }
-
+    
     public void setLocation(Location location) {
 	   this.location = location;
     }
-
+    
     public List<Location> getAllLocations() {
 	   findAllLocations();
 	   return allLocations;
     }
-
+    
     public void setAllLocations(List<Location> allLocations) {
 	   this.allLocations = allLocations;
     }
-
+    
     public String getSelectedCont() {
 	   return selectedCont;
     }
-
+    
     public void setSelectedCont(String selectedCont) {
 	   this.selectedCont = selectedCont;
     }
-
+    
     public List<LocationLevel> getAllLevels() {
 	   return allLevels;
     }
-
+    
     public void setAllLevels(List<LocationLevel> allLevels) {
 	   this.allLevels = allLevels;
     }
-
+    
     public String getSelectedLevel() {
 	   return selectedLevel;
     }
-
+    
     public void setSelectedLevel(String selectedLevel) {
 	   this.selectedLevel = selectedLevel;
     }
-
+    
     public TreeNode getRoot() {
 	   return root;
     }
-
+    
     public void setRoot(TreeNode root) {
 	   this.root = root;
     }
-
+    
     public TreeNode getSelectedNode() {
 	   return selectedNode;
     }
-
+    
     public void setSelectedNode(TreeNode selectedNode) {
 	   this.selectedNode = selectedNode;
     }
-
+    
     public List<Specimen> getLocationSpecimens() {
 	   return locationSpecimens;
     }
-
+    
     public void setLocationSpecimens(List<Specimen> locationSpecimens) {
 	   this.locationSpecimens = locationSpecimens;
     }
-
+    
     private void createLocTree() {
 	   List<Location> locList = locationSession.findListByQuery("Location.findOrderedAsc");
-	   HashMap<Integer, TreeNode> tree = new HashMap<Integer, TreeNode>();
+	   tree = new HashMap<Integer, TreeNode>();
 	   root = null;
 	   if (locList != null) {
 		  for (Location l : locList) {
@@ -191,20 +192,45 @@ public class LocationBean extends Utilsbean implements Serializable {
 				tree.put(l.getIdLocation(), new DefaultTreeNode(l, tree.get(l.getIdContainer().getIdLocation())));
 			 }
 		  }
-
+		  
 		  TreeNode n = null;
 		  if (parentLocation != null) {
 			 n = tree.get(parentLocation.getIdLocation());
 		  } else if (location != null) {
 			 n = tree.get(location.getIdLocation());
 		  }
-		  while (n != null) {
-			 n.setExpanded(true);
-			 n = n.getParent();
-		  }
+		  openBranch(n);
 	   }
     }
-
+    
+    public Location getNodeName() {
+	   return (Location) selectedNode.getData();
+    }
+    
+    private void openBranch(TreeNode node) {
+	   if (node == null) {
+		  return;
+	   }
+	   deselectAll();
+	   node.setSelected(true);
+	   while (node != null) {
+		  node.setExpanded(true);
+		  node = node.getParent();
+	   }
+    }
+    
+    public void deselectAll() {
+	   for (TreeNode t : tree.values()) {
+		  t.setSelected(false);
+		  t.setExpanded(false);
+	   }
+    }
+    
+    public void selectNodeFromId(Integer idLocation) {
+	   selectedNode = tree.get(idLocation);
+	   openBranch(selectedNode);
+    }
+    
     public void setTaxfromNode(String order) {
 	   if (selectedNode != null) {
 		  try {
@@ -222,7 +248,7 @@ public class LocationBean extends Utilsbean implements Serializable {
 			 e.printStackTrace();
 		  }
 		  RequestContext context = RequestContext.getCurrentInstance();
-
+		  
 		  if (order.equals("detail")) {
 			 context.execute("PF('locationDetail').show()");
 		  } else if (order.equals("create")) {

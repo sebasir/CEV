@@ -8,13 +8,19 @@
 
     <f:view contentType="text/html">
         <h:head>
-            <f:facet name="first">
-			 <h:outputStylesheet library="css" name="pstyle.css" />
-                <title><ui:insert name="title">Administrador de Colección Entomológica</ui:insert></title>
-            </f:facet>
+		  <h:outputStylesheet library="css" name="pstyle.css" />
+		  <h:outputScript library="js" name="es_locale.js"/>
         </h:head>
 
         <h:body>
+		  <p:ajaxStatus onstart="PF('dialogAjaxProcess').show();" oncomplete="PF('dialogAjaxProcess').hide();"/>
+		  <p:dialog modal="true" widgetVar="dialogAjaxProcess" resizable="false" showEffect="TituloSub" draggable="false" closable="false">
+			 <div class="progress">
+				<div class="progress-bar progress-bar-striped progress-bar-success active" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100" style="width: 75%">
+				    <span class="sr-only"></span>
+				</div>
+			 </div>
+		  </p:dialog>
             <p:layout fullPage="true">
                 <p:layoutUnit position="north" size="50" resizable="true" closable="true" collapsible="true">
                     <h:outputText value="Bienvenido Administrador"/>

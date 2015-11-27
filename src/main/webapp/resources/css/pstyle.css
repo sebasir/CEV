@@ -1,13 +1,44 @@
-
-.centrar {
-    alignment-adjust: central
-}
-
 .cursive {
     font-style: italic;
 }
 
+.bolded {
+    font-weight: bold;
+}
+
+.disable-scroll .ui-dialog-content {
+    overflow: hidden !important;
+}
+
 .ui-widget, .ui-widget .ui-widget, .ui-button-text ui-c {
-    font-size: 90% !important;
-    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 95% !important;
+    font-family: Raleway;
+}
+
+.ui-widget .title{
+    font-size: 1.2em !important;
+    font-weight: bold;
+    text-align: center;
+    display: block
+}
+
+.tree {
+    width: 100%;
+    height: 150px;
+    overflow-y: scroll;
+    display: block;
+    padding-top: 10px;
+}
+
+.panelRes {
+    width: 100%;
+    overflow-y: scroll;
+    max-height: 100px;
+}
+
+@font-face {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Raleway'), url(/Bichos/css/font/0dTEPzkLWceF7z0koJaX1A.woff2) format('woff2');
 }
