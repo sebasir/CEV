@@ -1,15 +1,16 @@
 package net.hpclab.utilities;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class AuthorPivot {
-
+public class AuthorPivot implements Serializable {
+    private static final long serialVersionUID = 1L;
     private Integer idAuthor;
-    private HashMap<Integer, Integer> idTypes;
+    private HashMap<Integer, Boolean> idTypes;
     private String authorName;
 
     public AuthorPivot() {
-	   idTypes = new HashMap<Integer, Integer>();
+	   idTypes = new HashMap<Integer, Boolean>();
     }
 
     public AuthorPivot(Integer idAuthor) {
@@ -29,14 +30,14 @@ public class AuthorPivot {
 	   this.idAuthor = idAuthor;
     }
 
-    public HashMap<Integer, Integer> getIdTypes() {
+    public HashMap<Integer, Boolean> getIdTypes() {
 	   if (idTypes == null) {
-		  idTypes = new HashMap<Integer, Integer>();
+		  idTypes = new HashMap<Integer, Boolean>();
 	   }
 	   return idTypes;
     }
 
-    public void setIdTypes(HashMap<Integer, Integer> idTypes) {
+    public void setIdTypes(HashMap<Integer, Boolean> idTypes) {
 	   this.idTypes = idTypes;
     }
 

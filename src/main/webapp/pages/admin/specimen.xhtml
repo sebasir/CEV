@@ -8,7 +8,7 @@
 	   <h:form id="formSpecimen">
 		  <p:dataTable id="dataTableSpecimen" paginator="true" rows="25" value="#{specimenBean.allSpecimens}" var="specimen" emptyMessage="No se encontraron especímenes" paginatorPosition="top">
 			 <p:column headerText="Nombre Científico">
-				<h:outputText value="#{specimen.idTaxonomy.taxonomyName} #{specimen.specificEpithet}" style=""/>
+				<h:outputText styleClass="cursive" value="#{specimen.idTaxonomy.taxonomyName} #{specimen.specificEpithet}" style=""/>
 			 </p:column>
 			 <p:column headerText="Nombre Común">
 				<h:outputText value="#{specimen.commonName}" />

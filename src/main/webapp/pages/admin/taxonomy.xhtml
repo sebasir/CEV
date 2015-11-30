@@ -6,6 +6,9 @@
 			 xmlns:f="http://java.sun.com/jsf/core"
 			 template="admin.xhtml">
     <ui:define name="body">
+	   <f:metadata>
+		  <f:event type="preRenderView" listener="#{taxonomyBean.deselectAll()}" />
+	   </f:metadata>
 	   <h:form id="formTaxonomy">
 		  <p:panel id="data">
 			 <f:facet name="header">
@@ -28,7 +31,7 @@
 
 	   <p:dialog id="detailDialog" width="500px" appendTo="@(body)" widgetVar="taxonomyDetail" modal="true" dynamic="true" resizable="false" header="#{taxonomyBean.taxonomy.taxonomyName}" closeOnEscape="true">
 		  <p:dataList id="dataListSpecimen" paginator="true" rows="5" value="#{taxonomyBean.taxonomySpecimens}" var="specimen" emptyMessage="No se encontraron especímenes asociados a esta clasificación" paginatorPosition="bottom">
-			 #{specimen.commonName} <span style="font-style: italic;">(#{specimen.specificEpithet})</span>
+			 #{specimen.commonName} <span class="cursive">(#{specimen.specificEpithet})</span>
 		  </p:dataList>
 	   </p:dialog>
 
