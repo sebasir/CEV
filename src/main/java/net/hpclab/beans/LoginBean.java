@@ -41,11 +41,12 @@ public class LoginBean {
     public void cargar_menu() {
         menu_principal = new DefaultMenuModel();
 	   menu_principal.addElement(getItem("Espécimen", "specimen.xhtml", null));
+	   menu_principal.addElement(getItem("Contenido de Colección", "specimenManager.xhtml", null));
 	   menu_principal.addElement(getItem("Ubicaciones", "location.xhtml", null));
 	   menu_principal.addElement(getItem("Clasificaciones", "taxonomy.xhtml", null));
 	   menu_principal.addElement(getItem("Autores", "author.xhtml", null));
-	   menu_principal.addElement(getItem("Usuarios", "/pages/admin/users/index.xhtml", null));
-	   menu_principal.addElement(getItem("Volver a la Coleccion", "/index.html", null));
+	   menu_principal.addElement(getItem("Variables de Entorno", "envConfig.xhtml", null));
+	   menu_principal.addElement(getItem("Volver a la Colección", "/index.html", null));
     }
     
     private DefaultMenuItem getItem(String name, String source, String icon) {

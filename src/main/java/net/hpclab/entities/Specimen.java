@@ -2,6 +2,7 @@ package net.hpclab.entities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,12 +13,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name = "specimen")
@@ -33,6 +36,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Specimen.findByCollectDate", query = "SELECT s FROM Specimen s WHERE s.collectDate = :collectDate"),
     @NamedQuery(name = "Specimen.findByCollectComment", query = "SELECT s FROM Specimen s WHERE s.collectComment = :collectComment")})
 public class Specimen implements entNaming, Serializable {
+    @OneToMany(mappedBy = "idSpecimen")
+    private List<SpecimenContent> specimenContentList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -220,6 +225,16 @@ public class Specimen implements entNaming, Serializable {
 
     public void setIdDeterminer(AuthorRole idDeterminer) {
 	   this.idDeterminer = idDeterminer;
+    }
+    
+    
+    @XmlTransient
+    public List<SpecimenContent> getSpecimenContentList() {
+	   return specimenContentList;
+    }
+
+    public void setSpecimenContentList(List<SpecimenContent> specimenContentList) {
+	   this.specimenContentList = specimenContentList;
     }
 
     @Override

@@ -1,0 +1,40 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+			 xmlns:h="http://java.sun.com/jsf/html"
+			 xmlns:ui="http://java.sun.com/jsf/facelets"
+			 xmlns:p="http://primefaces.org/ui"
+			 xmlns:f="http://java.sun.com/jsf/core"
+			 template="admin.xhtml">
+    <ui:define name="body">
+	   <h:form id="formConfig">
+		  <p:dataTable id="dataTableConfig" rows="25" value="#{envConfBean.allEnvConfs}" var="con" emptyMessage="No se encontraron configuraciones de entorno">
+			 <p:column headerText="Variable">
+				<h:outputText value="#{con.configName}"/>
+			 </p:column>
+			 <p:column headerText="Valor">
+				<h:outputText value="#{con.configValue}" />
+			 </p:column>
+			 <p:column headerText="Descripción">
+				<h:outputText value="#{con.configDesc}" />
+			 </p:column>
+			 <p:column headerText="Acciones" style="">
+				<p:commandButton id="editButton" icon="ui-icon-pencil" oncomplete="PF('conDialog').show()" update="detailDialog :conDialogForm" title="Editar variable #{con.configName}" actionListener="#{envConfBean.setEnvConf(con)}"/>
+			 </p:column>
+		  </p:dataTable>
+		  <p:growl id="messages" showDetail="true"/>
+	   </h:form>
+
+	   <p:dialog id="detailDialog" widgetVar="conDialog" modal="true" resizable="false" appendTo="@(body)" header="Editar variable de entorno" closeOnEscape="true" > 
+		  <h:form id="conDialogForm" prependId="false">
+			 <p:panelGrid id="displayCreate" columns="2" >
+				<p:outputLabel value="Variable:"/>
+				<p:outputLabel value="#{envConfBean.envConf.configName}" styleClass="bolded"/>
+				<p:outputLabel value="Valor" for="val" />
+				<p:inputTextarea id="val" value="#{envConfBean.envConf.configValue}" rows="3" required="true" requiredMessage="Debes definir un valor!!"/>
+				<p:outputLabel value="Descripción:" for="desc" />
+				<p:inputTextarea id="desc" value="#{envConfBean.envConf.configDesc}" rows="3" title="Descripción de la variable de entorno" rendered="true" required="true" requiredMessage="Debes definir una descripción!"/>
+			 </p:panelGrid>
+			 <p:commandButton id="createSave" value="Guardar" action="#{envConfBean.edit()}" update=":formConfig" oncomplete="PF('conDialog').hide()"/>
+		  </h:form>
+	   </p:dialog>
+    </ui:define>
+</ui:composition>

@@ -6,7 +6,7 @@
 			 template="admin.xhtml">
     <ui:define name="body">
 	   <h:form id="formAuthor">
-		  <p:dataTable id="dataTableAuthor" paginator="true" rows="15" value="#{authorBean.allAuthors}" var="author">
+		  <p:dataTable id="dataTableAuthor" paginator="true" rows="15" value="#{authorBean.allAuthors}" var="author" paginatorPosition="top">
 			 <p:column headerText="Nombre Autor">
 				<h:outputText value="#{author.authorName}" style=""/>
 			 </p:column>
