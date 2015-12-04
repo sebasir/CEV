@@ -1,5 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
-    <body><h1>HOLA MUNDO</h1></body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	 xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+    <f:metadata>
+	   <f:viewParam name="idSpecimen" value="#{specimenContentBean.specimenDetail}" />
+    </f:metadata>
+    <h:body>
+        <div id="map" style="width: 500px; height: 400px;"></div>
+        <script src="https://maps.googleapis.com/maps/api/js"></script>
+        <script>
+		  function initialize() {
+			 var mapCanvas = document.getElementById('map');
+			 var mapOptions = {zoom: 15};
+			 var map = new google.maps.Map(mapCanvas, mapOptions);
+			 geocodeAddress(map);
+		  }
+
+		  function geocodeAddress(map) {
+			 var geocoder = new google.maps.Geocoder();
+			 var pt;
+			 var lat = #{specimenContentBean.specimen.idLocation.latitude};
+			 var lon = #{specimenContentBean.specimen.idLocation.longitude};
+			 if (lat === 0 || lon === 0) {
+				geocoder.geocode({
+				    'address': '#{specimenContentBean.specimen.idLocation.locationName}'
+				}, function(results, status) {
+				    if (status === google.maps.GeocoderStatus.OK) {
+					   pt = results[0].geometry.location;
+				    } else {
+					   console.log('Ubicación desconocida!!!');
+				    }
+				    centerMap(pt, map);
+				});
+			 } else {
+				pt = new google.maps.LatLng(lat, lon);
+				centerMap(pt, map);
+			 }
+		  }
+
+		  function centerMap(pt, map) {
+			 map.setCenter(pt);
+			 var marker = new google.maps.Marker({
+				position: pt,
+				icon: 'images/utils/bee_marker.png',
+				title: '#{specimenContentBean.specimen.commonName}'
+			 });
+			 marker.setMap(map);
+		  }
+		  google.maps.event.addDomListener(window, 'load', initialize);
+        </script>
+    </h:body>
 </html>

@@ -28,7 +28,9 @@ public class SpecimenContentBean extends Utilsbean implements Serializable {
     private SpecimenContent specimenContent;
     private List<SpecimenContent> allSpecimenContents;
     private List<Specimen> allSpecimens;
+    private Specimen specimen;
     private String selectedSpecimen;
+    private String specimenDetail;
     private boolean publish;
     private UploadedFile contentFile;
 
@@ -89,16 +91,20 @@ public class SpecimenContentBean extends Utilsbean implements Serializable {
 	   }
     }
 
+    private void loadSpecimens() {
+	   setAllSpecimens((List<Specimen>) specimenContentSession.findListByQuery("Specimen.findAll", Specimen.class));
+    }
+    
     public void prepareCreate() {
 	   setSpecimenContent(new SpecimenContent());
 	   selectedSpecimen = null;
 	   contentFile = null;
 	   publish = false;
-	   setAllSpecimens((List<Specimen>) specimenContentSession.findListByQuery("Specimen.findAll", Specimen.class));
+	   loadSpecimens();
     }
 
     public void prepareUpdate(SpecimenContent specimenContent) {
-	   setAllSpecimens((List<Specimen>) specimenContentSession.findListByQuery("Specimen.findAll", Specimen.class));
+	   loadSpecimens();
 	   setSpecimenContent(specimenContent);
 	   publish = specimenContent.getPublish() == 'S';
 	   selectedSpecimen = specimenContent.getIdSpecimen().getIdSpecimen().toString();
@@ -119,6 +125,7 @@ public class SpecimenContentBean extends Utilsbean implements Serializable {
 
     private Specimen getSpecimen(String id) {
 	   Integer idSpecimen = null;
+	   loadSpecimens();
 	   try {
 		  idSpecimen = new Integer(id);
 		  for (Specimen s : allSpecimens) {
@@ -187,6 +194,10 @@ public class SpecimenContentBean extends Utilsbean implements Serializable {
 	   this.selectedSpecimen = selectedSpecimen;
     }
 
+    private void setSpecimenfromId() {
+	   this.specimen = getSpecimen(specimenDetail);
+    }
+    
     public boolean isPublish() {
 	   return publish;
     }
@@ -205,5 +216,22 @@ public class SpecimenContentBean extends Utilsbean implements Serializable {
 
     public String getHeader() {
 	   return specimenContent != null && specimenContent.getIdSpeccont() != null ? "Editar el contenido de " + specimenContent.getIdSpecimen().getIdTaxonomy().getTaxonomyName() + " " + specimenContent.getIdSpecimen().getSpecificEpithet() : "Nuevo contenido";
+    }
+
+    public Specimen getSpecimen() {
+	   return specimen;
+    }
+
+    public void setSpecimen(Specimen specimen) {
+	   this.specimen = specimen;
+    }
+
+    public String getSpecimenDetail() {
+	   return specimenDetail;
+    }
+
+    public void setSpecimenDetail(String specimenDetail) {
+	   this.specimenDetail = specimenDetail;
+	   setSpecimenfromId();
     }
 }

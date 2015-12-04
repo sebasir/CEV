@@ -41,7 +41,7 @@
 				<p:outputLabel value="Nombre Clasificación:" for="taxName" />
 				<p:inputText id="taxName" value="#{taxonomyBean.taxonomy.taxonomyName}" title="Nombre Ubicación" rendered="true" style="width: 100%" required="true" requiredMessage="Debes definir el nombre de la clasificación!"/>
 				<p:outputLabel value="Nivel Clasificación:" for="level" />
-				<p:selectOneMenu id="level" value="#{taxonomyBean.selectedLevel}" effect="fade" style="width: 100%" required="true" rendered="true" requiredMessage="Debes escoger una jerarquía!">
+				<p:selectOneMenu id="level" value="#{taxonomyBean.selectedLevel}" effect="fade" required="true" rendered="true" requiredMessage="Debes escoger una jerarquía!">
 				    <f:selectItem itemLabel="Selecciona una jerarquía" itemValue="" />
 				    <f:selectItems value="#{taxonomyBean.allLevels}" var="lev" itemLabel="#{lev.taxlevelName}" itemValue="#{lev.idTaxlevel}" />
 				</p:selectOneMenu>

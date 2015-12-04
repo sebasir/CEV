@@ -11,12 +11,12 @@
         <link href="css/default.css" type="text/css" rel="stylesheet"/>
 	   <link href="css/collage/transitions.css" type="text/css" rel="stylesheet"/>
 	   <link href="css/collage/collage.css" type="text/css" rel="stylesheet"/>
-	   <link href="js/fancybox/jquery.fancybox.css" type="text/css" rel="stylesheet"/>
-        <script src="js/jquery-1.11.3.js" type="text/javascript"></script>
+	   <script src="js/jquery-1.11.3.js" type="text/javascript"></script>
 	   <script src="js/collage/jquery.collagePlus.js" type="text/javascript" />
 	   <script src="js/collage/extras/jquery.collageCaption.js" type="text/javascript" />
 	   <script src="js/collage/extras/jquery.removeWhitespace.js" type="text/javascript" />
-	   <script src="js/fancybox/jquery.fancybox.js" type="text/javascript" />
+	   <link href="js/fancybox/jquery.fancybox.css?v=2.1.5" type="text/css" rel="stylesheet" media="screen"/>
+	   <script src="js/fancybox/jquery.fancybox.js?v=2.1.5" type="text/javascript" />
         <script type="text/javascript">
 		  $(window).load(function() {
 			 $(document).ready(function() {
@@ -24,17 +24,7 @@
 				$('.Collage').collageCaption();
 			 });
 
-			 $(".fancy").fancybox({
-				padding: 0,
-				openEffect: 'fade',
-				openSpeed: 250,
-				closeEffect: 'fade',
-				closeSpeed: 250,
-				closeClick: true,
-				helpers: {
-				    overlay: null
-				}
-			 });
+			 $(".fancybox").fancybox();
 		  });
 
 		  function collage() {
@@ -81,13 +71,14 @@
 	   <div id="box" class="box">
             <div id="portfolio" class="container">
 			 <div class="Collage effect-parent">
-				<ui:repeat value="#{specimenContentBean.allSpecimenContents}" var="scon" step="1">
+				<ui:repeat value="#{specimenContentBean.allSpecimenContents}" var="scon">
 				    <div class="Image_Wrapper" data-caption="#{scon.shortDescription}">
-					   <h:link outcome="specimenDetail.xhtml" styleClass="fancy" target="_blank">
+					   <h:outputLink value="specimenDetail.xhtml" styleClass="fancybox fancybox.iframe" title="#{scon.idSpecimen.commonName}">
+						  <f:param name="idSpecimen" value="#{scon.idSpecimen.idSpecimen}" />
 						  <p:graphicImage value="#{specimenContentBean.getSpecimenThumb()}">
 							 <f:param name="idSpecimen" value="#{scon.idSpecimen.idSpecimen}" />
 						  </p:graphicImage>
-					   </h:link>
+					   </h:outputLink>>
 				    </div>
 				</ui:repeat>
 			 </div>
