@@ -9,7 +9,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.validation.ConstraintViolationException;
 
 public abstract class Generic<T> implements Serializable {
 
@@ -17,7 +16,6 @@ public abstract class Generic<T> implements Serializable {
     @PersistenceContext(unitName = "bichosPU")
     private EntityManager em;
     private Class<T> type;
-    private Class<?> auxType;
 
     public Generic() {
     }
@@ -32,45 +30,83 @@ public abstract class Generic<T> implements Serializable {
 		  this.em.persist(t);
 		  this.em.flush();
 		  this.em.refresh(t);
-	   } catch (ConstraintViolationException e) {
-		  e.printStackTrace();
 	   } catch (Exception e) {
-		  e.printStackTrace();
-	   }
 
+	   }
 	   return t;
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public T merge(T entity) {
-	   em.merge(entity);
+	   try {
+		  em.merge(entity);
+	   } catch (Exception e) {
+
+	   }
 	   return entity;
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void delete(T entity) {
-	   entity = em.merge(entity);
-	   em.remove(entity);
+    public boolean delete(T entity) {
+	   boolean success = false;
+	   try {
+		  entity = em.merge(entity);
+		  em.remove(entity);
+		  success = true;
+	   } catch (Exception e) {
+
+	   }
+	   return success;
     }
 
     public int count(String namedQueryName) {
-	   return ((Number) em.createNamedQuery(namedQueryName).getSingleResult()).intValue();
+	   int count = 0;
+	   try {
+		  count = ((Number) em.createNamedQuery(namedQueryName).getSingleResult()).intValue();
+	   } catch (Exception e) {
+
+	   }
+	   return count;
     }
 
     public T find(Object id) {
-	   return this.em.find(this.type, id);
+	   T found = null;
+	   try {
+		  found = this.em.find(this.type, id);
+	   } catch (Exception e) {
+
+	   }
+	   return found;
     }
 
     public T findById(Object id) {
-	   return this.em.getReference(this.type, id);
+	   T found = null;
+	   try {
+		  found = this.em.getReference(this.type, id);
+	   } catch (Exception e) {
+
+	   }
+	   return found;
     }
 
     public T findSingleByQuery(String namedQueryName) {
-	   return (T) this.em.createNamedQuery(namedQueryName).getSingleResult();
+	   T found = null;
+	   try {
+		  found = (T) this.em.createNamedQuery(namedQueryName).getSingleResult();
+	   } catch (Exception e) {
+
+	   }
+	   return found;
     }
 
     public T findSingleBySQL(String sql) {
-	   return (T) this.em.createNativeQuery(sql, type).getSingleResult();
+	   T found = null;
+	   try {
+		  found = (T) this.em.createNativeQuery(sql, type).getSingleResult();
+	   } catch (Exception e) {
+
+	   }
+	   return found;
     }
 
     public T findSingleByParams(String namedQuery, Map<String, Object> parameters) {
@@ -92,7 +128,13 @@ public abstract class Generic<T> implements Serializable {
     }
 
     public List<T> findListByQuery(String namedQueryName) {
-	   return this.em.createNamedQuery(namedQueryName).getResultList();
+	   List<T> list = null;
+	   try {
+		  list = this.em.createNamedQuery(namedQueryName).getResultList();
+	   } catch (Exception e) {
+
+	   }
+	   return list;
     }
 
     public List<T> findListByQuery(String namedQueryName, Map parameters) {
@@ -100,34 +142,58 @@ public abstract class Generic<T> implements Serializable {
     }
 
     public List<T> findListByQuery(String queryName, int resultLimit) {
-	   return this.em.createNamedQuery(queryName).setMaxResults(resultLimit).getResultList();
+	   List<T> list = null;
+	   try {
+		  list = this.em.createNamedQuery(queryName).setMaxResults(resultLimit).getResultList();
+	   } catch (Exception e) {
+
+	   }
+	   return list;
     }
 
     public List<T> findListBySQL(String sql) {
-	   return this.em.createNativeQuery(sql, type).getResultList();
+	   List<T> list = null;
+	   try {
+		  list = this.em.createNativeQuery(sql, type).getResultList();
+	   } catch (Exception e) {
+
+	   }
+	   return list;
     }
 
     public List<T> findListByQuery(String namedQueryName, Map parameters, int resultLimit) {
-	   Set<Map.Entry<String, Object>> rawParameters = parameters.entrySet();
-	   Query query = this.em.createNamedQuery(namedQueryName);
-	   if (resultLimit > 0) {
-		  query.setMaxResults(resultLimit);
+	   List<T> list = null;
+	   try {
+		  Set<Map.Entry<String, Object>> rawParameters = parameters.entrySet();
+		  Query query = this.em.createNamedQuery(namedQueryName);
+		  if (resultLimit > 0) {
+			 query.setMaxResults(resultLimit);
+		  }
+		  for (Map.Entry<String, Object> entry : rawParameters) {
+			 query.setParameter(entry.getKey(), entry.getValue());
+		  }
+		  list = query.getResultList();
+	   } catch (Exception e) {
+
 	   }
-	   for (Map.Entry<String, Object> entry : rawParameters) {
-		  query.setParameter(entry.getKey(), entry.getValue());
-	   }
-	   return query.getResultList();
+	   return list;
     }
 
     public List<T> findListByQuery(String namedQueryName, int start, int end) {
-	   Query query = this.em.createNamedQuery(namedQueryName);
-	   query.setMaxResults(end - start);
-	   query.setFirstResult(start);
-	   return query.getResultList();
+	   List<T> list = null;
+	   try {
+		  Query query = this.em.createNamedQuery(namedQueryName);
+		  query.setMaxResults(end - start);
+		  query.setFirstResult(start);
+		  list = query.getResultList();
+	   } catch (Exception e) {
+
+	   }
+	   return list;
     }
 
     public List<T> findListByParams(String namedQuery, Map<String, Object> parameters) {
-	   List<T> result = null;
+	   List<T> list = null;
 	   try {
 		  Query query = em.createNamedQuery(namedQuery);
 		  if (parameters != null && !parameters.isEmpty()) {
@@ -136,16 +202,22 @@ public abstract class Generic<T> implements Serializable {
 				query.setParameter(entry.getKey(), entry.getValue());
 			 }
 		  }
-		  result = query.getResultList();
-		  em.refresh(result);
+		  list = query.getResultList();
+		  em.refresh(list);
 	   } catch (Exception e) {
 
 	   }
-	   return result;
+	   return list;
     }
 
     public List<?> findListByQuery(String queryName, Class<?> type) {
-	   return this.em.createNamedQuery(queryName, type).getResultList();
+	   List<?> list = null;
+	   try {
+		  list = this.em.createNamedQuery(queryName, type).getResultList();
+	   } catch (Exception e) {
+		  e.printStackTrace();
+	   }
+	   return list;
     }
 
     public List<T> listAll() {
@@ -153,6 +225,10 @@ public abstract class Generic<T> implements Serializable {
     }
 
     public void joinTransaction() {
-	   em.joinTransaction();
+	   try {
+		  em.joinTransaction();
+	   } catch (Exception e) {
+
+	   }
     }
 }

@@ -42,3 +42,11 @@
     font-weight: 400;
     src: local('Raleway'), url(/Bichos/css/font/0dTEPzkLWceF7z0koJaX1A.woff2) format('woff2');
 }
+
+.ui-tree.ui-tree-horizontal .ui-treenode {
+    padding: 5px 10px !important;
+}
+
+.ui-tree.ui-tree-horizontal .ui-treenode.ui-treenode-leaf, .ui-tree.ui-tree-horizontal .ui-treenode.ui-treenode-collapsed {
+    padding-right: 0px !important;
+}

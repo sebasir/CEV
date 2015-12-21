@@ -1,23 +1,36 @@
 package net.hpclab.beans;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import javax.faces.application.FacesMessage;
+import net.hpclab.entities.AuthorRole;
+import net.hpclab.entities.Location;
+import net.hpclab.entities.LocationLevel;
+import net.hpclab.entities.Specimen;
+import net.hpclab.entities.SpecimenContent;
+import net.hpclab.entities.Taxonomy;
+import net.hpclab.entities.TaxonomyLevel;
 import net.hpclab.entities.entNaming;
+import org.apache.commons.io.IOUtils;
 
 public class Utilsbean implements Serializable {
 
     private static HashMap<String, String> ENV_CONF;
-
-    public enum Actions {
+    public static List<Specimen> allSpecimens;
+    public static List<SpecimenContent> allSpecimenContents;
+    public static List<Taxonomy> allTaxonomys;
+    public static List<Location> allLocations;
+    public static List<TaxonomyLevel> allTaxonomyLevels;
+    public static List<LocationLevel> allLocationLevels;
+    public static List<AuthorRole> allAuthorRoles;
+    
+    public static enum Actions {
 
 	   createSuccess, updateSuccess, deleteSuccess, createError, updateError, deleteError, fileRequired, fileUploadSuccess, fileUploadError, fileDeleteError
     };
@@ -99,35 +112,11 @@ public class Utilsbean implements Serializable {
 	   Utilsbean.ENV_CONF = ENV_CONF;
     }
 
-    public boolean copyFile(String fileName, InputStream in) throws IOException {
-	   String path = getENV_CONF().get("PATH_FILES");
-	   String pS = getENV_CONF().get("PATH_SEP");
-	   OutputStream out = new FileOutputStream(new File(path + pS + fileName));
-	   int read;
-	   byte[] bytes = new byte[1024];
-	   while ((read = in.read(bytes)) != -1) {
-		  out.write(bytes, 0, read);
-	   }
-	   in.close();
-	   out.flush();
-	   out.close();
-	   return true;
+    public byte[] getByteArray(InputStream in) throws IOException {
+	   return IOUtils.toByteArray(in);
     }
 
-    public boolean deleteFile(String fileName) throws IOException {
-	   String path = getENV_CONF().get("PATH_FILES");
-	   String pS = getENV_CONF().get("PATH_SEP");
-	   File delFile = new File(path + pS + fileName);
-	   if (delFile.exists()) {
-		  return delFile.delete();
-	   }
-	   return false;
-    }
-
-    public FileInputStream getInputStream(String fileName) throws IOException {
-	   String path = getENV_CONF().get("PATH_FILES");
-	   String pS = getENV_CONF().get("PATH_SEP");
-	   File file = new File(path + pS + fileName);
-	   return new FileInputStream(file);
+    public InputStream getInputStream(byte[] byteContent) throws IOException {
+	   return new ByteArrayInputStream(byteContent);
     }
 }

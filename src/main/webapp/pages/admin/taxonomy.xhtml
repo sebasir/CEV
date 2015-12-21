@@ -6,9 +6,6 @@
 			 xmlns:f="http://java.sun.com/jsf/core"
 			 template="admin.xhtml">
     <ui:define name="body">
-	   <f:metadata>
-		  <f:event type="preRenderView" listener="#{taxonomyBean.deselectAll()}" />
-	   </f:metadata>
 	   <h:form id="formTaxonomy">
 		  <p:panel id="data">
 			 <f:facet name="header">
@@ -43,7 +40,7 @@
 				<p:outputLabel value="Nivel Clasificación:" for="level" />
 				<p:selectOneMenu id="level" value="#{taxonomyBean.selectedLevel}" effect="fade" required="true" rendered="true" requiredMessage="Debes escoger una jerarquía!">
 				    <f:selectItem itemLabel="Selecciona una jerarquía" itemValue="" />
-				    <f:selectItems value="#{taxonomyBean.allLevels}" var="lev" itemLabel="#{lev.taxlevelName}" itemValue="#{lev.idTaxlevel}" />
+				    <f:selectItems value="#{taxonomyBean.avalLevels}" var="lev" itemLabel="#{lev.taxlevelName}" itemValue="#{lev.idTaxlevel}" />
 				</p:selectOneMenu>
 			 </p:panelGrid>
 			 <p:commandButton id="createSave" value="Guardar" action="#{taxonomyBean.persist()}" update=":formTaxonomy" oncomplete="PF('taxonomyCreate').hide()"/>

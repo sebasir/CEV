@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -42,6 +43,11 @@ public class SpecimenContent implements entNaming, Serializable {
     @Size(min = 1, max = 128)
     @Column(name = "file_name")
     private String fileName;
+    @Basic(optional = false)
+    @NotNull
+    @Lob
+    @Column(name = "file_content")
+    private byte[] fileContent;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 512)
@@ -163,5 +169,13 @@ public class SpecimenContent implements entNaming, Serializable {
     @Override
     public String getDescription() {
 	   return "del archivo " + fileName + " para " + idSpecimen.getIdTaxonomy().getTaxonomyName() + " " + idSpecimen.getSpecificEpithet();
+    }
+
+    public byte[] getFileContent() {
+	   return fileContent;
+    }
+
+    public void setFileContent(byte[] fileContent) {
+	   this.fileContent = fileContent;
     }
 }

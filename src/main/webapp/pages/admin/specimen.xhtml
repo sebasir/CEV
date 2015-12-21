@@ -37,10 +37,7 @@
 				<p:commandButton id="deleteButton" icon="ui-icon-trash" oncomplete="PF('specimenDelete').show()" title="Eliminar #{specimen.commonName}" actionListener="#{specimenBean.setSpecimen(specimen)}"/>
 			 </p:column>
 			 <f:facet name="footer">
-				<p:commandButton id="btnCreate" value="Nuevo Espécimen" oncomplete="PF('specimenWizard').show()" update=":formDialog :specimenWizardForm" title="Crear Espécimen" actionListener="#{specimenBean.prepareCreate()}">
-				    <f:actionListener binding="#{locationBean.deselectAll()}" />
-				    <f:actionListener binding="#{taxonomyBean.deselectAll()}" />
-				</p:commandButton>
+				<p:commandButton id="btnCreate" value="Nuevo Espécimen" oncomplete="PF('specimenWizard').show()" update=":formDialog :specimenWizardForm" title="Crear Espécimen" actionListener="#{specimenBean.prepareCreate()}"/>
 			 </f:facet>
 		  </p:dataTable>
 		  <p:growl id="messages" showDetail="true"/>
@@ -193,7 +190,8 @@
 					   <p:outputLabel value="#{specimenBean.specimen.idBioreg}" styleClass="bolded"/>
 				    </p:panelGrid>
 				    <p:separator/>
-				    <p:commandButton id="createSave" value="Guardar Espécimen" action="#{specimenBean.persist()}" update=":formSpecimen" oncomplete="PF('specimenWizard').hide()" />
+				    <p:commandButton id="createSave" value="Guardar Espécimen" rendered="#{specimenBean.create}" action="#{specimenBean.persist()}" update=":formSpecimen" oncomplete="PF('specimenWizard').hide()" />
+				    <p:commandButton id="editSave" value="Guardar Cambios" rendered="#{!specimenBean.create}" action="#{specimenBean.edit()}" update=":formSpecimen" oncomplete="PF('specimenWizard').hide()" />
 				</p:tab>
 			 </p:wizard>
 		  </h:form>

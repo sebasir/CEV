@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import net.hpclab.entities.Specimen;
 import net.hpclab.entities.Taxonomy;
 import net.hpclab.entities.TaxonomyLevel;
+import net.hpclab.entities.entNaming;
 import net.hpclab.sessions.TaxonomySession;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.DefaultTreeNode;
@@ -30,11 +31,9 @@ public class TaxonomyBean extends Utilsbean implements Serializable {
     private TreeNode root;
     private TreeNode selectedNode;
     private HashMap<Integer, TreeNode> tree;
-    private List<Taxonomy> allTaxonomys;
-    private List<TaxonomyLevel> allLevels;
+    private List<TaxonomyLevel> avalLevels;
     private List<Specimen> taxonomySpecimens;
     private String selectedLevel;
-    private boolean onTreeEdit;
 
     public TaxonomyBean() {
 	   taxonomySession = new TaxonomySession();
@@ -42,6 +41,8 @@ public class TaxonomyBean extends Utilsbean implements Serializable {
 
     @PostConstruct
     public void init() {
+	   if(allTaxonomys == null)
+		  allTaxonomys = taxonomySession.listAll();
 	   createTaxTree();
     }
 
@@ -51,15 +52,15 @@ public class TaxonomyBean extends Utilsbean implements Serializable {
 		  taxonomy.setIdTaxlevel(new TaxonomyLevel(new Integer(selectedLevel)));
 		  setTaxonomy(taxonomySession.persist(getTaxonomy()));
 		  if (getTaxonomy() != null && getTaxonomy().getIdTaxonomy() != null) {
-			 FacesContext.getCurrentInstance().addMessage(null, showMessage(taxonomy, Actions.createSuccess));
+			 allTaxonomys.add(taxonomy);
+			 launchMessage(taxonomy, Actions.createSuccess);
 			 createTaxTree();
-			 onTreeEdit = true;
 		  } else {
-			 FacesContext.getCurrentInstance().addMessage(null, showMessage(taxonomy, Actions.createError));
+			 launchMessage(taxonomy, Actions.createError);
 		  }
 	   } catch (Exception e) {
 		  e.printStackTrace();
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(taxonomy, Actions.createError));
+		  launchMessage(taxonomy, Actions.createError);
 	   }
 	   selectedLevel = null;
 	   return findAllTaxonomys();
@@ -68,46 +69,40 @@ public class TaxonomyBean extends Utilsbean implements Serializable {
     public void edit() {
 	   try {
 		  setTaxonomy(taxonomySession.merge(getTaxonomy()));
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(getTaxonomy(), Actions.updateSuccess));
+		  launchMessage(taxonomy, Actions.updateSuccess);
 		  createTaxTree();
-		  onTreeEdit = true;
 	   } catch (Exception e) {
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(getTaxonomy(), Actions.updateError));
+		  launchMessage(taxonomy, Actions.updateError);
 	   }
     }
-    
+
     public void delete() {
-	   try {
-		  taxonomySession.delete(getTaxonomy());
+	   if (taxonomySession.delete(taxonomy)) {
 		  createTaxTree();
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(getTaxonomy(), Actions.deleteSuccess));
-		  onTreeEdit = true;
-	   } catch (Exception e) {
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(getTaxonomy(), Actions.deleteError));
+		  launchMessage(getTaxonomy(), Actions.deleteSuccess);
+	   } else {
+		  launchMessage(getTaxonomy(), Actions.deleteError);
 	   }
     }
 
     public void prepareCreate() {
-	   onTreeEdit = false;
 	   parentTaxonomy = taxonomy;
 	   taxonomy = new Taxonomy();
-	   List<TaxonomyLevel> taxLevels = (List<TaxonomyLevel>) taxonomySession.findListByQuery("TaxonomyLevel.findAll", TaxonomyLevel.class);
-	   allLevels = new ArrayList<TaxonomyLevel>();
-	   for (TaxonomyLevel t : taxLevels) {
+	   selectedLevel = null;
+	   avalLevels = new ArrayList<TaxonomyLevel>();
+	   for (TaxonomyLevel t : allTaxonomyLevels) {
 		  if (t.getTaxlevelRank() > parentTaxonomy.getIdTaxlevel().getTaxlevelRank()) {
-			 allLevels.add(t);
+			 avalLevels.add(t);
 		  }
 	   }
     }
 
     public void prepareUpdate() {
-	   onTreeEdit = false;
 	   selectedLevel = taxonomy.getIdTaxlevel().getIdTaxlevel().toString();
-	   List<TaxonomyLevel> taxLevels = (List<TaxonomyLevel>) taxonomySession.findListByQuery("TaxonomyLevel.findAll", TaxonomyLevel.class);
-	   allLevels = new ArrayList<TaxonomyLevel>();
-	   for (TaxonomyLevel t : taxLevels) {
+	   avalLevels = new ArrayList<TaxonomyLevel>();
+	   for (TaxonomyLevel t : allTaxonomyLevels) {
 		  if (t.getTaxlevelRank() > parentTaxonomy.getIdTaxlevel().getTaxlevelRank()) {
-			 allLevels.add(t);
+			 avalLevels.add(t);
 		  }
 	   }
     }
@@ -143,11 +138,11 @@ public class TaxonomyBean extends Utilsbean implements Serializable {
     }
 
     public List<TaxonomyLevel> getAllLevels() {
-	   return allLevels;
+	   return allTaxonomyLevels;
     }
 
     public void setAllLevels(List<TaxonomyLevel> allLevels) {
-	   this.allLevels = allLevels;
+	   this.allTaxonomyLevels = allLevels;
     }
 
     public TreeNode getTaxRoot() {
@@ -175,11 +170,10 @@ public class TaxonomyBean extends Utilsbean implements Serializable {
     }
 
     private void createTaxTree() {
-	   List<Taxonomy> taxList = taxonomySession.findListByQuery("Taxonomy.findOrderedAsc");
 	   tree = new HashMap<Integer, TreeNode>();
 	   root = null;
-	   if (taxList != null) {
-		  for (Taxonomy t : taxList) {
+	   if (allTaxonomys != null) {
+		  for (Taxonomy t : allTaxonomys) {
 			 if (root == null) {
 				tree.put(t.getIdTaxonomy(), (root = new DefaultTreeNode(t, null)));
 			 } else {
@@ -200,7 +194,7 @@ public class TaxonomyBean extends Utilsbean implements Serializable {
     public Taxonomy getNodeName() {
 	   return (Taxonomy) selectedNode.getData();
     }
-    
+
     private void openBranch(TreeNode node) {
 	   if (node == null) {
 		  return;
@@ -212,18 +206,16 @@ public class TaxonomyBean extends Utilsbean implements Serializable {
 		  node = node.getParent();
 	   }
     }
-    
+
     public void deselectAll() {
-	   if(!onTreeEdit)
-		  for (TreeNode t : tree.values()) {
-			 t.setSelected(false);
-			 t.setExpanded(false);
-		  }
+	   for (TreeNode t : tree.values()) {
+		  t.setSelected(false);
+		  t.setExpanded(false);
+	   }
     }
-    
+
     public void selectNodeFromId(Integer idLocation) {
 	   selectedNode = tree.get(idLocation);
-	   onTreeEdit = false;
 	   openBranch(selectedNode);
     }
 
@@ -257,5 +249,17 @@ public class TaxonomyBean extends Utilsbean implements Serializable {
 			 context.execute("PF('taxonomyDelete').show()");
 		  }
 	   }
+    }
+
+    private void launchMessage(entNaming ent, Actions act) {
+	   FacesContext.getCurrentInstance().addMessage(null, showMessage(ent, act));
+    }
+
+    public List<TaxonomyLevel> getAvalLevels() {
+	   return avalLevels;
+    }
+
+    public void setAvalLevels(List<TaxonomyLevel> avalLevels) {
+	   this.avalLevels = avalLevels;
     }
 }

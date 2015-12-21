@@ -1,5 +1,6 @@
 package net.hpclab.beans;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +24,9 @@ import net.hpclab.entities.RegType;
 import net.hpclab.entities.SampleType;
 import net.hpclab.entities.Specimen;
 import net.hpclab.entities.Taxonomy;
+import net.hpclab.entities.entNaming;
 import net.hpclab.sessions.CollectionSession;
 import net.hpclab.sessions.SpecimenSession;
-import net.hpclab.sessions.TaxonomySession;
 import org.primefaces.component.calendar.Calendar;
 import org.primefaces.component.column.Column;
 import org.primefaces.component.inputtext.InputText;
@@ -50,7 +51,6 @@ public class SpecimenBean extends Utilsbean implements Serializable {
     private CollectionSession collectionSession;
 
     private static final long serialVersionUID = 1L;
-    private FacesContext fCon;
     private Specimen specimen;
     private Location location;
     private LocationBean locationBean;
@@ -61,7 +61,6 @@ public class SpecimenBean extends Utilsbean implements Serializable {
     private Catalog catalog;
     private Collection collection;
     private AuthorRole collector, determiner;
-    private List<Specimen> allSpecimens;
     private List<Taxonomy> allTaxonomys;
     private List<Location> allLocations;
     private List<AuthorRole> allDeterminer;
@@ -71,6 +70,8 @@ public class SpecimenBean extends Utilsbean implements Serializable {
     private List<RegType> allRegTypes;
     private List<SampleType> allSampleTypes;
     private PanelGrid specimenForm;
+    private boolean create;
+    private String specimenDetail;
     private String selectedDeterminer;
     private String selectedCollector;
     private String selectedCatalog;
@@ -87,10 +88,7 @@ public class SpecimenBean extends Utilsbean implements Serializable {
     public void init() {
     }
 
-    public String persist() {
-	   fCon = FacesContext.getCurrentInstance();
-	   locationBean = (LocationBean) fCon.getApplication().getELResolver().getValue(fCon.getELContext(), null, "locationBean");
-	   taxonomyBean = (TaxonomyBean) fCon.getApplication().getELResolver().getValue(fCon.getELContext(), null, "taxonomyBean");
+    public void persist() {
 	   location = (Location) locationBean.getSelectedNode().getData();
 	   taxonomy = (Taxonomy) taxonomyBean.getSelectedNode().getData();
 	   specimen.setIdTaxonomy(taxonomy);
@@ -102,20 +100,42 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 	   specimen.setIdSaty(sampleType);
 	   specimen = specimenSession.persist(specimen);
 	   if (specimen != null && specimen.getIdSpecimen() != null) {
-		  fCon.addMessage(null, showMessage(specimen, Actions.createSuccess));
+		  launchMessage(specimen, Actions.createSuccess);
+		  allSpecimens.add(specimen);
 	   } else {
-		  fCon.addMessage(null, showMessage(specimen, Actions.createError));
+		  launchMessage(specimen, Actions.createError);
 	   }
 	   resetForm();
-	   return findAllSpecimens();
+	   findAllSpecimens();
+    }
+
+    public void edit() {
+	   try {
+		  location = (Location) locationBean.getSelectedNode().getData();
+		  taxonomy = (Taxonomy) taxonomyBean.getSelectedNode().getData();
+		  specimen.setIdTaxonomy(taxonomy);
+		  specimen.setIdLocation(location);
+		  specimen.setIdDeterminer(determiner);
+		  specimen.setIdCollector(collector);
+		  specimen.setIdCatalog(catalog);
+		  specimen.setIdRety(regType);
+		  specimen.setIdSaty(sampleType);
+		  specimen = specimenSession.merge(specimen);
+		  allSpecimens.remove(specimen);
+		  allSpecimens.add(specimen);
+		  launchMessage(specimen, Actions.updateSuccess);
+	   } catch (Exception e) {
+		  launchMessage(specimen, Actions.updateError);
+	   }
+	   resetForm();
     }
 
     public void delete() {
-	   try {
-		  specimenSession.delete(specimen);
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(specimen, Actions.deleteSuccess));
-	   } catch (Exception e) {
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(specimen, Actions.deleteError));
+	   if (specimenSession.delete(specimen)) {
+		  launchMessage(specimen, Actions.deleteSuccess);
+		  allSpecimens.remove(specimen);
+	   } else {
+		  launchMessage(specimen, Actions.deleteError);
 	   }
     }
 
@@ -127,6 +147,8 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 	   selectedDeterminer = null;
 	   selectedRegType = null;
 	   selectedSampleType = null;
+	   taxonomyBean.deselectAll();
+	   locationBean.deselectAll();
     }
 
     private void updateLists() {
@@ -137,12 +159,20 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 	   setAllRegTypes((List<RegType>) specimenSession.findListByQuery("RegType.findAll", RegType.class));
     }
 
+    private void prepareBeans() {
+	   FacesContext fCon = FacesContext.getCurrentInstance();
+	   locationBean = (LocationBean) fCon.getApplication().getELResolver().getValue(fCon.getELContext(), null, "locationBean");
+	   taxonomyBean = (TaxonomyBean) fCon.getApplication().getELResolver().getValue(fCon.getELContext(), null, "taxonomyBean");
+    }
+
     public void prepareCreate() {
+	   prepareBeans();
 	   resetForm();
 	   updateLists();
     }
 
     public void prepareUpdate(Specimen onEdit) {
+	   prepareBeans();
 	   RequestContext context = RequestContext.getCurrentInstance();
 	   context.reset("specimenWizardForm");
 	   specimen = onEdit;
@@ -154,16 +184,6 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 	   selectedRegType = specimen.getIdRety().getIdRety().toString();
 	   selectedSampleType = specimen.getIdSaty().getIdSaty().toString();
 	   updateLists();
-    }
-
-    public void edit() {
-	   try {
-		  specimen = specimenSession.merge(specimen);
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(specimen, Actions.updateSuccess));
-	   } catch (Exception e) {
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(specimen, Actions.updateError));
-	   }
-	   resetForm();
     }
 
     private void createSpecimenForm() {
@@ -299,11 +319,6 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 	   iA.setCols(30);
 	   iA.setValueExpression("value", getValueExpression(value));
 	   return iA;
-    }
-
-    public String displayList() {
-	   findAllSpecimens();
-	   return "specimen";
     }
 
     public void filterCatalog() {
@@ -469,13 +484,10 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 	   return allSpecimens;
     }
 
-    public void setAllSpecimens(List<Specimen> allSpecimens) {
-	   this.allSpecimens = allSpecimens;
-    }
-
-    public String findAllSpecimens() {
-	   allSpecimens = specimenSession.listAll();
-	   return null;
+    public void findAllSpecimens() {
+	   if (allSpecimens == null) {
+		  allSpecimens = specimenSession.listAll();
+	   }
     }
 
     public List<Taxonomy> getAllTaxonomys() {
@@ -594,7 +606,6 @@ public class SpecimenBean extends Utilsbean implements Serializable {
     public void setSelectedCatalog(String selectedCatalog) {
 	   this.selectedCatalog = selectedCatalog;
 	   this.catalog = getCatalogFromList(selectedCatalog);
-
     }
 
     public Catalog getCatalog() {
@@ -621,34 +632,107 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 	   return specimen != null && specimen.getIdSpecimen() != null ? "Editar a " + specimen.getCommonName() : "Registrar nuevo espécimen";
     }
 
-    public void specimensJSON() {
+    private void launchMessage(entNaming ent, Actions act) {
+	   FacesContext.getCurrentInstance().addMessage(null, showMessage(ent, act));
+    }
+
+    public boolean isCreate() {
+	   return create;
+    }
+
+    public void setCreate(boolean create) {
+	   this.create = create;
+    }
+
+    private void setSpecimenfromId() {
+	   this.specimen = getSpecimen(specimenDetail);
+    }
+
+    private Specimen getSpecimen(String id) {
+	   Integer idSpecimen;
 	   try {
-		  FacesContext facesContext = FacesContext.getCurrentInstance();
-		  ExternalContext externalContext = facesContext.getExternalContext();
-		  externalContext.setResponseContentType("application/json");
-		  externalContext.setResponseCharacterEncoding("UTF-8");
-		  allSpecimens = getAllSpecimens();
-		  JSONArray jArray = new JSONArray();
-		  JSONObject jObj;
+		  idSpecimen = new Integer(id);
 		  for (Specimen s : allSpecimens) {
-			 jObj = new JSONObject();
-			 jObj.put("id", s.getIdSpecimen().toString());
-			 jObj.put("sname", s.getIdTaxonomy().getTaxonomyName() + " " + s.getSpecificEpithet());
-			 jObj.put("cname", s.getCommonName());
-			 jObj.put("loc", s.getIdLocation().getIdLoclevel().getLoclevelName() + " de " + s.getIdLocation().getLocationName());
-			 jArray.put(jObj);
+			 if (s.getIdSpecimen().equals(idSpecimen)) {
+				return s;
+			 }
 		  }
-		  JSONObject salida = new JSONObject();
-		  salida.put("collection", jArray);
-		  jObj = new JSONObject();
-		  jObj.put("slide_width", 952);
-		  jObj.put("darkslide_width", 794);
-		  jObj.put("specimenSize", allSpecimens.size());
-		  salida.put("settings", jObj);
-		  externalContext.getResponseOutputWriter().write(salida.toString());
-		  facesContext.responseComplete();
-	   } catch (Exception e) {
-		  System.out.println("ERROR" + e.getLocalizedMessage());
+	   } catch (NumberFormatException e) {
+
 	   }
+	   return null;
+    }
+
+    public String getSpecimenDetail() {
+	   return specimenDetail;
+    }
+
+    public void setSpecimenDetail(String specimenDetail) {
+	   this.specimenDetail = specimenDetail;
+	   setSpecimenfromId();
+    }
+
+    public String printJSON() {
+	   JSONObject specimenInfo = new JSONObject();
+	   if (specimen == null || specimen.getIdSpecimen() == null) {
+		  specimenInfo.put("error", "No hay espécimen seleccionado");
+	   } else {
+		  JSONArray taxArray = new JSONArray();
+		  JSONArray locArray = new JSONArray();
+		  JSONObject taxData = new JSONObject();
+		  JSONObject locData = new JSONObject();
+		  JSONObject colData = new JSONObject();
+		  Taxonomy tax = specimen.getIdTaxonomy();
+		  ArrayList<Taxonomy> taxList = new ArrayList<Taxonomy>();
+		  while (tax != null) {
+			 taxList.add(0, tax);
+			 tax = tax.getIdContainer();
+		  }
+
+		  Location loc = specimen.getIdLocation();
+		  ArrayList<Location> locList = new ArrayList<Location>();
+		  while (loc != null) {
+			 locList.add(0, loc);
+			 loc = loc.getIdContainer();
+		  }
+		  JSONObject data;
+		  for (Taxonomy t : taxList) {
+			 data = new JSONObject();
+			 data.put("label", t.getIdTaxlevel().getTaxlevelName());
+			 data.put("value", t.getTaxonomyName());
+			 taxArray.put(data);
+		  }
+
+		  for (Location l : locList) {
+			 data = new JSONObject();
+			 data.put("label", l.getIdLoclevel().getLoclevelName());
+			 data.put("value", l.getLocationName());
+			 locArray.put(data);
+		  }
+
+		  taxData.put("specificEpithet", specimen.getSpecificEpithet() == null ? "" : specimen.getSpecificEpithet());
+		  taxData.put("commonName", specimen.getCommonName());
+		  taxData.put("idenComment", specimen.getIdenComment() == null ? "" : specimen.getIdenComment());
+		  taxData.put("determiner", specimen.getIdDeterminer().getIdAuthor().getAuthorName());
+		  taxData.put("idenDate", formatDate(specimen.getIdenDate()));
+		  locData.put("lat", specimen.getIdLocation().getLatitude());
+		  locData.put("lon", specimen.getIdLocation().getLongitude());
+		  locData.put("alt", specimen.getIdLocation().getAltitude());
+		  locData.put("collector", specimen.getIdCollector().getIdAuthor().getAuthorName());
+		  locData.put("collectDate", formatDate(specimen.getCollectDate()));
+		  locData.put("collectComment", specimen.getCollectComment() == null ? "" : specimen.getCollectComment());
+		  colData.put("companyName", specimen.getIdCatalog().getIdCollection().getCompanyName());
+		  colData.put("regType", specimen.getIdRety().getRetyName());
+		  colData.put("samType", specimen.getIdSaty().getSatyName());
+		  colData.put("collectionName", specimen.getIdCatalog().getIdCollection().getCollectionName());
+		  colData.put("idBioreg", specimen.getIdBioreg());
+		  colData.put("catalogName", specimen.getIdCatalog().getCatalogName());
+		  specimenInfo.put("taxArray", taxArray);
+		  specimenInfo.put("locArray", locArray);
+		  specimenInfo.put("taxData", taxData);
+		  specimenInfo.put("locData", locData);
+		  specimenInfo.put("colData", colData);
+	   }
+	   return specimenInfo.toString();
     }
 }

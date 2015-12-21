@@ -1,0 +1,19 @@
+body {
+    margin: 0px;
+    padding: 0px;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 12pt;
+    color: rgba(24, 51, 22, 0.99);
+    background-color: rgb(249, 249, 249);
+}
+
+label {
+    margin-bottom: 0px;
+}
+
+label.titulo {
+    display: block;
+    text-align: center;
+    text-decoration: underline;
+    background-color: rgb(207, 226, 177);
+}

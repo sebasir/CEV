@@ -23,15 +23,13 @@ public class SpecimenContentBean extends Utilsbean implements Serializable {
 
     @Inject
     private SpecimenContentSession specimenContentSession;
-
     private static final long serialVersionUID = 1L;
-    private SpecimenContent specimenContent;
+    private boolean publish;
     private List<SpecimenContent> allSpecimenContents;
-    private List<Specimen> allSpecimens;
     private Specimen specimen;
+    private SpecimenContent specimenContent;
     private String selectedSpecimen;
     private String specimenDetail;
-    private boolean publish;
     private UploadedFile contentFile;
 
     public SpecimenContentBean() {
@@ -52,59 +50,39 @@ public class SpecimenContentBean extends Utilsbean implements Serializable {
 			 specimenContent.setFileName(contentFile.getFileName());
 			 specimenContent.setFileUploadDate(Calendar.getInstance().getTime());
 			 specimenContent.setIdSpecimen(getSpecimen(selectedSpecimen));
-			 String fileName = contentFile.getFileName();
-			 specimenContent.setFileName(fileName);
-			 String ext = fileName.substring(fileName.lastIndexOf("."));
-			 if (copyFile(selectedSpecimen + ext, contentFile.getInputstream())) {
-				setSpecimenContent(specimenContentSession.persist(getSpecimenContent()));
-				if (getSpecimenContent() != null && getSpecimenContent().getIdSpeccont() != null) {
-				    FacesContext.getCurrentInstance().addMessage(null, showMessage(getSpecimenContent(), Actions.createSuccess));
-				} else {
-				    FacesContext.getCurrentInstance().addMessage(null, showMessage(getSpecimenContent(), Actions.createError));
-				}
+			 specimenContent.setFileName(contentFile.getFileName());
+			 specimenContent.setFileContent(getByteArray(contentFile.getInputstream()));
+			 setSpecimenContent(specimenContentSession.persist(getSpecimenContent()));
+			 if (getSpecimenContent() != null && getSpecimenContent().getIdSpeccont() != null) {
+				FacesContext.getCurrentInstance().addMessage(null, showMessage(getSpecimenContent(), Actions.createSuccess));
 			 } else {
-				FacesContext.getCurrentInstance().addMessage(null, showFileMessage(contentFile.getFileName(), Actions.fileUploadError));
+				FacesContext.getCurrentInstance().addMessage(null, showMessage(getSpecimenContent(), Actions.createError));
 			 }
 		  } else {
 			 FacesContext.getCurrentInstance().addMessage(null, showMessage(getSpecimenContent(), Actions.fileRequired));
 		  }
 	   } catch (IOException e) {
 		  FacesContext.getCurrentInstance().addMessage(null, showFileMessage(contentFile.getFileName(), Actions.fileUploadError));
-	   } catch (Exception e) {
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(getSpecimenContent(), Actions.createError));
 	   }
     }
 
     public void delete() {
 	   try {
-		  String fileName = specimenContent.getFileName();
-		  fileName = fileName.substring(fileName.lastIndexOf("."));
-		  fileName = specimenContent.getIdSpecimen().getIdSpecimen() + fileName;
-		  if (deleteFile(fileName)) {
-			 specimenContentSession.delete(getSpecimenContent());
-			 FacesContext.getCurrentInstance().addMessage(null, showMessage(getSpecimenContent(), Actions.deleteSuccess));
-		  } else {
-			 FacesContext.getCurrentInstance().addMessage(null, showFileMessage(specimenContent.getFileName(), Actions.fileDeleteError));
-		  }
+		  specimenContentSession.delete(getSpecimenContent());
+		  FacesContext.getCurrentInstance().addMessage(null, showMessage(getSpecimenContent(), Actions.deleteSuccess));
 	   } catch (Exception e) {
 		  FacesContext.getCurrentInstance().addMessage(null, showMessage(getSpecimenContent(), Actions.deleteError));
 	   }
     }
 
-    private void loadSpecimens() {
-	   setAllSpecimens((List<Specimen>) specimenContentSession.findListByQuery("Specimen.findAll", Specimen.class));
-    }
-    
     public void prepareCreate() {
 	   setSpecimenContent(new SpecimenContent());
 	   selectedSpecimen = null;
 	   contentFile = null;
 	   publish = false;
-	   loadSpecimens();
     }
 
     public void prepareUpdate(SpecimenContent specimenContent) {
-	   loadSpecimens();
 	   setSpecimenContent(specimenContent);
 	   publish = specimenContent.getPublish() == 'S';
 	   selectedSpecimen = specimenContent.getIdSpecimen().getIdSpecimen().toString();
@@ -124,8 +102,7 @@ public class SpecimenContentBean extends Utilsbean implements Serializable {
     }
 
     private Specimen getSpecimen(String id) {
-	   Integer idSpecimen = null;
-	   loadSpecimens();
+	   Integer idSpecimen;
 	   try {
 		  idSpecimen = new Integer(id);
 		  for (Specimen s : allSpecimens) {
@@ -133,7 +110,7 @@ public class SpecimenContentBean extends Utilsbean implements Serializable {
 				return s;
 			 }
 		  }
-	   } catch (Exception e) {
+	   } catch (NumberFormatException e) {
 
 	   }
 	   return null;
@@ -148,9 +125,7 @@ public class SpecimenContentBean extends Utilsbean implements Serializable {
 		  Integer idSpecimen = Integer.parseInt(id);
 		  for (SpecimenContent s : allSpecimenContents) {
 			 if (s.getIdSpecimen().getIdSpecimen().equals(idSpecimen)) {
-				String fileName = s.getFileName();
-				fileName = fileName.substring(fileName.lastIndexOf("."));
-				return new DefaultStreamedContent(super.getInputStream(idSpecimen + fileName), "image/jpeg");
+				return new DefaultStreamedContent(super.getInputStream(s.getFileContent()), "image/jpeg");
 			 }
 		  }
 		  return null;
@@ -197,7 +172,7 @@ public class SpecimenContentBean extends Utilsbean implements Serializable {
     private void setSpecimenfromId() {
 	   this.specimen = getSpecimen(specimenDetail);
     }
-    
+
     public boolean isPublish() {
 	   return publish;
     }
