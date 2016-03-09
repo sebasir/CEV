@@ -7,23 +7,113 @@
 	 xmlns:f="http://java.sun.com/jsf/core">
     <head>
         <title>Colección Entomológica 3D - Bichos</title>
-        <link href="css/sansPro.css" type="text/css" rel="stylesheet"/>
+	   <link href="bootstrap/css/bootstrap.css" type="text/css" rel="stylesheet"/>
         <link href="css/default.css" type="text/css" rel="stylesheet"/>
 	   <link href="css/collage/transitions.css" type="text/css" rel="stylesheet"/>
 	   <link href="css/collage/collage.css" type="text/css" rel="stylesheet"/>
+	   <link href="js/fancybox/jquery.fancybox.css?v=2.1.5" type="text/css" rel="stylesheet" media="screen"/>
 	   <script src="js/jquery-1.11.3.js" type="text/javascript"></script>
+	   <script src="bootstrap/js/bootstrap.js" type="text/javascript"></script>
 	   <script src="js/collage/jquery.collagePlus.js" type="text/javascript" />
 	   <script src="js/collage/extras/jquery.collageCaption.js" type="text/javascript" />
 	   <script src="js/collage/extras/jquery.removeWhitespace.js" type="text/javascript" />
-	   <link href="js/fancybox/jquery.fancybox.css?v=2.1.5" type="text/css" rel="stylesheet" media="screen"/>
 	   <script src="js/fancybox/jquery.fancybox.js?v=2.1.5" type="text/javascript" />
-        <script type="text/javascript">
+    </head>
+    <body style="padding-top: 10px;">
+	   <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+		  <div class="container">
+			 <div class="row" style="padding-top: 5px;">
+				<div class="col-md-2">
+				    <img class="img-responsive" src="images/logo_central.gif" alt="" style="max-height: 35px;"/>
+				</div>
+				<div class="col-md-2 col-md-offset-8">
+				    <img class="img-responsive" src="images/logo_utadeo.gif" alt="" style="max-height: 35px;"/>
+				</div>
+			 </div>
+		  </div>
+	   </nav>
+	   <nav class="navbar" role="navigation" style="padding-top: 50px;">
+		  <div class="container" style="text-align: center;">
+			 <h1 class="bs-docs-featurette-title">COLECCION ENTOMOLÓGICA VIRTUAL</h1>
+			 <hr/>
+			 <p>Colección Entomológica del Centro de Biosistemas de la Universidad Jorge Tadeo Lozano.</p>
+		  </div>
+	   </nav>
+	   <div class="container">
+		  <div class="row">
+			 <div class="col-md-12">
+				<img class="img-responsive" src="images/banner/abeja.jpg" alt="" style="float: left; width: 12.5%"/>
+				<img class="img-responsive" src="images/banner/avispa.jpg" alt="" style="float: left; width: 12.5%"/>
+				<img class="img-responsive" src="images/banner/hormiga.jpg" alt="" style="float: left; width: 12.5%"/>
+				<img class="img-responsive" src="images/banner/insect.jpg" alt="" style="float: left; width: 12.5%"/>
+				<img class="img-responsive" src="images/banner/mariposa.jpg" alt="" style="float: left; width: 12.5%"/>
+				<img class="img-responsive" src="images/banner/avispa.jpg" alt="" style="float: left; width: 12.5%"/>
+				<img class="img-responsive" src="images/banner/hormiga.jpg" alt="" style="float: left; width: 12.5%"/>
+				<img class="img-responsive" src="images/banner/mosca.jpg" alt="" style="float: left; width: 12.5%"/>
+			 </div>
+		  </div>
+		  <div class="row">
+			 <div class="col-md-12">
+				<nav class="navbar navbar-default">
+				    <div class="container-fluid">
+					   <div class="navbar-header">
+						  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+							 <span class="sr-only">Toggle navigation</span>
+							 <span class="icon-bar"></span>
+							 <span class="icon-bar"></span>
+							 <span class="icon-bar"></span>
+						  </button>
+						  <a class="navbar-brand" href="#">HPCLab</a>
+					   </div>
+					   <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+						  <ul class="nav navbar-nav navbar-right">
+							 <li><h:outputLink value="FamiliesCollection.xhtml">Colección Entomológica</h:outputLink></li>
+							 <li><a href="#">Contacto</a></li>
+							 <li><a href="#">Acerca</a></li>
+							 <li><a href="pages/login.xhtml">Ingreso</a></li>
+						  </ul>
+					   </div>
+				    </div>
+				</nav>
+			 </div>
+		  </div>
+		  <div class="row">
+			 <div id="box" class="box">
+				<div id="portfolio" class="container">
+				    <div class="Collage effect-parent">
+					   <ui:repeat value="#{specimenContentBean.allSpecimenContents}" var="scon">
+						  <div class="Image_Wrapper" data-caption="#{scon.shortDescription}">
+							 <h:outputLink value="specimenDetail.xhtml" styleClass="fancybox fancybox.iframe" title="#{scon.idSpecimen.commonName}">
+								<f:param name="idSpecimen" value="#{scon.idSpecimen.idSpecimen}" />
+								<p:graphicImage value="#{specimenContentBean.getSpecimenThumb()}">
+								    <f:param name="idSpecimen" value="#{scon.idSpecimen.idSpecimen}" />
+								</p:graphicImage>
+							 </h:outputLink>>
+						  </div>
+					   </ui:repeat>
+				    </div>
+				</div>
+			 </div>
+		  </div>
+	   </div>
+	   <div class="container">
+		  <hr/>
+		  <footer>
+			 <div class="row">
+				<div class="col-lg-12">
+				    <p style="text-align: center;">
+					   Proyecto Colección Entomológica. Todos los derechos reservados. | Fotos de <a href="http://www.google.com/images">GOOGLE</a> | Diseño por <a href="#" rel="nofollow">smotavitam</a>.<br/><span class="glyphicon glyphicon-copyright-mark" aria-hidden="true"></span>
+				    </p>
+				</div>
+			 </div>
+		  </footer>
+	   </div>
+	   <script type="text/javascript">
 		  $(window).load(function() {
 			 $(document).ready(function() {
 				collage();
 				$('.Collage').collageCaption();
 			 });
-
 			 $(".fancybox").fancybox();
 		  });
 
@@ -41,55 +131,6 @@
 				clearTimeout(resizeTimer);
 			 resizeTimer = setTimeout(collage, 200);
 		  });
-
         </script>
-    </head>
-
-    <body class="fondo">
-	   <div id="header-wrapper">
-		  <div id="header" class="container">
-			 <div id="logo">
-				<h1>
-				    <a href="/Bichos">Bichos</a>
-				</h1>
-				<h2>
-				    Colección Entomológica del<br/> Centro de Biosistemas de la Universidad Jorge Tadeo Lozano.
-				</h2>
-			 </div>
-			 <div id="menu">
-				<ul>
-				    <li class="current_page_item">
-					   <h:link outcome="Collection.xhtml" onclick="#{specimenBean.findAllSpecimens()}">Colección Entomológica</h:link>
-				    </li>
-				    <li><a href="#" accesskey="4" title="">Sobre Nosotros</a></li>
-				    <li><a href="#" accesskey="5" title="">Contáctanos</a></li>
-				    <li><a href="pages/login.xhtml" accesskey="6" title="">Ingreso</a></li>
-				</ul>
-			 </div>
-		  </div>
-	   </div>
-	   <div id="box" class="box">
-            <div id="portfolio" class="container">
-			 <div class="Collage effect-parent">
-				<ui:repeat value="#{specimenContentBean.allSpecimenContents}" var="scon">
-				    <div class="Image_Wrapper" data-caption="#{scon.shortDescription}">
-					   <h:outputLink value="specimenDetail.xhtml" styleClass="fancybox fancybox.iframe" title="#{scon.idSpecimen.commonName}">
-						  <f:param name="idSpecimen" value="#{scon.idSpecimen.idSpecimen}" />
-						  <p:graphicImage value="#{specimenContentBean.getSpecimenThumb()}">
-							 <f:param name="idSpecimen" value="#{scon.idSpecimen.idSpecimen}" />
-						  </p:graphicImage>
-					   </h:outputLink>>
-				    </div>
-				</ui:repeat>
-			 </div>
-		  </div>
-	   </div>
-	   <div id="copyright" class="container">
-		  <p>
-			 &copy; Proyecto Bichos. Todos los derechos reservados. | Fotos de <a
-				href="http://www.google.com/images">GOOGLE</a> | Diseño por <a
-				href="#" rel="nofollow">SMOTAVITAM</a>.
-		  </p>
-	   </div>
     </body>    
 </html>

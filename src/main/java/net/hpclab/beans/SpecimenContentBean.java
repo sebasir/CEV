@@ -2,6 +2,7 @@ package net.hpclab.beans;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -13,6 +14,7 @@ import net.hpclab.entities.SpecimenContent;
 import net.hpclab.sessions.SpecimenContentSession;
 import java.util.Calendar;
 import javax.faces.event.PhaseId;
+import net.hpclab.entities.Taxonomy;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
@@ -25,7 +27,6 @@ public class SpecimenContentBean extends Utilsbean implements Serializable {
     private SpecimenContentSession specimenContentSession;
     private static final long serialVersionUID = 1L;
     private boolean publish;
-    private List<SpecimenContent> allSpecimenContents;
     private Specimen specimen;
     private SpecimenContent specimenContent;
     private String selectedSpecimen;
@@ -38,6 +39,10 @@ public class SpecimenContentBean extends Utilsbean implements Serializable {
 
     @PostConstruct
     public void init() {
+	   System.out.println("Inicializando lista 'SpecimenContents'");
+	   if (allSpecimenContents == null) {
+		  allSpecimenContents = specimenContentSession.listAll();
+	   }
     }
 
     public void persist() {
@@ -116,6 +121,25 @@ public class SpecimenContentBean extends Utilsbean implements Serializable {
 	   return null;
     }
 
+    public List<Taxonomy> getFamilies() {
+	   ArrayList<Integer> families = new ArrayList<Integer>();
+	   ArrayList<Taxonomy> familiesWithContent = new ArrayList<Taxonomy>();
+	   allTaxonomys = (List<Taxonomy>) specimenContentSession.findListByQuery("Taxonomy.findAll", Taxonomy.class);
+	   for (Taxonomy t : allTaxonomys) {
+		  if (t.getIdTaxlevel().getTaxlevelRank() == 12) {
+			 families.add(t.getIdTaxonomy());
+		  }
+	   }
+	   for (SpecimenContent s : allSpecimenContents) {
+		  for (Integer t : families) {
+			 if (isFather(t, s.getIdSpecimen())) {
+				familiesWithContent.add(s.getIdSpecimen().getIdTaxonomy());
+			 }
+		  }
+	   }
+	   return familiesWithContent;
+    }
+
     public StreamedContent getSpecimenThumb() throws IOException {
 	   FacesContext context = FacesContext.getCurrentInstance();
 	   if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
@@ -132,8 +156,31 @@ public class SpecimenContentBean extends Utilsbean implements Serializable {
 	   }
     }
 
-    public void findAllSpecimenContent() {
-	   setAllSpecimenContents(specimenContentSession.listAll());
+    public StreamedContent getFamilyThumb() throws IOException {
+	   FacesContext context = FacesContext.getCurrentInstance();
+	   if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
+		  return new DefaultStreamedContent();
+	   } else {
+		  String id = context.getExternalContext().getRequestParameterMap().get("idTaxonomy");
+		  Integer idTaxonomy = Integer.parseInt(id);
+		  for (SpecimenContent s : allSpecimenContents) {
+			 if (isFather(idTaxonomy, s.getIdSpecimen())) {
+				return new DefaultStreamedContent(super.getInputStream(s.getFileContent()), "image/jpeg");
+			 }
+		  }
+		  return null;
+	   }
+    }
+
+    private boolean isFather(Integer f, Specimen s) {
+	   Taxonomy t = s.getIdTaxonomy();
+	   while (t != null) {
+		  if (f == t.getIdTaxonomy()) {
+			 return true;
+		  }
+		  t = t.getIdContainer();
+	   }
+	   return false;
     }
 
     public SpecimenContent getSpecimenContent() {
@@ -145,20 +192,11 @@ public class SpecimenContentBean extends Utilsbean implements Serializable {
     }
 
     public List<SpecimenContent> getAllSpecimenContents() {
-	   findAllSpecimenContent();
 	   return allSpecimenContents;
-    }
-
-    public void setAllSpecimenContents(List<SpecimenContent> allSpecimenContents) {
-	   this.allSpecimenContents = allSpecimenContents;
     }
 
     public List<Specimen> getAllSpecimens() {
 	   return allSpecimens;
-    }
-
-    public void setAllSpecimens(List<Specimen> allSpecimens) {
-	   this.allSpecimens = allSpecimens;
     }
 
     public String getSelectedSpecimen() {

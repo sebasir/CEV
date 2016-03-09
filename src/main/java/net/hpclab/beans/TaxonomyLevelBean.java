@@ -19,7 +19,6 @@ public class TaxonomyLevelBean extends Utilsbean implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private TaxonomyLevel taxonomyLevel;
-    private List<TaxonomyLevel> allTaxonomyLevels;
     private String selectedCont;
 
     public TaxonomyLevelBean() {
@@ -28,9 +27,12 @@ public class TaxonomyLevelBean extends Utilsbean implements Serializable {
 
     @PostConstruct
     public void init() {
+	   System.out.println("Inicializando lista 'TaxonomyLevels'");
+	   if(allTaxonomyLevels == null)
+		  allTaxonomyLevels = taxonomyLevelSession.listAll();
     }
 
-    public String persist() {
+    public void persist() {
 	   try {
 		  setTaxonomyLevel(taxonomyLevelSession.persist(getTaxonomyLevel()));
 		  if (getTaxonomyLevel() != null && getTaxonomyLevel().getIdTaxlevel()!= null)
@@ -40,8 +42,6 @@ public class TaxonomyLevelBean extends Utilsbean implements Serializable {
 	   } catch (Exception e) {
 		  FacesContext.getCurrentInstance().addMessage(null, showMessage(taxonomyLevel, Actions.createError));
 	   }
-
-	   return findAllTaxonomyLevels();
     }
 
     public void delete() {
@@ -66,16 +66,6 @@ public class TaxonomyLevelBean extends Utilsbean implements Serializable {
 	   }
     }
 
-    public String displayList() {
-	   findAllTaxonomyLevels();
-	   return "specimen";
-    }
-
-    public String findAllTaxonomyLevels() {
-	   setAllTaxonomyLevels(taxonomyLevelSession.listAll());
-	   return null;
-    }
-
     public TaxonomyLevel getTaxonomyLevel() {
 	   return taxonomyLevel;
     }
@@ -86,10 +76,6 @@ public class TaxonomyLevelBean extends Utilsbean implements Serializable {
 
     public List<TaxonomyLevel> getAllTaxonomyLevels() {
 	   return allTaxonomyLevels;
-    }
-
-    public void setAllTaxonomyLevels(List<TaxonomyLevel> allTaxonomyLevels) {
-	   this.allTaxonomyLevels = allTaxonomyLevels;
     }
 
     public String getSelectedCont() {

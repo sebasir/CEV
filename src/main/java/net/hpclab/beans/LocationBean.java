@@ -30,7 +30,6 @@ public class LocationBean extends Utilsbean implements Serializable {
     private TreeNode root;
     private TreeNode selectedNode;
     private List<Specimen> locationSpecimens;
-    private List<Location> allLocations;
     private List<LocationLevel> allLevels;
     private String selectedCont;
     private String selectedLevel;
@@ -44,7 +43,7 @@ public class LocationBean extends Utilsbean implements Serializable {
 	   createLocTree();
     }
     
-    public String persist() {
+    public void persist() {
 	   try {
 		  location.setIdContainer(new Location(parentLocation.getIdLocation()));
 		  location.setIdLoclevel(new LocationLevel(new Integer(selectedLevel)));
@@ -59,8 +58,6 @@ public class LocationBean extends Utilsbean implements Serializable {
 		  e.printStackTrace();
 		  FacesContext.getCurrentInstance().addMessage(null, showMessage(location, Actions.createError));
 	   }
-	   
-	   return findAllLocations();
     }
     
     public void delete() {
@@ -105,16 +102,6 @@ public class LocationBean extends Utilsbean implements Serializable {
 	   }
     }
     
-    public String displayList() {
-	   findAllLocations();
-	   return "specimen";
-    }
-    
-    public String findAllLocations() {
-	   setAllLocations(locationSession.listAll());
-	   return null;
-    }
-    
     public Location getLocation() {
 	   return location;
     }
@@ -124,12 +111,7 @@ public class LocationBean extends Utilsbean implements Serializable {
     }
     
     public List<Location> getAllLocations() {
-	   findAllLocations();
 	   return allLocations;
-    }
-    
-    public void setAllLocations(List<Location> allLocations) {
-	   this.allLocations = allLocations;
     }
     
     public String getSelectedCont() {

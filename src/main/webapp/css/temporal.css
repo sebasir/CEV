@@ -1,10 +1,17 @@
 body {
     margin: 0px;
     padding: 0px;
-    font-family: 'Source Sans Pro', sans-serif;
+    font-family: 'Raleway', sans-serif;
     font-size: 12pt;
     color: rgba(24, 51, 22, 0.99);
     background-color: rgb(249, 249, 249);
+}
+
+@font-face {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Raleway'), url(font/0dTEPzkLWceF7z0koJaX1A.woff2) format('woff2');
 }
 
 label {

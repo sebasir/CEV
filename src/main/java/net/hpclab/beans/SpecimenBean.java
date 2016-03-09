@@ -1,6 +1,5 @@
 package net.hpclab.beans;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,6 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UISelectItem;
 import javax.faces.component.UISelectItems;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import net.hpclab.entities.AuthorRole;
@@ -61,8 +59,6 @@ public class SpecimenBean extends Utilsbean implements Serializable {
     private Catalog catalog;
     private Collection collection;
     private AuthorRole collector, determiner;
-    private List<Taxonomy> allTaxonomys;
-    private List<Location> allLocations;
     private List<AuthorRole> allDeterminer;
     private List<AuthorRole> allCollector;
     private List<Collection> allCollection;
@@ -86,6 +82,10 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 
     @PostConstruct
     public void init() {
+	   System.out.println("Inicializando lista 'Specimens'");
+	   if (allSpecimens == null) {
+		  allSpecimens = specimenSession.listAll();
+	   }
     }
 
     public void persist() {
@@ -106,7 +106,6 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 		  launchMessage(specimen, Actions.createError);
 	   }
 	   resetForm();
-	   findAllSpecimens();
     }
 
     public void edit() {
@@ -480,30 +479,15 @@ public class SpecimenBean extends Utilsbean implements Serializable {
     }
 
     public List<Specimen> getAllSpecimens() {
-	   findAllSpecimens();
 	   return allSpecimens;
-    }
-
-    public void findAllSpecimens() {
-	   if (allSpecimens == null) {
-		  allSpecimens = specimenSession.listAll();
-	   }
     }
 
     public List<Taxonomy> getAllTaxonomys() {
 	   return allTaxonomys;
     }
 
-    public void setAllTaxonomys(List<Taxonomy> allTaxonomys) {
-	   this.allTaxonomys = allTaxonomys;
-    }
-
     public List<Location> getAllLocations() {
 	   return allLocations;
-    }
-
-    public void setAllLocations(List<Location> allLocations) {
-	   this.allLocations = allLocations;
     }
 
     public List<AuthorRole> getAllDeterminer() {
