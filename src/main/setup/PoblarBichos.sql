@@ -1290,10 +1290,20 @@ insert into specimen values(default, null, 'Mosco', 26, 5, null , to_date('01/01
 
 -----> module
 
-insert into module values (default, 'Gestión de Clasificación', 'Este módulo permite a los Administradores realizar cambios en la lista de dominio de la clasificación taxonómica de manera jerárquica.');
-insert into module values (default, 'Gestión de Ubicaciones', 'Los administradores pueden realizar cambios en esta lista de dominio. No obstante, para fines de parametrización, las localidades se añaden a nivel municipal de los departamentos de colombia, con fuente original del DANE.');
-insert into module values (default, 'Gestión de Especímenes', 'Permite incluir en la colección virtual los especímenes que existan en la colección física, teniendo en cuenta la ficha técnica que dispone la coordinación de la colección entomológica, utilizando las listas de dominio definidas en los otros módulos.');
-insert into module values (default, 'Gestión de Autores', 'Permite a los administradores definir los autores que recolectan y clasifican a los especímenes en la base de datos.');
-insert into module values (default, 'Gestión de Catálogos y Colecciones', 'Permite a los administradores estructurar los catálogos y las colecciones donde yacen los especímenes.');
-insert into module values (default, 'Gestión de Usuarios', 'Permite controlar y realizar seguimiento a los usuarios de la colección entomológica, además de cambiar y asignar roles de usuario (compuestos por accesos a la aplicación), nivel de acceso, cambio de credenciales e información del perfil.');
-insert into module values (default, 'Reporteador', 'Es un módulo que permite extraer estadísticos en listados de la información contenida en la colección así como el uso que se le da a esta, permitiendo su exportación.');
+insert into modules values (default, 'Gestión de Colecciones', 'Permite a los administradores estructurar los catálogos y las colecciones donde yacen los especímenes.', null);
+insert into modules values (default, 'Gestión de Usuarios', 'Permite controlar y realizar seguimiento a los usuarios de la colección entomológica, además de cambiar y asignar roles de usuario (compuestos por accesos a la aplicación), nivel de acceso, cambio de credenciales e información del perfil.', null);
+insert into modules values (default, 'Asistente de Creación de Especímenes', 'Este módulo permite a los Administradores y operadores crear ejemplares en la colección, de manera secuencial.', 1);
+insert into modules values (default, 'Perfil de Usuario', 'Este módulo permite a los todos los usuarios administrar el perfil', 2);
+insert into modules values (default, 'Gestionar Usuario', 'Este módulo permite a los todos los usuarios administrar el perfil', 2);
+insert into modules values (default, 'Gestión de Clasificación', 'Este módulo permite a los Administradores realizar cambios en la lista de dominio de la clasificación taxonómica de manera jerárquica.', null);
+insert into modules values (default, 'Gestión de Ubicaciones', 'Los administradores pueden realizar cambios en esta lista de dominio. No obstante, para fines de parametrización, las localidades se añaden a nivel municipal de los departamentos de colombia, con fuente original del DANE.', null);
+insert into modules values (default, 'Gestión de Especímenes', 'Permite incluir en la colección virtual los especímenes que existan en la colección física, teniendo en cuenta la ficha técnica que dispone la coordinación de la colección entomológica, utilizando las listas de dominio definidas en los otros módulos.', null);
+insert into modules values (default, 'Gestión de Autores', 'Permite a los administradores definir los autores que recolectan y clasifican a los especímenes en la base de datos.', null);
+insert into modules values (default, 'Reporteador', 'Es un módulo que permite extraer estadísticos en listados de la información contenida en la colección así como el uso que se le da a esta, permitiendo su exportación.', null);
+
+-----> roles
+
+insert into roles values (default, 'Administrador del Sistema', 'Es un usuario con acceso a todos los módulos que componen el Sistema de gestión y navegación, además de modificar parámetros del sistema, administración de usuarios y perfiles.', now());
+insert into roles values (default, 'Administrador de Colección', 'Este usuario tiene el privilegio de construir y definir los datos de dominio que se usarán posteriormente para ingresar los especímenes individuales, y podrá definir la publicación de estos.', now());
+insert into roles values (default, 'Operario', 'Este usuario puede ingresar los especímenes a la colección utilizando los datos de dominio por parte del administrador de colección.', now());
+insert into roles values (default, 'Usuario Público', 'Es un usuario genérico que representa a un persona que no tiene acceso a la gestión de la colección, pero puede hacer consultas y navegar entre los diferentes especímenes, con un nivel de acción restringido y controlado.', now());
