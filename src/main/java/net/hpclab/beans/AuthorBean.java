@@ -13,23 +13,11 @@ import javax.inject.Inject;
 import net.hpclab.entities.Author;
 import net.hpclab.entities.AuthorRole;
 import net.hpclab.entities.AuthorType;
-import net.hpclab.sessions.AuthorRoleSession;
 import net.hpclab.utilities.AuthorPivot;
-import net.hpclab.sessions.AuthorSession;
-import net.hpclab.sessions.AuthorTypeSession;
 
 @ManagedBean
 @SessionScoped
 public class AuthorBean extends Utilsbean implements Serializable {
-
-    @Inject
-    private AuthorSession authorSession;
-
-    @Inject
-    private AuthorTypeSession authorTypeSession;
-
-    @Inject
-    private AuthorRoleSession authorRoleSession;
 
     private static final long serialVersionUID = 1L;
     private AuthorPivot authorPivot;
@@ -43,10 +31,7 @@ public class AuthorBean extends Utilsbean implements Serializable {
     private HashMap<Integer, String> columns;
 
     public AuthorBean() {
-	   authorSession = new AuthorSession();
-	   authorTypeSession = new AuthorTypeSession();
-	   authorRoleSession = new AuthorRoleSession();
-	   allAuths = new ArrayList<Author>();
+        allAuths = new ArrayList<Author>();
     }
 
     @PostConstruct
@@ -54,235 +39,235 @@ public class AuthorBean extends Utilsbean implements Serializable {
     }
 
     public String persistAuthor() {
-	   try {
-		  author = authorSession.persist(author);
-		  if (getAuthor() != null && getAuthor().getIdAuthor() != null) {
-			 FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Actions.createSuccess));
-		  } else {
-			 FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Actions.createError));
-		  }
-	   } catch (Exception e) {
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Actions.createError));
-	   }
+        try {
+            //author = authorSession.persist(author);
+            if (getAuthor() != null && getAuthor().getIdAuthor() != null) {
+                FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Actions.createSuccess));
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Actions.createError));
+            }
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Actions.createError));
+        }
 
-	   return findAllAuthors();
+        return findAllAuthors();
     }
 
     private void persistAuro(Integer idAuthor, Integer idType) {
-	   AuthorRole authorRole = new AuthorRole();
-	   try {
-		  authorRole.setIdAuthor(new Author(idAuthor));
-		  authorRole.setIdAuty(new AuthorType(idType));
-		  authorRole = authorRoleSession.persist(authorRole);
-		  if (authorRole != null && authorRole.getIdAuro() != null) {
-			 FacesContext.getCurrentInstance().addMessage(null, showMessage(authorRole, Actions.createSuccess));
-		  } else {
-			 FacesContext.getCurrentInstance().addMessage(null, showMessage(authorRole, Actions.createError));
-		  }
-	   } catch (Exception e) {
-		  e.printStackTrace();
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(authorRole, Actions.createError));
-	   }
+        AuthorRole authorRole = new AuthorRole();
+        try {
+            authorRole.setIdAuthor(new Author(idAuthor));
+            authorRole.setIdAuty(new AuthorType(idType));
+            //authorRole = authorRoleSession.persist(authorRole);
+            if (authorRole != null && authorRole.getIdAuro() != null) {
+                FacesContext.getCurrentInstance().addMessage(null, showMessage(authorRole, Actions.createSuccess));
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null, showMessage(authorRole, Actions.createError));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(authorRole, Actions.createError));
+        }
     }
 
     public String persistType() {
-	   try {
-		  setAuthorType(authorTypeSession.persist(authorType));
-		  if (authorType != null && authorType.getIdAuty() != null) {
-			 FacesContext.getCurrentInstance().addMessage(null, showMessage(authorType, Actions.createSuccess));
-		  } else {
-			 FacesContext.getCurrentInstance().addMessage(null, showMessage(authorType, Actions.createError));
-		  }
-	   } catch (Exception e) {
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(authorType, Actions.createError));
-	   }
+        try {
+            //setAuthorType(authorTypeSession.persist(authorType));
+            if (authorType != null && authorType.getIdAuty() != null) {
+                FacesContext.getCurrentInstance().addMessage(null, showMessage(authorType, Actions.createSuccess));
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null, showMessage(authorType, Actions.createError));
+            }
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(authorType, Actions.createError));
+        }
 
-	   return findAllAuthors();
+        return findAllAuthors();
     }
 
     public void delete() {
-	   try {
-		  authorSession.delete(getAuthor());
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Actions.deleteSuccess));
-	   } catch (Exception e) {
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Actions.deleteError));
-	   }
+        try {
+            //authorSession.delete(getAuthor());
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Actions.deleteSuccess));
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Actions.deleteError));
+        }
     }
 
     public void deleteType() {
-	   try {
-		  authorTypeSession.delete(authorType);
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(authorType, Actions.deleteSuccess));
-	   } catch (Exception e) {
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(authorType, Actions.deleteError));
-	   }
+        try {
+            //authorTypeSession.delete(authorType);
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(authorType, Actions.deleteSuccess));
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(authorType, Actions.deleteError));
+        }
     }
 
     private void deleteAuro(Integer idAuthor, Integer idType) {
-	   AuthorRole authorRole = new AuthorRole();
-	   try {
-		  for (AuthorRole a : allAuthorRoles) {
-			 if (a.getIdAuthor().getIdAuthor().equals(idAuthor) && a.getIdAuty().getIdAuty().equals(idType)) {
-				authorRole = a;
-				break;
-			 }
-		  }
-		  authorRoleSession.delete(authorRole);
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(authorRole, Actions.deleteSuccess));
-	   } catch (Exception e) {
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(authorRole, Actions.deleteError));
-	   }
+        AuthorRole authorRole = new AuthorRole();
+        try {
+            for (AuthorRole a : allAuthorRoles) {
+                if (a.getIdAuthor().getIdAuthor().equals(idAuthor) && a.getIdAuty().getIdAuty().equals(idType)) {
+                    authorRole = a;
+                    break;
+                }
+            }
+            //authorRoleSession.delete(authorRole);
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(authorRole, Actions.deleteSuccess));
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(authorRole, Actions.deleteError));
+        }
     }
 
     public void prepareCreateAuthor() {
-	   author = new Author();
-	   authorType = null;
+        author = new Author();
+        authorType = null;
     }
 
     public void prepareCreateType() {
-	   authorType = new AuthorType();
-	   author = null;
+        authorType = new AuthorType();
+        author = null;
     }
 
     public void edit() {
-	   try {
-		  author = authorSession.merge(author);
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Actions.updateSuccess));
-	   } catch (Exception e) {
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Actions.updateError));
-	   }
+        try {
+            //author = authorSession.merge(author);
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Actions.updateSuccess));
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Actions.updateError));
+        }
     }
 
     public void editType() {
-	   try {
-		  authorType = authorTypeSession.merge(authorType);
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(authorType, Actions.updateSuccess));
-	   } catch (Exception e) {
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(authorType, Actions.updateError));
-	   }
+        try {
+            //authorType = authorTypeSession.merge(authorType);
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(authorType, Actions.updateSuccess));
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(authorType, Actions.updateError));
+        }
     }
 
     public String displayList() {
-	   findAllAuthors();
-	   return "specimen";
+        findAllAuthors();
+        return "specimen";
     }
 
     public String findAllAuthors() {
-	   allAuthorRoles = (List<AuthorRole>) authorSession.findListByQuery("AuthorRole.findAll", AuthorRole.class);
-	   allAuthorTypes = (List<AuthorType>) authorSession.findListByQuery("AuthorType.findAll", AuthorType.class);
-	   allAuths = (List<Author>) authorSession.listAll();
-	   List<Author> authors = new ArrayList<Author>(allAuths);
-	   if (allAuthorTypes != null && !allAuthorTypes.isEmpty()) {
-		  columns = new HashMap<Integer, String>();
-		  for (AuthorType a : allAuthorTypes) {
-			 columns.put(a.getIdAuty(), a.getAutyName());
-		  }
-	   }
-	   if (allAuthorRoles != null && !allAuthorRoles.isEmpty()) {
-		  HashMap<Integer, Boolean> idTypes;
-		  allAuthors = new ArrayList<AuthorPivot>();
-		  AuthorPivot pivot;
-		  int index;
-		  for (AuthorRole a : allAuthorRoles) {
-			 idTypes = new HashMap<Integer, Boolean>();
-			 idTypes.put(a.getIdAuty().getIdAuty(), true);
-			 pivot = new AuthorPivot(a.getIdAuthor().getIdAuthor());
-			 if (authors.contains(a.getIdAuthor())) {
-				authors.remove(a.getIdAuthor());
-			 }
-			 index = allAuthors.indexOf(pivot);
-			 if (index < 0) {
-				pivot.setAuthorName(a.getIdAuthor().getAuthorName());
-				allAuthors.add(pivot);
-				index = allAuthors.size() - 1;
-			 }
-			 allAuthors.get(index).getIdTypes().putAll(idTypes);
-		  }
-		  for (Author a : authors) {
-			 allAuthors.add(new AuthorPivot(a.getIdAuthor(), a.getAuthorName()));
-		  }
-	   }
-	   return null;
+        //allAuthorRoles = (List<AuthorRole>) authorSession.findListByQuery("AuthorRole.findAll", AuthorRole.class);
+        //allAuthorTypes = (List<AuthorType>) authorSession.findListByQuery("AuthorType.findAll", AuthorType.class);
+        //allAuths = (List<Author>) authorSession.listAll();
+        List<Author> authors = new ArrayList<Author>(allAuths);
+        if (allAuthorTypes != null && !allAuthorTypes.isEmpty()) {
+            columns = new HashMap<Integer, String>();
+            for (AuthorType a : allAuthorTypes) {
+                columns.put(a.getIdAuty(), a.getAutyName());
+            }
+        }
+        if (allAuthorRoles != null && !allAuthorRoles.isEmpty()) {
+            HashMap<Integer, Boolean> idTypes;
+            allAuthors = new ArrayList<AuthorPivot>();
+            AuthorPivot pivot;
+            int index;
+            for (AuthorRole a : allAuthorRoles) {
+                idTypes = new HashMap<Integer, Boolean>();
+                idTypes.put(a.getIdAuty().getIdAuty(), true);
+                pivot = new AuthorPivot(a.getIdAuthor().getIdAuthor());
+                if (authors.contains(a.getIdAuthor())) {
+                    authors.remove(a.getIdAuthor());
+                }
+                index = allAuthors.indexOf(pivot);
+                if (index < 0) {
+                    pivot.setAuthorName(a.getIdAuthor().getAuthorName());
+                    allAuthors.add(pivot);
+                    index = allAuthors.size() - 1;
+                }
+                allAuthors.get(index).getIdTypes().putAll(idTypes);
+            }
+            for (Author a : authors) {
+                allAuthors.add(new AuthorPivot(a.getIdAuthor(), a.getAuthorName()));
+            }
+        }
+        return null;
     }
 
     public Author getAuthor() {
-	   return author;
+        return author;
     }
 
     public void setAuthor(Author author) {
-	   this.author = author;
+        this.author = author;
     }
-    
+
     public void prepareTransaction(Integer idAuthor) {
-	   for (Author a : allAuths) {
-		  if (a.getIdAuthor().equals(idAuthor)) {
-			 author = a;
-			 break;
-		  }
-	   }
+        for (Author a : allAuths) {
+            if (a.getIdAuthor().equals(idAuthor)) {
+                author = a;
+                break;
+            }
+        }
     }
 
     public List<AuthorPivot> getAllAuthors() {
-	   findAllAuthors();
-	   return allAuthors;
+        findAllAuthors();
+        return allAuthors;
     }
 
     public void setAllAuthors(List<AuthorPivot> allAuthors) {
-	   this.allAuthors = allAuthors;
+        this.allAuthors = allAuthors;
     }
 
     public Set<Integer> getColumns() {
-	   return columns.keySet();
+        return columns.keySet();
     }
 
     public String getColumn(Integer index) {
-	   return columns.get(index);
+        return columns.get(index);
     }
 
     public void setColumns(HashMap<Integer, String> columns) {
-	   this.columns = columns;
+        this.columns = columns;
     }
 
     public String editarCheck(Integer idType, Integer idAuthor) {
-	   for (AuthorPivot a : allAuthors) {
-		  if (a.getIdAuthor().equals(idAuthor)) {
-			 if (a.getIdTypes().get(idType) != null) {
-				deleteAuro(idAuthor, idType);
-			 } else {
-				persistAuro(idAuthor, idType);
-			 }
-			 break;
-		  }
-	   }
-	   return null;
+        for (AuthorPivot a : allAuthors) {
+            if (a.getIdAuthor().equals(idAuthor)) {
+                if (a.getIdTypes().get(idType) != null) {
+                    deleteAuro(idAuthor, idType);
+                } else {
+                    persistAuro(idAuthor, idType);
+                }
+                break;
+            }
+        }
+        return null;
     }
 
     public AuthorPivot getAuthorPivot() {
-	   return authorPivot;
+        return authorPivot;
     }
 
     public void setAuthorPivot(AuthorPivot authorPivot) {
-	   this.authorPivot = authorPivot;
+        this.authorPivot = authorPivot;
     }
 
     public AuthorType getAuthorType() {
-	   return authorType;
+        return authorType;
     }
 
     public void setAuthorType(AuthorType authorType) {
-	   this.authorType = authorType;
+        this.authorType = authorType;
     }
 
     public void setIdType(Integer idType) {
-	   for (AuthorType a : allAuthorTypes) {
-		  if (a.getIdAuty() == idType) {
-			 authorType = a;
-			 break;
-		  }
-	   }
+        for (AuthorType a : allAuthorTypes) {
+            if (a.getIdAuty() == idType) {
+                authorType = a;
+                break;
+            }
+        }
     }
 
     public Integer getIdType() {
-	   return idType;
+        return idType;
     }
 }

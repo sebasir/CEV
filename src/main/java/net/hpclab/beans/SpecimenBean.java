@@ -23,8 +23,6 @@ import net.hpclab.entities.SampleType;
 import net.hpclab.entities.Specimen;
 import net.hpclab.entities.Taxonomy;
 import net.hpclab.entities.entNaming;
-import net.hpclab.sessions.CollectionSession;
-import net.hpclab.sessions.SpecimenSession;
 import org.primefaces.component.calendar.Calendar;
 import org.primefaces.component.column.Column;
 import org.primefaces.component.inputtext.InputText;
@@ -41,13 +39,6 @@ import org.primefaces.json.JSONObject;
 @ManagedBean
 @SessionScoped
 public class SpecimenBean extends Utilsbean implements Serializable {
-
-    @Inject
-    private SpecimenSession specimenSession;
-
-    @Inject
-    private CollectionSession collectionSession;
-
     private static final long serialVersionUID = 1L;
     private Specimen specimen;
     private Location location;
@@ -76,15 +67,14 @@ public class SpecimenBean extends Utilsbean implements Serializable {
     private String selectedSampleType;
 
     public SpecimenBean() {
-	   specimenSession = new SpecimenSession();
-	   collectionSession = new CollectionSession();
+        
     }
 
     @PostConstruct
     public void init() {
 	   System.out.println("Inicializando lista 'Specimens'");
 	   if (allSpecimens == null) {
-		  allSpecimens = specimenSession.listAll();
+		  allSpecimens = new ArrayList<Specimen>();
 	   }
     }
 
@@ -98,7 +88,7 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 	   specimen.setIdCatalog(catalog);
 	   specimen.setIdRety(regType);
 	   specimen.setIdSaty(sampleType);
-	   specimen = specimenSession.persist(specimen);
+	   //specimen = specimenSession.persist(specimen);
 	   if (specimen != null && specimen.getIdSpecimen() != null) {
 		  launchMessage(specimen, Actions.createSuccess);
 		  allSpecimens.add(specimen);
@@ -119,7 +109,7 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 		  specimen.setIdCatalog(catalog);
 		  specimen.setIdRety(regType);
 		  specimen.setIdSaty(sampleType);
-		  specimen = specimenSession.merge(specimen);
+		  //specimen = specimenSession.merge(specimen);
 		  allSpecimens.remove(specimen);
 		  allSpecimens.add(specimen);
 		  launchMessage(specimen, Actions.updateSuccess);
@@ -130,12 +120,12 @@ public class SpecimenBean extends Utilsbean implements Serializable {
     }
 
     public void delete() {
-	   if (specimenSession.delete(specimen)) {
+	   /*if (specimenSession.delete(specimen)) {
 		  launchMessage(specimen, Actions.deleteSuccess);
 		  allSpecimens.remove(specimen);
 	   } else {
 		  launchMessage(specimen, Actions.deleteError);
-	   }
+	   }*/
     }
 
     private void resetForm() {
@@ -151,11 +141,11 @@ public class SpecimenBean extends Utilsbean implements Serializable {
     }
 
     private void updateLists() {
-	   setAllCollector((List<AuthorRole>) specimenSession.findListByQuery("AuthorRole.findCollectors", AuthorRole.class));
+	   /*setAllCollector((List<AuthorRole>) specimenSession.findListByQuery("AuthorRole.findCollectors", AuthorRole.class));
 	   setAllDeterminer((List<AuthorRole>) specimenSession.findListByQuery("AuthorRole.findDeterminers", AuthorRole.class));
 	   setAllCollection((List<Collection>) specimenSession.findListByQuery("Collection.findAll", Collection.class));
 	   setAllSampleTypes((List<SampleType>) specimenSession.findListByQuery("SampleType.findAll", SampleType.class));
-	   setAllRegTypes((List<RegType>) specimenSession.findListByQuery("RegType.findAll", RegType.class));
+	   setAllRegTypes((List<RegType>) specimenSession.findListByQuery("RegType.findAll", RegType.class));*/
     }
 
     private void prepareBeans() {
@@ -322,8 +312,8 @@ public class SpecimenBean extends Utilsbean implements Serializable {
 
     public void filterCatalog() {
 	   if (selectedCollection != null && !selectedCollection.equals("")) {
-		  Collection col = collectionSession.findById(new Integer(selectedCollection));
-		  setAllCatalog(col.getCatalogList());
+		  //Collection col = collectionSession.findById(new Integer(selectedCollection));
+		  //setAllCatalog(col.getCatalogList());
 	   } else {
 		  setAllCatalog(null);
 	   }

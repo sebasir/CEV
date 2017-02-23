@@ -13,7 +13,6 @@ import net.hpclab.entities.Specimen;
 import net.hpclab.entities.Taxonomy;
 import net.hpclab.entities.TaxonomyLevel;
 import net.hpclab.entities.entNaming;
-import net.hpclab.sessions.TaxonomySession;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -21,9 +20,6 @@ import org.primefaces.model.TreeNode;
 @ManagedBean
 @SessionScoped
 public class TaxonomyBean extends Utilsbean implements Serializable {
-
-    @Inject
-    private TaxonomySession taxonomySession;
 
     private static final long serialVersionUID = 1L;
     private Taxonomy taxonomy;
@@ -37,223 +33,223 @@ public class TaxonomyBean extends Utilsbean implements Serializable {
     private TaxonomyLevelBean taxonomyLevelBean;
 
     public TaxonomyBean() {
-	   taxonomySession = new TaxonomySession();
     }
 
     @PostConstruct
     public void init() {
-	   System.out.println("Inicializando lista 'Taxonomys'");
-	   if(allTaxonomys == null)
-		  allTaxonomys = taxonomySession.listAll();
-	   prepareBeans();
-	   createTaxTree();
+        System.out.println("Inicializando lista 'Taxonomys'");
+        if (allTaxonomys == null) {
+            allTaxonomys = new ArrayList<Taxonomy>();
+        }
+        prepareBeans();
+        createTaxTree();
     }
 
     public void persist() {
-	   try {
-		  taxonomy.setIdContainer(new Taxonomy(parentTaxonomy.getIdTaxonomy()));
-		  taxonomy.setIdTaxlevel(new TaxonomyLevel(new Integer(selectedLevel)));
-		  setTaxonomy(taxonomySession.persist(getTaxonomy()));
-		  if (getTaxonomy() != null && getTaxonomy().getIdTaxonomy() != null) {
-			 allTaxonomys.add(taxonomy);
-			 launchMessage(taxonomy, Actions.createSuccess);
-			 createTaxTree();
-		  } else {
-			 launchMessage(taxonomy, Actions.createError);
-		  }
-	   } catch (Exception e) {
-		  e.printStackTrace();
-		  launchMessage(taxonomy, Actions.createError);
-	   }
-	   selectedLevel = null;
+        try {
+            taxonomy.setIdContainer(new Taxonomy(parentTaxonomy.getIdTaxonomy()));
+            taxonomy.setIdTaxlevel(new TaxonomyLevel(new Integer(selectedLevel)));
+            //setTaxonomy(taxonomySession.persist(getTaxonomy()));
+            if (getTaxonomy() != null && getTaxonomy().getIdTaxonomy() != null) {
+                allTaxonomys.add(taxonomy);
+                launchMessage(taxonomy, Actions.createSuccess);
+                createTaxTree();
+            } else {
+                launchMessage(taxonomy, Actions.createError);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            launchMessage(taxonomy, Actions.createError);
+        }
+        selectedLevel = null;
     }
 
     public void edit() {
-	   try {
-		  setTaxonomy(taxonomySession.merge(getTaxonomy()));
-		  launchMessage(taxonomy, Actions.updateSuccess);
-		  createTaxTree();
-	   } catch (Exception e) {
-		  launchMessage(taxonomy, Actions.updateError);
-	   }
+        try {
+            //setTaxonomy(taxonomySession.merge(getTaxonomy()));
+            launchMessage(taxonomy, Actions.updateSuccess);
+            createTaxTree();
+        } catch (Exception e) {
+            launchMessage(taxonomy, Actions.updateError);
+        }
     }
 
     public void delete() {
-	   if (taxonomySession.delete(taxonomy)) {
-		  createTaxTree();
-		  launchMessage(getTaxonomy(), Actions.deleteSuccess);
-	   } else {
-		  launchMessage(getTaxonomy(), Actions.deleteError);
-	   }
+        /*if (taxonomySession.delete(taxonomy)) {
+            createTaxTree();
+            launchMessage(getTaxonomy(), Actions.deleteSuccess);
+        } else {
+            launchMessage(getTaxonomy(), Actions.deleteError);
+        }*/
     }
-    
+
     private void prepareBeans() {
-	   FacesContext fCon = FacesContext.getCurrentInstance();
-	   taxonomyLevelBean = (TaxonomyLevelBean) fCon.getApplication().getELResolver().getValue(fCon.getELContext(), null, "taxonomyLevelBean");
+        FacesContext fCon = FacesContext.getCurrentInstance();
+        taxonomyLevelBean = (TaxonomyLevelBean) fCon.getApplication().getELResolver().getValue(fCon.getELContext(), null, "taxonomyLevelBean");
     }
 
     public void prepareCreate() {
-	   parentTaxonomy = taxonomy;
-	   taxonomy = new Taxonomy();
-	   selectedLevel = null;
-	   avalLevels = new ArrayList<TaxonomyLevel>();
-	   
-	   for (TaxonomyLevel t : allTaxonomyLevels) {
-		  if (t.getTaxlevelRank() > parentTaxonomy.getIdTaxlevel().getTaxlevelRank()) {
-			 avalLevels.add(t);
-		  }
-	   }
+        parentTaxonomy = taxonomy;
+        taxonomy = new Taxonomy();
+        selectedLevel = null;
+        avalLevels = new ArrayList<TaxonomyLevel>();
+
+        for (TaxonomyLevel t : allTaxonomyLevels) {
+            if (t.getTaxlevelRank() > parentTaxonomy.getIdTaxlevel().getTaxlevelRank()) {
+                avalLevels.add(t);
+            }
+        }
     }
 
     public void prepareUpdate() {
-	   selectedLevel = taxonomy.getIdTaxlevel().getIdTaxlevel().toString();
-	   avalLevels = new ArrayList<TaxonomyLevel>();
-	   for (TaxonomyLevel t : allTaxonomyLevels) {
-		  if (t.getTaxlevelRank() > parentTaxonomy.getIdTaxlevel().getTaxlevelRank()) {
-			 avalLevels.add(t);
-		  }
-	   }
+        selectedLevel = taxonomy.getIdTaxlevel().getIdTaxlevel().toString();
+        avalLevels = new ArrayList<TaxonomyLevel>();
+        for (TaxonomyLevel t : allTaxonomyLevels) {
+            if (t.getTaxlevelRank() > parentTaxonomy.getIdTaxlevel().getTaxlevelRank()) {
+                avalLevels.add(t);
+            }
+        }
     }
 
     public Taxonomy getTaxonomy() {
-	   return taxonomy;
+        return taxonomy;
     }
 
     public void setTaxonomy(Taxonomy taxonomy) {
-	   this.taxonomy = taxonomy;
+        this.taxonomy = taxonomy;
     }
 
     public List<Taxonomy> getAllTaxonomys() {
-	   return allTaxonomys;
+        return allTaxonomys;
     }
 
     public String getSelectedLevel() {
-	   return selectedLevel;
+        return selectedLevel;
     }
 
     public void setSelectedLevel(String selectedLevel) {
-	   this.selectedLevel = selectedLevel;
+        this.selectedLevel = selectedLevel;
     }
 
     public List<TaxonomyLevel> getAllLevels() {
-	   return allTaxonomyLevels;
+        return allTaxonomyLevels;
     }
 
     public TreeNode getTaxRoot() {
-	   return root;
+        return root;
     }
 
     public void setTaxRoot(TreeNode taxRoot) {
-	   this.root = taxRoot;
+        this.root = taxRoot;
     }
 
     public TreeNode getSelectedNode() {
-	   return selectedNode;
+        return selectedNode;
     }
 
     public void setSelectedNode(TreeNode selectedNode) {
-	   this.selectedNode = selectedNode;
+        this.selectedNode = selectedNode;
     }
 
     public List<Specimen> getTaxonomySpecimens() {
-	   return taxonomySpecimens;
+        return taxonomySpecimens;
     }
 
     public void setTaxonomySpecimens(List<Specimen> taxonomySpecimens) {
-	   this.taxonomySpecimens = taxonomySpecimens;
+        this.taxonomySpecimens = taxonomySpecimens;
     }
 
     private void createTaxTree() {
-	   tree = new HashMap<Integer, TreeNode>();
-	   root = null;
-	   if (allTaxonomys != null) {
-		  for (Taxonomy t : allTaxonomys) {
-			 if (root == null) {
-				tree.put(t.getIdTaxonomy(), (root = new DefaultTreeNode(t, null)));
-			 } else {
-				tree.put(t.getIdTaxonomy(), new DefaultTreeNode(t, tree.get(t.getIdContainer().getIdTaxonomy())));
-			 }
-		  }
+        tree = new HashMap<Integer, TreeNode>();
+        root = null;
+        if (allTaxonomys != null) {
+            for (Taxonomy t : allTaxonomys) {
+                if (root == null) {
+                    tree.put(t.getIdTaxonomy(), (root = new DefaultTreeNode(t, null)));
+                } else {
+                    tree.put(t.getIdTaxonomy(), new DefaultTreeNode(t, tree.get(t.getIdContainer().getIdTaxonomy())));
+                }
+            }
 
-		  TreeNode n = null;
-		  if (parentTaxonomy != null) {
-			 n = tree.get(parentTaxonomy.getIdTaxonomy());
-		  } else if (taxonomy != null) {
-			 n = tree.get(taxonomy.getIdTaxonomy());
-		  }
-		  openBranch(n);
-	   }
+            TreeNode n = null;
+            if (parentTaxonomy != null) {
+                n = tree.get(parentTaxonomy.getIdTaxonomy());
+            } else if (taxonomy != null) {
+                n = tree.get(taxonomy.getIdTaxonomy());
+            }
+            openBranch(n);
+        }
     }
 
     public Taxonomy getNodeName() {
-	   return (Taxonomy) selectedNode.getData();
+        return (Taxonomy) selectedNode.getData();
     }
 
     private void openBranch(TreeNode node) {
-	   if (node == null) {
-		  return;
-	   }
-	   deselectAll();
-	   node.setSelected(true);
-	   while (node != null) {
-		  node.setExpanded(true);
-		  node = node.getParent();
-	   }
+        if (node == null) {
+            return;
+        }
+        deselectAll();
+        node.setSelected(true);
+        while (node != null) {
+            node.setExpanded(true);
+            node = node.getParent();
+        }
     }
 
     public void deselectAll() {
-	   for (TreeNode t : tree.values()) {
-		  t.setSelected(false);
-		  t.setExpanded(false);
-	   }
+        for (TreeNode t : tree.values()) {
+            t.setSelected(false);
+            t.setExpanded(false);
+        }
     }
 
     public void selectNodeFromId(Integer idLocation) {
-	   selectedNode = tree.get(idLocation);
-	   openBranch(selectedNode);
+        selectedNode = tree.get(idLocation);
+        openBranch(selectedNode);
     }
 
     public void setTaxfromNode(String order) {
-	   if (selectedNode != null) {
-		  try {
-			 root.setExpanded(true);
-			 taxonomy = (Taxonomy) selectedNode.getData();
-			 if (!order.equals("create")) {
-				if (selectedNode.getParent() != null) {
-				    parentTaxonomy = (Taxonomy) selectedNode.getParent().getData();
-				}
-			 }
-			 if (order.equals("detail")) {
-				taxonomySpecimens = taxonomy.getSpecimenList();
-			 }
-		  } catch (Exception e) {
-			 e.printStackTrace();
-		  }
-		  RequestContext context = RequestContext.getCurrentInstance();
+        if (selectedNode != null) {
+            try {
+                root.setExpanded(true);
+                taxonomy = (Taxonomy) selectedNode.getData();
+                if (!order.equals("create")) {
+                    if (selectedNode.getParent() != null) {
+                        parentTaxonomy = (Taxonomy) selectedNode.getParent().getData();
+                    }
+                }
+                if (order.equals("detail")) {
+                    taxonomySpecimens = taxonomy.getSpecimenList();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            RequestContext context = RequestContext.getCurrentInstance();
 
-		  if (order.equals("detail")) {
-			 context.execute("PF('taxonomyDetail').show()");
-		  } else if (order.equals("create")) {
-			 prepareCreate();
-			 context.execute("PF('taxonomyCreate').show()");
-		  } else if (order.equals("edit")) {
-			 prepareUpdate();
-			 context.execute("PF('taxonomyEdit').show()");
-		  } else if (order.equals("delete")) {
-			 context.execute("PF('taxonomyDelete').show()");
-		  }
-	   }
+            if (order.equals("detail")) {
+                context.execute("PF('taxonomyDetail').show()");
+            } else if (order.equals("create")) {
+                prepareCreate();
+                context.execute("PF('taxonomyCreate').show()");
+            } else if (order.equals("edit")) {
+                prepareUpdate();
+                context.execute("PF('taxonomyEdit').show()");
+            } else if (order.equals("delete")) {
+                context.execute("PF('taxonomyDelete').show()");
+            }
+        }
     }
 
     private void launchMessage(entNaming ent, Actions act) {
-	   FacesContext.getCurrentInstance().addMessage(null, showMessage(ent, act));
+        FacesContext.getCurrentInstance().addMessage(null, showMessage(ent, act));
     }
 
     public List<TaxonomyLevel> getAvalLevels() {
-	   return avalLevels;
+        return avalLevels;
     }
 
     public void setAvalLevels(List<TaxonomyLevel> avalLevels) {
-	   this.avalLevels = avalLevels;
+        this.avalLevels = avalLevels;
     }
 }

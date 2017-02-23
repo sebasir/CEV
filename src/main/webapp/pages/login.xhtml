@@ -5,22 +5,18 @@
       xmlns:p="http://primefaces.org/ui">
     <h:head>
         <h:outputStylesheet library="css" name="pstyle.css" />
+        <h:outputStylesheet library="css" name="../bootstrap/css/bootstrap.min.css" />
     </h:head>
-    <h:body>        
+    <h:body>
+        
         <h:form id="loginForm">
             <p:growl id="growl" showDetail="true"></p:growl>            
-            <div align="center" style="margin-top: 150px">
-                <p:panel header="Autenticación de Usuarios" style="width: 400px;" >
-                    <h:panelGrid id="loginPanel" columns="2">  
-                        <h:outputText value="Usuario:"/>
-                        <p:inputText id="user" value="#{loginBean.user}" required="true" requiredMessage="Debe ingresar un nombre de usuario"/>
-                        <h:outputText value="Password:"/>
-                        <p:password id="clave" value="#{loginBean.clave}" required="true" requiredMessage="Debe ingresar una contraseña"/>
-                        <p:spacer/>
-                        <p:commandButton action="#{loginBean.autenticar}" value="Login" update="loginForm:growl" ajax="true"/>
-                    </h:panelGrid>
-                </p:panel>
-            </div>            
+            <h:outputText value="Usuario:"/>
+            <p:inputText id="user" value="#{loginBean.user}" required="true" requiredMessage="Debe ingresar un nombre de usuario"/>
+            <h:outputText value="Password:"/>
+            <p:password id="clave" value="#{loginBean.clave}" required="true" requiredMessage="Debe ingresar una contraseña"/>
+            <p:spacer/>
+            <p:commandButton action="#{loginBean.autenticar}" value="Login" update="loginForm:growl" ajax="true"/>
         </h:form>
     </h:body>
 </html>

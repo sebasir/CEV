@@ -1,3 +1,53 @@
+----> Institution
+
+insert into institution values (default, 'Universidad Central', '860.024.746-1');
+insert into institution values (default, 'Universidad de Bogotá Jorge Tadeo Lozano', '860.006.848-6');
+
+-----> collection
+
+insert into collection values (default, 'CIAA-UJTL', 2);
+
+-----> catalog
+
+insert into catalog values (default, 'Hym50', 1);
+insert into catalog values (default, 'Hym66', 1);
+insert into catalog values (default, 'Hym376', 1);
+insert into catalog values (default, 'Lep17', 1);
+insert into catalog values (default, 'Lep20', 1);
+insert into catalog values (default, 'D353', 1);
+
+-----> sample_type
+
+insert into sample_type values (default, 'Ejemplar Completo (ETOH)');
+
+-----> reg_type
+
+insert into reg_type values (default, 'Espécimen Preservado');
+
+-----> author
+
+insert into author values (default, 'Hernández L.', null);
+insert into author values (default, 'Carrillo D.', null);
+insert into author values (default, 'Ortiz G.', null);
+insert into author values (default, 'Jiménez T.', null);
+insert into author values (default, 'Pérez M.', null);
+
+-----> author_type
+
+insert into author_type values (default, 'Determinador');
+insert into author_type values (default, 'Autor Epiteto Específico');
+insert into author_type values (default, 'Colector');
+
+-----> author_role
+
+insert into author_role values (default, 1, 1);
+insert into author_role values (default, 1, 2);
+insert into author_role values (default, 1, 3);
+insert into author_role values (default, 2, 1);
+insert into author_role values (default, 2, 3);
+insert into author_role values (default, 3, 1);
+insert into author_role values (default, 4, 3);
+insert into author_role values (default, 5, 3);
 
 ----> location level
 
@@ -9,7 +59,6 @@ insert into location_level values (default, 'Localidad', 3);
 ----> Location
 
 insert into location values(default, 'Colombia', 0, 0, 0, 0, 1, null);
-
 insert into location values (default,'Amazonas', 0, 0, 0, 0, 2, 1);
 insert into location values (default,'Antioquia', 0, 0, 0, 0, 2, 1);
 insert into location values (default,'Arauca', 0, 0, 0, 0, 2, 1);
@@ -43,7 +92,6 @@ insert into location values (default,'Tolima', 0, 0, 0, 0, 2, 1);
 insert into location values (default,'Valle del Cauca', 0, 0, 0, 0, 2, 1);
 insert into location values (default,'Vaupés', 0, 0, 0, 0, 2, 1);
 insert into location values (default,'Vichada', 0, 0, 0, 0, 2, 1);
-
 insert into location values (default,'Cañasgordas', 0, 0, 0, 0, 3, 3);
 insert into location values (default,'Medellín', 0, 0, 0, 0, 3, 3);
 insert into location values (default,'Cáceres', 0, 0, 0, 0, 3, 3);
@@ -1232,52 +1280,6 @@ insert into taxonomy values (default, 'Brachycera', 10, 23);
 insert into taxonomy values (default, 'Muscoidea', 12, 24);
 insert into taxonomy values (default, 'Anthomyiidae', 13, 25);
 
------> reg_type
-
-insert into reg_type values (default, 'Espécimen Preservado');
-
------> sample_type
-
-insert into sample_type values (default, 'Ejemplar Completo (ETOH)');
-
------> collection
-
-insert into collection values (default, 'CIAA-UJTL', 'UJTL C-bios');
-
------> catalog
-
-insert into catalog values (default, 'Hym50', 1);
-insert into catalog values (default, 'Hym66', 1);
-insert into catalog values (default, 'Hym376', 1);
-insert into catalog values (default, 'Lep17', 1);
-insert into catalog values (default, 'Lep20', 1);
-insert into catalog values (default, 'D353', 1);
-
------> author
-
-insert into author values (default, 'Hernández L.');
-insert into author values (default, 'Carrillo D.');
-insert into author values (default, 'Ortiz G.');
-insert into author values (default, 'Jiménez T.');
-insert into author values (default, 'Pérez M.');
-
------> author_type
-
-insert into author_type values (default, 'Determinador');
-insert into author_type values (default, 'Autor Epiteto Específico');
-insert into author_type values (default, 'Colector');
-
------> author_role
-
-insert into author_role values (default, 1, 1);
-insert into author_role values (default, 1, 2);
-insert into author_role values (default, 1, 3);
-insert into author_role values (default, 2, 1);
-insert into author_role values (default, 2, 3);
-insert into author_role values (default, 3, 1);
-insert into author_role values (default, 4, 3);
-insert into author_role values (default, 5, 3);
-
 -----> specimen
 
 insert into specimen values(default, 'espelentesis', 'Polílla de Páramo', 11, 3, null , to_date('01/01/2013','dd/mm/yyyy'), 1, 1, 1157, 1,'C-bios 1009', 5, to_date('10/12/2012','dd/mm/yyyy'), 'Colecta Directa');
@@ -1286,7 +1288,12 @@ insert into specimen values(default, null, 'Avispa Cintura de Oro', 21, 5, 'Sp5'
 insert into specimen values(default, null, 'Hormiga', 22, 7, null , to_date('01/01/2015','dd/mm/yyyy'), 1, 1, 1160, 4,'C-bios 729', 3, to_date('12/08/2004','dd/mm/yyyy'), 'Trampa Pitfall');
 insert into specimen values(default, null, 'Mosco', 26, 5, null , to_date('01/01/2015','dd/mm/yyyy'), 1, 1, 1161, 4,'C-bios 1008', 6, to_date('03/02/2005','dd/mm/yyyy'), 'Trampa Malaisse');
 
------> env_conf
+-----> module
 
-insert into env_conf values(default, 'PATH_FILES', 'D:\BICHOS_STORAGE', 'Ruta de almacenamiento para los archivos de la aplicación');
-insert into env_conf values (default, 'PATH_SEP', '/', 'Separador de directorios de archivos');
+insert into module values (default, 'Gestión de Clasificación', 'Este módulo permite a los Administradores realizar cambios en la lista de dominio de la clasificación taxonómica de manera jerárquica.');
+insert into module values (default, 'Gestión de Ubicaciones', 'Los administradores pueden realizar cambios en esta lista de dominio. No obstante, para fines de parametrización, las localidades se añaden a nivel municipal de los departamentos de colombia, con fuente original del DANE.');
+insert into module values (default, 'Gestión de Especímenes', 'Permite incluir en la colección virtual los especímenes que existan en la colección física, teniendo en cuenta la ficha técnica que dispone la coordinación de la colección entomológica, utilizando las listas de dominio definidas en los otros módulos.');
+insert into module values (default, 'Gestión de Autores', 'Permite a los administradores definir los autores que recolectan y clasifican a los especímenes en la base de datos.');
+insert into module values (default, 'Gestión de Catálogos y Colecciones', 'Permite a los administradores estructurar los catálogos y las colecciones donde yacen los especímenes.');
+insert into module values (default, 'Gestión de Usuarios', 'Permite controlar y realizar seguimiento a los usuarios de la colección entomológica, además de cambiar y asignar roles de usuario (compuestos por accesos a la aplicación), nivel de acceso, cambio de credenciales e información del perfil.');
+insert into module values (default, 'Reporteador', 'Es un módulo que permite extraer estadísticos en listados de la información contenida en la colección así como el uso que se le da a esta, permitiendo su exportación.');

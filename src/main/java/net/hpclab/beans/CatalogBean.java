@@ -6,17 +6,13 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.inject.Inject;
 import net.hpclab.entities.Catalog;
 import net.hpclab.entities.Collection;
-import net.hpclab.sessions.CatalogSession;
+import net.hpclab.database.DataBaseManager;
 
 @ManagedBean
 @SessionScoped
 public class CatalogBean extends Utilsbean implements Serializable {
-
-    @Inject
-    private CatalogSession catalogSession;
 
     private static final long serialVersionUID = 1L;
     private Catalog catalog;
@@ -24,7 +20,7 @@ public class CatalogBean extends Utilsbean implements Serializable {
     private String selectedCont;
 
     public CatalogBean() {
-	   catalogSession = new CatalogSession();
+
     }
 
     @PostConstruct
@@ -32,73 +28,75 @@ public class CatalogBean extends Utilsbean implements Serializable {
     }
 
     public String persist() {
-	   try {
-		  catalog.setIdCollection(new Collection(new Integer(getSelectedCont())));
-		  setCatalog(catalogSession.persist(getCatalog()));
-		  if (getCatalog() != null && getCatalog().getIdCatalog() != null)
-			 FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Actions.createSuccess));
-		  else
-			 FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Actions.createError));
-	   } catch (Exception e) {
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Actions.createError));
-	   }
+        try {
+            catalog.setIdCollection(new Collection(new Integer(getSelectedCont())));
+            DataBaseManager<Catalog> dbm = new DataBaseManager<Catalog>();
+            setCatalog(dbm.persist(catalog));
+            if (getCatalog() != null && getCatalog().getIdCatalog() != null) {
+                FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Actions.createSuccess));
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Actions.createError));
+            }
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Actions.createError));
+        }
 
-	   return findAllCatalogs();
+        return findAllCatalogs();
     }
 
     public void delete() {
-	   try {
-		  catalogSession.delete(getCatalog());
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Actions.deleteSuccess));
-	   } catch (Exception e) {
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Actions.deleteError));
-	   }
+        try {
+            //catalogSession.delete(getCatalog());
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Actions.deleteSuccess));
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Actions.deleteError));
+        }
     }
 
     public void prepareCreate() {
-	   setCatalog(new Catalog());
+        setCatalog(new Catalog());
     }
 
     public void edit() {
-	   try {
-		  setCatalog(catalogSession.merge(getCatalog()));
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Actions.updateSuccess));
-	   } catch (Exception e) {
-		  FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Actions.updateError));
-	   }
+        try {
+            //setCatalog(catalogSession.merge(getCatalog()));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Actions.updateSuccess));
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Actions.updateError));
+        }
     }
 
     public String displayList() {
-	   findAllCatalogs();
-	   return "specimen";
+        findAllCatalogs();
+        return "specimen";
     }
 
     public String findAllCatalogs() {
-	   setAllCatalogs(catalogSession.listAll());
-	   return null;
+        //setAllCatalogs(catalogSession.listAll());
+        return null;
     }
 
     public Catalog getCatalog() {
-	   return catalog;
+        return catalog;
     }
 
     public void setCatalog(Catalog catalog) {
-	   this.catalog = catalog;
+        this.catalog = catalog;
     }
 
     public List<Catalog> getAllCatalogs() {
-	   return allCatalogs;
+        return allCatalogs;
     }
 
     public void setAllCatalogs(List<Catalog> allCatalogs) {
-	   this.allCatalogs = allCatalogs;
+        this.allCatalogs = allCatalogs;
     }
 
     public String getSelectedCont() {
-	   return selectedCont;
+        return selectedCont;
     }
 
     public void setSelectedCont(String selectedCont) {
-	   this.selectedCont = selectedCont;
+        this.selectedCont = selectedCont;
     }
 }

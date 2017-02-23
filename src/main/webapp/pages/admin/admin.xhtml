@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
@@ -8,10 +8,13 @@
 
     <f:view contentType="text/html">
         <h:head>
+		  <h:outputStylesheet library="assets/css" name="bootstrap.min.css" />
+		  <h:outputStylesheet library="assets/css" name="animate.min.css" />
+		  <h:outputStylesheet library="assets/css" name="pe-icon-7-stroke.css" />
+		  <h:outputStylesheet library="assets/css" name="demo.css" />
 		  <h:outputStylesheet library="css" name="pstyle.css" />
 		  <h:outputScript library="js" name="es_locale.js"/>
         </h:head>
-
         <h:body>
 		  <p:layout fullPage="true">
                 <p:layoutUnit position="north" size="50" resizable="true" closable="true" collapsible="true">
