@@ -9,12 +9,12 @@
 
 -----> catalog
 
-insert into catalog values (default, 'Hym50', 1);
-insert into catalog values (default, 'Hym66', 1);
-insert into catalog values (default, 'Hym376', 1);
-insert into catalog values (default, 'Lep17', 1);
-insert into catalog values (default, 'Lep20', 1);
-insert into catalog values (default, 'D353', 1);
+/*1*/insert into catalog values (default, 'Hym50', 1);
+/*2*/insert into catalog values (default, 'Hym66', 1);
+/*3*/insert into catalog values (default, 'Hym376', 1);
+/*4*/insert into catalog values (default, 'Lep17', 1);
+/*5*/insert into catalog values (default, 'Lep20', 1);
+/*6*/insert into catalog values (default, 'D353', 1);
 
 -----> sample_type
 
@@ -1263,13 +1263,17 @@ insert into taxonomy values (default, 'Brachycera', 10, 23);
 insert into taxonomy values (default, 'Muscoidea', 12, 24);
 insert into taxonomy values (default, 'Anthomyiidae', 13, 25);
 
+----> users
+
+/*1*/insert into users values (default, '1', 'Administrador', 'del Sistema', 'admin.cev@ucentral.edu.co', now(), now(), null, 'tBuvcpCBCU8feB6wPDZRpw==', 1);
+
 -----> specimen
 
-insert into specimen values(default, 'espelentesis', 'Polílla de Páramo', 11, 3, null , to_date('01/01/2013','dd/mm/yyyy'), 1, 1, 1157, 1,'C-bios 1009', 5, to_date('10/12/2012','dd/mm/yyyy'), 'Colecta Directa');
-insert into specimen values(default, 'mellifera', 'Abeja de la Miel', 18, 8, null , to_date('01/01/2015','dd/mm/yyyy'), 1, 1, 1158, 6,'C-bios 419', 2, to_date('12/02/1998','dd/mm/yyyy'), 'Colecta directa');
-insert into specimen values(default, null, 'Avispa Cintura de Oro', 21, 5, 'Sp5' , to_date('01/01/2015','dd/mm/yyyy'), 1, 1, 1159, 6,'C-bios 403', 1, to_date('07/12/2004','dd/mm/yyyy'), 'En trampa Malaisse');
-insert into specimen values(default, null, 'Hormiga', 22, 7, null , to_date('01/01/2015','dd/mm/yyyy'), 1, 1, 1160, 4,'C-bios 729', 3, to_date('12/08/2004','dd/mm/yyyy'), 'Trampa Pitfall');
-insert into specimen values(default, null, 'Mosco', 26, 5, null , to_date('01/01/2015','dd/mm/yyyy'), 1, 1, 1161, 4,'C-bios 1008', 6, to_date('03/02/2005','dd/mm/yyyy'), 'Trampa Malaisse');
+insert into specimen values(default, 'espelentesis', 'Polílla de Páramo', 11, 1, null , to_date('01/01/2013','dd/mm/yyyy'), 1, 1, 1157, 1,'C-bios 1009', 5, to_date('10/12/2012','dd/mm/yyyy'), 'Colecta Directa', 1);
+insert into specimen values(default, 'mellifera', 'Abeja de la Miel', 18, 5, null , to_date('01/01/2015','dd/mm/yyyy'), 1, 1, 1158, 3,'C-bios 419', 2, to_date('12/02/1998','dd/mm/yyyy'), 'Colecta directa', 1);
+insert into specimen values(default, null, 'Avispa Cintura de Oro', 21, 2, 'Sp5' , to_date('01/01/2015','dd/mm/yyyy'), 1, 1, 1159, 3,'C-bios 403', 1, to_date('07/12/2004','dd/mm/yyyy'), 'En trampa Malaisse', 1);
+insert into specimen values(default, null, 'Hormiga', 22, 4, null , to_date('01/01/2015','dd/mm/yyyy'), 1, 1, 1160, 2,'C-bios 729', 3, to_date('12/08/2004','dd/mm/yyyy'), 'Trampa Pitfall', 1);
+insert into specimen values(default, null, 'Mosco', 26, 2, null , to_date('01/01/2015','dd/mm/yyyy'), 1, 1, 1161, 2,'C-bios 1008', 6, to_date('03/02/2005','dd/mm/yyyy'), 'Trampa Malaisse', 1);
 
 -----> module
 
@@ -1333,10 +1337,6 @@ insert into roles_modules values (default, 3, 4);
 insert into roles_modules values (default, 3, 5);
 insert into roles_modules values (default, 3, 12);
 
-----> users
-
-/*1*/insert into users values (default, '1', 'Administrador', 'del Sistema', 'admin.cev@ucentral.edu.co', now(), now(), null, 'tBuvcpCBCU8feB6wPDZRpw==', 1);
-
-----> roles_users
+---> roles_users
 
 insert into roles_users values (default, 1, 1, 3);
