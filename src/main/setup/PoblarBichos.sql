@@ -1,11 +1,11 @@
 ----> Institution
 
-insert into institution values (default, 'Universidad Central', '860.024.746-1');
-insert into institution values (default, 'Universidad de Bogotá Jorge Tadeo Lozano', '860.006.848-6');
+/*1*/insert into institution values (default, 'Universidad Central', '860.024.746-1', '@ucentral.edu.co');
+/*2*/insert into institution values (default, 'Universidad de Bogotá Jorge Tadeo Lozano', '860.006.848-6', '@utadeo.edu.co');
 
 -----> collection
 
-insert into collection values (default, 'CIAA-UJTL', 2);
+/*1*/insert into collection values (default, 'CIAA-UJTL', 2);
 
 -----> catalog
 
@@ -26,35 +26,18 @@ insert into reg_type values (default, 'Espécimen Preservado');
 
 -----> author
 
-insert into author values (default, 'Hernández L.', null);
-insert into author values (default, 'Carrillo D.', null);
-insert into author values (default, 'Ortiz G.', null);
-insert into author values (default, 'Jiménez T.', null);
-insert into author values (default, 'Pérez M.', null);
-
------> author_type
-
-insert into author_type values (default, 'Determinador');
-insert into author_type values (default, 'Autor Epiteto Específico');
-insert into author_type values (default, 'Colector');
-
------> author_role
-
-insert into author_role values (default, 1, 1);
-insert into author_role values (default, 1, 2);
-insert into author_role values (default, 1, 3);
-insert into author_role values (default, 2, 1);
-insert into author_role values (default, 2, 3);
-insert into author_role values (default, 3, 1);
-insert into author_role values (default, 4, 3);
-insert into author_role values (default, 5, 3);
+/*1*/insert into author values (default, 'Hernández L.', 1, 1, 1, null);
+/*2*/insert into author values (default, 'Carrillo D.', 1, 0, 1,  null);
+/*3*/insert into author values (default, 'Ortiz G.', 1, 0, 0,  null);
+/*4*/insert into author values (default, 'Jiménez T.', 0, 0, 1,  null);
+/*5*/insert into author values (default, 'Pérez M.', 0, 0, 1,  null);
 
 ----> location level
 
-insert into location_level values (default, 'País', 0);
-insert into location_level values (default, 'Departamento', 1);
-insert into location_level values (default, 'Municipio', 2);
-insert into location_level values (default, 'Localidad', 3);
+/*1*/insert into location_level values (default, 'País', 0);
+/*2*/insert into location_level values (default, 'Departamento', 1);
+/*3*/insert into location_level values (default, 'Municipio', 2);
+/*4*/insert into location_level values (default, 'Localidad', 3);
 
 ----> Location
 
@@ -1290,20 +1273,70 @@ insert into specimen values(default, null, 'Mosco', 26, 5, null , to_date('01/01
 
 -----> module
 
-insert into modules values (default, 'Gestión de Colecciones', 'Permite a los administradores estructurar los catálogos y las colecciones donde yacen los especímenes.', null);
-insert into modules values (default, 'Gestión de Usuarios', 'Permite controlar y realizar seguimiento a los usuarios de la colección entomológica, además de cambiar y asignar roles de usuario (compuestos por accesos a la aplicación), nivel de acceso, cambio de credenciales e información del perfil.', null);
-insert into modules values (default, 'Asistente de Creación de Especímenes', 'Este módulo permite a los Administradores y operadores crear ejemplares en la colección, de manera secuencial.', 1);
-insert into modules values (default, 'Perfil de Usuario', 'Este módulo permite a los todos los usuarios administrar el perfil', 2);
-insert into modules values (default, 'Gestionar Usuario', 'Este módulo permite a los todos los usuarios administrar el perfil', 2);
-insert into modules values (default, 'Gestión de Clasificación', 'Este módulo permite a los Administradores realizar cambios en la lista de dominio de la clasificación taxonómica de manera jerárquica.', null);
-insert into modules values (default, 'Gestión de Ubicaciones', 'Los administradores pueden realizar cambios en esta lista de dominio. No obstante, para fines de parametrización, las localidades se añaden a nivel municipal de los departamentos de colombia, con fuente original del DANE.', null);
-insert into modules values (default, 'Gestión de Especímenes', 'Permite incluir en la colección virtual los especímenes que existan en la colección física, teniendo en cuenta la ficha técnica que dispone la coordinación de la colección entomológica, utilizando las listas de dominio definidas en los otros módulos.', null);
-insert into modules values (default, 'Gestión de Autores', 'Permite a los administradores definir los autores que recolectan y clasifican a los especímenes en la base de datos.', null);
-insert into modules values (default, 'Reporteador', 'Es un módulo que permite extraer estadísticos en listados de la información contenida en la colección así como el uso que se le da a esta, permitiendo su exportación.', null);
+/*1*/insert into modules values (default, 'Gestión de Colecciones', 'Permite a los administradores estructurar los catálogos y las colecciones donde yacen los especímenes.', null);
+/*2*/insert into modules values (default, 'Gestión de Usuarios', 'Permite controlar y realizar seguimiento a los usuarios de la colección entomológica, además de cambiar y asignar roles de usuario (compuestos por accesos a la aplicación), nivel de acceso, cambio de credenciales e información del perfil.', null);
+/*3*/insert into modules values (default, 'Reporteador', 'Permite extraer estadísticos en listados de la información contenida en la colección así como el uso que se le da a esta, permitiendo su exportación.', null);
+/*4*/insert into modules values (default, 'Salir', 'Cierra la sesión de usuario cancelando toda transacción pendiente.', null);
+
+/*5*/insert into modules values (default, 'Asistente de Creación', 'Permite crear ejemplares en la colección.', 1);
+/*6*/insert into modules values (default, 'Clasificaciones', 'Permite realizar cambios en la lista de dominio de la clasificación taxonómica de manera jerárquica.', 1);
+/*7*/insert into modules values (default, 'Ubicaciones', 'Permite realizar cambios en la lista de dominio de la ubicación de manera jerárquica.', 1);
+/*8*/insert into modules values (default, 'Autores', 'Permite definir los autores que recolectan y clasifican a los especímenes.', 1);
+/*9*/insert into modules values (default, 'Catálogos y Colecciones', 'Permite estructurar los catálogos y las colecciones donde yacen los especímenes.', 1);
+/*10*/insert into modules values (default, 'Especímenes', 'Permite incluir en la colección virtual los especímenes utilizando las listas de dominio definidas en los otros módulos.', 1);
+
+/*11*/insert into modules values (default, 'Editar Perfil', 'Permite a los usuarios administrar el perfil.', 2);
+/*12*/insert into modules values (default, 'Credenciales', 'Permite a los usuarios cambiar las credenciales de acceso.', 2);
+/*13*/insert into modules values (default, 'Auditoria', 'Este módulo permite conocer la auditoría realizada a los usuarios.', 2);
+/*14*/insert into modules values (default, 'Usuarios', 'Este módulo permite administrar a los usuarios.', 2);
 
 -----> roles
 
-insert into roles values (default, 'Administrador del Sistema', 'Es un usuario con acceso a todos los módulos que componen el Sistema de gestión y navegación, además de modificar parámetros del sistema, administración de usuarios y perfiles.', now());
-insert into roles values (default, 'Administrador de Colección', 'Este usuario tiene el privilegio de construir y definir los datos de dominio que se usarán posteriormente para ingresar los especímenes individuales, y podrá definir la publicación de estos.', now());
-insert into roles values (default, 'Operario', 'Este usuario puede ingresar los especímenes a la colección utilizando los datos de dominio por parte del administrador de colección.', now());
-insert into roles values (default, 'Usuario Público', 'Es un usuario genérico que representa a un persona que no tiene acceso a la gestión de la colección, pero puede hacer consultas y navegar entre los diferentes especímenes, con un nivel de acción restringido y controlado.', now());
+/*1*/insert into roles values (default, 'Administrador del Sistema', 'Es un usuario con acceso a todos los módulos que componen el Sistema de gestión y navegación, además de modificar parámetros del sistema, administración de usuarios y perfiles.', now());
+/*2*/insert into roles values (default, 'Administrador de Colección', 'Este usuario tiene el privilegio de construir y definir los datos de dominio que se usarán posteriormente para ingresar los especímenes individuales, y podrá definir la publicación de estos.', now());
+/*3*/insert into roles values (default, 'Operario', 'Este usuario puede ingresar los especímenes a la colección utilizando los datos de dominio por parte del administrador de colección.', now());
+
+-----> roles_modules
+
+insert into roles_modules values (default, 1, 1);
+insert into roles_modules values (default, 1, 2);
+insert into roles_modules values (default, 1, 3);
+insert into roles_modules values (default, 1, 4);
+insert into roles_modules values (default, 1, 5);
+insert into roles_modules values (default, 1, 6);
+insert into roles_modules values (default, 1, 7);
+insert into roles_modules values (default, 1, 8);
+insert into roles_modules values (default, 1, 9);
+insert into roles_modules values (default, 1, 10);
+insert into roles_modules values (default, 1, 11);
+insert into roles_modules values (default, 1, 12);
+insert into roles_modules values (default, 1, 13);
+insert into roles_modules values (default, 1, 14);
+
+insert into roles_modules values (default, 2, 1);
+insert into roles_modules values (default, 2, 2);
+insert into roles_modules values (default, 2, 3);
+insert into roles_modules values (default, 2, 4);
+insert into roles_modules values (default, 2, 5);
+insert into roles_modules values (default, 2, 6);
+insert into roles_modules values (default, 2, 7);
+insert into roles_modules values (default, 2, 8);
+insert into roles_modules values (default, 2, 9);
+insert into roles_modules values (default, 2, 10);
+insert into roles_modules values (default, 2, 11);
+insert into roles_modules values (default, 2, 12);
+
+insert into roles_modules values (default, 3, 1);
+insert into roles_modules values (default, 3, 2);
+insert into roles_modules values (default, 3, 3);
+insert into roles_modules values (default, 3, 4);
+insert into roles_modules values (default, 3, 5);
+insert into roles_modules values (default, 3, 12);
+
+----> users
+
+/*1*/insert into users values (default, '1', 'Administrador', 'del Sistema', 'admin.cev@ucentral.edu.co', now(), now(), null, 'tBuvcpCBCU8feB6wPDZRpw==', 1);
+
+----> roles_users
+
+insert into roles_users values (default, 1, 1, 3);
