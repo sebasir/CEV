@@ -1,8 +1,8 @@
 CREATE TYPE STATUS_ENUM AS ENUM ('Activo', 'Deshabilitado', 'Bloqueado', 'Incompleto', 'Completo');
-COMMENT ON TYPE STATUS_ENUM IS 'Enumeraci贸n que define los estados posibles de todas las tablas.';
+COMMENT ON TYPE STATUS_ENUM IS 'Enumeraci髇 que define los estados posibles de todas las tablas.';
 
 CREATE TYPE AUDIT_ENUM AS ENUM ('LOGIN', 'LOGOUT', 'INSERT', 'UPDATE', 'DELETE', 'STATUS_CHANGE');
-COMMENT ON TYPE AUDIT_ENUM IS 'Enumeraci贸n que define las operaciones posibles del sistema.';
+COMMENT ON TYPE AUDIT_ENUM IS 'Enumeraci髇 que define las operaciones posibles del sistema.';
 
 CREATE TABLE INSTITUTION (
 	ID_INSTITUTION SERIAL NOT NULL PRIMARY KEY CHECK (ID_INSTITUTION > 0),
@@ -20,7 +20,7 @@ CREATE TABLE COLLECTION (
         STATUS STATUS_ENUM DEFAULT 'Activo',
         UNIQUE(ID_INSTITUTION, COLLECTION_NAME)
 );
-COMMENT ON TABLE COLLECTION IS 'Tabla para guardar las colecciones, tales que pertenezcan a cada instituci贸n.';
+COMMENT ON TABLE COLLECTION IS 'Tabla para guardar las colecciones, tales que pertenezcan a cada instituci髇.';
 
 CREATE TABLE CATALOG (
 	ID_CATALOG SERIAL NOT NULL PRIMARY KEY CHECK (ID_CATALOG > 0),
@@ -29,7 +29,7 @@ CREATE TABLE CATALOG (
         STATUS STATUS_ENUM DEFAULT 'Activo',
 	UNIQUE(ID_COLLECTION, CATALOG_NAME)
 );
-COMMENT ON TABLE CATALOG IS 'Tabla para guardar los cat谩logos donde yacen los espec铆menes, para cada colecci贸n.';
+COMMENT ON TABLE CATALOG IS 'Tabla para guardar los cat谩logos donde yacen los espec铆menes, para cada colecci髇.';
 
 CREATE TABLE SAMPLE_TYPE (
 	ID_SATY SERIAL NOT NULL PRIMARY KEY CHECK(ID_SATY > 0),
@@ -171,7 +171,7 @@ CREATE TABLE MODULES (
         STATUS STATUS_ENUM DEFAULT 'Activo',
         UNIQUE(MODULE_NAME)
 );
-COMMENT ON TABLE MODULES IS 'Tabla para guardar los m贸dulos del sistema.';
+COMMENT ON TABLE MODULES IS 'Tabla para guardar los m骴ulos del sistema.';
 
 CREATE TABLE ROLES (
 	ID_ROLE SERIAL NOT NULL PRIMARY KEY CHECK (ID_ROLE > 0),
@@ -224,4 +224,4 @@ CREATE TABLE AUDIT_LOG (
 	AULOG_ACTION AUDIT_ENUM,
 	AULOG_TARGET VARCHAR(2048) NOT NULL
 );
-COMMENT ON TABLE MODULES_USERS IS 'Tabla para guardar las operaciones de usuarios en los modulos, con fecha, direccion IP, acci贸n realizada y cambio.';
+COMMENT ON TABLE MODULES_USERS IS 'Tabla para guardar las operaciones de usuarios en los modulos, con fecha, direccion IP, acci髇 realizada y cambio.';

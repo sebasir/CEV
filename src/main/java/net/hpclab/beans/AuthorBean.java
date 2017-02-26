@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import net.hpclab.entities.Author;
 import net.hpclab.entities.AuthorRole;
 import net.hpclab.entities.AuthorType;
-import net.hpclab.utilities.AuthorPivot;
+import net.hpclab.services.AuthorPivot;
 
 @ManagedBean
 @SessionScoped
