@@ -1,8 +1,12 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package net.hpclab.entities;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,31 +17,23 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
+/**
+ *
+ * @author Sebasir
+ */
 @Entity
 @Table(name = "specimen")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Specimen.findAll", query = "SELECT s FROM Specimen s"),
-    @NamedQuery(name = "Specimen.findByIdSpecimen", query = "SELECT s FROM Specimen s WHERE s.idSpecimen = :idSpecimen"),
-    @NamedQuery(name = "Specimen.findBySpecificEpithet", query = "SELECT s FROM Specimen s WHERE s.specificEpithet = :specificEpithet"),
-    @NamedQuery(name = "Specimen.findByCommonName", query = "SELECT s FROM Specimen s WHERE s.commonName = :commonName"),
-    @NamedQuery(name = "Specimen.findByIdenComment", query = "SELECT s FROM Specimen s WHERE s.idenComment = :idenComment"),
-    @NamedQuery(name = "Specimen.findByIdenDate", query = "SELECT s FROM Specimen s WHERE s.idenDate = :idenDate"),
-    @NamedQuery(name = "Specimen.findByIdBioreg", query = "SELECT s FROM Specimen s WHERE s.idBioreg = :idBioreg"),
-    @NamedQuery(name = "Specimen.findByCollectDate", query = "SELECT s FROM Specimen s WHERE s.collectDate = :collectDate"),
-    @NamedQuery(name = "Specimen.findByCollectComment", query = "SELECT s FROM Specimen s WHERE s.collectComment = :collectComment")})
-public class Specimen implements entNaming, Serializable {
-    @OneToMany(mappedBy = "idSpecimen")
-    private List<SpecimenContent> specimenContentList;
+    @NamedQuery(name = "Specimen.findAll", query = "SELECT s FROM Specimen s")})
+public class Specimen implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -71,200 +67,217 @@ public class Specimen implements entNaming, Serializable {
     @Size(max = 2048)
     @Column(name = "collect_comment")
     private String collectComment;
-    @JoinColumn(name = "id_taxonomy", referencedColumnName = "id_taxonomy")
+    @Size(max = 2147483647)
+    @Column(name = "status")
+    private String status;
+    @OneToOne(mappedBy = "idSpecimen")
+    private SpecimenContent specimenContent;
+    @JoinColumn(name = "id_collector", referencedColumnName = "id_author")
     @ManyToOne
-    private Taxonomy idTaxonomy;
-    @JoinColumn(name = "id_saty", referencedColumnName = "id_saty")
+    private Author idCollector;
+    @JoinColumn(name = "id_determiner", referencedColumnName = "id_author")
     @ManyToOne
-    private SampleType idSaty;
-    @JoinColumn(name = "id_rety", referencedColumnName = "id_rety")
-    @ManyToOne
-    private RegType idRety;
-    @JoinColumn(name = "id_location", referencedColumnName = "id_location")
-    @ManyToOne
-    private Location idLocation;
+    private Author idDeterminer;
     @JoinColumn(name = "id_catalog", referencedColumnName = "id_catalog")
     @ManyToOne
     private Catalog idCatalog;
-    @JoinColumn(name = "id_collector", referencedColumnName = "id_auro")
+    @JoinColumn(name = "id_location", referencedColumnName = "id_location")
     @ManyToOne
-    private AuthorRole idCollector;
-    @JoinColumn(name = "id_determiner", referencedColumnName = "id_auro")
+    private Location idLocation;
+    @JoinColumn(name = "id_rety", referencedColumnName = "id_rety")
     @ManyToOne
-    private AuthorRole idDeterminer;
+    private RegType idRety;
+    @JoinColumn(name = "id_saty", referencedColumnName = "id_saty")
+    @ManyToOne
+    private SampleType idSaty;
+    @JoinColumn(name = "id_taxonomy", referencedColumnName = "id_taxonomy")
+    @OneToOne
+    private Taxonomy idTaxonomy;
+    @JoinColumn(name = "id_user", referencedColumnName = "id_user")
+    @ManyToOne
+    private Users idUser;
 
     public Specimen() {
     }
 
     public Specimen(Integer idSpecimen) {
-	   this.idSpecimen = idSpecimen;
+        this.idSpecimen = idSpecimen;
     }
 
     public Specimen(Integer idSpecimen, String commonName, Date idenDate, String idBioreg) {
-	   this.idSpecimen = idSpecimen;
-	   this.commonName = commonName;
-	   this.idenDate = idenDate;
-	   this.idBioreg = idBioreg;
+        this.idSpecimen = idSpecimen;
+        this.commonName = commonName;
+        this.idenDate = idenDate;
+        this.idBioreg = idBioreg;
     }
 
     public Integer getIdSpecimen() {
-	   return idSpecimen;
+        return idSpecimen;
     }
 
     public void setIdSpecimen(Integer idSpecimen) {
-	   this.idSpecimen = idSpecimen;
+        this.idSpecimen = idSpecimen;
     }
 
     public String getSpecificEpithet() {
-	   return specificEpithet;
+        return specificEpithet;
     }
 
     public void setSpecificEpithet(String specificEpithet) {
-	   this.specificEpithet = specificEpithet;
+        this.specificEpithet = specificEpithet;
     }
 
     public String getCommonName() {
-	   return commonName;
+        return commonName;
     }
 
     public void setCommonName(String commonName) {
-	   this.commonName = commonName;
+        this.commonName = commonName;
     }
 
     public String getIdenComment() {
-	   return idenComment;
+        return idenComment;
     }
 
     public void setIdenComment(String idenComment) {
-	   this.idenComment = idenComment;
+        this.idenComment = idenComment;
     }
 
     public Date getIdenDate() {
-	   return idenDate;
+        return idenDate;
     }
 
     public void setIdenDate(Date idenDate) {
-	   this.idenDate = idenDate;
+        this.idenDate = idenDate;
     }
 
     public String getIdBioreg() {
-	   return idBioreg;
+        return idBioreg;
     }
 
     public void setIdBioreg(String idBioreg) {
-	   this.idBioreg = idBioreg;
+        this.idBioreg = idBioreg;
     }
 
     public Date getCollectDate() {
-	   return collectDate;
+        return collectDate;
     }
 
     public void setCollectDate(Date collectDate) {
-	   this.collectDate = collectDate;
+        this.collectDate = collectDate;
     }
 
     public String getCollectComment() {
-	   return collectComment;
+        return collectComment;
     }
 
     public void setCollectComment(String collectComment) {
-	   this.collectComment = collectComment;
+        this.collectComment = collectComment;
     }
 
-    public Taxonomy getIdTaxonomy() {
-	   return idTaxonomy;
+    public String getStatus() {
+        return status;
     }
 
-    public void setIdTaxonomy(Taxonomy idTaxonomy) {
-	   this.idTaxonomy = idTaxonomy;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public SampleType getIdSaty() {
-	   return idSaty;
+    public SpecimenContent getSpecimenContent() {
+        return specimenContent;
     }
 
-    public void setIdSaty(SampleType idSaty) {
-	   this.idSaty = idSaty;
+    public void setSpecimenContent(SpecimenContent specimenContent) {
+        this.specimenContent = specimenContent;
     }
 
-    public RegType getIdRety() {
-	   return idRety;
+    public Author getIdCollector() {
+        return idCollector;
     }
 
-    public void setIdRety(RegType idRety) {
-	   this.idRety = idRety;
+    public void setIdCollector(Author idCollector) {
+        this.idCollector = idCollector;
     }
 
-    public Location getIdLocation() {
-	   return idLocation;
+    public Author getIdDeterminer() {
+        return idDeterminer;
     }
 
-    public void setIdLocation(Location idLocation) {
-	   this.idLocation = idLocation;
+    public void setIdDeterminer(Author idDeterminer) {
+        this.idDeterminer = idDeterminer;
     }
 
     public Catalog getIdCatalog() {
-	   return idCatalog;
+        return idCatalog;
     }
 
     public void setIdCatalog(Catalog idCatalog) {
-	   this.idCatalog = idCatalog;
+        this.idCatalog = idCatalog;
     }
 
-    public AuthorRole getIdCollector() {
-	   return idCollector;
+    public Location getIdLocation() {
+        return idLocation;
     }
 
-    public void setIdCollector(AuthorRole idCollector) {
-	   this.idCollector = idCollector;
+    public void setIdLocation(Location idLocation) {
+        this.idLocation = idLocation;
     }
 
-    public AuthorRole getIdDeterminer() {
-	   return idDeterminer;
+    public RegType getIdRety() {
+        return idRety;
     }
 
-    public void setIdDeterminer(AuthorRole idDeterminer) {
-	   this.idDeterminer = idDeterminer;
-    }
-    
-    
-    @XmlTransient
-    public List<SpecimenContent> getSpecimenContentList() {
-	   return specimenContentList;
+    public void setIdRety(RegType idRety) {
+        this.idRety = idRety;
     }
 
-    public void setSpecimenContentList(List<SpecimenContent> specimenContentList) {
-	   this.specimenContentList = specimenContentList;
+    public SampleType getIdSaty() {
+        return idSaty;
+    }
+
+    public void setIdSaty(SampleType idSaty) {
+        this.idSaty = idSaty;
+    }
+
+    public Taxonomy getIdTaxonomy() {
+        return idTaxonomy;
+    }
+
+    public void setIdTaxonomy(Taxonomy idTaxonomy) {
+        this.idTaxonomy = idTaxonomy;
+    }
+
+    public Users getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(Users idUser) {
+        this.idUser = idUser;
     }
 
     @Override
     public int hashCode() {
-	   int hash = 0;
-	   hash += (idSpecimen != null ? idSpecimen.hashCode() : 0);
-	   return hash;
+        int hash = 0;
+        hash += (idSpecimen != null ? idSpecimen.hashCode() : 0);
+        return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-	   if (!(object instanceof Specimen)) {
-		  return false;
-	   }
-	   Specimen other = (Specimen) object;
-	   return (this.idSpecimen != null || other.idSpecimen == null) && (this.idSpecimen == null || this.idSpecimen.equals(other.idSpecimen));
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Specimen)) {
+            return false;
+        }
+        Specimen other = (Specimen) object;
+        if ((this.idSpecimen == null && other.idSpecimen != null) || (this.idSpecimen != null && !this.idSpecimen.equals(other.idSpecimen))) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public String toString() {
-	   return "net.hpclab.entities.Specimen[ idSpecimen=" + idSpecimen + " ]";
+        return "net.hpclab.entities.Specimen[ idSpecimen=" + idSpecimen + " ]";
     }
-
-    @Override
-    public String getEntityName() {
-	   return "Espécimen";
-    }
-
-    @Override
-    public String getDescription() {
-	   return getSpecificEpithet() + "(" + getCommonName() + ")";
-    }
+    
 }

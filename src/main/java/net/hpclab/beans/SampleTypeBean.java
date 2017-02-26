@@ -10,7 +10,7 @@ import net.hpclab.entities.SampleType;
 
 @ManagedBean
 @SessionScoped
-public class SampleTypeBean extends Utilsbean implements Serializable {
+public class SampleTypeBean extends UtilsBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private SampleType sampleType;

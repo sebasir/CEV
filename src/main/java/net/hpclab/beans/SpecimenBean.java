@@ -38,7 +38,7 @@ import org.primefaces.json.JSONObject;
 
 @ManagedBean
 @SessionScoped
-public class SpecimenBean extends Utilsbean implements Serializable {
+public class SpecimenBean extends UtilsBean implements Serializable {
     private static final long serialVersionUID = 1L;
     private Specimen specimen;
     private Location location;

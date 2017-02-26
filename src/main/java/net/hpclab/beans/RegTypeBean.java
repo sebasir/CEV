@@ -10,7 +10,7 @@ import net.hpclab.entities.RegType;
 
 @ManagedBean
 @SessionScoped
-public class RegTypeBean extends Utilsbean implements Serializable {
+public class RegTypeBean extends UtilsBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private RegType regType;

@@ -11,7 +11,7 @@ import net.hpclab.entities.Collection;
 
 @ManagedBean
 @SessionScoped
-public class CollectionBean extends Utilsbean implements Serializable {
+public class CollectionBean extends UtilsBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private Collection collection;

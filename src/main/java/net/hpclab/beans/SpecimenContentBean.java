@@ -19,7 +19,7 @@ import org.primefaces.model.UploadedFile;
 
 @ManagedBean
 @SessionScoped
-public class SpecimenContentBean extends Utilsbean implements Serializable {
+public class SpecimenContentBean extends UtilsBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private boolean publish;

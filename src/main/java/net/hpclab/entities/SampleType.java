@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package net.hpclab.entities;
 
 import java.io.Serializable;
@@ -14,17 +19,17 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
+/**
+ *
+ * @author Sebasir
+ */
 @Entity
 @Table(name = "sample_type")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "SampleType.findAll", query = "SELECT s FROM SampleType s"),
-    @NamedQuery(name = "SampleType.findByIdSaty", query = "SELECT s FROM SampleType s WHERE s.idSaty = :idSaty"),
-    @NamedQuery(name = "SampleType.findBySatyName", query = "SELECT s FROM SampleType s WHERE s.satyName = :satyName")})
-public class SampleType implements entNaming, Serializable {
+    @NamedQuery(name = "SampleType.findAll", query = "SELECT s FROM SampleType s")})
+public class SampleType implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +41,9 @@ public class SampleType implements entNaming, Serializable {
     @Size(min = 1, max = 32)
     @Column(name = "saty_name")
     private String satyName;
+    @Size(max = 2147483647)
+    @Column(name = "status")
+    private String status;
     @OneToMany(mappedBy = "idSaty")
     private List<Specimen> specimenList;
 
@@ -43,67 +51,69 @@ public class SampleType implements entNaming, Serializable {
     }
 
     public SampleType(Integer idSaty) {
-	   this.idSaty = idSaty;
+        this.idSaty = idSaty;
     }
 
     public SampleType(Integer idSaty, String satyName) {
-	   this.idSaty = idSaty;
-	   this.satyName = satyName;
+        this.idSaty = idSaty;
+        this.satyName = satyName;
     }
 
     public Integer getIdSaty() {
-	   return idSaty;
+        return idSaty;
     }
 
     public void setIdSaty(Integer idSaty) {
-	   this.idSaty = idSaty;
+        this.idSaty = idSaty;
     }
 
     public String getSatyName() {
-	   return satyName;
+        return satyName;
     }
 
     public void setSatyName(String satyName) {
-	   this.satyName = satyName;
+        this.satyName = satyName;
     }
 
-    @XmlTransient
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public List<Specimen> getSpecimenList() {
-	   return specimenList;
+        return specimenList;
     }
 
     public void setSpecimenList(List<Specimen> specimenList) {
-	   this.specimenList = specimenList;
+        this.specimenList = specimenList;
     }
 
     @Override
     public int hashCode() {
-	   int hash = 0;
-	   hash += (idSaty != null ? idSaty.hashCode() : 0);
-	   return hash;
+        int hash = 0;
+        hash += (idSaty != null ? idSaty.hashCode() : 0);
+        return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-	   if (!(object instanceof SampleType)) {
-		  return false;
-	   }
-	   SampleType other = (SampleType) object;
-	   return (this.idSaty != null || other.idSaty == null) && (this.idSaty == null || this.idSaty.equals(other.idSaty));
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof SampleType)) {
+            return false;
+        }
+        SampleType other = (SampleType) object;
+        if ((this.idSaty == null && other.idSaty != null) || (this.idSaty != null && !this.idSaty.equals(other.idSaty))) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public String toString() {
-	   return "net.hpclab.entities.SampleType[ idSaty=" + idSaty + " ]";
+        return "net.hpclab.entities.SampleType[ idSaty=" + idSaty + " ]";
     }
-
-    @Override
-    public String getEntityName() {
-	   return "Tipo de Muestra";
-    }
-
-    @Override
-    public String getDescription() {
-	   return getSatyName();
-    }
+    
 }

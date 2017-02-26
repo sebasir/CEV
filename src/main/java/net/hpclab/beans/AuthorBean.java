@@ -9,15 +9,14 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.inject.Inject;
 import net.hpclab.entities.Author;
 import net.hpclab.entities.AuthorRole;
 import net.hpclab.entities.AuthorType;
-import net.hpclab.utilities.AuthorPivot;
+import net.hpclab.services.AuthorPivot;
 
 @ManagedBean
 @SessionScoped
-public class AuthorBean extends Utilsbean implements Serializable {
+public class AuthorBean extends UtilsBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private AuthorPivot authorPivot;

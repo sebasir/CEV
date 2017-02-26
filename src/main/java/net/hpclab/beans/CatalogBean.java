@@ -8,11 +8,11 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import net.hpclab.entities.Catalog;
 import net.hpclab.entities.Collection;
-import net.hpclab.database.DataBaseManager;
+import net.hpclab.services.DataBaseService;
 
 @ManagedBean
 @SessionScoped
-public class CatalogBean extends Utilsbean implements Serializable {
+public class CatalogBean extends UtilsBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private Catalog catalog;
@@ -30,7 +30,7 @@ public class CatalogBean extends Utilsbean implements Serializable {
     public String persist() {
         try {
             catalog.setIdCollection(new Collection(new Integer(getSelectedCont())));
-            DataBaseManager<Catalog> dbm = new DataBaseManager<Catalog>();
+            DataBaseService<Catalog> dbm = new DataBaseService<>(Catalog.class);
             setCatalog(dbm.persist(catalog));
             if (getCatalog() != null && getCatalog().getIdCatalog() != null) {
                 FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Actions.createSuccess));

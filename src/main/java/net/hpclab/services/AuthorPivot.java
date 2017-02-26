@@ -1,4 +1,4 @@
-package net.hpclab.utilities;
+package net.hpclab.services;
 
 import java.io.Serializable;
 import java.util.HashMap;

@@ -12,7 +12,7 @@ import net.hpclab.entities.TaxonomyLevel;
 
 @ManagedBean
 @SessionScoped
-public class TaxonomyLevelBean extends Utilsbean implements Serializable {
+public class TaxonomyLevelBean extends UtilsBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private TaxonomyLevel taxonomyLevel;

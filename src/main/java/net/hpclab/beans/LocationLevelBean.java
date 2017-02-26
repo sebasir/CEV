@@ -10,7 +10,7 @@ import net.hpclab.entities.LocationLevel;
 
 @ManagedBean
 @SessionScoped
-public class LocationLevelBean extends Utilsbean implements Serializable {
+public class LocationLevelBean extends UtilsBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private LocationLevel locationLevel;

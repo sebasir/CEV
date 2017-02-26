@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package net.hpclab.entities;
 
 import java.io.Serializable;
@@ -14,18 +19,17 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
+/**
+ *
+ * @author Sebasir
+ */
 @Entity
 @Table(name = "location_level")
-@XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "LocationLevel.findAll", query = "SELECT l FROM LocationLevel l"),
-    @NamedQuery(name = "LocationLevel.findByIdLoclevel", query = "SELECT l FROM LocationLevel l WHERE l.idLoclevel = :idLoclevel"),
-    @NamedQuery(name = "LocationLevel.findByLoclevelName", query = "SELECT l FROM LocationLevel l WHERE l.loclevelName = :loclevelName"),
-    @NamedQuery(name = "LocationLevel.findByLoclevelRank", query = "SELECT l FROM LocationLevel l WHERE l.loclevelRank = :loclevelRank")})
-public class LocationLevel implements entNaming, Serializable {
+    @NamedQuery(name = "LocationLevel.findAll", query = "SELECT l FROM LocationLevel l")})
+public class LocationLevel implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,6 +45,9 @@ public class LocationLevel implements entNaming, Serializable {
     @NotNull
     @Column(name = "loclevel_rank")
     private int loclevelRank;
+    @Size(max = 2147483647)
+    @Column(name = "status")
+    private String status;
     @OneToMany(mappedBy = "idLoclevel")
     private List<Location> locationList;
 
@@ -48,80 +55,78 @@ public class LocationLevel implements entNaming, Serializable {
     }
 
     public LocationLevel(Integer idLoclevel) {
-	   this.idLoclevel = idLoclevel;
+        this.idLoclevel = idLoclevel;
     }
 
     public LocationLevel(Integer idLoclevel, String loclevelName, int loclevelRank) {
-	   this.idLoclevel = idLoclevel;
-	   this.loclevelName = loclevelName;
-	   this.loclevelRank = loclevelRank;
+        this.idLoclevel = idLoclevel;
+        this.loclevelName = loclevelName;
+        this.loclevelRank = loclevelRank;
     }
 
     public Integer getIdLoclevel() {
-	   return idLoclevel;
+        return idLoclevel;
     }
 
     public void setIdLoclevel(Integer idLoclevel) {
-	   this.idLoclevel = idLoclevel;
+        this.idLoclevel = idLoclevel;
     }
 
     public String getLoclevelName() {
-	   return loclevelName;
+        return loclevelName;
     }
 
     public void setLoclevelName(String loclevelName) {
-	   this.loclevelName = loclevelName;
+        this.loclevelName = loclevelName;
     }
 
     public int getLoclevelRank() {
-	   return loclevelRank;
+        return loclevelRank;
     }
 
     public void setLoclevelRank(int loclevelRank) {
-	   this.loclevelRank = loclevelRank;
+        this.loclevelRank = loclevelRank;
     }
 
-    @XmlTransient
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public List<Location> getLocationList() {
-	   return locationList;
+        return locationList;
     }
 
     public void setLocationList(List<Location> locationList) {
-	   this.locationList = locationList;
+        this.locationList = locationList;
     }
 
     @Override
     public int hashCode() {
-	   int hash = 0;
-	   hash += (idLoclevel != null ? idLoclevel.hashCode() : 0);
-	   return hash;
+        int hash = 0;
+        hash += (idLoclevel != null ? idLoclevel.hashCode() : 0);
+        return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-	   // TODO: Warning - this method won't work in the case the id fields are not set
-	   if (!(object instanceof LocationLevel)) {
-		  return false;
-	   }
-	   LocationLevel other = (LocationLevel) object;
-	   if ((this.idLoclevel == null && other.idLoclevel != null) || (this.idLoclevel != null && !this.idLoclevel.equals(other.idLoclevel))) {
-		  return false;
-	   }
-	   return true;
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof LocationLevel)) {
+            return false;
+        }
+        LocationLevel other = (LocationLevel) object;
+        if ((this.idLoclevel == null && other.idLoclevel != null) || (this.idLoclevel != null && !this.idLoclevel.equals(other.idLoclevel))) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public String toString() {
-	   return "net.hpclab.entities.LocationLevel[ idLoclevel=" + idLoclevel + " ]";
+        return "net.hpclab.entities.LocationLevel[ idLoclevel=" + idLoclevel + " ]";
     }
-
-    @Override
-    public String getEntityName() {
-	   return "Nivel de Ubicación";
-    }
-
-    @Override
-    public String getDescription() {
-	   return getLoclevelName();
-    }
+    
 }
