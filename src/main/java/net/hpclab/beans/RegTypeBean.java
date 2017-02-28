@@ -27,12 +27,12 @@ public class RegTypeBean extends UtilsBean implements Serializable {
         try {
             //setRegType(regTypeSession.persist(getRegType()));
             if (getRegType() != null && getRegType().getIdRety() != null) {
-                FacesContext.getCurrentInstance().addMessage(null, showMessage(regType, Actions.createSuccess));
+                FacesContext.getCurrentInstance().addMessage(null, showMessage(regType, Operations.CREATE_SUCCESS));
             } else {
-                FacesContext.getCurrentInstance().addMessage(null, showMessage(regType, Actions.createError));
+                FacesContext.getCurrentInstance().addMessage(null, showMessage(regType, Operations.CREATE_ERROR));
             }
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(regType, Actions.createError));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(regType, Operations.CREATE_ERROR));
         }
 
         return findAllRegTypes();
@@ -41,9 +41,9 @@ public class RegTypeBean extends UtilsBean implements Serializable {
     public void delete() {
         try {
             //regTypeSession.delete(getRegType());
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(getRegType(), Actions.deleteSuccess));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(getRegType(), Operations.DELETE_SUCCESS));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(getRegType(), Actions.deleteError));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(getRegType(), Operations.DELETE_ERROR));
         }
     }
 
@@ -54,9 +54,9 @@ public class RegTypeBean extends UtilsBean implements Serializable {
     public void edit() {
         try {
             //setRegType(regTypeSession.merge(getRegType()));
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(getRegType(), Actions.updateSuccess));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(getRegType(), Operations.UPDATE_SUCCESS));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(getRegType(), Actions.updateError));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(getRegType(), Operations.UPDATE_ERROR));
         }
     }
 

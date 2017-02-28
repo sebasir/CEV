@@ -90,10 +90,10 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 	   specimen.setIdSaty(sampleType);
 	   //specimen = specimenSession.persist(specimen);
 	   if (specimen != null && specimen.getIdSpecimen() != null) {
-		  launchMessage(specimen, Actions.createSuccess);
+		  launchMessage(specimen, Operations.CREATE_SUCCESS);
 		  allSpecimens.add(specimen);
 	   } else {
-		  launchMessage(specimen, Actions.createError);
+		  launchMessage(specimen, Operations.CREATE_ERROR);
 	   }
 	   resetForm();
     }
@@ -112,19 +112,19 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 		  //specimen = specimenSession.merge(specimen);
 		  allSpecimens.remove(specimen);
 		  allSpecimens.add(specimen);
-		  launchMessage(specimen, Actions.updateSuccess);
+		  launchMessage(specimen, Operations.UPDATE_SUCCESS);
 	   } catch (Exception e) {
-		  launchMessage(specimen, Actions.updateError);
+		  launchMessage(specimen, Operations.UPDATE_ERROR);
 	   }
 	   resetForm();
     }
 
     public void delete() {
 	   /*if (specimenSession.delete(specimen)) {
-		  launchMessage(specimen, Actions.deleteSuccess);
+		  launchMessage(specimen, Operations.DELETE_SUCCESS);
 		  allSpecimens.remove(specimen);
 	   } else {
-		  launchMessage(specimen, Actions.deleteError);
+		  launchMessage(specimen, Operations.DELETE_ERROR);
 	   }*/
     }
 
@@ -606,8 +606,8 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 	   return specimen != null && specimen.getIdSpecimen() != null ? "Editar a " + specimen.getCommonName() : "Registrar nuevo espécimen";
     }
 
-    private void launchMessage(entNaming ent, Actions act) {
-	   FacesContext.getCurrentInstance().addMessage(null, showMessage(ent, act));
+    private void launchMessage(entNaming ent, Operations act) {
+	   FacesContext.getCurrentInstance().addMessage(null, showOperationMessage(ent, act));
     }
 
     public boolean isCreate() {

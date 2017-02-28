@@ -52,14 +52,14 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
             //setTaxonomy(taxonomySession.persist(getTaxonomy()));
             if (getTaxonomy() != null && getTaxonomy().getIdTaxonomy() != null) {
                 allTaxonomys.add(taxonomy);
-                launchMessage(taxonomy, Actions.createSuccess);
+                launchMessage(taxonomy, Operations.CREATE_SUCCESS);
                 createTaxTree();
             } else {
-                launchMessage(taxonomy, Actions.createError);
+                launchMessage(taxonomy, Operations.CREATE_ERROR);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            launchMessage(taxonomy, Actions.createError);
+            launchMessage(taxonomy, Operations.CREATE_ERROR);
         }
         selectedLevel = null;
     }
@@ -67,19 +67,19 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
     public void edit() {
         try {
             //setTaxonomy(taxonomySession.merge(getTaxonomy()));
-            launchMessage(taxonomy, Actions.updateSuccess);
+            launchMessage(taxonomy, Operations.UPDATE_SUCCESS);
             createTaxTree();
         } catch (Exception e) {
-            launchMessage(taxonomy, Actions.updateError);
+            launchMessage(taxonomy, Operations.UPDATE_ERROR);
         }
     }
 
     public void delete() {
         /*if (taxonomySession.delete(taxonomy)) {
             createTaxTree();
-            launchMessage(getTaxonomy(), Actions.deleteSuccess);
+            launchMessage(getTaxonomy(), Operations.DELETE_SUCCESS);
         } else {
-            launchMessage(getTaxonomy(), Actions.deleteError);
+            launchMessage(getTaxonomy(), Operations.DELETE_ERROR);
         }*/
     }
 
@@ -241,8 +241,8 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
         }
     }
 
-    private void launchMessage(entNaming ent, Actions act) {
-        FacesContext.getCurrentInstance().addMessage(null, showMessage(ent, act));
+    private void launchMessage(entNaming ent, Operations act) {
+        FacesContext.getCurrentInstance().addMessage(null, showOperationMessage(ent, act));
     }
 
     public List<TaxonomyLevel> getAvalLevels() {

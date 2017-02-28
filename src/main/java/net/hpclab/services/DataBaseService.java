@@ -24,8 +24,8 @@ public class DataBaseService<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(DataBaseService.class.getSimpleName());
-    private static EntityManagerFactory entityManagerFactory;
-    private static EntityManager entityManager;
+    private EntityManagerFactory entityManagerFactory;
+    private EntityManager entityManager;
     protected Class<T> entityClass;
 
     public DataBaseService(Class<T> entityClass) throws PersistenceException, Exception {
@@ -45,6 +45,13 @@ public class DataBaseService<T> implements Serializable {
             }
         }
         List<T> result = typedQuery.setMaxResults(Util.Constant.QUERY_MAX_RESULTS).getResultList();
+        LOGGER.log(Level.INFO, "Listing {0}, OK", entityClass.getSimpleName());
+        return result;
+    }
+
+    public List<T> getList(String query) throws NoResultException, Exception {
+        LOGGER.log(Level.INFO, "Listing {0}...", entityClass.getSimpleName());
+        List<T> result = entityManager.createNamedQuery(query, entityClass).setMaxResults(Util.Constant.QUERY_MAX_RESULTS).getResultList();
         LOGGER.log(Level.INFO, "Listing {0}, OK", entityClass.getSimpleName());
         return result;
     }
@@ -141,7 +148,7 @@ public class DataBaseService<T> implements Serializable {
         return entity;
     }
 
-    public static void disconnect() {
+    public void disconnect() {
         if (entityManager != null) {
             LOGGER.log(Level.INFO, "Desconectando EntityManager...");
             entityManager.close();

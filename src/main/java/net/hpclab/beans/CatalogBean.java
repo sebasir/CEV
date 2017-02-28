@@ -20,7 +20,6 @@ public class CatalogBean extends UtilsBean implements Serializable {
     private String selectedCont;
 
     public CatalogBean() {
-
     }
 
     @PostConstruct
@@ -33,12 +32,12 @@ public class CatalogBean extends UtilsBean implements Serializable {
             DataBaseService<Catalog> dbm = new DataBaseService<>(Catalog.class);
             setCatalog(dbm.persist(catalog));
             if (getCatalog() != null && getCatalog().getIdCatalog() != null) {
-                FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Actions.createSuccess));
+                FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Operations.CREATE_SUCCESS));
             } else {
-                FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Actions.createError));
+                FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Operations.CREATE_ERROR));
             }
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Actions.createError));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Operations.CREATE_ERROR));
         }
 
         return findAllCatalogs();
@@ -47,9 +46,9 @@ public class CatalogBean extends UtilsBean implements Serializable {
     public void delete() {
         try {
             //catalogSession.delete(getCatalog());
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Actions.deleteSuccess));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Operations.DELETE_SUCCESS));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Actions.deleteError));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Operations.DELETE_ERROR));
         }
     }
 
@@ -60,9 +59,9 @@ public class CatalogBean extends UtilsBean implements Serializable {
     public void edit() {
         try {
             //setCatalog(catalogSession.merge(getCatalog()));
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Actions.updateSuccess));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Operations.UPDATE_SUCCESS));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Actions.updateError));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(catalog, Operations.UPDATE_ERROR));
         }
     }
 

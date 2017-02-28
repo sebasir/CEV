@@ -54,24 +54,24 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
                 specimenContent.setFileContent(getByteArray(contentFile.getInputstream()));
                 //setSpecimenContent(specimenContentSession.persist(getSpecimenContent()));
                 if (getSpecimenContent() != null && getSpecimenContent().getIdSpeccont() != null) {
-                    FacesContext.getCurrentInstance().addMessage(null, showMessage(getSpecimenContent(), Actions.createSuccess));
+                    FacesContext.getCurrentInstance().addMessage(null, showMessage(getSpecimenContent(), Operations.CREATE_SUCCESS));
                 } else {
-                    FacesContext.getCurrentInstance().addMessage(null, showMessage(getSpecimenContent(), Actions.createError));
+                    FacesContext.getCurrentInstance().addMessage(null, showMessage(getSpecimenContent(), Operations.CREATE_ERROR));
                 }
             } else {
-                FacesContext.getCurrentInstance().addMessage(null, showMessage(getSpecimenContent(), Actions.fileRequired));
+                FacesContext.getCurrentInstance().addMessage(null, showMessage(getSpecimenContent(), Operations.FILE_REQUIRED));
             }
         } catch (IOException e) {
-            FacesContext.getCurrentInstance().addMessage(null, showFileMessage(contentFile.getFileName(), Actions.fileUploadError));
+            FacesContext.getCurrentInstance().addMessage(null, showFileMessage(contentFile.getFileName(), Operations.FILE_LOAD_ERROR));
         }
     }
 
     public void delete() {
         try {
             //specimenContentSession.delete(getSpecimenContent());
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(getSpecimenContent(), Actions.deleteSuccess));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(getSpecimenContent(), Operations.DELETE_SUCCESS));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(getSpecimenContent(), Actions.deleteError));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(getSpecimenContent(), Operations.DELETE_ERROR));
         }
     }
 
@@ -95,9 +95,9 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
     public void edit() {
         try {
             //setSpecimenContent(specimenContentSession.merge(getSpecimenContent()));
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(getSpecimenContent(), Actions.updateSuccess));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(getSpecimenContent(), Operations.UPDATE_SUCCESS));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(getSpecimenContent(), Actions.updateError));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(getSpecimenContent(), Operations.UPDATE_ERROR));
         }
     }
 

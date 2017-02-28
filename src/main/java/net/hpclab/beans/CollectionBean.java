@@ -29,12 +29,12 @@ public class CollectionBean extends UtilsBean implements Serializable {
         try {
             //setCollection(collectionSession.persist(getCollection()));
             if (getCollection() != null && getCollection().getIdCollection() != null) {
-                FacesContext.getCurrentInstance().addMessage(null, showMessage(collection, Actions.createSuccess));
+                FacesContext.getCurrentInstance().addMessage(null, showMessage(collection, Operations.CREATE_SUCCESS));
             } else {
-                FacesContext.getCurrentInstance().addMessage(null, showMessage(collection, Actions.createError));
+                FacesContext.getCurrentInstance().addMessage(null, showMessage(collection, Operations.CREATE_ERROR));
             }
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(collection, Actions.createError));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(collection, Operations.CREATE_ERROR));
         }
 
         return findAllCollections();
@@ -43,9 +43,9 @@ public class CollectionBean extends UtilsBean implements Serializable {
     public void delete() {
         try {
             //collectionSession.delete(getCollection());
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(getCollection(), Actions.deleteSuccess));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(getCollection(), Operations.DELETE_SUCCESS));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(getCollection(), Actions.deleteError));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(getCollection(), Operations.DELETE_ERROR));
         }
     }
 
@@ -56,9 +56,9 @@ public class CollectionBean extends UtilsBean implements Serializable {
     public void edit() {
         try {
             //setCollection(collectionSession.merge(getCollection()));
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(getCollection(), Actions.updateSuccess));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(getCollection(), Operations.UPDATE_SUCCESS));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(getCollection(), Actions.updateError));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(getCollection(), Operations.UPDATE_ERROR));
         }
     }
 

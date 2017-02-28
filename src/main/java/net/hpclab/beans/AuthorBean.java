@@ -41,12 +41,12 @@ public class AuthorBean extends UtilsBean implements Serializable {
         try {
             //author = authorSession.persist(author);
             if (getAuthor() != null && getAuthor().getIdAuthor() != null) {
-                FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Actions.createSuccess));
+                FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Operations.CREATE_SUCCESS));
             } else {
-                FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Actions.createError));
+                FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Operations.CREATE_ERROR));
             }
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Actions.createError));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Operations.CREATE_ERROR));
         }
 
         return findAllAuthors();
@@ -59,13 +59,13 @@ public class AuthorBean extends UtilsBean implements Serializable {
             authorRole.setIdAuty(new AuthorType(idType));
             //authorRole = authorRoleSession.persist(authorRole);
             if (authorRole != null && authorRole.getIdAuro() != null) {
-                FacesContext.getCurrentInstance().addMessage(null, showMessage(authorRole, Actions.createSuccess));
+                FacesContext.getCurrentInstance().addMessage(null, showOperationMessage(authorRole, Operations.CREATE_SUCCESS));
             } else {
-                FacesContext.getCurrentInstance().addMessage(null, showMessage(authorRole, Actions.createError));
+                FacesContext.getCurrentInstance().addMessage(null, showOperationMessage(authorRole, Operations.CREATE_ERROR));
             }
         } catch (Exception e) {
             e.printStackTrace();
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(authorRole, Actions.createError));
+            FacesContext.getCurrentInstance().addMessage(null, showOperationMessage(authorRole, Operations.CREATE_ERROR));
         }
     }
 
@@ -73,12 +73,12 @@ public class AuthorBean extends UtilsBean implements Serializable {
         try {
             //setAuthorType(authorTypeSession.persist(authorType));
             if (authorType != null && authorType.getIdAuty() != null) {
-                FacesContext.getCurrentInstance().addMessage(null, showMessage(authorType, Actions.createSuccess));
+                FacesContext.getCurrentInstance().addMessage(null, showOperationMessage(authorType, Operations.CREATE_SUCCESS));
             } else {
-                FacesContext.getCurrentInstance().addMessage(null, showMessage(authorType, Actions.createError));
+                FacesContext.getCurrentInstance().addMessage(null, showOperationMessage(authorType, Operations.CREATE_ERROR));
             }
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(authorType, Actions.createError));
+            FacesContext.getCurrentInstance().addMessage(null, showOperationMessage(authorType, Operations.CREATE_ERROR));
         }
 
         return findAllAuthors();
@@ -87,18 +87,18 @@ public class AuthorBean extends UtilsBean implements Serializable {
     public void delete() {
         try {
             //authorSession.delete(getAuthor());
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Actions.deleteSuccess));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Operations.DELETE_SUCCESS));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Actions.deleteError));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Operations.DELETE_ERROR));
         }
     }
 
     public void deleteType() {
         try {
             //authorTypeSession.delete(authorType);
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(authorType, Actions.deleteSuccess));
+            FacesContext.getCurrentInstance().addMessage(null, showOperationMessage(authorType, Operations.DELETE_SUCCESS));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(authorType, Actions.deleteError));
+            FacesContext.getCurrentInstance().addMessage(null, showOperationMessage(authorType, Operations.DELETE_ERROR));
         }
     }
 
@@ -112,9 +112,9 @@ public class AuthorBean extends UtilsBean implements Serializable {
                 }
             }
             //authorRoleSession.delete(authorRole);
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(authorRole, Actions.deleteSuccess));
+            FacesContext.getCurrentInstance().addMessage(null, showOperationMessage(authorRole, Operations.DELETE_SUCCESS));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(authorRole, Actions.deleteError));
+            FacesContext.getCurrentInstance().addMessage(null, showOperationMessage(authorRole, Operations.DELETE_ERROR));
         }
     }
 
@@ -131,18 +131,18 @@ public class AuthorBean extends UtilsBean implements Serializable {
     public void edit() {
         try {
             //author = authorSession.merge(author);
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Actions.updateSuccess));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Operations.UPDATE_SUCCESS));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Actions.updateError));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(author, Operations.UPDATE_ERROR));
         }
     }
 
     public void editType() {
         try {
             //authorType = authorTypeSession.merge(authorType);
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(authorType, Actions.updateSuccess));
+            FacesContext.getCurrentInstance().addMessage(null, showOperationMessage(authorType, Operations.UPDATE_SUCCESS));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(authorType, Actions.updateError));
+            FacesContext.getCurrentInstance().addMessage(null, showOperationMessage(authorType, Operations.UPDATE_ERROR));
         }
     }
 

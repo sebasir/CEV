@@ -44,14 +44,14 @@ public class LocationBean extends UtilsBean implements Serializable {
             location.setIdLoclevel(new LocationLevel(new Integer(selectedLevel)));
             //setLocation(locationSession.persist(getLocation()));
             if (getLocation() != null && getLocation().getIdLocation() != null) {
-                FacesContext.getCurrentInstance().addMessage(null, showMessage(location, Actions.createSuccess));
+                FacesContext.getCurrentInstance().addMessage(null, showMessage(location, Operations.CREATE_SUCCESS));
                 createLocTree();
             } else {
-                FacesContext.getCurrentInstance().addMessage(null, showMessage(location, Actions.createError));
+                FacesContext.getCurrentInstance().addMessage(null, showMessage(location, Operations.CREATE_ERROR));
             }
         } catch (Exception e) {
             e.printStackTrace();
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(location, Actions.createError));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(location, Operations.CREATE_ERROR));
         }
     }
 
@@ -59,9 +59,9 @@ public class LocationBean extends UtilsBean implements Serializable {
         try {
             //locationSession.delete(getLocation());
             createLocTree();
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(getLocation(), Actions.deleteSuccess));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(getLocation(), Operations.DELETE_SUCCESS));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(getLocation(), Actions.deleteError));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(getLocation(), Operations.DELETE_ERROR));
         }
     }
 
@@ -82,9 +82,9 @@ public class LocationBean extends UtilsBean implements Serializable {
     public void edit() {
         try {
             //setLocation(locationSession.merge(getLocation()));
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(getLocation(), Actions.updateSuccess));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(getLocation(), Operations.UPDATE_SUCCESS));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(getLocation(), Actions.updateError));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(getLocation(), Operations.UPDATE_ERROR));
         }
     }
 

@@ -27,12 +27,12 @@ public class SampleTypeBean extends UtilsBean implements Serializable {
         try {
             //setSampleType(sampleTypeSession.persist(getSampleType()));
             if (getSampleType() != null && getSampleType().getIdSaty() != null) {
-                FacesContext.getCurrentInstance().addMessage(null, showMessage(sampleType, Actions.createSuccess));
+                FacesContext.getCurrentInstance().addMessage(null, showMessage(sampleType, Operations.CREATE_SUCCESS));
             } else {
-                FacesContext.getCurrentInstance().addMessage(null, showMessage(sampleType, Actions.createError));
+                FacesContext.getCurrentInstance().addMessage(null, showMessage(sampleType, Operations.CREATE_ERROR));
             }
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(sampleType, Actions.createError));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(sampleType, Operations.CREATE_ERROR));
         }
 
         return findAllSampleTypes();
@@ -41,9 +41,9 @@ public class SampleTypeBean extends UtilsBean implements Serializable {
     public void delete() {
         try {
             //sampleTypeSession.delete(getSampleType());
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(getSampleType(), Actions.deleteSuccess));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(getSampleType(), Operations.DELETE_SUCCESS));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(getSampleType(), Actions.deleteError));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(getSampleType(), Operations.DELETE_ERROR));
         }
     }
 
@@ -54,9 +54,9 @@ public class SampleTypeBean extends UtilsBean implements Serializable {
     public void edit() {
         try {
             //setSampleType(sampleTypeSession.merge(getSampleType()));
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(getSampleType(), Actions.updateSuccess));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(getSampleType(), Operations.UPDATE_SUCCESS));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(getSampleType(), Actions.updateError));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(getSampleType(), Operations.UPDATE_ERROR));
         }
     }
 

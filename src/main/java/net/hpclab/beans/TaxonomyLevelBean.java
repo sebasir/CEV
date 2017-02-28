@@ -33,21 +33,21 @@ public class TaxonomyLevelBean extends UtilsBean implements Serializable {
         try {
             //setTaxonomyLevel(taxonomyLevelSession.persist(getTaxonomyLevel()));
             if (getTaxonomyLevel() != null && getTaxonomyLevel().getIdTaxlevel() != null) {
-                FacesContext.getCurrentInstance().addMessage(null, showMessage(taxonomyLevel, Actions.createSuccess));
+                FacesContext.getCurrentInstance().addMessage(null, showMessage(taxonomyLevel, Operations.CREATE_SUCCESS));
             } else {
-                FacesContext.getCurrentInstance().addMessage(null, showMessage(taxonomyLevel, Actions.createError));
+                FacesContext.getCurrentInstance().addMessage(null, showMessage(taxonomyLevel, Operations.CREATE_ERROR));
             }
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(taxonomyLevel, Actions.createError));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(taxonomyLevel, Operations.CREATE_ERROR));
         }
     }
 
     public void delete() {
         try {
             //taxonomyLevelSession.delete(getTaxonomyLevel());
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(getTaxonomyLevel(), Actions.deleteSuccess));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(getTaxonomyLevel(), Operations.DELETE_SUCCESS));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(getTaxonomyLevel(), Actions.deleteError));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(getTaxonomyLevel(), Operations.DELETE_ERROR));
         }
     }
 
@@ -58,9 +58,9 @@ public class TaxonomyLevelBean extends UtilsBean implements Serializable {
     public void edit() {
         try {
             //setTaxonomyLevel(taxonomyLevelSession.merge(getTaxonomyLevel()));
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(getTaxonomyLevel(), Actions.updateSuccess));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(getTaxonomyLevel(), Operations.UPDATE_SUCCESS));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, showMessage(getTaxonomyLevel(), Actions.updateError));
+            FacesContext.getCurrentInstance().addMessage(null, showMessage(getTaxonomyLevel(), Operations.UPDATE_ERROR));
         }
     }
 

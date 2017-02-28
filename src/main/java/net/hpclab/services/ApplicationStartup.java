@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+import net.hpclab.entities.Institution;
 
 @WebListener
 public class ApplicationStartup implements ServletContextListener, Serializable {
@@ -38,6 +39,10 @@ public class ApplicationStartup implements ServletContextListener, Serializable 
             entityNames.put("TaxonomyLevel", "Nivel de Clasificación");
             entityNames.put("Users", "Usuario");
             Util.setEntityNames(entityNames);
+            
+            LOGGER.info("Inicializando dominios de instituciones");
+            DataBaseService<Institution> institutionService = new DataBaseService<>(Institution.class);
+            Util.setInstitutions(institutionService.getList("Institution.findAll"));
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Error inicializando nombres de entidades: {0}", e.getMessage());
         }
