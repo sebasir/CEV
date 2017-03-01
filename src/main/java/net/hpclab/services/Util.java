@@ -22,6 +22,9 @@ public class Util implements Serializable {
         public static final String HASH_ALGORITHM = "MD5";
         public static final String ENCRYPT_KEY = "_B1cH05";
         public static final int QUERY_MAX_RESULTS = 20;
+        public static final int ACCESS_LEVEL_SELECT = 1;
+        public static final int ACCESS_LEVEL_UPDATE = 2;
+        public static final int ACCESS_LEVEL_DELETE = 3;
     }
 
     public static boolean isEmpty(String string) {
