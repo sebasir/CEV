@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NamedQuery;
 import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
@@ -23,6 +24,7 @@ import javax.persistence.criteria.Root;
 public class DataBaseService<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    private static final String SELECT = "SELECT";
     private static final Logger LOGGER = Logger.getLogger(DataBaseService.class.getSimpleName());
     private EntityManagerFactory entityManagerFactory;
     private EntityManager entityManager;
@@ -93,9 +95,7 @@ public class DataBaseService<T> implements Serializable {
         return result;
     }
 
-    public T getSingleRecord(String query, HashMap<String, Object> params) throws NoResultException, Exception {
-        LOGGER.log(Level.INFO, "GetSingleRecord {0}, params: '{'{1}'}'", new Object[]{entityClass.getSimpleName(), params == null ? "N/A" : params.size()});
-        TypedQuery<T> typedQuery = entityManager.createQuery(query, entityClass);
+    private T getSingleRecord(TypedQuery<T> typedQuery, HashMap<String, Object> params) throws NoResultException, Exception {
         if (params != null) {
             for (String param : params.keySet()) {
                 typedQuery.setParameter(param, params.get(param));
@@ -104,6 +104,15 @@ public class DataBaseService<T> implements Serializable {
         T result = typedQuery.getSingleResult();
         LOGGER.log(Level.INFO, "GetSingleRecord {0}, OK", entityClass.getSimpleName());
         return result;
+    }
+
+    public T getSingleRecord(String query, HashMap<String, Object> params) throws NoResultException, Exception {
+        LOGGER.log(Level.INFO, "GetSingleRecord {0}, params: '{'{1}'}'", new Object[]{entityClass.getSimpleName(), params == null ? "N/A" : params.size()});
+        if (query.toLowerCase().contains(SELECT)) {
+            return getSingleRecord(entityManager.createQuery(query, entityClass), params);
+        } else {
+            return getSingleRecord(entityManager.createNamedQuery(query, entityClass), params);
+        }
     }
 
     public T mergeFromQuery(String queryUpdate, String query, HashMap<String, Object> params) throws NoResultException, Exception {
@@ -146,6 +155,14 @@ public class DataBaseService<T> implements Serializable {
         LOGGER.log(Level.INFO, "Persist {0}, OK", entityClass.getSimpleName());
         entityManager.getTransaction().commit();
         return entity;
+    }
+
+    public void delete(T entity) throws Exception {
+        entityManager.getTransaction().begin();
+        LOGGER.log(Level.INFO, "Removing {0}", entityClass.getSimpleName());
+        entityManager.remove(entity);
+        LOGGER.log(Level.INFO, "Removed {0}, OK", entityClass.getSimpleName());
+        entityManager.getTransaction().commit();
     }
 
     public void disconnect() {

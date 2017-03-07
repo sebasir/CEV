@@ -26,7 +26,8 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "roles_modules")
 @NamedQueries({
-    @NamedQuery(name = "RolesModules.findAll", query = "SELECT r FROM RolesModules r")})
+    @NamedQuery(name = "RolesModules.findAll", query = "SELECT r FROM RolesModules r"),
+    @NamedQuery(name = "RolesModules.findByKey", query = "SELECT r FROM RolesModules r WHERE r.idModule.idModule = :idModule AND r.idRole.idRole = :idRole")})
 public class RolesModules implements Serializable {
 
     private static final long serialVersionUID = 1L;

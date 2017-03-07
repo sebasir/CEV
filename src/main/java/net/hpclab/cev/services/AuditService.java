@@ -28,6 +28,7 @@ public class AuditService implements Serializable {
 
     public void log(Users idUser, Modules idModule, String aulogIpAddress, AuditEnum aulogAction, String aulogTarget) {
         try {
+            LOGGER.log(Level.INFO, "User: {0}, Module: {1}, IP: {2}, Action: {3}, target: {4}", new Object[]{idUser.getIdUser(), idModule.getIdModule(), aulogIpAddress, aulogAction.get(), aulogIpAddress});
             auditLog = new AuditLog();
             auditLog.setIdUser(idUser);
             auditLog.setIdModule(idModule);

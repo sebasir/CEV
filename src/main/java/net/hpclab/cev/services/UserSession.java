@@ -2,6 +2,7 @@ package net.hpclab.cev.services;
 
 import java.io.Serializable;
 import javax.servlet.http.HttpSession;
+import net.hpclab.cev.entities.Modules;
 import net.hpclab.cev.entities.Users;
 
 public class UserSession implements Serializable {
@@ -10,5 +11,6 @@ public class UserSession implements Serializable {
     public static HttpSession session;
     public static String ipAddress;
     public static Users user;
+    public static Modules module;
 
 }
