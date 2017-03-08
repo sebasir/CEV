@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.hpclab.cev.entities.AuditEnum;
+import net.hpclab.cev.enums.AuditEnum;
 import net.hpclab.cev.entities.AuditLog;
 import net.hpclab.cev.entities.Modules;
 import net.hpclab.cev.entities.Users;
@@ -17,9 +17,8 @@ public class AuditService implements Serializable {
     private DataBaseService<AuditLog> auditDBService;
     private AuditLog auditLog;
 
-    static {
+    private AuditService() {
         try {
-            auditService = new AuditService();
             auditService.auditDBService = new DataBaseService<>(AuditLog.class);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "El servicio de log no ha podido iniciar correctamente: {0}.", e.getMessage());
@@ -42,7 +41,7 @@ public class AuditService implements Serializable {
         }
     }
 
-    public static AuditService getInstance() {
-        return auditService;
+    public static synchronized AuditService getInstance() {
+        return auditService == null ? (auditService = new AuditService()) : auditService;
     }
 }

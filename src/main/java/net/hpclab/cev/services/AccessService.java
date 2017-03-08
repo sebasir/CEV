@@ -6,13 +6,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.hpclab.cev.entities.AuditEnum;
+import net.hpclab.cev.enums.AuditEnum;
 import net.hpclab.cev.entities.Modules;
 import net.hpclab.cev.entities.ModulesUsers;
 import net.hpclab.cev.entities.Roles;
 import net.hpclab.cev.entities.RolesModules;
 import net.hpclab.cev.entities.RolesUsers;
-import net.hpclab.cev.entities.StatusEnum;
+import net.hpclab.cev.enums.StatusEnum;
 import net.hpclab.cev.entities.Users;
 import net.hpclab.cev.exceptions.RecordAlreadyExistsException;
 import net.hpclab.cev.exceptions.RecordNotExistsException;
@@ -34,18 +34,17 @@ public class AccessService implements Serializable {
     private List<RolesUsers> rolesUsers;
     private List<RolesModules> rolesModules;
 
-    static {
+    private AccessService() throws Exception {
         try {
-            accessService = new AccessService();
-            accessService.mousService = new DataBaseService<>(ModulesUsers.class);
-            accessService.rousService = new DataBaseService<>(RolesUsers.class);
-            accessService.romoService = new DataBaseService<>(RolesModules.class);
-            accessService.userAccess = new HashMap<>();
-            accessService.roleUserAccess = new HashMap<>();
-            accessService.roleModuleAccess = new HashMap<>();
-            accessService.loadAccesses();
+            mousService = new DataBaseService<>(ModulesUsers.class);
+            rousService = new DataBaseService<>(RolesUsers.class);
+            romoService = new DataBaseService<>(RolesModules.class);
+            userAccess = new HashMap<>();
+            roleUserAccess = new HashMap<>();
+            roleModuleAccess = new HashMap<>();
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "El servicio de acceso no ha podido iniciar correctamente: {0}.", e.getMessage());
+            throw new Exception("El servicio de acceso no ha podido iniciar correctamente: " + e.getMessage());
         }
     }
 
@@ -305,10 +304,6 @@ public class AccessService implements Serializable {
         }
     }
 
-    public static AccessService getInstance() {
-        return accessService;
-    }
-
     public List<ModulesUsers> getModulesUsers() {
         return modulesUsers;
     }
@@ -331,5 +326,13 @@ public class AccessService implements Serializable {
 
     public void setRolesModules(List<RolesModules> aRolesModules) {
         rolesModules = aRolesModules;
+    }
+
+    public static synchronized AccessService getInstance() throws Exception {
+        if (accessService == null) {
+            accessService = new AccessService();
+            accessService.loadAccesses();
+        }
+        return accessService;
     }
 }

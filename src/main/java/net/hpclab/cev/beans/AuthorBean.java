@@ -10,8 +10,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import net.hpclab.cev.entities.Author;
-import net.hpclab.entities.AuthorRole;
-import net.hpclab.entities.AuthorType;
 import net.hpclab.cev.services.AuthorPivot;
 
 @ManagedBean
@@ -21,15 +19,11 @@ public class AuthorBean extends UtilsBean implements Serializable {
     private static final long serialVersionUID = 1L;
     private AuthorPivot authorPivot;
     private Author author;
-    private AuthorType authorType;
     private Integer idType;
-    private List<AuthorPivot> allAuthors;
-    private List<Author> allAuths;
-    private List<AuthorType> allAuthorTypes;
-    private List<AuthorRole> allAuthorRoles;
     private HashMap<Integer, String> columns;
 
     public AuthorBean() {
+        super(FacesContext.getCurrentInstance());
         allAuths = new ArrayList<Author>();
     }
 

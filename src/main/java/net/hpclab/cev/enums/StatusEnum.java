@@ -1,4 +1,4 @@
-package net.hpclab.cev.entities;
+package net.hpclab.cev.enums;
 
 public enum StatusEnum {
     ACTIVO("Activo"), DESHABILITADO("Deshabilitado"), BLOQUEADO("Bloqueado"), INCOMPLETO("Incompleto"), COMPLETO("Completo");

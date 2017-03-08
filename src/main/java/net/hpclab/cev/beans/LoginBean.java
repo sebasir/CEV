@@ -9,13 +9,15 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
-import net.hpclab.cev.entities.AuditLog;
 import net.hpclab.cev.entities.Institution;
 import net.hpclab.cev.entities.Modules;
-import net.hpclab.cev.entities.StatusEnum;
+import net.hpclab.cev.enums.StatusEnum;
 import net.hpclab.cev.entities.Users;
+import net.hpclab.cev.enums.AuditEnum;
+import net.hpclab.cev.enums.DataBaseEnum;
 import net.hpclab.cev.services.AuditService;
 import net.hpclab.cev.services.DataBaseService;
+import net.hpclab.cev.services.UserSession;
 import net.hpclab.cev.services.Util;
 
 @Named
@@ -42,13 +44,13 @@ public class LoginBean extends UtilsBean implements Serializable {
             usersService = new DataBaseService<>(Users.class);
             institutions = Util.getInstitutions();
         } catch (Exception e) {
-            showDataBaseMessage(e.getMessage(), DataBaseActions.DB_INIT_ERROR);
+            showDataBaseMessage(DataBaseEnum.DB_INIT_ERROR, e.getMessage());
         }
     }
 
     public void authenticate() {
         if (Util.isEmpty(user) || Util.isEmpty(pass)) {
-            showDataBaseMessage("Ni el Usuario ni la Contraseña no pueden estar vacías", DataBaseActions.LOGIN_ERROR);
+            showDataBaseMessage(DataBaseEnum.LOGIN_ERROR, "Ni el Usuario ni la Contraseña pueden estar vacías");
             LOGGER.log(Level.WARNING, "Usuario o contraseña vacías");
         } else {
             if (usersService != null && usersService.isConnected()) {
@@ -59,23 +61,24 @@ public class LoginBean extends UtilsBean implements Serializable {
                     users = usersService.getSingleRecord("Users.authenticate", params);
                     if (users != null) {
                         if (users.getStatus().equals(StatusEnum.ACTIVO.get())) {
-                            showDataBaseMessage(users.getUserNames() + " " + users.getUserLastnames(), DataBaseActions.LOGIN_SUCCESS);
+                            loadUserSession(users);
+                            showDataBaseMessage(DataBaseEnum.LOGIN_SUCCESS, users.getUserNames() + " " + users.getUserLastnames());
                             LOGGER.log(Level.INFO, "Users {0} autenticado.", users.getIdUser());
-                            AuditService.log(users, new Modules(2), pass, domain, domain);
+                            AuditService.getInstance().log(users, new Modules(2), UserSession.ipAddress, AuditEnum.LOGIN, "Users " + users.getIdUser() + " autenticado.");
                         } else {
-                            showDataBaseMessage("Tu estado actual es: " + users.getStatus(), DataBaseActions.LOGIN_ERROR);
+                            showDataBaseMessage(DataBaseEnum.LOGIN_ERROR, "Tu estado actual es: " + users.getStatus());
                             LOGGER.log(Level.INFO, "Error autenticando: Users status = {0}", users.getStatus());
                         }
                     } else {
-                        showDataBaseMessage("Asegurate de que los valores ingresados sean correctos.", DataBaseActions.LOGIN_ERROR);
+                        showDataBaseMessage(DataBaseEnum.LOGIN_ERROR, "Asegurate de que los valores ingresados sean correctos.");
                         LOGGER.log(Level.INFO, "Error autenticando: Users null");
                     }
                 } catch (Exception e) {
                     LOGGER.log(Level.INFO, "Error autenticando: {0}", e.getMessage());
-                    showDataBaseMessage("Intenta nuevamente", DataBaseActions.LOGIN_ERROR);
+                    showDataBaseMessage(DataBaseEnum.LOGIN_ERROR, "Intenta nuevamente");
                 }
             } else {
-                showDataBaseMessage("Error inicializando conexión a base de datos.", DataBaseActions.DB_INIT_ERROR);
+                showDataBaseMessage(DataBaseEnum.DB_INIT_ERROR, "Error inicializando conexión a base de datos.");
             }
         }
     }
