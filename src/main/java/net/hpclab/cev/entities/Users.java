@@ -12,6 +12,8 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,6 +27,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import net.hpclab.cev.enums.StatusEnum;
 
 /**
  *
@@ -77,9 +80,11 @@ public class Users implements Serializable {
     @Size(min = 1, max = 64)
     @Column(name = "user_password")
     private String userPassword;
-    @Size(max = 2147483647)
+    
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private String status;
+    private StatusEnum status;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idUser")
     private List<AuditLog> auditLogList;
     @OneToMany(mappedBy = "idUser")
@@ -182,11 +187,11 @@ public class Users implements Serializable {
         this.userPassword = userPassword;
     }
 
-    public String getStatus() {
+    public StatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusEnum status) {
         this.status = status;
     }
 

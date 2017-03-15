@@ -19,7 +19,7 @@ public class AuditService implements Serializable {
 
     private AuditService() {
         try {
-            auditService.auditDBService = new DataBaseService<>(AuditLog.class);
+            auditDBService = new DataBaseService<>(AuditLog.class);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "El servicio de log no ha podido iniciar correctamente: {0}.", e.getMessage());
         }
@@ -27,16 +27,17 @@ public class AuditService implements Serializable {
 
     public void log(Users idUser, Modules idModule, String aulogIpAddress, AuditEnum aulogAction, String aulogTarget) {
         try {
-            LOGGER.log(Level.INFO, "User: {0}, Module: {1}, IP: {2}, Action: {3}, target: {4}", new Object[]{idUser.getIdUser(), idModule.getIdModule(), aulogIpAddress, aulogAction.get(), aulogIpAddress});
+            LOGGER.log(Level.INFO, "User: {0}, Module: {1}, IP: {2}, Action: {3}, target: {4}", new Object[]{idUser.getIdUser(), idModule.getIdModule(), aulogIpAddress, aulogAction.get(), aulogTarget});
             auditLog = new AuditLog();
             auditLog.setIdUser(idUser);
             auditLog.setIdModule(idModule);
             auditLog.setAulogTime(new Date());
             auditLog.setAulogIpAddress(aulogIpAddress);
-            auditLog.setAulogAction(aulogAction.get());
+            auditLog.setAulogAction(aulogAction);
             auditLog.setAulogTarget(aulogTarget);
             auditDBService.persist(auditLog);
         } catch (Exception e) {
+            e.printStackTrace();
             LOGGER.log(Level.SEVERE, "Error realizando inserción en AuditLog: {0}", e.getMessage());
         }
     }

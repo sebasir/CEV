@@ -35,5 +35,58 @@ body {
 }
 
 hr {
-    border-color: rgba(48, 115, 61, 0.31);
+    border-color: rgba(15, 31, 18, 0.31);
+}
+
+.ui-widget {
+    font-family: 'Raleway', sans-serif;
+}
+
+.background {
+    background-image: url(../images/fondo_light.jpg); opacity: 0.5;
+    -webkit-filter: blur(7px); filter: blur(7px);
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left:0;
+    top: 0;
+}
+
+.background:after {
+    background:rgba(0,0,255,0.5);
+}
+
+.center-middle {
+    position: absolute;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    height: 443px;
+    width: 380px;
+    padding: 25px;
+    border-radius: 15px;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.footer-login {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    font-weight: 600;
+}
+
+.footer-login>hr {
+    border-top: 1px solid;
+}
+
+.center-text {
+    text-align: center;
+}
+
+select[multiple], select[size] {
+    min-height: 34px !important;
 }

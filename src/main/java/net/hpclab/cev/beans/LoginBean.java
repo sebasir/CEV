@@ -28,15 +28,11 @@ public class LoginBean extends UtilsBean implements Serializable {
     private static final Logger LOGGER = Logger.getLogger(LoginBean.class.getSimpleName());
     private String domain;
     private String user;
-    private String pass;
+    private String password;
     private Users users;
     private HashMap<String, String> userMenu;
     private DataBaseService<Users> usersService;
     private List<Institution> institutions;
-
-    public LoginBean() {
-        super(FacesContext.getCurrentInstance());
-    }
 
     @PostConstruct
     public void init() {
@@ -44,41 +40,42 @@ public class LoginBean extends UtilsBean implements Serializable {
             usersService = new DataBaseService<>(Users.class);
             institutions = Util.getInstitutions();
         } catch (Exception e) {
-            showDataBaseMessage(DataBaseEnum.DB_INIT_ERROR, e.getMessage());
+            showDataBaseMessage(FacesContext.getCurrentInstance(), DataBaseEnum.DB_INIT_ERROR, e.getMessage());
         }
     }
 
     public void authenticate() {
-        if (Util.isEmpty(user) || Util.isEmpty(pass)) {
-            showDataBaseMessage(DataBaseEnum.LOGIN_ERROR, "Ni el Usuario ni la Contraseña pueden estar vacías");
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        if (Util.isEmpty(user) || Util.isEmpty(password)) {
+            showDataBaseMessage(facesContext, DataBaseEnum.LOGIN_ERROR, "Ni el Usuario ni la Contraseña pueden estar vacías");
             LOGGER.log(Level.WARNING, "Usuario o contraseña vacías");
         } else {
             if (usersService != null && usersService.isConnected()) {
                 try {
                     HashMap<String, Object> params = new HashMap<>(2);
-                    params.put(":userEmail", user + domain);
-                    params.put(":userPassword", Util.encrypt(pass));
+                    params.put("userEmail", user + domain);
+                    params.put("userPassword", Util.encrypt(password));
                     users = usersService.getSingleRecord("Users.authenticate", params);
                     if (users != null) {
-                        if (users.getStatus().equals(StatusEnum.ACTIVO.get())) {
-                            loadUserSession(users);
-                            showDataBaseMessage(DataBaseEnum.LOGIN_SUCCESS, users.getUserNames() + " " + users.getUserLastnames());
+                        if (users.getStatus().equals(StatusEnum.Activo)) {
+                            loadUserSession(facesContext, users);
+                            showDataBaseMessage(facesContext, DataBaseEnum.LOGIN_SUCCESS, users.getUserNames() + " " + users.getUserLastnames());
                             LOGGER.log(Level.INFO, "Users {0} autenticado.", users.getIdUser());
                             AuditService.getInstance().log(users, new Modules(2), UserSession.ipAddress, AuditEnum.LOGIN, "Users " + users.getIdUser() + " autenticado.");
                         } else {
-                            showDataBaseMessage(DataBaseEnum.LOGIN_ERROR, "Tu estado actual es: " + users.getStatus());
+                            showDataBaseMessage(facesContext, DataBaseEnum.LOGIN_ERROR, "Tu estado actual es: " + users.getStatus());
                             LOGGER.log(Level.INFO, "Error autenticando: Users status = {0}", users.getStatus());
                         }
                     } else {
-                        showDataBaseMessage(DataBaseEnum.LOGIN_ERROR, "Asegurate de que los valores ingresados sean correctos.");
+                        showDataBaseMessage(facesContext, DataBaseEnum.LOGIN_ERROR, "Asegurate de que los valores ingresados sean correctos.");
                         LOGGER.log(Level.INFO, "Error autenticando: Users null");
                     }
                 } catch (Exception e) {
                     LOGGER.log(Level.INFO, "Error autenticando: {0}", e.getMessage());
-                    showDataBaseMessage(DataBaseEnum.LOGIN_ERROR, "Intenta nuevamente");
+                    showDataBaseMessage(facesContext, DataBaseEnum.LOGIN_ERROR, "Intenta nuevamente");
                 }
             } else {
-                showDataBaseMessage(DataBaseEnum.DB_INIT_ERROR, "Error inicializando conexión a base de datos.");
+                showDataBaseMessage(facesContext, DataBaseEnum.DB_INIT_ERROR, "Error inicializando conexión a base de datos.");
             }
         }
     }
@@ -99,16 +96,16 @@ public class LoginBean extends UtilsBean implements Serializable {
         return user;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public void setUser(String user) {
         this.user = user;
-    }
-
-    public String getPass() {
-        return pass;
-    }
-
-    public void setPass(String pass) {
-        this.pass = pass;
     }
 
     public Users getUsers() {

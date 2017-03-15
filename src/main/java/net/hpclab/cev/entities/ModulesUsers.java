@@ -9,6 +9,8 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,6 +21,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import net.hpclab.cev.enums.StatusEnum;
 
 /**
  *
@@ -41,9 +44,11 @@ public class ModulesUsers implements Serializable {
     @NotNull
     @Column(name = "access_level")
     private int accessLevel;
-    @Size(max = 2147483647)
+    
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private String status;
+    private StatusEnum status;
+    
     @JoinColumn(name = "id_module", referencedColumnName = "id_module")
     @ManyToOne
     private Modules idModule;
@@ -79,11 +84,11 @@ public class ModulesUsers implements Serializable {
         this.accessLevel = accessLevel;
     }
 
-    public String getStatus() {
+    public StatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusEnum status) {
         this.status = status;
     }
 

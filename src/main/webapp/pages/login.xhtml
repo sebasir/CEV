@@ -2,40 +2,53 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+        <link href="../css/default.css" rel="stylesheet"/>
     </h:head>
     <h:body>
-        <h:form id="loginForm">
-            <p:growl id="growl" showDetail="true"></p:growl>
-
-            <div class="container">
-
-                <form class="form-signin">
-                    <h2 class="form-signin-heading">Please sign in</h2>
-                    <label for="inputEmail" class="sr-only">Email address</label>
-                    <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required="" autofocus=""/>
-                    <label for="inputPassword" class="sr-only">Password</label>
-                    <input type="password" id="inputPassword" class="form-control" placeholder="Password" required="" />
-                    <div class="checkbox">
-                        <label>
-                            <input type="checkbox" value="remember-me"/> Remember me
-                        </label>
+        <div class="background"></div>
+        <div class="center-middle">
+            <h:form id="loginForm">
+                <p:growl id="growl" showDetail="true"/>
+                <h3 class="center-text">Ingreso al Centro Entomológico Virtual</h3>
+                <hr />
+                <div class="form-group">
+                    <label for="inputEmail">Usuario</label>
+                    <div class="input-group">
+                        <h:inputText id="inputEmail" class="form-control" required="true" value="#{loginBean.user}"/>
+                        <span class="input-group-addon">|</span>
+                        <h:selectOneMenu id="domain" class="form-control" value="#{loginBean.domain}">
+                            <f:selectItem itemLabel="Selecciona"/>
+                            <f:selectItems value="#{loginBean.institutions}" var="inst" itemLabel="#{inst.domainUrl}" itemValue="#{inst.domainUrl}"/>
+                        </h:selectOneMenu>
                     </div>
-                    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-                </form>
-
-            </div>
-
-
-
-            <h:outputText value="Usuario:"/>
-            <p:inputText id="user" value="#{loginBean.user}" required="true" requiredMessage="Debe ingresar un nombre de usuario"/>
-            <h:outputText value="Password:"/>
-            <p:password id="clave" value="#{loginBean.clave}" required="true" requiredMessage="Debe ingresar una contraseña"/>
-            <p:spacer/>
-            <p:commandButton action="#{loginBean.autenticar}" value="Login" update="loginForm:growl" ajax="true"/>
-        </h:form>
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword">Contraseña</label>
+                    <p:password id="inputPassword" class="form-control" required="true" value="#{loginBean.password}" />
+                </div>
+                <hr />
+                <div class="row">
+                    <h:commandLink class="pull-right">Olvidaste tus credenciales?</h:commandLink>
+                </div>
+                <hr />
+                <p:commandButton id="buttonLogin" class="btn btn-default btn-block" ajax="true" update="growl" actionListener="#{loginBean.authenticate()}" value="Ingresar"/>
+            </h:form>
+        </div>
+        <div class="container footer-login">
+            <hr/>
+            <footer>
+                <div class="row">
+                    <div class="col-md-12">
+                        <p style="text-align: center;">
+                            Proyecto Colección Entomológica Virtual. Todos los derechos reservados. | Fotos de <a href="http://www.google.com/images">GOOGLE</a> | Diseño por <a href="#" rel="nofollow">smotavitam</a>.<br/><span class="glyphicon glyphicon-copyright-mark" aria-hidden="true"></span>
+                        </p>
+                    </div>
+                </div>
+            </footer>
+        </div>
     </h:body>
 </html>

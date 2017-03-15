@@ -32,23 +32,18 @@ public class UtilsBean implements Serializable {
     public static List<Location> allLocations;
     public static List<TaxonomyLevel> allTaxonomyLevels;
     public static List<LocationLevel> allLocationLevels;
-    private FacesContext facesContext;
 
-    public UtilsBean(FacesContext facesContext) {
-        this.facesContext = facesContext;
-    }
-
-    public void loadUserSession(Users user) {
-        UserSession.ipAddress = getRemoteAddr();
-        UserSession.session = getHttpSession();
+    public void loadUserSession(FacesContext facesContext, Users user) {
+        UserSession.ipAddress = getRemoteAddr(facesContext);
+        UserSession.session = getHttpSession(facesContext);
         UserSession.user = user;
     }
     
-    private HttpSession getHttpSession() {
+    private HttpSession getHttpSession(FacesContext facesContext) {
         return (HttpSession) facesContext.getExternalContext().getSession(false);
     }
 
-    private String getRemoteAddr() {
+    private String getRemoteAddr(FacesContext facesContext) {
         HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
         String forwardedFor = request.getHeader("X-FORWARDED-FOR");
 
@@ -77,7 +72,7 @@ public class UtilsBean implements Serializable {
         return retorno;
     }
 
-    public void showMessage(OutcomeEnum action, String errorMessage) {
+    public void showMessage(FacesContext facesContext, OutcomeEnum action, String errorMessage) {
         FacesMessage fMess;
         switch (action) {
             case CREATE_SUCCESS:
@@ -105,7 +100,7 @@ public class UtilsBean implements Serializable {
         facesContext.addMessage(null, fMess);
     }
 
-    public void showFileMessage(OutcomeEnum action, String fileName, String errorMessage) {
+    public void showFileMessage(FacesContext facesContext, OutcomeEnum action, String fileName, String errorMessage) {
         FacesMessage fMess;
         switch (action) {
             case FILE_UPLOAD_SUCCESS:
@@ -130,7 +125,7 @@ public class UtilsBean implements Serializable {
         facesContext.addMessage(null, fMess);
     }
 
-    public void showDataBaseMessage(DataBaseEnum action, String message) {
+    public void showDataBaseMessage(FacesContext facesContext, DataBaseEnum action, String message) {
         FacesMessage fMess;
         switch (action) {
             case DB_INIT_ERROR:
@@ -155,13 +150,5 @@ public class UtilsBean implements Serializable {
 
     public InputStream getInputStream(byte[] byteContent) throws IOException {
         return new ByteArrayInputStream(byteContent);
-    }
-
-    public FacesContext getFacesContext() {
-        return facesContext;
-    }
-
-    public void setFacesContext(FacesContext facesContext) {
-        this.facesContext = facesContext;
     }
 }

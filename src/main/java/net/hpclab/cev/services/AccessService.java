@@ -118,7 +118,7 @@ public class AccessService implements Serializable {
                 params.put(":idModule", idModule);
                 params.put(":idUser", idUser);
                 moduleUser = mousService.getSingleRecord("ModuleUser.findByKey", params);
-                moduleUser.setStatus(status.get());
+                moduleUser.setStatus(status);
                 mousService.merge(moduleUser);
                 if (userAccess.get(idUser) == null || userAccess.get(idUser).get(idModule) == null) {
                     addUserAccess(idUser, idModule, accessLevel);
@@ -179,7 +179,7 @@ public class AccessService implements Serializable {
                 params.put(":idRole", idRole);
                 params.put(":idUser", idUser);
                 roleUser = rousService.getSingleRecord("RoleUser.findByKey", params);
-                roleUser.setStatus(status.get());
+                roleUser.setStatus(status);
                 rousService.merge(roleUser);
 
                 if (roleUserAccess.get(idUser) == null || roleUserAccess.get(idUser).get(idRole) == null) {
@@ -229,7 +229,7 @@ public class AccessService implements Serializable {
                 params.put(":idRole", idRole);
                 params.put(":idModule", idModule);
                 roleModule = romoService.getSingleRecord("RoleUser.findByKey", params);
-                roleModule.setStatus(status.get());
+                roleModule.setStatus(status);
                 romoService.merge(roleModule);
 
                 if (roleModuleAccess.get(idRole) == null || !roleModuleAccess.get(idRole).contains(idModule)) {
