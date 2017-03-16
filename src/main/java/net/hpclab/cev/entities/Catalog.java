@@ -1,10 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.hpclab.cev.entities;
 
+import net.hpclab.cev.enums.StatusEnum;
+import net.hpclab.cev.enums.StatusEnumConverter;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -18,23 +15,24 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
-/**
- *
- * @author Sebasir
- */
 @Entity
 @Table(name = "catalog")
 @NamedQueries({
     @NamedQuery(name = "Catalog.findAll", query = "SELECT c FROM Catalog c")})
+@TypeDef(name = "StatusEnumConverter", typeClass = StatusEnumConverter.class)
 public class Catalog implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "CatalogSeq", sequenceName = "catalog_id_catalog_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CatalogSeq")
     @Basic(optional = false)
     @Column(name = "id_catalog")
     private Integer idCatalog;
@@ -43,9 +41,12 @@ public class Catalog implements Serializable {
     @Size(min = 1, max = 64)
     @Column(name = "catalog_name")
     private String catalogName;
+
     @Size(max = 2147483647)
     @Column(name = "status")
-    private String status;
+    @Type(type = "StatusEnumConverter")
+    private StatusEnum status;
+
     @JoinColumn(name = "id_collection", referencedColumnName = "id_collection")
     @ManyToOne
     private Collection idCollection;
@@ -80,11 +81,11 @@ public class Catalog implements Serializable {
         this.catalogName = catalogName;
     }
 
-    public String getStatus() {
+    public StatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusEnum status) {
         this.status = status;
     }
 
@@ -113,20 +114,15 @@ public class Catalog implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Catalog)) {
             return false;
         }
         Catalog other = (Catalog) object;
-        if ((this.idCatalog == null && other.idCatalog != null) || (this.idCatalog != null && !this.idCatalog.equals(other.idCatalog))) {
-            return false;
-        }
-        return true;
+        return !((this.idCatalog == null && other.idCatalog != null) || (this.idCatalog != null && !this.idCatalog.equals(other.idCatalog)));
     }
 
     @Override
     public String toString() {
         return "net.hpclab.entities.Catalog[ idCatalog=" + idCatalog + " ]";
     }
-    
 }

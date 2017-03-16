@@ -1,10 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.hpclab.cev.entities;
 
+import net.hpclab.cev.enums.StatusEnum;
+import net.hpclab.cev.enums.StatusEnumConverter;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -12,8 +9,6 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,27 +17,28 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import net.hpclab.cev.enums.StatusEnum;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
-/**
- *
- * @author Sebasir
- */
 @Entity
 @Table(name = "users")
 @NamedQueries({
-    @NamedQuery(name = "Users.findAll", query = "SELECT u FROM Users u"),
+    @NamedQuery(name = "Users.findAll", query = "SELECT u FROM Users u")
+    ,
     @NamedQuery(name = "Users.authenticate", query = "SELECT u FROM Users u WHERE u.userEmail = :userEmail AND u.userPassword = :userPassword")})
+@TypeDef(name = "StatusEnumConverter", typeClass = StatusEnumConverter.class)
 public class Users implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "UsersSeq", sequenceName = "users_id_user_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "UsersSeq")
     @Basic(optional = false)
     @Column(name = "id_user")
     private Integer idUser;
@@ -80,11 +76,12 @@ public class Users implements Serializable {
     @Size(min = 1, max = 64)
     @Column(name = "user_password")
     private String userPassword;
-    
-    @Enumerated(EnumType.STRING)
+
+    @Size(max = 2147483647)
     @Column(name = "status")
+    @Type(type = "StatusEnumConverter")
     private StatusEnum status;
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idUser")
     private List<AuditLog> auditLogList;
     @OneToMany(mappedBy = "idUser")
@@ -257,15 +254,11 @@ public class Users implements Serializable {
             return false;
         }
         Users other = (Users) object;
-        if ((this.idUser == null && other.idUser != null) || (this.idUser != null && !this.idUser.equals(other.idUser))) {
-            return false;
-        }
-        return true;
+        return !((this.idUser == null && other.idUser != null) || (this.idUser != null && !this.idUser.equals(other.idUser)));
     }
 
     @Override
     public String toString() {
         return "net.hpclab.entities.Users[ idUser=" + idUser + " ]";
     }
-    
 }

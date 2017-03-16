@@ -1,10 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.hpclab.cev.entities;
 
+import net.hpclab.cev.enums.StatusEnum;
+import net.hpclab.cev.enums.StatusEnumConverter;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -16,23 +13,24 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
-/**
- *
- * @author Sebasir
- */
 @Entity
 @Table(name = "institution")
 @NamedQueries({
     @NamedQuery(name = "Institution.findAll", query = "SELECT i FROM Institution i")})
+@TypeDef(name = "StatusEnumConverter", typeClass = StatusEnumConverter.class)
 public class Institution implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "InstitutionSeq", sequenceName = "institution_id_institution_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "InstitutionSeq")
     @Basic(optional = false)
     @Column(name = "id_institution")
     private Integer idInstitution;
@@ -51,9 +49,12 @@ public class Institution implements Serializable {
     @Size(min = 1, max = 32)
     @Column(name = "domain_url")
     private String domainUrl;
+
     @Size(max = 2147483647)
     @Column(name = "status")
-    private String status;
+    @Type(type = "StatusEnumConverter")
+    private StatusEnum status;
+
     @OneToMany(mappedBy = "idInstitution")
     private List<Collection> collectionList;
     @OneToMany(mappedBy = "idInstitution")
@@ -105,11 +106,11 @@ public class Institution implements Serializable {
         this.domainUrl = domainUrl;
     }
 
-    public String getStatus() {
+    public StatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusEnum status) {
         this.status = status;
     }
 
@@ -143,15 +144,11 @@ public class Institution implements Serializable {
             return false;
         }
         Institution other = (Institution) object;
-        if ((this.idInstitution == null && other.idInstitution != null) || (this.idInstitution != null && !this.idInstitution.equals(other.idInstitution))) {
-            return false;
-        }
-        return true;
+        return !((this.idInstitution == null && other.idInstitution != null) || (this.idInstitution != null && !this.idInstitution.equals(other.idInstitution)));
     }
 
     @Override
     public String toString() {
         return "net.hpclab.entities.Institution[ idInstitution=" + idInstitution + " ]";
     }
-    
 }

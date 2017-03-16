@@ -1,10 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.hpclab.cev.entities;
 
+import net.hpclab.cev.enums.StatusEnum;
+import net.hpclab.cev.enums.StatusEnumConverter;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -19,23 +16,24 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
-/**
- *
- * @author Sebasir
- */
 @Entity
 @Table(name = "taxonomy")
 @NamedQueries({
     @NamedQuery(name = "Taxonomy.findAll", query = "SELECT t FROM Taxonomy t")})
+@TypeDef(name = "StatusEnumConverter", typeClass = StatusEnumConverter.class)
 public class Taxonomy implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "TaxonomySeq", sequenceName = "taxonomy_id_taxonomy_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TaxonomySeq")
     @Basic(optional = false)
     @Column(name = "id_taxonomy")
     private Integer idTaxonomy;
@@ -44,9 +42,12 @@ public class Taxonomy implements Serializable {
     @Size(min = 1, max = 64)
     @Column(name = "taxonomy_name")
     private String taxonomyName;
+
     @Size(max = 2147483647)
     @Column(name = "status")
-    private String status;
+    @Type(type = "StatusEnumConverter")
+    private StatusEnum status;
+
     @OneToMany(mappedBy = "idContainer")
     private List<Taxonomy> taxonomyList;
     @JoinColumn(name = "id_container", referencedColumnName = "id_taxonomy")
@@ -86,11 +87,11 @@ public class Taxonomy implements Serializable {
         this.taxonomyName = taxonomyName;
     }
 
-    public String getStatus() {
+    public StatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusEnum status) {
         this.status = status;
     }
 
@@ -135,20 +136,15 @@ public class Taxonomy implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Taxonomy)) {
             return false;
         }
         Taxonomy other = (Taxonomy) object;
-        if ((this.idTaxonomy == null && other.idTaxonomy != null) || (this.idTaxonomy != null && !this.idTaxonomy.equals(other.idTaxonomy))) {
-            return false;
-        }
-        return true;
+        return !((this.idTaxonomy == null && other.idTaxonomy != null) || (this.idTaxonomy != null && !this.idTaxonomy.equals(other.idTaxonomy)));
     }
 
     @Override
     public String toString() {
         return "net.hpclab.entities.Taxonomy[ idTaxonomy=" + idTaxonomy + " ]";
     }
-    
 }

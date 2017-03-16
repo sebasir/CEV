@@ -1,12 +1,11 @@
 package net.hpclab.cev.entities;
 
+import net.hpclab.cev.enums.AuditEnum;
+import net.hpclab.cev.enums.AuditEnumConverter;
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,39 +13,36 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import net.hpclab.cev.enums.AuditEnum;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 @Entity
 @Table(name = "audit_log")
 @NamedQueries({
     @NamedQuery(name = "AuditLog.findAll", query = "SELECT a FROM AuditLog a")})
+@TypeDef(name = "AuditEnumConverter", typeClass = AuditEnumConverter.class)
 public class AuditLog implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
+    @SequenceGenerator(name = "AuditLogSeq", sequenceName = "audit_log_id_aulog_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "AuditLogSeq")
     @Column(name = "id_aulog")
     private Integer idAulog;
     @Column(name = "aulog_time")
     @Temporal(TemporalType.TIMESTAMP)
     private Date aulogTime;
-    @Size(max = 16)
     @Column(name = "aulog_ip_address")
     private String aulogIpAddress;
-    
-    @Enumerated(EnumType.STRING)
+
     @Column(name = "aulog_action")
+    @Type(type = "AuditEnumConverter")
     private AuditEnum aulogAction;
-    
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 2048)
+
     @Column(name = "aulog_target")
     private String aulogTarget;
     @JoinColumn(name = "id_module", referencedColumnName = "id_module")
@@ -137,10 +133,7 @@ public class AuditLog implements Serializable {
             return false;
         }
         AuditLog other = (AuditLog) object;
-        if ((this.idAulog == null && other.idAulog != null) || (this.idAulog != null && !this.idAulog.equals(other.idAulog))) {
-            return false;
-        }
-        return true;
+        return !((this.idAulog == null && other.idAulog != null) || (this.idAulog != null && !this.idAulog.equals(other.idAulog)));
     }
 
     @Override

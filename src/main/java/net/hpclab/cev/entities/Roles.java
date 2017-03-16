@@ -1,10 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.hpclab.cev.entities;
 
+import net.hpclab.cev.enums.StatusEnum;
+import net.hpclab.cev.enums.StatusEnumConverter;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -17,25 +14,26 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
-/**
- *
- * @author Sebasir
- */
 @Entity
 @Table(name = "roles")
 @NamedQueries({
     @NamedQuery(name = "Roles.findAll", query = "SELECT r FROM Roles r")})
+@TypeDef(name = "StatusEnumConverter", typeClass = StatusEnumConverter.class)
 public class Roles implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "RolesSeq", sequenceName = "roles_id_role_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RolesSeq")
     @Basic(optional = false)
     @Column(name = "id_role")
     private Integer idRole;
@@ -55,9 +53,12 @@ public class Roles implements Serializable {
     @Column(name = "role_modified")
     @Temporal(TemporalType.TIMESTAMP)
     private Date roleModified;
+
     @Size(max = 2147483647)
     @Column(name = "status")
-    private String status;
+    @Type(type = "StatusEnumConverter")
+    private StatusEnum status;
+
     @OneToMany(mappedBy = "idRole")
     private List<RolesModules> rolesModulesList;
     @OneToMany(mappedBy = "idRole")
@@ -116,11 +117,11 @@ public class Roles implements Serializable {
         this.roleModified = roleModified;
     }
 
-    public String getStatus() {
+    public StatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusEnum status) {
         this.status = status;
     }
 
@@ -154,15 +155,11 @@ public class Roles implements Serializable {
             return false;
         }
         Roles other = (Roles) object;
-        if ((this.idRole == null && other.idRole != null) || (this.idRole != null && !this.idRole.equals(other.idRole))) {
-            return false;
-        }
-        return true;
+        return !((this.idRole == null && other.idRole != null) || (this.idRole != null && !this.idRole.equals(other.idRole)));
     }
 
     @Override
     public String toString() {
         return "net.hpclab.entities.Roles[ idRole=" + idRole + " ]";
     }
-    
 }

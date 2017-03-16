@@ -1,16 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.hpclab.cev.entities;
 
+import net.hpclab.cev.enums.StatusEnum;
+import net.hpclab.cev.enums.StatusEnumConverter;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,25 +13,26 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import net.hpclab.cev.enums.StatusEnum;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
-/**
- *
- * @author Sebasir
- */
 @Entity
 @Table(name = "modules_users")
 @NamedQueries({
-    @NamedQuery(name = "ModulesUsers.findAll", query = "SELECT m FROM ModulesUsers m"),
+    @NamedQuery(name = "ModulesUsers.findAll", query = "SELECT m FROM ModulesUsers m")
+    ,
     @NamedQuery(name = "ModulesUsers.findByKey", query = "SELECT m FROM ModulesUsers m WHERE m.idModule.idModule = :idModule AND m.idUser.idUser = :idUser")})
+@TypeDef(name = "StatusEnumConverter", typeClass = StatusEnumConverter.class)
 public class ModulesUsers implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "ModulesUsersSeq", sequenceName = "modules_users_id_mous_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ModulesUsersSeq")
     @Basic(optional = false)
     @Column(name = "id_mous")
     private Integer idMous;
@@ -44,11 +40,12 @@ public class ModulesUsers implements Serializable {
     @NotNull
     @Column(name = "access_level")
     private int accessLevel;
-    
-    @Enumerated(EnumType.STRING)
+
+    @Size(max = 2147483647)
     @Column(name = "status")
+    @Type(type = "StatusEnumConverter")
     private StatusEnum status;
-    
+
     @JoinColumn(name = "id_module", referencedColumnName = "id_module")
     @ManyToOne
     private Modules idModule;
@@ -122,15 +119,11 @@ public class ModulesUsers implements Serializable {
             return false;
         }
         ModulesUsers other = (ModulesUsers) object;
-        if ((this.idMous == null && other.idMous != null) || (this.idMous != null && !this.idMous.equals(other.idMous))) {
-            return false;
-        }
-        return true;
+        return !((this.idMous == null && other.idMous != null) || (this.idMous != null && !this.idMous.equals(other.idMous)));
     }
 
     @Override
     public String toString() {
         return "net.hpclab.entities.ModulesUsers[ idMous=" + idMous + " ]";
     }
-    
 }

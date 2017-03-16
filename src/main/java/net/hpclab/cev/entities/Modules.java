@@ -1,10 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.hpclab.cev.entities;
 
+import net.hpclab.cev.enums.StatusEnum;
+import net.hpclab.cev.enums.StatusEnumConverter;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -18,23 +15,24 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
-/**
- *
- * @author Sebasir
- */
 @Entity
 @Table(name = "modules")
 @NamedQueries({
     @NamedQuery(name = "Modules.findAll", query = "SELECT m FROM Modules m")})
+@TypeDef(name = "StatusEnumConverter", typeClass = StatusEnumConverter.class)
 public class Modules implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "ModulesSeq", sequenceName = "modules_id_module_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ModulesSeq")
     @Basic(optional = false)
     @Column(name = "id_module")
     private Integer idModule;
@@ -48,9 +46,12 @@ public class Modules implements Serializable {
     @Size(min = 1, max = 256)
     @Column(name = "module_descr")
     private String moduleDescr;
+
     @Size(max = 2147483647)
     @Column(name = "status")
-    private String status;
+    @Type(type = "StatusEnumConverter")
+    private StatusEnum status;
+
     @OneToMany(mappedBy = "idModule")
     private List<AuditLog> auditLogList;
     @OneToMany(mappedBy = "idModule")
@@ -100,11 +101,11 @@ public class Modules implements Serializable {
         this.moduleDescr = moduleDescr;
     }
 
-    public String getStatus() {
+    public StatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusEnum status) {
         this.status = status;
     }
 
@@ -157,20 +158,15 @@ public class Modules implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Modules)) {
             return false;
         }
         Modules other = (Modules) object;
-        if ((this.idModule == null && other.idModule != null) || (this.idModule != null && !this.idModule.equals(other.idModule))) {
-            return false;
-        }
-        return true;
+        return !((this.idModule == null && other.idModule != null) || (this.idModule != null && !this.idModule.equals(other.idModule)));
     }
 
     @Override
     public String toString() {
         return "net.hpclab.entities.Modules[ idModule=" + idModule + " ]";
     }
-    
 }

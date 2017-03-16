@@ -11,6 +11,7 @@ import net.hpclab.cev.entities.Institution;
 
 @WebListener
 public class ApplicationStartup implements ServletContextListener, Serializable {
+
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(ApplicationStartup.class.getSimpleName());
 
@@ -39,12 +40,12 @@ public class ApplicationStartup implements ServletContextListener, Serializable 
             entityNames.put("TaxonomyLevel", "Nivel de Clasificación");
             entityNames.put("Users", "Usuario");
             Util.setEntityNames(entityNames);
-            
+
             LOGGER.info("Inicializando dominios de instituciones");
             DataBaseService<Institution> institutionService = new DataBaseService<>(Institution.class);
             Util.setInstitutions(institutionService.getList("Institution.findAll"));
         } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Error inicializando nombres de entidades: {0}", e.getMessage());
+            LOGGER.log(Level.WARNING, "Error inicializando: {0}", e.getMessage());
         }
     }
 
@@ -52,5 +53,4 @@ public class ApplicationStartup implements ServletContextListener, Serializable 
     public void contextDestroyed(ServletContextEvent sce) {
 
     }
-
 }

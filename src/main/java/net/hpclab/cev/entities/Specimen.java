@@ -1,10 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.hpclab.cev.entities;
 
+import net.hpclab.cev.enums.StatusEnum;
+import net.hpclab.cev.enums.StatusEnumConverter;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -18,25 +15,26 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
-/**
- *
- * @author Sebasir
- */
 @Entity
 @Table(name = "specimen")
 @NamedQueries({
     @NamedQuery(name = "Specimen.findAll", query = "SELECT s FROM Specimen s")})
+@TypeDef(name = "StatusEnumConverter", typeClass = StatusEnumConverter.class)
 public class Specimen implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "SpecimenSeq", sequenceName = "specimen_id_specimen_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SpecimenSeq")
     @Basic(optional = false)
     @Column(name = "id_specimen")
     private Integer idSpecimen;
@@ -67,9 +65,12 @@ public class Specimen implements Serializable {
     @Size(max = 2048)
     @Column(name = "collect_comment")
     private String collectComment;
+
     @Size(max = 2147483647)
     @Column(name = "status")
-    private String status;
+    @Type(type = "StatusEnumConverter")
+    private StatusEnum status;
+
     @OneToOne(mappedBy = "idSpecimen")
     private SpecimenContent specimenContent;
     @JoinColumn(name = "id_collector", referencedColumnName = "id_author")
@@ -175,11 +176,11 @@ public class Specimen implements Serializable {
         this.collectComment = collectComment;
     }
 
-    public String getStatus() {
+    public StatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusEnum status) {
         this.status = status;
     }
 
@@ -264,20 +265,15 @@ public class Specimen implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Specimen)) {
             return false;
         }
         Specimen other = (Specimen) object;
-        if ((this.idSpecimen == null && other.idSpecimen != null) || (this.idSpecimen != null && !this.idSpecimen.equals(other.idSpecimen))) {
-            return false;
-        }
-        return true;
+        return !((this.idSpecimen == null && other.idSpecimen != null) || (this.idSpecimen != null && !this.idSpecimen.equals(other.idSpecimen)));
     }
 
     @Override
     public String toString() {
         return "net.hpclab.entities.Specimen[ idSpecimen=" + idSpecimen + " ]";
     }
-    
 }

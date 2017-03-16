@@ -1,16 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.hpclab.cev.entities;
 
+import net.hpclab.cev.enums.StatusEnum;
+import net.hpclab.cev.enums.StatusEnumConverter;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,25 +13,26 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import net.hpclab.cev.enums.StatusEnum;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
-/**
- *
- * @author Sebasir
- */
 @Entity
 @Table(name = "roles_users")
 @NamedQueries({
-    @NamedQuery(name = "RolesUsers.findAll", query = "SELECT r FROM RolesUsers r"),
+    @NamedQuery(name = "RolesUsers.findAll", query = "SELECT r FROM RolesUsers r")
+    ,
     @NamedQuery(name = "RolesUsers.findByKey", query = "SELECT r FROM RolesUsers r WHERE r.idRole.idRole = :idRole AND r.idUser.idUser = :idUser")})
+@TypeDef(name = "StatusEnumConverter", typeClass = StatusEnumConverter.class)
 public class RolesUsers implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "RolesUsersSeq", sequenceName = "roles_users_id_rous_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RolesUsersSeq")
     @Basic(optional = false)
     @Column(name = "id_rous")
     private Integer idRous;
@@ -44,11 +40,12 @@ public class RolesUsers implements Serializable {
     @NotNull
     @Column(name = "access_level")
     private int accessLevel;
-    
-    @Enumerated(EnumType.STRING)
+
+    @Size(max = 2147483647)
     @Column(name = "status")
+    @Type(type = "StatusEnumConverter")
     private StatusEnum status;
-    
+
     @JoinColumn(name = "id_role", referencedColumnName = "id_role")
     @ManyToOne
     private Roles idRole;
@@ -122,15 +119,11 @@ public class RolesUsers implements Serializable {
             return false;
         }
         RolesUsers other = (RolesUsers) object;
-        if ((this.idRous == null && other.idRous != null) || (this.idRous != null && !this.idRous.equals(other.idRous))) {
-            return false;
-        }
-        return true;
+        return !((this.idRous == null && other.idRous != null) || (this.idRous != null && !this.idRous.equals(other.idRous)));
     }
 
     @Override
     public String toString() {
         return "net.hpclab.entities.RolesUsers[ idRous=" + idRous + " ]";
     }
-    
 }

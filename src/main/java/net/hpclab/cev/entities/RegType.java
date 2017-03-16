@@ -1,10 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.hpclab.cev.entities;
 
+import net.hpclab.cev.enums.StatusEnum;
+import net.hpclab.cev.enums.StatusEnumConverter;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -16,23 +13,24 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
-/**
- *
- * @author Sebasir
- */
 @Entity
 @Table(name = "reg_type")
 @NamedQueries({
     @NamedQuery(name = "RegType.findAll", query = "SELECT r FROM RegType r")})
+@TypeDef(name = "StatusEnumConverter", typeClass = StatusEnumConverter.class)
 public class RegType implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "RegTypeSeq", sequenceName = "reg_type_id_rety_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RegTypeSeq")
     @Basic(optional = false)
     @Column(name = "id_rety")
     private Integer idRety;
@@ -41,9 +39,12 @@ public class RegType implements Serializable {
     @Size(min = 1, max = 32)
     @Column(name = "rety_name")
     private String retyName;
+
     @Size(max = 2147483647)
     @Column(name = "status")
-    private String status;
+    @Type(type = "StatusEnumConverter")
+    private StatusEnum status;
+
     @OneToMany(mappedBy = "idRety")
     private List<Specimen> specimenList;
 
@@ -75,11 +76,11 @@ public class RegType implements Serializable {
         this.retyName = retyName;
     }
 
-    public String getStatus() {
+    public StatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusEnum status) {
         this.status = status;
     }
 
@@ -100,20 +101,15 @@ public class RegType implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof RegType)) {
             return false;
         }
         RegType other = (RegType) object;
-        if ((this.idRety == null && other.idRety != null) || (this.idRety != null && !this.idRety.equals(other.idRety))) {
-            return false;
-        }
-        return true;
+        return !((this.idRety == null && other.idRety != null) || (this.idRety != null && !this.idRety.equals(other.idRety)));
     }
 
     @Override
     public String toString() {
         return "net.hpclab.entities.RegType[ idRety=" + idRety + " ]";
     }
-    
 }

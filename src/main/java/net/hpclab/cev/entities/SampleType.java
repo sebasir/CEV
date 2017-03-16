@@ -1,10 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.hpclab.cev.entities;
 
+import net.hpclab.cev.enums.StatusEnum;
+import net.hpclab.cev.enums.StatusEnumConverter;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -16,23 +13,24 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
-/**
- *
- * @author Sebasir
- */
 @Entity
 @Table(name = "sample_type")
 @NamedQueries({
     @NamedQuery(name = "SampleType.findAll", query = "SELECT s FROM SampleType s")})
+@TypeDef(name = "StatusEnumConverter", typeClass = StatusEnumConverter.class)
 public class SampleType implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "SampleTypeSeq", sequenceName = "sample_type_id_saty_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SampleTypeSeq")
     @Basic(optional = false)
     @Column(name = "id_saty")
     private Integer idSaty;
@@ -41,9 +39,12 @@ public class SampleType implements Serializable {
     @Size(min = 1, max = 32)
     @Column(name = "saty_name")
     private String satyName;
+
     @Size(max = 2147483647)
     @Column(name = "status")
-    private String status;
+    @Type(type = "StatusEnumConverter")
+    private StatusEnum status;
+
     @OneToMany(mappedBy = "idSaty")
     private List<Specimen> specimenList;
 
@@ -75,11 +76,11 @@ public class SampleType implements Serializable {
         this.satyName = satyName;
     }
 
-    public String getStatus() {
+    public StatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusEnum status) {
         this.status = status;
     }
 
@@ -105,15 +106,11 @@ public class SampleType implements Serializable {
             return false;
         }
         SampleType other = (SampleType) object;
-        if ((this.idSaty == null && other.idSaty != null) || (this.idSaty != null && !this.idSaty.equals(other.idSaty))) {
-            return false;
-        }
-        return true;
+        return !((this.idSaty == null && other.idSaty != null) || (this.idSaty != null && !this.idSaty.equals(other.idSaty)));
     }
 
     @Override
     public String toString() {
         return "net.hpclab.entities.SampleType[ idSaty=" + idSaty + " ]";
     }
-    
 }

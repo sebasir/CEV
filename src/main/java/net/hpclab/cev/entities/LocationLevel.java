@@ -1,10 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.hpclab.cev.entities;
 
+import net.hpclab.cev.enums.StatusEnum;
+import net.hpclab.cev.enums.StatusEnumConverter;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -16,23 +13,24 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
-/**
- *
- * @author Sebasir
- */
 @Entity
 @Table(name = "location_level")
 @NamedQueries({
     @NamedQuery(name = "LocationLevel.findAll", query = "SELECT l FROM LocationLevel l")})
+@TypeDef(name = "StatusEnumConverter", typeClass = StatusEnumConverter.class)
 public class LocationLevel implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "LocationLevelSeq", sequenceName = "location_level_id_loclevel_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "LocationLevelSeq")
     @Basic(optional = false)
     @Column(name = "id_loclevel")
     private Integer idLoclevel;
@@ -45,9 +43,12 @@ public class LocationLevel implements Serializable {
     @NotNull
     @Column(name = "loclevel_rank")
     private int loclevelRank;
+
     @Size(max = 2147483647)
     @Column(name = "status")
-    private String status;
+    @Type(type = "StatusEnumConverter")
+    private StatusEnum status;
+
     @OneToMany(mappedBy = "idLoclevel")
     private List<Location> locationList;
 
@@ -88,11 +89,11 @@ public class LocationLevel implements Serializable {
         this.loclevelRank = loclevelRank;
     }
 
-    public String getStatus() {
+    public StatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusEnum status) {
         this.status = status;
     }
 
@@ -118,15 +119,11 @@ public class LocationLevel implements Serializable {
             return false;
         }
         LocationLevel other = (LocationLevel) object;
-        if ((this.idLoclevel == null && other.idLoclevel != null) || (this.idLoclevel != null && !this.idLoclevel.equals(other.idLoclevel))) {
-            return false;
-        }
-        return true;
+        return !((this.idLoclevel == null && other.idLoclevel != null) || (this.idLoclevel != null && !this.idLoclevel.equals(other.idLoclevel)));
     }
 
     @Override
     public String toString() {
         return "net.hpclab.entities.LocationLevel[ idLoclevel=" + idLoclevel + " ]";
     }
-    
 }
