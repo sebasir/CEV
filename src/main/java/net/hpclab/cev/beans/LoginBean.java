@@ -15,8 +15,10 @@ import net.hpclab.cev.enums.StatusEnum;
 import net.hpclab.cev.entities.Users;
 import net.hpclab.cev.enums.AuditEnum;
 import net.hpclab.cev.enums.DataBaseEnum;
+import net.hpclab.cev.enums.OutcomeEnum;
 import net.hpclab.cev.services.AuditService;
 import net.hpclab.cev.services.DataBaseService;
+import net.hpclab.cev.services.SessionService;
 import net.hpclab.cev.services.UserSession;
 import net.hpclab.cev.services.Util;
 
@@ -57,14 +59,19 @@ public class LoginBean extends UtilsBean implements Serializable {
                     params.put("userPassword", Util.encrypt(password));
                     users = usersService.getSingleRecord("Users.authenticate", params);
                     if (users != null) {
-                        if (users.getStatus().equals(StatusEnum.Activo)) {
-                            loadUserSession(facesContext, users);
-                            showDataBaseMessage(facesContext, DataBaseEnum.LOGIN_SUCCESS, users.getUserNames() + " " + users.getUserLastnames());
-                            LOGGER.log(Level.INFO, "Users {0} autenticado.", users.getIdUser());
-                            AuditService.getInstance().log(users, new Modules(2), UserSession.ipAddress, AuditEnum.LOGIN, "Users " + users.getIdUser() + " autenticado.");
+                        if (!SessionService.isUserOnline(users)) {
+                            SessionService.addUser(getSessionId(facesContext), loadUserSession(facesContext, users));
+                            if (users.getStatus().equals(StatusEnum.Activo)) {
+                                UserSession userSession = loadUserSession(facesContext, users);
+                                showDataBaseMessage(facesContext, DataBaseEnum.LOGIN_SUCCESS, users.getUserNames() + " " + users.getUserLastnames());
+                                LOGGER.log(Level.INFO, "Users {0} autenticado.", users.getIdUser());
+                                AuditService.getInstance().log(userSession.getUser(), new Modules(2), userSession.getIpAddress(), AuditEnum.LOGIN, "Users " + users.getIdUser() + " autenticado.");
+                            } else {
+                                showDataBaseMessage(facesContext, DataBaseEnum.LOGIN_ERROR, "Tu estado actual es: " + users.getStatus());
+                                LOGGER.log(Level.INFO, "Error autenticando: Users status = {0}", users.getStatus());
+                            }
                         } else {
-                            showDataBaseMessage(facesContext, DataBaseEnum.LOGIN_ERROR, "Tu estado actual es: " + users.getStatus());
-                            LOGGER.log(Level.INFO, "Error autenticando: Users status = {0}", users.getStatus());
+                            showMessage(facesContext, OutcomeEnum.GENERIC_ERROR, "El usuario ya había iniciado en otra sesión.");
                         }
                     } else {
                         showDataBaseMessage(facesContext, DataBaseEnum.LOGIN_ERROR, "Asegurate de que los valores ingresados sean correctos.");
@@ -78,6 +85,10 @@ public class LoginBean extends UtilsBean implements Serializable {
                 showDataBaseMessage(facesContext, DataBaseEnum.DB_INIT_ERROR, "Error inicializando conexión a base de datos.");
             }
         }
+    }
+
+    public void logOut() {
+
     }
 
     public void loadMenu() {

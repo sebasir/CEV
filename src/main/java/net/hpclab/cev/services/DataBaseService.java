@@ -45,14 +45,14 @@ public class DataBaseService<T> implements Serializable {
                 typedQuery.setParameter(param, params.get(param));
             }
         }
-        List<T> result = typedQuery.setMaxResults(Util.Constant.QUERY_MAX_RESULTS).getResultList();
+        List<T> result = typedQuery.setMaxResults(Constant.QUERY_MAX_RESULTS).getResultList();
         LOGGER.log(Level.INFO, "Listing {0}, OK", entityClass.getSimpleName());
         return result;
     }
 
     public List<T> getList(String query) throws NoResultException, Exception {
         LOGGER.log(Level.INFO, "Listing {0}...", entityClass.getSimpleName());
-        List<T> result = entityManager.createNamedQuery(query, entityClass).setMaxResults(Util.Constant.QUERY_MAX_RESULTS).getResultList();
+        List<T> result = entityManager.createNamedQuery(query, entityClass).setMaxResults(Constant.QUERY_MAX_RESULTS).getResultList();
         LOGGER.log(Level.INFO, "Listing {0}, OK", entityClass.getSimpleName());
         return result;
     }
@@ -75,7 +75,7 @@ public class DataBaseService<T> implements Serializable {
                     continue;
                 }
                 path = null;
-                attributes = param.split(Util.Constant.POINT);
+                attributes = param.split(Constant.POINT);
                 for (String attribute : attributes) {
                     if (path == null) {
                         path = root.get(attribute);
@@ -89,7 +89,7 @@ public class DataBaseService<T> implements Serializable {
             criteriaQuery.select(root).where(predicate);
         }
 
-        List<T> result = entityManager.createQuery(criteriaQuery).setMaxResults(Util.Constant.QUERY_MAX_RESULTS).getResultList();
+        List<T> result = entityManager.createQuery(criteriaQuery).setMaxResults(Constant.QUERY_MAX_RESULTS).getResultList();
         LOGGER.log(Level.INFO, "Listing {0}, OK", entityClass.getSimpleName());
         return result;
     }
@@ -180,7 +180,7 @@ public class DataBaseService<T> implements Serializable {
     private void getEntityManager() throws PersistenceException, Exception {
         LOGGER.log(Level.INFO, "Obteniendo EntityManager");
         if (entityManagerFactory == null) {
-            entityManagerFactory = Persistence.createEntityManagerFactory(Util.Constant.PERSISTENCE_UNIT);
+            entityManagerFactory = Persistence.createEntityManagerFactory(Constant.PERSISTENCE_UNIT);
         }
         if (entityManager == null) {
             entityManager = entityManagerFactory.createEntityManager();

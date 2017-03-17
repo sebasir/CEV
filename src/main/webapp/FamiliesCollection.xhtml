@@ -1,136 +1,136 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html	xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
-	 xmlns:p="http://primefaces.org/ui"
-	 xmlns:ui="http://java.sun.com/jsf/facelets"
-	 xmlns:f="http://java.sun.com/jsf/core">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
     <head>
         <title>Colección Entomológica 3D - Bichos</title>
-	   <link href="bootstrap/css/bootstrap.css" type="text/css" rel="stylesheet"/>
+        <link href="bootstrap/css/bootstrap.css" type="text/css" rel="stylesheet"/>
         <link href="css/default.css" type="text/css" rel="stylesheet"/>
-	   <link href="css/collage/transitions.css" type="text/css" rel="stylesheet"/>
-	   <link href="css/collage/collage.css" type="text/css" rel="stylesheet"/>
-	   <link href="js/fancybox/jquery.fancybox.css?v=2.1.5" type="text/css" rel="stylesheet" media="screen"/>
-	   <script src="js/jquery-1.11.3.js" type="text/javascript"></script>
-	   <script src="bootstrap/js/bootstrap.js" type="text/javascript"></script>
-	   <script src="js/collage/jquery.collagePlus.js" type="text/javascript" />
-	   <script src="js/collage/extras/jquery.collageCaption.js" type="text/javascript" />
-	   <script src="js/collage/extras/jquery.removeWhitespace.js" type="text/javascript" />
-	   <script src="js/fancybox/jquery.fancybox.js?v=2.1.5" type="text/javascript" />
+        <link href="css/collage/transitions.css" type="text/css" rel="stylesheet"/>
+        <link href="css/collage/collage.css" type="text/css" rel="stylesheet"/>
+        <link href="js/fancybox/jquery.fancybox.css?v=2.1.5" type="text/css" rel="stylesheet" media="screen"/>
+        <script src="js/jquery-1.11.3.js" type="text/javascript"></script>
+        <script src="bootstrap/js/bootstrap.js" type="text/javascript"></script>
+        <script src="js/collage/jquery.collagePlus.js" type="text/javascript" />
+        <script src="js/collage/extras/jquery.collageCaption.js" type="text/javascript" />
+        <script src="js/collage/extras/jquery.removeWhitespace.js" type="text/javascript" />
+        <script src="js/fancybox/jquery.fancybox.js?v=2.1.5" type="text/javascript" />
     </head>
     <body style="padding-top: 10px;">
-	   <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-		  <div class="container">
-			 <div class="row" style="padding-top: 5px;">
-				<div class="col-md-2">
-				    <img class="img-responsive" src="images/logo_central.gif" alt="" style="max-height: 35px;"/>
-				</div>
-				<div class="col-md-2 col-md-offset-8">
-				    <img class="img-responsive" src="images/logo_utadeo.gif" alt="" style="max-height: 35px;"/>
-				</div>
-			 </div>
-		  </div>
-	   </nav>
-	   <nav class="navbar" role="navigation" style="padding-top: 50px;">
-		  <div class="container" style="text-align: center;">
-			 <h1 class="bs-docs-featurette-title">COLECCION ENTOMOLÓGICA VIRTUAL</h1>
-			 <hr/>
-			 <p>Colección Entomológica del Centro de Biosistemas de la Universidad Jorge Tadeo Lozano.</p>
-		  </div>
-	   </nav>
-	   <div class="container">
-		  <div class="row">
-			 <div class="col-md-12">
-				<img class="img-responsive" src="images/banner/abeja.jpg" alt="" style="float: left; width: 12.5%"/>
-				<img class="img-responsive" src="images/banner/avispa.jpg" alt="" style="float: left; width: 12.5%"/>
-				<img class="img-responsive" src="images/banner/hormiga.jpg" alt="" style="float: left; width: 12.5%"/>
-				<img class="img-responsive" src="images/banner/insect.jpg" alt="" style="float: left; width: 12.5%"/>
-				<img class="img-responsive" src="images/banner/mariposa.jpg" alt="" style="float: left; width: 12.5%"/>
-				<img class="img-responsive" src="images/banner/avispa.jpg" alt="" style="float: left; width: 12.5%"/>
-				<img class="img-responsive" src="images/banner/hormiga.jpg" alt="" style="float: left; width: 12.5%"/>
-				<img class="img-responsive" src="images/banner/mosca.jpg" alt="" style="float: left; width: 12.5%"/>
-			 </div>
-		  </div>
-		  <div class="row">
-			 <div class="col-md-12">
-				<nav class="navbar navbar-default">
-				    <div class="container-fluid">
-					   <div class="navbar-header">
-						  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-							 <span class="sr-only">Toggle navigation</span>
-							 <span class="icon-bar"></span>
-							 <span class="icon-bar"></span>
-							 <span class="icon-bar"></span>
-						  </button>
-						  <a class="navbar-brand" href="#">HPCLab</a>
-					   </div>
-					   <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-						  <ul class="nav navbar-nav navbar-right">
-							 <li><h:outputLink value="Collection.xhtml">Colección Entomológica</h:outputLink></li>
-							 <li><a href="#">Contacto</a></li>
-							 <li><a href="#">Acerca</a></li>
-							 <li><a href="pages/login.xhtml">Ingreso</a></li>
-						  </ul>
-					   </div>
-				    </div>
-				</nav>
-			 </div>
-		  </div>
-		  <h:outputText value="&lt;div class=&quot;row&quot;&gt;" escape="false" />
-		  <ui:repeat value="#{specimenContentBean.families}" var="fam" varStatus="stat">
-			 <h:outputText value="&lt;/div&gt;&lt;div class=&quot;row&quot;&gt;" escape="false" rendered="#{stat.index % 3 == 0}" />
-			 <div class="col-md-4">
-				<div class="thumbnail">
-				    <p:graphicImage value="#{specimenContentBean.getFamilyThumb()}">
-					   <f:param name="idTaxonomy" value="#{fam.idTaxonomy}" />
-				    </p:graphicImage>
-				    <div class="caption">
-					   <h3>#{fam.taxonomyName}</h3>
-					   <p>
-						  <a href="Collection.xhtml" class="btn btn-success" role="button">Ver Ejemplares</a>
-					   </p>
-				    </div>
-				</div>
-			 </div>
-		  </ui:repeat>
-		  <h:outputText value="&lt;/div&gt;" escape="false" />
-	   </div>
-	   <div class="container">
-		  <hr/>
-		  <footer>
-			 <div class="row">
-				<div class="col-lg-12">
-				    <p style="text-align: center;">
-					   Proyecto Colección Entomológica. Todos los derechos reservados. | Fotos de <a href="http://www.google.com/images">GOOGLE</a> | Diseño por <a href="#" rel="nofollow">smotavitam</a>.<br/><span class="glyphicon glyphicon-copyright-mark" aria-hidden="true"></span>
-				    </p>
-				</div>
-			 </div>
-		  </footer>
-	   </div>
-	   <script type="text/javascript">
-		  $(window).load(function() {
-			 $(document).ready(function() {
-				collage();
-				$('.Collage').collageCaption();
-			 });
-			 $(".fancybox").fancybox();
-		  });
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="row" style="padding-top: 5px;">
+                    <div class="col-md-2">
+                        <img class="img-responsive" src="images/logo_central.gif" alt="" style="max-height: 35px;"/>
+                    </div>
+                    <div class="col-md-2 col-md-offset-8">
+                        <img class="img-responsive" src="images/logo_utadeo.gif" alt="" style="max-height: 35px;"/>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <nav class="navbar" role="navigation" style="padding-top: 50px;">
+            <div class="container" style="text-align: center;">
+                <h1 class="bs-docs-featurette-title">COLECCION ENTOMOLÓGICA VIRTUAL</h1>
+                <hr/>
+                <p>Colección Entomológica del Centro de Biosistemas de la Universidad Jorge Tadeo Lozano.</p>
+            </div>
+        </nav>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <img class="img-responsive" src="images/banner/abeja.jpg" alt="" style="float: left; width: 12.5%"/>
+                    <img class="img-responsive" src="images/banner/avispa.jpg" alt="" style="float: left; width: 12.5%"/>
+                    <img class="img-responsive" src="images/banner/hormiga.jpg" alt="" style="float: left; width: 12.5%"/>
+                    <img class="img-responsive" src="images/banner/insect.jpg" alt="" style="float: left; width: 12.5%"/>
+                    <img class="img-responsive" src="images/banner/mariposa.jpg" alt="" style="float: left; width: 12.5%"/>
+                    <img class="img-responsive" src="images/banner/avispa.jpg" alt="" style="float: left; width: 12.5%"/>
+                    <img class="img-responsive" src="images/banner/hormiga.jpg" alt="" style="float: left; width: 12.5%"/>
+                    <img class="img-responsive" src="images/banner/mosca.jpg" alt="" style="float: left; width: 12.5%"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <nav class="navbar navbar-default">
+                        <div class="container-fluid">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                                <a class="navbar-brand" href="#">HPCLab</a>
+                            </div>
+                            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                                <ul class="nav navbar-nav navbar-right">
+                                    <li><h:outputLink value="Collection.xhtml">Colección Entomológica</h:outputLink></li>
+                                    <li><a href="#">Contacto</a></li>
+                                    <li><a href="#">Acerca</a></li>
+                                    <li><a href="pages/login.xhtml">Ingreso</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+            <h:outputText value="&lt;div class=&quot;row&quot;&gt;" escape="false" />
+            <ui:repeat value="#{specimenContentBean.families}" var="fam" varStatus="stat">
+                <h:outputText value="&lt;/div&gt;&lt;div class=&quot;row&quot;&gt;" escape="false" rendered="#{stat.index % 3 == 0}" />
+                <div class="col-md-4">
+                    <div class="thumbnail">
+                        <p:graphicImage value="#{specimenContentBean.getFamilyThumb()}">
+                            <f:param name="idTaxonomy" value="#{fam.idTaxonomy}" />
+                        </p:graphicImage>
+                        <div class="caption">
+                            <h3>#{fam.taxonomyName}</h3>
+                            <p>
+                                <a href="Collection.xhtml" class="btn btn-success" role="button">Ver Ejemplares</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </ui:repeat>
+            <h:outputText value="&lt;/div&gt;" escape="false" />
+        </div>
+        <div class="container">
+            <hr/>
+            <footer>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <p style="text-align: center;">
+                            Proyecto Colección Entomológica. Todos los derechos reservados. | Fotos de <a href="http://www.google.com/images">GOOGLE</a> | Diseño por <a href="#" rel="nofollow">smotavitam</a>.<br/><span class="glyphicon glyphicon-copyright-mark" aria-hidden="true"></span>
+                        </p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+        <script type="text/javascript">
+            $(window).load(function () {
+                $(document).ready(function () {
+                    collage();
+                    $('.Collage').collageCaption();
+                });
+                $(".fancybox").fancybox();
+            });
 
-		  function collage() {
-			 $('.Collage').removeWhitespace().collagePlus({
-				'fadeSpeed': 2000,
-				'targetHeight': 200
-			 });
-		  }
+            function collage() {
+                $('.Collage').removeWhitespace().collagePlus({
+                    'fadeSpeed': 2000,
+                    'targetHeight': 200
+                });
+            }
 
-		  var resizeTimer = null;
-		  $(window).bind('resize', function() {
-			 $('.Collage .Image_Wrapper').css("opacity", 0);
-			 if (resizeTimer)
-				clearTimeout(resizeTimer);
-			 resizeTimer = setTimeout(collage, 200);
-		  });
+            var resizeTimer = null;
+            $(window).bind('resize', function () {
+                $('.Collage .Image_Wrapper').css("opacity", 0);
+                if (resizeTimer)
+                    clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(collage, 200);
+            });
         </script>
     </body>    
 </html>

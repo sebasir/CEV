@@ -7,13 +7,15 @@ import java.util.logging.Logger;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
 import net.hpclab.cev.entities.Institution;
 
 @WebListener
-public class ApplicationStartup implements ServletContextListener, Serializable {
+public class ApplicationListener implements ServletContextListener, HttpSessionListener, Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger LOGGER = Logger.getLogger(ApplicationStartup.class.getSimpleName());
+    private static final Logger LOGGER = Logger.getLogger(ApplicationListener.class.getSimpleName());
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
@@ -52,5 +54,15 @@ public class ApplicationStartup implements ServletContextListener, Serializable 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
 
+    }
+
+    @Override
+    public void sessionCreated(HttpSessionEvent se) {
+        
+    }
+
+    @Override
+    public void sessionDestroyed(HttpSessionEvent se) {
+        SessionService.removeUser(se.getSession().getId());
     }
 }

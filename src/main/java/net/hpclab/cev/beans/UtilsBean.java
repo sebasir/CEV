@@ -8,9 +8,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import net.hpclab.cev.entities.Location;
 import net.hpclab.cev.entities.LocationLevel;
 import net.hpclab.cev.enums.OutcomeEnum;
@@ -20,6 +20,7 @@ import net.hpclab.cev.entities.Taxonomy;
 import net.hpclab.cev.entities.TaxonomyLevel;
 import net.hpclab.cev.entities.Users;
 import net.hpclab.cev.enums.DataBaseEnum;
+import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.UserSession;
 import net.hpclab.cev.services.Util;
 import org.apache.commons.io.IOUtils;
@@ -33,24 +34,34 @@ public class UtilsBean implements Serializable {
     public static List<TaxonomyLevel> allTaxonomyLevels;
     public static List<LocationLevel> allLocationLevels;
 
-    public void loadUserSession(FacesContext facesContext, Users user) {
-        UserSession.ipAddress = getRemoteAddr(facesContext);
-        UserSession.session = getHttpSession(facesContext);
-        UserSession.user = user;
-    }
-    
-    private HttpSession getHttpSession(FacesContext facesContext) {
-        return (HttpSession) facesContext.getExternalContext().getSession(false);
+    public UserSession loadUserSession(FacesContext facesContext, Users user) {
+        UserSession userSession = new UserSession(user, getRemoteAddress(facesContext));
+        facesContext.getExternalContext().getSessionMap().put(Constant.USER_DATA, userSession);
+        return userSession;
     }
 
-    private String getRemoteAddr(FacesContext facesContext) {
+    public UserSession getUserSession(FacesContext facesContext) {
+        return (UserSession) facesContext.getExternalContext().getSessionMap().get(Constant.USER_DATA);
+    }
+    
+    public String getSessionId(FacesContext facesContext) {
+        return facesContext.getExternalContext().getSessionId(false);
+    }
+
+    public void checkAuthentication() throws IOException {
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        if (getUserSession(FacesContext.getCurrentInstance()) != null) {
+            externalContext.redirect(externalContext.getRequestContextPath() + Constant.MAIN_ADMIN_PAGE);
+        }
+    }
+
+    private String getRemoteAddress(FacesContext facesContext) {
         HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
         String forwardedFor = request.getHeader("X-FORWARDED-FOR");
 
         if (!Util.isEmpty(forwardedFor)) {
             return forwardedFor.split("\\s*,\\s*", 2)[0];
         }
-
         return request.getRemoteAddr();
     }
 
@@ -93,6 +104,9 @@ public class UtilsBean implements Serializable {
             case UPDATE_ERROR:
                 fMess = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al actualizar.", "Ha fallado la actualización del registro, (" + errorMessage + ")");
                 break;
+            case GENERIC_ERROR:
+                fMess = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Error general.", errorMessage);
+                break;
             default:
                 fMess = new FacesMessage(FacesMessage.SEVERITY_WARN, "ET llama a casa", "Hola. Probando un mensaje no contemplado!!");
                 break;
@@ -129,13 +143,13 @@ public class UtilsBean implements Serializable {
         FacesMessage fMess;
         switch (action) {
             case DB_INIT_ERROR:
-                fMess = new FacesMessage(FacesMessage.SEVERITY_INFO, "Error conectando a base de datos", "(" + message + ")");
+                fMess = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error conectando a base de datos", "(" + message + ")");
                 break;
             case LOGIN_ERROR:
                 fMess = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error autenticando", "Se ha producido un error autenticando el usuario, (" + message + ")");
                 break;
             case LOGIN_SUCCESS:
-                fMess = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Bienvenido, " + message, "Has ingresado correctamente al sistema!");
+                fMess = new FacesMessage(FacesMessage.SEVERITY_INFO, "Bienvenido, " + message, "Has ingresado correctamente al sistema!");
                 break;
             default:
                 fMess = new FacesMessage(FacesMessage.SEVERITY_WARN, "ET llama a casa", "Hola. Probando un mensaje no contemplado!!");

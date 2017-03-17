@@ -4,11 +4,18 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <f:event type="preRenderView" listener="#{loginBean.checkAuthentication}" />
     <h:head>
-        <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
-        <link href="../css/default.css" rel="stylesheet"/>
+        <title>Bienvenido a CEV :: Ingreso</title>
+        <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+        <link href="css/default.css" rel="stylesheet"/>
     </h:head>
     <h:body>
+        <div id="loading" class="oculto topcorner">
+            <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
+            <p>Procesando...</p>
+        </div>
+        <p:ajaxStatus onstart="$('#loading').removeClass('oculto')" onsuccess="$('#loading').addClass('oculto')" />
         <div class="background"></div>
         <div class="center-middle">
             <h:form id="loginForm">
@@ -35,7 +42,14 @@
                     <h:commandLink class="pull-right">Olvidaste tus credenciales?</h:commandLink>
                 </div>
                 <hr />
-                <p:commandButton id="buttonLogin" class="btn btn-default btn-block" ajax="true" update="growl" actionListener="#{loginBean.authenticate()}" value="Ingresar"/>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h:commandButton id="buttonLogin" class="btn btn-default btn-block" actionListener="#{loginBean.authenticate()}" value="Ingresar"/>
+                    </div>
+                    <div class="col-md-6">
+                        <h:outputLink value="/CEV" class="btn btn-default btn-block">Salir</h:outputLink>
+                    </div>
+                </div>
             </h:form>
         </div>
         <div class="container footer-login">

@@ -8,15 +8,15 @@
 
     <f:view contentType="text/html">
         <h:head>
-		  <h:outputStylesheet library="assets/css" name="bootstrap.min.css" />
-		  <h:outputStylesheet library="assets/css" name="animate.min.css" />
-		  <h:outputStylesheet library="assets/css" name="pe-icon-7-stroke.css" />
-		  <h:outputStylesheet library="assets/css" name="demo.css" />
-		  <h:outputStylesheet library="css" name="pstyle.css" />
-		  <h:outputScript library="js" name="es_locale.js"/>
+            <h:outputStylesheet library="assets/css" name="bootstrap.min.css" />
+            <h:outputStylesheet library="assets/css" name="animate.min.css" />
+            <h:outputStylesheet library="assets/css" name="pe-icon-7-stroke.css" />
+            <h:outputStylesheet library="assets/css" name="demo.css" />
+            <h:outputStylesheet library="css" name="pstyle.css" />
+            <h:outputScript library="js" name="es_locale.js"/>
         </h:head>
         <h:body>
-		  <p:layout fullPage="true">
+            <p:layout fullPage="true">
                 <p:layoutUnit position="north" size="50" resizable="true" closable="true" collapsible="true">
                     <h:outputText value="Bienvenido Administrador"/>
                     <ui:insert name="title"/>                
@@ -24,7 +24,7 @@
 
                 <p:layoutUnit position="west" size="175" header="Menu Principal" collapsible="true">
                     <h:form>
-                        <p:menu model="#{loginBean.menu_principal}" />
+                        
                     </h:form>
                 </p:layoutUnit>
 

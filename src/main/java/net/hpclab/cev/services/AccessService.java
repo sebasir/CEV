@@ -129,7 +129,6 @@ public class AccessService implements Serializable {
             default:
                 throw new IllegalArgumentException("Operación desconocida");
         }
-        AuditService.getInstance().log(UserSession.user, UserSession.module, UserSession.ipAddress, operation, "idModule = " + idModule + ", idUser = " + idUser + ", accessLevel = " + accessLevel);
     }
 
     public void setRoleUserAccess(Integer idRole, Integer idUser, Integer accessLevel, AuditEnum operation, StatusEnum status) throws Exception {
@@ -191,7 +190,6 @@ public class AccessService implements Serializable {
             default:
                 throw new IllegalArgumentException("Operación desconocida");
         }
-        AuditService.getInstance().log(UserSession.user, UserSession.module, UserSession.ipAddress, operation, "idRole = " + idRole + ", idUser = " + idUser + ", accessLevel = " + accessLevel);
     }
 
     public void setRoleModule(Integer idRole, Integer idModule, AuditEnum operation, StatusEnum status) throws Exception {
@@ -241,7 +239,6 @@ public class AccessService implements Serializable {
             default:
                 throw new IllegalArgumentException("Operación desconocida");
         }
-        AuditService.getInstance().log(UserSession.user, UserSession.module, UserSession.ipAddress, operation, "idRole = " + idRole + ", idModule = " + idModule);
     }
 
     public int accessLevel(Integer idModule, Integer idUser) throws Exception {
