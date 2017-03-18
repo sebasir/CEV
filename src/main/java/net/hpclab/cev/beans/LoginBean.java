@@ -1,5 +1,6 @@
 package net.hpclab.cev.beans;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletResponse;
 import net.hpclab.cev.entities.Institution;
 import net.hpclab.cev.entities.Modules;
 import net.hpclab.cev.enums.StatusEnum;
@@ -17,6 +19,7 @@ import net.hpclab.cev.enums.AuditEnum;
 import net.hpclab.cev.enums.DataBaseEnum;
 import net.hpclab.cev.enums.OutcomeEnum;
 import net.hpclab.cev.services.AuditService;
+import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
 import net.hpclab.cev.services.SessionService;
 import net.hpclab.cev.services.UserSession;
@@ -87,8 +90,9 @@ public class LoginBean extends UtilsBean implements Serializable {
         }
     }
 
-    public void logOut() {
-
+    public String logOut() throws IOException {
+        invalidateSession(FacesContext.getCurrentInstance());
+        return Constant.LOGIN_PAGE + Constant.FACES_REDIRECT;
     }
 
     public void loadMenu() {

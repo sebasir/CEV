@@ -11,13 +11,6 @@ body {
     src: local('Raleway'), url(font/0dTEPzkLWceF7z0koJaX1A.woff2) format('woff2');
 }
 
-.navbar-default {
-    background-color: rgba(48, 115, 61, 0.31);
-    border-color: rgba(48, 115, 61, 0.31);
-    font-weight: bold;
-    color: #173B1E;
-}
-
 .panel-default {
     border-color: rgba(48, 115, 61, 0.31);
 }
@@ -123,4 +116,14 @@ select[multiple], select[size] {
 @-webkit-keyframes spin2 {
     from { -webkit-transform: rotate(0deg);}
     to { -webkit-transform: rotate(360deg);}
+}
+
+.logo-dashboard {
+    width: 50%;
+    margin: 0 auto;
+    padding: 1em;
+}
+
+.navbar-nav > li > a > i {
+    font-size: 1.8em;
 }

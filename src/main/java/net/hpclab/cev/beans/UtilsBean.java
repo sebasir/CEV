@@ -21,6 +21,7 @@ import net.hpclab.cev.entities.TaxonomyLevel;
 import net.hpclab.cev.entities.Users;
 import net.hpclab.cev.enums.DataBaseEnum;
 import net.hpclab.cev.services.Constant;
+import net.hpclab.cev.services.SessionService;
 import net.hpclab.cev.services.UserSession;
 import net.hpclab.cev.services.Util;
 import org.apache.commons.io.IOUtils;
@@ -43,7 +44,7 @@ public class UtilsBean implements Serializable {
     public UserSession getUserSession(FacesContext facesContext) {
         return (UserSession) facesContext.getExternalContext().getSessionMap().get(Constant.USER_DATA);
     }
-    
+
     public String getSessionId(FacesContext facesContext) {
         return facesContext.getExternalContext().getSessionId(false);
     }
@@ -53,6 +54,11 @@ public class UtilsBean implements Serializable {
         if (getUserSession(FacesContext.getCurrentInstance()) != null) {
             externalContext.redirect(externalContext.getRequestContextPath() + Constant.MAIN_ADMIN_PAGE);
         }
+    }
+
+    public void invalidateSession(FacesContext facesContext) {
+        SessionService.removeUser(getSessionId(facesContext));
+        facesContext.getExternalContext().invalidateSession();
     }
 
     private String getRemoteAddress(FacesContext facesContext) {

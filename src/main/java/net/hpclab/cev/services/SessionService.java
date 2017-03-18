@@ -11,7 +11,6 @@ public class SessionService implements Serializable {
 
     public static void addUser(String sessionId, UserSession userSession) {
         ONLINE_USERS.put(sessionId, userSession);
-        System.out.println(" -> added:" + ONLINE_USERS);
     }
 
     public static void removeUser(String sessionId) {
@@ -20,7 +19,6 @@ public class SessionService implements Serializable {
 
     public static boolean isUserOnline(Users users) {
         for (String sessionId : ONLINE_USERS.keySet()) {
-            System.out.println("-> " + sessionId + ": " + ONLINE_USERS.get(sessionId));
             if (ONLINE_USERS.get(sessionId).getUser().equals(users)) {
                 return true;
             }
