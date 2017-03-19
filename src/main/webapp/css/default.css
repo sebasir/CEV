@@ -56,7 +56,7 @@ hr {
     left: 0;
     right: 0;
     margin: auto;
-    height: 443px;
+    height: 480px;
     width: 380px;
     padding: 25px;
     border-radius: 15px;
@@ -118,10 +118,19 @@ select[multiple], select[size] {
     to { -webkit-transform: rotate(360deg);}
 }
 
+div.logo-dashboard {
+    width: 50%;
+    margin: -3em auto -3em auto;
+}
+
+.logo-login {
+    width: 50%;
+    margin: -2em auto -1em auto;
+}
+
 .logo-dashboard {
     width: 50%;
     margin: 0 auto;
-    padding: 1em;
 }
 
 .navbar-nav > li > a > i {

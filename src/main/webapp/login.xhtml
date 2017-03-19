@@ -21,7 +21,8 @@
         <div class="center-middle">
             <h:form id="loginForm">
                 <p:growl id="growl" showDetail="true"/>
-                <h3 class="center-text">Ingreso al Centro Entomológico Virtual</h3>
+                <img src="images/utils/bug-contour-dark.png" class="logo-login img-responsive"/>
+                <p class="center-text">Ingreso al Centro Entomológico Virtual</p>
                 <hr />
                 <div class="form-group">
                     <label for="inputEmail">Usuario</label>
@@ -38,7 +39,6 @@
                     <label for="inputPassword">Contraseña</label>
                     <p:password id="inputPassword" class="form-control" required="true" value="#{loginBean.password}" />
                 </div>
-                <hr />
                 <div class="row">
                     <h:commandLink class="pull-right">Olvidaste tus credenciales?</h:commandLink>
                 </div>
@@ -54,7 +54,6 @@
             </h:form>
         </div>
         <div class="container footer-login">
-            <hr/>
             <footer>
                 <div class="row">
                     <div class="col-md-12">
