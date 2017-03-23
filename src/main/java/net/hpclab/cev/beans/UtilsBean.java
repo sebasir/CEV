@@ -89,7 +89,7 @@ public class UtilsBean implements Serializable {
         return retorno;
     }
 
-    public void showMessage(FacesContext facesContext, OutcomeEnum action, String errorMessage) {
+    public void showMessage(FacesContext facesContext, OutcomeEnum action, String message) {
         FacesMessage fMess;
         switch (action) {
             case CREATE_SUCCESS:
@@ -102,16 +102,19 @@ public class UtilsBean implements Serializable {
                 fMess = new FacesMessage(FacesMessage.SEVERITY_INFO, "Registro actualizado.", "Se ha actualizado el registro satisfactoriamente!");
                 break;
             case CREATE_ERROR:
-                fMess = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al crear.", "Ha fallado la creación del registro, (" + errorMessage + ")");
+                fMess = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al crear.", "Ha fallado la creación del registro, (" + message + ")");
                 break;
             case DELETE_ERROR:
-                fMess = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al eliminar.", "Ha fallado la eliminación del registro, (" + errorMessage + ")");
+                fMess = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al eliminar.", "Ha fallado la eliminación del registro, (" + message + ")");
                 break;
             case UPDATE_ERROR:
-                fMess = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al actualizar.", "Ha fallado la actualización del registro, (" + errorMessage + ")");
+                fMess = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al actualizar.", "Ha fallado la actualización del registro, (" + message + ")");
+                break;
+            case GENERIC_INFO:
+                fMess = new FacesMessage(FacesMessage.SEVERITY_INFO, "Información", message);
                 break;
             case GENERIC_ERROR:
-                fMess = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Error general.", errorMessage);
+                fMess = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Error general.", message);
                 break;
             default:
                 fMess = new FacesMessage(FacesMessage.SEVERITY_WARN, "ET llama a casa", "Hola. Probando un mensaje no contemplado!!");
@@ -120,20 +123,20 @@ public class UtilsBean implements Serializable {
         facesContext.addMessage(null, fMess);
     }
 
-    public void showFileMessage(FacesContext facesContext, OutcomeEnum action, String fileName, String errorMessage) {
+    public void showFileMessage(FacesContext facesContext, OutcomeEnum action, String fileName, String message) {
         FacesMessage fMess;
         switch (action) {
             case FILE_UPLOAD_SUCCESS:
                 fMess = new FacesMessage(FacesMessage.SEVERITY_INFO, "Archivo adjuntado", "Se ha adjuntado el archivo " + fileName + " satisfactoriamente!");
                 break;
             case FILE_UPLOAD_ERROR:
-                fMess = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Archivo no adjuntado", "Se ha producido un error adjuntando el archivo " + fileName + ", (" + errorMessage + ")");
+                fMess = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Archivo no adjuntado", "Se ha producido un error adjuntando el archivo " + fileName + ", (" + message + ")");
                 break;
             case FILE_DELETE_SUCCESS:
                 fMess = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Archivo eliminado", "Se ha eliminado el archivo " + fileName + "!");
                 break;
             case FILE_DELETE_ERROR:
-                fMess = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Archivo no eliminado", "Se ha producido un error eliminando el archivo " + fileName + ", (" + errorMessage + ")");
+                fMess = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Archivo no eliminado", "Se ha producido un error eliminando el archivo " + fileName + ", (" + message + ")");
                 break;
             case FILE_REQUIRED:
                 fMess = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Archivo no adjunto", "El archivo " + fileName + " es obligatorio y debe adjuntarse.");

@@ -10,6 +10,8 @@ import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 import net.hpclab.cev.entities.Institution;
+import net.hpclab.cev.entities.Modules;
+import net.hpclab.cev.enums.ModulesEnum;
 
 @WebListener
 public class ApplicationListener implements ServletContextListener, HttpSessionListener, Serializable {
@@ -42,6 +44,10 @@ public class ApplicationListener implements ServletContextListener, HttpSessionL
             entityNames.put("TaxonomyLevel", "Nivel de Clasificación");
             entityNames.put("Users", "Usuario");
             Util.setEntityNames(entityNames);
+            
+            LOGGER.info("Inicializando objetos [Modules]...");
+            HashMap<ModulesEnum, Modules> modules = new HashMap<>();
+            modules.put(ModulesEnum.LOGIN, new Modules(2));
 
             LOGGER.info("Inicializando dominios de instituciones");
             DataBaseService<Institution> institutionService = new DataBaseService<>(Institution.class);

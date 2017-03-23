@@ -9,6 +9,7 @@
         <title>Bienvenido a CEV :: Ingreso</title>
         <link rel="icon" type="image/png" href="images/utils/bug-silhouette-dark.png" />
         <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+        <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
         <link href="css/default.css" rel="stylesheet"/>
     </h:head>
     <h:body>
@@ -17,19 +18,48 @@
             <p>Procesando...</p>
         </div>
         <p:ajaxStatus onstart="$('#loading').removeClass('oculto')" onsuccess="$('#loading').addClass('oculto')" />
+        <p:growl id="growl" showDetail="true"/>
         <div class="background"></div>
         <div class="center-middle">
+            <h:form id="recoverForm">
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel">Recuperación de Credenciales</h4>
+                            </div>
+                            <div class="modal-body">
+                                Te enviaremos un correo donde se habrá un enlace para reestablecer tu contraseña
+                                <hr />
+                                <div class="input-group">
+                                    <h:inputText id="recInputEmail" class="form-control" value="#{loginBean.revUser}"/>
+                                    <span class="input-group-addon">|</span>
+                                    <h:selectOneMenu id="recDomain" class="form-control" value="#{loginBean.revDomain}">
+                                        <f:selectItem itemLabel="Selecciona"/>
+                                        <f:selectItems value="#{loginBean.institutions}" var="inst" itemLabel="#{inst.domainUrl}" itemValue="#{inst.domainUrl}"/>
+                                    </h:selectOneMenu>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <p:commandButton id="buttonRecover" onclick="$('#myModal').modal('hide');" class="btn btn-default" ajax="true" update="growl" actionListener="#{loginBean.recoverPassword()}" value="Enviar"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
             <h:form id="loginForm">
-                <p:growl id="growl" showDetail="true"/>
                 <img src="images/utils/bug-contour-dark.png" class="logo-login img-responsive"/>
                 <p class="center-text">Ingreso al Centro Entomológico Virtual</p>
-                <hr />
+                <hr /> 
                 <div class="form-group">
                     <label for="inputEmail">Usuario</label>
                     <div class="input-group">
-                        <h:inputText id="inputEmail" class="form-control" required="true" value="#{loginBean.user}"/>
+                        <h:inputText id="inputEmail" class="form-control" required="true" requiredMessage="Se necesita un nombre de usuario" value="#{loginBean.user}"/>
                         <span class="input-group-addon">|</span>
-                        <h:selectOneMenu id="domain" class="form-control" value="#{loginBean.domain}">
+                        <h:selectOneMenu id="domain" class="form-control" required="true" requiredMessage="Se necesita un dominio registrado" value="#{loginBean.domain}">
                             <f:selectItem itemLabel="Selecciona"/>
                             <f:selectItems value="#{loginBean.institutions}" var="inst" itemLabel="#{inst.domainUrl}" itemValue="#{inst.domainUrl}"/>
                         </h:selectOneMenu>
@@ -37,18 +67,21 @@
                 </div>
                 <div class="form-group">
                     <label for="inputPassword">Contraseña</label>
-                    <p:password id="inputPassword" class="form-control" required="true" value="#{loginBean.password}" />
+                    <p:password id="inputPassword" class="form-control" required="true" requiredMessage="Se necesita una contraseña" value="#{loginBean.password}" />
                 </div>
                 <div class="row">
-                    <h:commandLink class="pull-right">Olvidaste tus credenciales?</h:commandLink>
+                    <a data-toggle="modal" data-target="#myModal" class="pull-right">Olvidaste tu contraseña?</a>
+
                 </div>
                 <hr />
                 <div class="row">
                     <div class="col-md-6">
-                        <h:commandButton id="buttonLogin" class="btn btn-default btn-block" actionListener="#{loginBean.authenticate()}" value="Ingresar"/>
+                        <p:commandButton id="buttonLogin" class="btn btn-default btn-block" ajax="true" update="growl" actionListener="#{loginBean.authenticate()}" value="Ingresar"/>
                     </div>
                     <div class="col-md-6">
-                        <h:outputLink value="/CEV" class="btn btn-default btn-block">Salir</h:outputLink>
+                        <h:outputLink value="/CEV" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only btn btn-default btn-block">
+                            <span class="ui-button-text ui-c">Salir</span>
+                        </h:outputLink>
                     </div>
                 </div>
             </h:form>
