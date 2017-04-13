@@ -1,7 +1,5 @@
 package net.hpclab.cev.entities;
 
-import net.hpclab.cev.enums.StatusEnum;
-import net.hpclab.cev.enums.StatusEnumConverter;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -15,24 +13,26 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 
 @Entity
 @Table(name = "modules")
 @NamedQueries({
-    @NamedQuery(name = "Modules.findAll", query = "SELECT m FROM Modules m")})
-@TypeDef(name = "StatusEnumConverter", typeClass = StatusEnumConverter.class)
+    @NamedQuery(name = "Modules.findAll", query = "SELECT m FROM Modules m")
+    , @NamedQuery(name = "Modules.findByIdModule", query = "SELECT m FROM Modules m WHERE m.idModule = :idModule")
+    , @NamedQuery(name = "Modules.findByModuleName", query = "SELECT m FROM Modules m WHERE m.moduleName = :moduleName")
+    , @NamedQuery(name = "Modules.findByModuleDescr", query = "SELECT m FROM Modules m WHERE m.moduleDescr = :moduleDescr")
+    , @NamedQuery(name = "Modules.findByModuleOrder", query = "SELECT m FROM Modules m WHERE m.moduleOrder = :moduleOrder")
+    , @NamedQuery(name = "Modules.findByModulePage", query = "SELECT m FROM Modules m WHERE m.modulePage = :modulePage")
+    , @NamedQuery(name = "Modules.findByModuleIcon", query = "SELECT m FROM Modules m WHERE m.moduleIcon = :moduleIcon")
+    , @NamedQuery(name = "Modules.findByStatus", query = "SELECT m FROM Modules m WHERE m.status = :status")})
 public class Modules implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @SequenceGenerator(name = "ModulesSeq", sequenceName = "modules_id_module_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ModulesSeq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id_module")
     private Integer idModule;
@@ -46,23 +46,24 @@ public class Modules implements Serializable {
     @Size(min = 1, max = 256)
     @Column(name = "module_descr")
     private String moduleDescr;
-
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "module_order")
+    private int moduleOrder;
+    @Size(max = 32)
+    @Column(name = "module_page")
+    private String modulePage;
+    @Size(max = 16)
+    @Column(name = "module_icon")
+    private String moduleIcon;
     @Size(max = 2147483647)
     @Column(name = "status")
-    @Type(type = "StatusEnumConverter")
-    private StatusEnum status;
-
-    @OneToMany(mappedBy = "idModule")
-    private List<AuditLog> auditLogList;
-    @OneToMany(mappedBy = "idModule")
-    private List<ModulesUsers> modulesUsersList;
+    private String status;
     @OneToMany(mappedBy = "idContainer")
     private List<Modules> modulesList;
     @JoinColumn(name = "id_container", referencedColumnName = "id_module")
     @ManyToOne
     private Modules idContainer;
-    @OneToMany(mappedBy = "idModule")
-    private List<RolesModules> rolesModulesList;
 
     public Modules() {
     }
@@ -71,10 +72,11 @@ public class Modules implements Serializable {
         this.idModule = idModule;
     }
 
-    public Modules(Integer idModule, String moduleName, String moduleDescr) {
+    public Modules(Integer idModule, String moduleName, String moduleDescr, int moduleOrder) {
         this.idModule = idModule;
         this.moduleName = moduleName;
         this.moduleDescr = moduleDescr;
+        this.moduleOrder = moduleOrder;
     }
 
     public Integer getIdModule() {
@@ -101,28 +103,36 @@ public class Modules implements Serializable {
         this.moduleDescr = moduleDescr;
     }
 
-    public StatusEnum getStatus() {
+    public int getModuleOrder() {
+        return moduleOrder;
+    }
+
+    public void setModuleOrder(int moduleOrder) {
+        this.moduleOrder = moduleOrder;
+    }
+
+    public String getModulePage() {
+        return modulePage;
+    }
+
+    public void setModulePage(String modulePage) {
+        this.modulePage = modulePage;
+    }
+
+    public String getModuleIcon() {
+        return moduleIcon;
+    }
+
+    public void setModuleIcon(String moduleIcon) {
+        this.moduleIcon = moduleIcon;
+    }
+
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(StatusEnum status) {
+    public void setStatus(String status) {
         this.status = status;
-    }
-
-    public List<AuditLog> getAuditLogList() {
-        return auditLogList;
-    }
-
-    public void setAuditLogList(List<AuditLog> auditLogList) {
-        this.auditLogList = auditLogList;
-    }
-
-    public List<ModulesUsers> getModulesUsersList() {
-        return modulesUsersList;
-    }
-
-    public void setModulesUsersList(List<ModulesUsers> modulesUsersList) {
-        this.modulesUsersList = modulesUsersList;
     }
 
     public List<Modules> getModulesList() {
@@ -141,14 +151,6 @@ public class Modules implements Serializable {
         this.idContainer = idContainer;
     }
 
-    public List<RolesModules> getRolesModulesList() {
-        return rolesModulesList;
-    }
-
-    public void setRolesModulesList(List<RolesModules> rolesModulesList) {
-        this.rolesModulesList = rolesModulesList;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -158,6 +160,7 @@ public class Modules implements Serializable {
 
     @Override
     public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Modules)) {
             return false;
         }
@@ -167,6 +170,7 @@ public class Modules implements Serializable {
 
     @Override
     public String toString() {
-        return "net.hpclab.entities.Modules[ idModule=" + idModule + " ]";
+        return "net.hpclab.cev.entities.Modules[ idModule=" + idModule + " ]";
     }
+
 }

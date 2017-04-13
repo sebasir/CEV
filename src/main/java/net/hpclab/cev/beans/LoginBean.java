@@ -11,7 +11,6 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import net.hpclab.cev.entities.Institution;
-import net.hpclab.cev.entities.Modules;
 import net.hpclab.cev.enums.StatusEnum;
 import net.hpclab.cev.entities.Users;
 import net.hpclab.cev.enums.AuditEnum;
@@ -87,6 +86,7 @@ public class LoginBean extends UtilsBean implements Serializable {
             } catch (Exception e) {
                 LOGGER.log(Level.INFO, "Error autenticando: {0}", e.getMessage());
                 showDataBaseMessage(facesContext, DataBaseEnum.LOGIN_ERROR, "Intenta nuevamente");
+                e.printStackTrace();
             }
         } else {
             showDataBaseMessage(facesContext, DataBaseEnum.DB_INIT_ERROR, "Error inicializando conexión a base de datos.");

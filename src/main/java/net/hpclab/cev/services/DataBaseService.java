@@ -180,9 +180,11 @@ public class DataBaseService<T> implements Serializable {
     private void getEntityManager() throws PersistenceException, Exception {
         LOGGER.log(Level.INFO, "Obteniendo EntityManager");
         if (entityManagerFactory == null) {
+            LOGGER.log(Level.INFO, "entityManagerFactory is null");
             entityManagerFactory = Persistence.createEntityManagerFactory(Constant.PERSISTENCE_UNIT);
         }
         if (entityManager == null) {
+            LOGGER.log(Level.INFO, "entityManager is null");
             entityManager = entityManagerFactory.createEntityManager();
         }
     }
