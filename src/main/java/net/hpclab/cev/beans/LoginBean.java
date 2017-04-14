@@ -3,6 +3,7 @@ package net.hpclab.cev.beans;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,12 +12,14 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import net.hpclab.cev.entities.Institution;
+import net.hpclab.cev.entities.Modules;
 import net.hpclab.cev.enums.StatusEnum;
 import net.hpclab.cev.entities.Users;
 import net.hpclab.cev.enums.AuditEnum;
 import net.hpclab.cev.enums.DataBaseEnum;
 import net.hpclab.cev.enums.ModulesEnum;
 import net.hpclab.cev.enums.OutcomeEnum;
+import net.hpclab.cev.services.AccessService;
 import net.hpclab.cev.services.AuditService;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
@@ -36,9 +39,9 @@ public class LoginBean extends UtilsBean implements Serializable {
     private String revUser;
     private String password;
     private Users users;
-    private HashMap<String, String> userMenu;
     private DataBaseService<Users> usersService;
     private List<Institution> institutions;
+    private List<Modules> userModules;
 
     @PostConstruct
     public void init() {
@@ -70,6 +73,7 @@ public class LoginBean extends UtilsBean implements Serializable {
                             UserSession userSession = loadUserSession(facesContext, users);
                             showDataBaseMessage(facesContext, DataBaseEnum.LOGIN_SUCCESS, users.getUserNames() + " " + users.getUserLastnames());
                             LOGGER.log(Level.INFO, "Users {0} autenticado.", users.getIdUser());
+                            userModules = AccessService.getInstance().getUserMenu(users);
                             AuditService.getInstance().log(userSession.getUser(), Util.getModule(ModulesEnum.LOGIN), userSession.getIpAddress(), AuditEnum.LOGIN, "Users " + users.getIdUser() + " autenticado.");
                         } else {
                             showDataBaseMessage(facesContext, DataBaseEnum.LOGIN_ERROR, "Tu estado actual es: " + users.getStatus());
@@ -86,7 +90,6 @@ public class LoginBean extends UtilsBean implements Serializable {
             } catch (Exception e) {
                 LOGGER.log(Level.INFO, "Error autenticando: {0}", e.getMessage());
                 showDataBaseMessage(facesContext, DataBaseEnum.LOGIN_ERROR, "Intenta nuevamente");
-                e.printStackTrace();
             }
         } else {
             showDataBaseMessage(facesContext, DataBaseEnum.DB_INIT_ERROR, "Error inicializando conexión a base de datos.");
@@ -106,10 +109,6 @@ public class LoginBean extends UtilsBean implements Serializable {
         } else {
             showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.GENERIC_INFO, "Se ha enviado un mensaje al correo con la información de recuperación!");
         }
-    }
-
-    public void loadMenu() {
-        userMenu = new HashMap<>();
     }
 
     public String getDomain() {
@@ -160,19 +159,19 @@ public class LoginBean extends UtilsBean implements Serializable {
         this.users = users;
     }
 
-    public HashMap<String, String> getUserMenu() {
-        return userMenu;
-    }
-
-    public void setUserMenu(HashMap<String, String> userMenu) {
-        this.userMenu = userMenu;
-    }
-
     public List<Institution> getInstitutions() {
         return institutions;
     }
 
     public void setInstitutions(List<Institution> institutions) {
         this.institutions = institutions;
+    }
+
+    public List<Modules> getUserModules() {
+        return userModules;
+    }
+
+    public void setUserModules(LinkedList<Modules> userModules) {
+        this.userModules = userModules;
     }
 }

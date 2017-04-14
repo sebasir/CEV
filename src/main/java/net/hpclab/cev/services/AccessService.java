@@ -1,9 +1,14 @@
 package net.hpclab.cev.services;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.hpclab.cev.enums.AuditEnum;
@@ -27,9 +32,9 @@ public class AccessService implements Serializable {
     private DataBaseService<ModulesUsers> mousService;
     private DataBaseService<RolesUsers> rousService;
     private DataBaseService<RolesModules> romoService;
-    private HashMap<Integer, HashMap<Integer, Integer>> userAccess;
-    private HashMap<Integer, HashMap<Integer, Integer>> roleUserAccess;
-    private HashMap<Integer, HashSet<Integer>> roleModuleAccess;
+    private HashMap<Users, HashMap<Modules, Integer>> userAccess;
+    private HashMap<Users, HashMap<Roles, Integer>> roleUserAccess;
+    private HashMap<Roles, HashSet<Modules>> roleModuleAccess;
     private List<ModulesUsers> modulesUsers;
     private List<RolesUsers> rolesUsers;
     private List<RolesModules> rolesModules;
@@ -52,26 +57,26 @@ public class AccessService implements Serializable {
         userAccess.clear();
         roleUserAccess.clear();
         roleModuleAccess.clear();
-        modulesUsers = mousService.getList("ModulesUsers.listAll");
-        rolesUsers = rousService.getList("RolesUsers.listAll");
-        rolesModules = romoService.getList("RolesModules.listAll");
+        modulesUsers = mousService.getList("ModulesUsers.findAll");
+        rolesUsers = rousService.getList("RolesUsers.findAll");
+        rolesModules = romoService.getList("RolesModules.findAll");
         for (RolesModules r : rolesModules) {
-            addRoleModuleAccess(r.getIdRole().getIdRole(), r.getIdModule().getIdModule());
+            addRoleModuleAccess(r.getIdRole(), r.getIdModule());
         }
 
         for (RolesUsers r : rolesUsers) {
-            addRoleUserAccess(r.getIdUser().getIdUser(), r.getIdRole().getIdRole(), r.getAccessLevel());
-            for (Integer idModule : roleModuleAccess.get(r.getIdRole().getIdRole())) {
-                addUserAccess(r.getIdUser().getIdUser(), idModule, r.getAccessLevel());
+            addRoleUserAccess(r.getIdUser(), r.getIdRole(), r.getAccessLevel());
+            for (Modules idModule : roleModuleAccess.get(r.getIdRole())) {
+                addUserAccess(r.getIdUser(), idModule, r.getAccessLevel());
             }
         }
 
         for (ModulesUsers r : modulesUsers) {
-            addUserAccess(r.getIdUser().getIdUser(), r.getIdModule().getIdModule(), r.getAccessLevel());
+            addUserAccess(r.getIdUser(), r.getIdModule(), r.getAccessLevel());
         }
     }
 
-    public void setModuleUserAccess(Integer idModule, Integer idUser, Integer accessLevel, AuditEnum operation, StatusEnum status) throws Exception {
+    public void setModuleUserAccess(Modules idModule, Users idUser, Integer accessLevel, AuditEnum operation, StatusEnum status) throws Exception {
         ModulesUsers moduleUser;
         HashMap<String, Object> params;
         switch (operation) {
@@ -80,8 +85,8 @@ public class AccessService implements Serializable {
                     throw new RecordAlreadyExistsException("Ya existe esta relación");
                 }
                 moduleUser = new ModulesUsers();
-                moduleUser.setIdModule(new Modules(idModule));
-                moduleUser.setIdUser(new Users(idUser));
+                moduleUser.setIdModule(idModule);
+                moduleUser.setIdUser(idUser);
                 moduleUser.setAccessLevel(accessLevel);
                 mousService.persist(moduleUser);
                 addUserAccess(idUser, idModule, accessLevel);
@@ -131,7 +136,7 @@ public class AccessService implements Serializable {
         }
     }
 
-    public void setRoleUserAccess(Integer idRole, Integer idUser, Integer accessLevel, AuditEnum operation, StatusEnum status) throws Exception {
+    public void setRoleUserAccess(Roles idRole, Users idUser, Integer accessLevel, AuditEnum operation, StatusEnum status) throws Exception {
         RolesUsers roleUser;
         HashMap<String, Object> params;
         switch (operation) {
@@ -140,14 +145,14 @@ public class AccessService implements Serializable {
                     throw new RecordAlreadyExistsException("Ya existe esta relación");
                 }
                 roleUser = new RolesUsers();
-                roleUser.setIdRole(new Roles(idRole));
-                roleUser.setIdUser(new Users(idUser));
+                roleUser.setIdRole(idRole);
+                roleUser.setIdUser(idUser);
                 roleUser.setAccessLevel(accessLevel);
                 rousService.persist(roleUser);
                 addRoleUserAccess(idUser, idRole, accessLevel);
                 break;
             case DELETE:
-                if (userAccess.get(idUser).get(idRole) == null) {
+                if (roleUserAccess.get(idUser).get(idRole) == null) {
                     throw new RecordNotExistsException("No existe esta relación");
                 }
                 params = new HashMap<>(2);
@@ -158,7 +163,7 @@ public class AccessService implements Serializable {
                 removeRoleUserAccess(idUser, idRole);
                 break;
             case UPDATE:
-                if (userAccess.get(idUser).get(idRole) == null) {
+                if (roleUserAccess.get(idUser).get(idRole) == null) {
                     throw new RecordNotExistsException("No existe esta relación");
                 }
                 params = new HashMap<>(2);
@@ -171,7 +176,7 @@ public class AccessService implements Serializable {
                 addRoleUserAccess(idUser, idRole, accessLevel);
                 break;
             case STATUS_CHANGE:
-                if (userAccess.get(idUser).get(idRole) == null) {
+                if (roleUserAccess.get(idUser).get(idRole) == null) {
                     throw new RecordNotExistsException("No existe esta relación");
                 }
                 params = new HashMap<>(2);
@@ -192,7 +197,7 @@ public class AccessService implements Serializable {
         }
     }
 
-    public void setRoleModule(Integer idRole, Integer idModule, AuditEnum operation, StatusEnum status) throws Exception {
+    public void setRoleModule(Roles idRole, Modules idModule, AuditEnum operation, StatusEnum status) throws Exception {
         RolesModules roleModule;
         HashMap<String, Object> params;
         switch (operation) {
@@ -201,8 +206,8 @@ public class AccessService implements Serializable {
                     throw new RecordAlreadyExistsException("Ya existe esta relación");
                 }
                 roleModule = new RolesModules();
-                roleModule.setIdRole(new Roles(idRole));
-                roleModule.setIdModule(new Modules(idModule));
+                roleModule.setIdRole(idRole);
+                roleModule.setIdModule(idModule);
                 romoService.persist(roleModule);
                 addRoleModuleAccess(idRole, idModule);
                 break;
@@ -241,48 +246,48 @@ public class AccessService implements Serializable {
         }
     }
 
-    public int accessLevel(Integer idModule, Integer idUser) throws Exception {
+    public int accessLevel(Modules idModule, Users idUser) throws Exception {
         if (userAccess.get(idUser) == null || userAccess.get(idUser).get(idModule) == null) {
             throw new RestrictedAccessException("El usuario no tiene permisos para el módulo.");
         }
         return userAccess.get(idUser).get(idModule);
     }
 
-    private void addUserAccess(Integer idUser, Integer idModule, Integer accessLevel) {
+    private void addUserAccess(Users idUser, Modules idModule, Integer accessLevel) {
         if (userAccess.get(idUser) == null) {
-            userAccess.put(idUser, new HashMap<Integer, Integer>());
+            userAccess.put(idUser, new HashMap<Modules, Integer>());
         }
         userAccess.get(idUser).put(idModule, accessLevel);
     }
 
-    private void removeUserAccess(Integer idUser, Integer idModule) {
+    private void removeUserAccess(Users idUser, Modules idModule) {
         userAccess.get(idUser).remove(idModule);
     }
 
-    private void addRoleUserAccess(Integer idUser, Integer idRole, Integer accessLevel) {
+    private void addRoleUserAccess(Users idUser, Roles idRole, Integer accessLevel) {
         if (roleUserAccess.get(idUser) == null) {
-            roleUserAccess.put(idUser, new HashMap<Integer, Integer>());
+            roleUserAccess.put(idUser, new HashMap<Roles, Integer>());
         }
         roleUserAccess.get(idUser).put(idRole, accessLevel);
-        for (Integer idModule : roleModuleAccess.get(idRole)) {
+        for (Modules idModule : roleModuleAccess.get(idRole)) {
             addUserAccess(idUser, idModule, accessLevel);
         }
     }
 
-    private void removeRoleUserAccess(Integer idUser, Integer idRole) {
-        userAccess.get(idUser).remove(idRole);
-        for (Integer idModule : roleModuleAccess.get(idRole)) {
+    private void removeRoleUserAccess(Users idUser, Roles idRole) {
+        roleUserAccess.get(idUser).remove(idRole);
+        for (Modules idModule : roleModuleAccess.get(idRole)) {
             removeUserAccess(idUser, idModule);
         }
     }
 
-    private void addRoleModuleAccess(Integer idRole, Integer idModule) {
+    private void addRoleModuleAccess(Roles idRole, Modules idModule) {
         if (roleModuleAccess.get(idRole) == null) {
-            roleModuleAccess.put(idRole, new HashSet<Integer>());
+            roleModuleAccess.put(idRole, new HashSet<Modules>());
         }
         roleModuleAccess.get(idRole).add(idModule);
-        for (Integer idUser : roleUserAccess.keySet()) {
-            for (Integer idRole_ : roleUserAccess.get(idUser).keySet()) {
+        for (Users idUser : roleUserAccess.keySet()) {
+            for (Roles idRole_ : roleUserAccess.get(idUser).keySet()) {
                 if (idRole_.equals(idRole)) {
                     addUserAccess(idUser, idModule, roleUserAccess.get(idUser).get(idRole));
                 }
@@ -290,15 +295,37 @@ public class AccessService implements Serializable {
         }
     }
 
-    private void removeRoleModuleAccess(Integer idRole, Integer idModule) {
+    private void removeRoleModuleAccess(Roles idRole, Modules idModule) {
         roleModuleAccess.get(idRole).remove(idModule);
-        for (Integer idUser : roleUserAccess.keySet()) {
-            for (Integer idRole_ : roleUserAccess.get(idUser).keySet()) {
+        for (Users idUser : roleUserAccess.keySet()) {
+            for (Roles idRole_ : roleUserAccess.get(idUser).keySet()) {
                 if (idRole_.equals(idRole)) {
                     removeUserAccess(idUser, idModule);
                 }
             }
         }
+    }
+
+    public List<Modules> getUserMenu(Users idUser) {
+        Set<Modules> setModules = getUserModules(idUser).keySet();
+        PriorityQueue<Modules> userModules = new PriorityQueue<>(setModules.size(), new Comparator<Modules>() {
+            @Override
+            public int compare(Modules o1, Modules o2) {
+                return new Integer(o1.getModuleOrder()).compareTo(o2.getModuleOrder());
+            }
+        });
+        for (Modules idModule : setModules) {
+            userModules.add(idModule);
+        }
+        ArrayList<Modules> orderedUserModules = new ArrayList<>();
+        while (!userModules.isEmpty()) {
+            orderedUserModules.add(userModules.poll());
+        }
+        return orderedUserModules;
+    }
+
+    public HashMap<Modules, Integer> getUserModules(Users idUsers) {
+        return userAccess.get(idUsers);
     }
 
     public List<ModulesUsers> getModulesUsers() {

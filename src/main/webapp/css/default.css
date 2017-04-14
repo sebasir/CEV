@@ -226,21 +226,32 @@ div.logo-dashboard {
 }
 
 .sidebar .nav .seccion {
-    color: red;
     font-size: 14px;
     font-weight: 600;
     text-transform: uppercase;
-    line-height: 20px;
+    line-height: 17px;
     position: relative;
     display: block;
-    padding: 10px 15px;
+    padding: 3px 15px;
 }
 
 .sidebar .nav li > a {
     margin: 0 15px;
+    padding: 3px 15px;
 }
 
 .sidebar .logo .simple-text, body > .navbar-collapse .logo .simple-text {
     font-size: 15px;
-    line-height: 20px;
+    line-height: 17px;
+}
+
+.sidebar .nav i {
+    font-size: 20px;
+    margin-right: 10px;
+    width: 15px;
+}
+
+.sidebar .nav .seccion > a {
+    margin: 0 0px;
+    padding: 3px 0px;
 }

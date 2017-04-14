@@ -48,8 +48,9 @@ public class ApplicationListener implements ServletContextListener, HttpSessionL
             LOGGER.info("Inicializando objetos [Modules]...");
             HashMap<ModulesEnum, Modules> modules = new HashMap<>();
             modules.put(ModulesEnum.LOGIN, new Modules(2));
+            Util.setModules(modules);
 
-            LOGGER.info("Inicializando dominios de instituciones");
+            LOGGER.info("Inicializando objetos [Institution]...");
             DataBaseService<Institution> institutionService = new DataBaseService<>(Institution.class);
             Util.setInstitutions(institutionService.getList("Institution.findAll"));
         } catch (Exception e) {

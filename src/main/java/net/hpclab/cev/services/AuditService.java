@@ -21,7 +21,6 @@ public class AuditService implements Serializable {
         try {
             auditDBService = new DataBaseService<>(AuditLog.class);
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER.log(Level.SEVERE, "El servicio de log no ha podido iniciar correctamente: {0}.", e.getMessage());
         }
     }
@@ -38,7 +37,6 @@ public class AuditService implements Serializable {
             auditLog.setAulogTarget(aulogTarget);
             auditDBService.persist(auditLog);
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER.log(Level.SEVERE, "Error realizando inserción en AuditLog: {0}", e.getMessage());
         }
     }
