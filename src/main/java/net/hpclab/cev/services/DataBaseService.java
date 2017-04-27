@@ -28,13 +28,19 @@ public class DataBaseService<T> implements Serializable {
     private EntityManagerFactory entityManagerFactory;
     private EntityManager entityManager;
     protected Class<T> entityClass;
+    private int queryMaxResults;
 
-    public DataBaseService(Class<T> entityClass) throws PersistenceException, Exception {
+    public DataBaseService(Class<T> entityClass, int queryMaxResults) throws PersistenceException, Exception {
         this.entityClass = entityClass;
+        this.queryMaxResults = queryMaxResults;
         getEntityManager();
         if (entityManagerFactory != null) {
             LOGGER.log(Level.INFO, "DataBaseService ya había iniciado...");
         }
+    }
+    
+    public DataBaseService(Class<T> entityClass) throws PersistenceException, Exception {
+        this(entityClass, Constant.QUERY_MAX_RESULTS);
     }
 
     public List<T> getList(String query, HashMap<String, Object> params) throws NoResultException, Exception {
@@ -45,14 +51,14 @@ public class DataBaseService<T> implements Serializable {
                 typedQuery.setParameter(param, params.get(param));
             }
         }
-        List<T> result = typedQuery.setMaxResults(Constant.QUERY_MAX_RESULTS).getResultList();
+        List<T> result = typedQuery.setMaxResults(queryMaxResults).getResultList();
         LOGGER.log(Level.INFO, "Listing {0}, OK", entityClass.getSimpleName());
         return result;
     }
 
     public List<T> getList(String query) throws NoResultException, Exception {
         LOGGER.log(Level.INFO, "Listing {0}...", entityClass.getSimpleName());
-        List<T> result = entityManager.createNamedQuery(query, entityClass).setMaxResults(Constant.QUERY_MAX_RESULTS).getResultList();
+        List<T> result = entityManager.createNamedQuery(query, entityClass).setMaxResults(queryMaxResults).getResultList();
         LOGGER.log(Level.INFO, "Listing {0}, OK", entityClass.getSimpleName());
         return result;
     }
@@ -89,7 +95,7 @@ public class DataBaseService<T> implements Serializable {
             criteriaQuery.select(root).where(predicate);
         }
 
-        List<T> result = entityManager.createQuery(criteriaQuery).setMaxResults(Constant.QUERY_MAX_RESULTS).getResultList();
+        List<T> result = entityManager.createQuery(criteriaQuery).setMaxResults(queryMaxResults).getResultList();
         LOGGER.log(Level.INFO, "Listing {0}, OK", entityClass.getSimpleName());
         return result;
     }

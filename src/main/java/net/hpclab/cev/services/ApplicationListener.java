@@ -22,6 +22,7 @@ public class ApplicationListener implements ServletContextListener, HttpSessionL
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         try {
+            AccessService.getInstance().loadAccesses();
             LOGGER.info("Inicializando nombres de entidades...");
             HashMap<String, String> entityNames = new HashMap<>();
             entityNames.put("AuditLog", "Auditoria de Usuario");

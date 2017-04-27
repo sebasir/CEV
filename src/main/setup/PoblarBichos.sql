@@ -1266,7 +1266,7 @@ insert into taxonomy values (default, 'Anthomyiidae', 13, 25);
 ----> users
 
 /*1*/insert into users values (default, '1', 'Administrador', 'del Sistema', 'admin.cev@ucentral.edu.co', now(), now(), null, 'tBuvcpCBCU8feB6wPDZRpw==', 1);
-
+/*1*/INSERT INTO USERS VALUES (DEFAULT, '2', 'Operador', '1', 'oper.cev@ucentral.edu.co', now(), now(), null, 'tBuvcpCBCU8feB6wPDZRpw==', 1);
 -----> specimen
 
 insert into specimen values(default, 'espelentesis', 'Polílla de Páramo', 11, 1, null , to_date('01/01/2013','dd/mm/yyyy'), 1, 1, 1157, 1,'C-bios 1009', 5, to_date('10/12/2012','dd/mm/yyyy'), 'Colecta Directa', 1);
@@ -1340,3 +1340,4 @@ insert into roles_modules values (default, 3, 12);
 ---> roles_users
 
 insert into roles_users values (default, 1, 1, 3);
+insert into ROLES_USERS values (default, 3, 2, 3);

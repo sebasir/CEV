@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
@@ -41,9 +40,9 @@ public class AccessService implements Serializable {
 
     private AccessService() throws Exception {
         try {
-            mousService = new DataBaseService<>(ModulesUsers.class);
-            rousService = new DataBaseService<>(RolesUsers.class);
-            romoService = new DataBaseService<>(RolesModules.class);
+            mousService = new DataBaseService<>(ModulesUsers.class, 100);
+            rousService = new DataBaseService<>(RolesUsers.class, 100);
+            romoService = new DataBaseService<>(RolesModules.class, 100);
             userAccess = new HashMap<>();
             roleUserAccess = new HashMap<>();
             roleModuleAccess = new HashMap<>();
@@ -60,6 +59,7 @@ public class AccessService implements Serializable {
         modulesUsers = mousService.getList("ModulesUsers.findAll");
         rolesUsers = rousService.getList("RolesUsers.findAll");
         rolesModules = romoService.getList("RolesModules.findAll");
+        
         for (RolesModules r : rolesModules) {
             addRoleModuleAccess(r.getIdRole(), r.getIdModule());
         }
