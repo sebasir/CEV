@@ -270,7 +270,7 @@ input:focus {
     opacity: 1;
     background: rgba(255, 255, 255, 0.23);
 }
-.sidebar .nav p {
+.sidebar .nav p, .sidebar .nav a {
     margin: 0;
     line-height: 30px;
     font-size: 12px;

@@ -56,6 +56,7 @@ public class ApplicationListener implements ServletContextListener, HttpSessionL
             Util.setInstitutions(institutionService.getList("Institution.findAll"));
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Error inicializando: {0}", e.getMessage());
+            e.printStackTrace();
         }
     }
 

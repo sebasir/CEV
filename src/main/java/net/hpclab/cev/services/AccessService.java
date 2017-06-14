@@ -47,6 +47,7 @@ public class AccessService implements Serializable {
             roleUserAccess = new HashMap<>();
             roleModuleAccess = new HashMap<>();
         } catch (Exception e) {
+            e.printStackTrace();
             LOGGER.log(Level.SEVERE, "El servicio de acceso no ha podido iniciar correctamente: {0}.", e.getMessage());
             throw new Exception("El servicio de acceso no ha podido iniciar correctamente: " + e.getMessage());
         }

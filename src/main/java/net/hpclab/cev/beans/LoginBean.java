@@ -11,6 +11,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
+import javax.persistence.NoResultException;
 import net.hpclab.cev.entities.Institution;
 import net.hpclab.cev.entities.Modules;
 import net.hpclab.cev.enums.StatusEnum;
@@ -87,6 +88,9 @@ public class LoginBean extends UtilsBean implements Serializable {
                     showDataBaseMessage(facesContext, DataBaseEnum.LOGIN_ERROR, "Asegurate de que los valores ingresados sean correctos.");
                     LOGGER.log(Level.INFO, "Error autenticando: Users null");
                 }
+            } catch (NoResultException e) {
+                LOGGER.log(Level.INFO, "Error autenticando: {0}", e.getMessage());
+                showDataBaseMessage(facesContext, DataBaseEnum.LOGIN_ERROR, "Credenciales de acceso no válidas. Intente nuevamente");
             } catch (Exception e) {
                 LOGGER.log(Level.INFO, "Error autenticando: {0}", e.getMessage());
                 showDataBaseMessage(facesContext, DataBaseEnum.LOGIN_ERROR, "Intenta nuevamente");
