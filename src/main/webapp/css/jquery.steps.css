@@ -1,7 +1,7 @@
 .wizard, .tabcontrol {
     display: block;
     width: 100%;
-    overflow: hidden;
+    height: 100%;
 }
 
 .wizard a, .tabcontrol a {
@@ -71,21 +71,21 @@
 
 .wizard>.steps .disabled a, .wizard>.steps .disabled a:hover, .wizard>.steps .disabled a:active
 {
-    background: #eee;
+    background: rgba(238, 238, 238, 0.8);
     color: #aaa;
     cursor: default;
 }
 
 .wizard>.steps .current a, .wizard>.steps .current a:hover, .wizard>.steps .current a:active
 {
-    background: #9c0808;
+    background: #73ac17;
     color: #fff;
     cursor: default;
 }
 
 .wizard>.steps .done a, .wizard>.steps .done a:hover, .wizard>.steps .done a:active
 {
-    background: #c17c7c;
+    background: #c0e08c;
     color: #fff;
 }
 
@@ -96,9 +96,8 @@
 }
 
 .wizard>.content {
-    background: #eee;
+    background: rgba(238, 238, 238, 0.8);
     display: block;
-    min-height: 32em;
     overflow-y: auto;
     position: relative;
     width: auto;
@@ -111,6 +110,7 @@
     display: inline;
     float: left;
     width: 80%;
+    height: 89%;
 }
 
 .wizard>.content>.body {
@@ -166,6 +166,7 @@
     position: relative;
     display: block;
     text-align: right;
+    margin: 0.5% 0.5%;
     width: 100%;
 }
 
@@ -192,7 +193,7 @@
 
 .wizard>.actions a, .wizard>.actions a:hover, .wizard>.actions a:active
 {
-    background: #9c0808;
+    background: #73ac17;
     color: #fff;
     display: block;
     padding: 0.5em 1em;
@@ -204,7 +205,7 @@
 
 .wizard>.actions .disabled a, .wizard>.actions .disabled a:hover,
 .wizard>.actions .disabled a:active {
-    background: #eee;
+    background: rgba(238, 238, 238, 0.8);
     color: #aaa;
 }
 
