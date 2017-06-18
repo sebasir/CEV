@@ -2,6 +2,7 @@ package net.hpclab.cev.services;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletContextEvent;
@@ -50,10 +51,15 @@ public class ApplicationListener implements ServletContextListener, HttpSessionL
             HashMap<ModulesEnum, Modules> modules = new HashMap<>();
             modules.put(ModulesEnum.LOGIN, new Modules(2));
             Util.setModules(modules);
+            
 
             LOGGER.info("Inicializando objetos [Institution]...");
             DataBaseService<Institution> institutionService = new DataBaseService<>(Institution.class);
             Util.setInstitutions(institutionService.getList("Institution.findAll"));
+            
+            Properties messages = new Properties();
+            messages.load(sce.getServletContext().getResourceAsStream(Constant.MESSAGES_FILE));
+            MessagesService.getInstance().loadMessages(messages);
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Error inicializando: {0}", e.getMessage());
             e.printStackTrace();

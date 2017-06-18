@@ -12,6 +12,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import net.hpclab.cev.enums.StatusEnum;
 
 @WebFilter("/admin/*")
 public class AuthorizationFilter implements Filter {
@@ -27,13 +28,21 @@ public class AuthorizationFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) res;
         HttpSession session = request.getSession(false);
         String loginURL = request.getContextPath() + Constant.LOGIN_PAGE;
-
-        boolean loggedIn = session != null && session.getAttribute(Constant.USER_DATA) != null;
+        boolean loggedIn = false;
+        boolean userActive = false;
+        try {
+            UserSession userSession = (UserSession) session.getAttribute(Constant.USER_DATA);
+            loggedIn = true;
+            if (userSession.getUser().getStatus() == StatusEnum.Activo) {
+                userActive = true;
+            }
+        } catch (Exception e) {
+        }
         boolean loginRequest = request.getRequestURI().equals(loginURL);
         boolean resourceRequest = request.getRequestURI().startsWith(request.getContextPath() + ResourceHandler.RESOURCE_IDENTIFIER + "/");
         boolean ajaxRequest = "partial/ajax".equals(request.getHeader("Faces-Request"));
 
-        if (loggedIn || loginRequest || resourceRequest) {
+        if ((loggedIn && userActive) || loginRequest || resourceRequest) {
             if (!resourceRequest) {
                 response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
                 response.setHeader("Pragma", "no-cache");

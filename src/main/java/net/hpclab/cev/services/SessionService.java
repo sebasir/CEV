@@ -25,4 +25,8 @@ public class SessionService implements Serializable {
         }
         return false;
     }
+    
+    public static UserSession getUserSession(String sessionId) {
+        return ONLINE_USERS.get(sessionId);
+    }
 }

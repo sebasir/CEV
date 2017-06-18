@@ -19,7 +19,7 @@ import net.hpclab.cev.entities.SpecimenContent;
 import net.hpclab.cev.entities.Taxonomy;
 import net.hpclab.cev.entities.TaxonomyLevel;
 import net.hpclab.cev.entities.Users;
-import net.hpclab.cev.enums.DataBaseEnum;
+import net.hpclab.cev.enums.AuthenticateEnum;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.SessionService;
 import net.hpclab.cev.services.UserSession;
@@ -148,7 +148,7 @@ public class UtilsBean implements Serializable {
         facesContext.addMessage(null, fMess);
     }
 
-    public void showDataBaseMessage(FacesContext facesContext, DataBaseEnum action, String message) {
+    public void showAuthenticationMessage(FacesContext facesContext, AuthenticateEnum action, String message) {
         FacesMessage fMess;
         switch (action) {
             case DB_INIT_ERROR:
@@ -160,8 +160,13 @@ public class UtilsBean implements Serializable {
             case LOGIN_SUCCESS:
                 fMess = new FacesMessage(FacesMessage.SEVERITY_INFO, "Bienvenido, " + message, "Has ingresado correctamente al sistema!");
                 break;
+            case LOGIN_INVALID_FORMAT_ERROR:
+            case LOGIN_USER_LOGGED_IN_ERROR:
+            case LOGIN_UNKNOWN_ERROR:
+                fMess = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error autenticando", message);
+                break;
             default:
-                fMess = new FacesMessage(FacesMessage.SEVERITY_WARN, "ET llama a casa", "Hola. Probando un mensaje no contemplado!!");
+                fMess = new FacesMessage(FacesMessage.SEVERITY_WARN, "ET llama a casa", "Hola. Probando un mensaje no contemplado!! [" + action + "]");
                 break;
         }
         facesContext.addMessage(null, fMess);

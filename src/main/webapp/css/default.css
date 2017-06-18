@@ -186,8 +186,8 @@ div.logo-dashboard {
 
 .new-specimen {
     position: absolute;
-    right: 0;
-    bottom: 0;
+    left: 230px;
+    bottom: 30px;
     width: 90px;
     z-index: 999;
     background-color: rgb(115, 172, 23);
