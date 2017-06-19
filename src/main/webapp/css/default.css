@@ -250,3 +250,33 @@ div.logo-dashboard {
     margin: 0 0px;
     padding: 0px 0px;
 }
+
+.paginador {
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+}
+
+.pagination>li>a, .pagination>li>span {
+    color: #3c763d;
+    background-color: rgba(133, 184, 32, 0.15);
+    border: 1px solid rgba(112, 170, 26, 0.56);
+}
+
+.pagination>li>a:focus, .pagination>li>a:hover, .pagination>li>span:focus, .pagination>li>span:hover {
+    color: #42610f;
+    background-color: rgba(113, 189, 11, 0.72);
+    border-color: #8ab546;
+}
+
+.table-hover>tbody>tr:hover {
+    color: #42610f;
+    background-color: rgba(113, 189, 11, 0.72);
+    border-color: #8ab546;
+}
+
+.active-page {
+    color: #42610f;
+    background-color: rgba(113, 189, 11, 0.72);
+    border-color: #8ab546;
+}

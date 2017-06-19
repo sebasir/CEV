@@ -1026,14 +1026,7 @@ body > .navbar-collapse[data-color="purple"]:after {
     padding: 12px 8px;
     vertical-align: middle;
 }
-.table > thead > tr > th {
-    border-bottom-width: 1px;
-    font-size: 12px;
-    text-transform: uppercase;
-    color: #9A9A9A;
-    font-weight: 400;
-    padding-bottom: 5px;
-}
+
 .table .td-actions .btn {
     opacity: 0.36;
     filter: alpha(opacity=36);
