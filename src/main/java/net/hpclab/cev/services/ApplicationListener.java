@@ -55,7 +55,7 @@ public class ApplicationListener implements ServletContextListener, HttpSessionL
 
             LOGGER.info("Inicializando objetos [Institution]...");
             DataBaseService<Institution> institutionService = new DataBaseService<>(Institution.class);
-            Util.setInstitutions(institutionService.getList("Institution.findAll"));
+            Util.setInstitutions(institutionService.getList());
             
             Properties messages = new Properties();
             messages.load(sce.getServletContext().getResourceAsStream(Constant.MESSAGES_FILE));

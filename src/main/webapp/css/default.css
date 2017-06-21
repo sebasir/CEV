@@ -95,7 +95,7 @@ select[multiple], select[size] {
     padding-top: 0.5em;
     text-align: center;
     border-radius: 6px;
-    background-color: #f5f5f5;
+    background-color: rgba(237, 245, 229, 0.91);
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, .1);
 }
 
@@ -258,25 +258,37 @@ div.logo-dashboard {
 }
 
 .pagination>li>a, .pagination>li>span {
-    color: #3c763d;
+    color: #42610f;
     background-color: rgba(133, 184, 32, 0.15);
     border: 1px solid rgba(112, 170, 26, 0.56);
 }
 
 .pagination>li>a:focus, .pagination>li>a:hover, .pagination>li>span:focus, .pagination>li>span:hover {
     color: #42610f;
-    background-color: rgba(113, 189, 11, 0.72);
+    background-color: rgba(113, 189, 11, 0.45);
     border-color: #8ab546;
 }
 
 .table-hover>tbody>tr:hover {
     color: #42610f;
-    background-color: rgba(113, 189, 11, 0.72);
+    background-color: rgba(113, 189, 11, 0.21);
     border-color: #8ab546;
 }
 
-.active-page {
+.pagination>li>a.active-page {
     color: #42610f;
-    background-color: rgba(113, 189, 11, 0.72);
+    background-color: rgba(113, 189, 11, 0.45);
+    border-color: #8ab546;
+}
+
+.btn-action {
+    color: #42610f;
+    background-color: rgba(133, 184, 32, 0.15);
+    border: 1px solid rgba(112, 170, 26, 0.56);
+}
+
+.btn-action:hover {
+    color: #42610f;
+    background-color: rgba(113, 189, 11, 0.45);
     border-color: #8ab546;
 }

@@ -57,9 +57,9 @@ public class AccessService implements Serializable {
         userAccess.clear();
         roleUserAccess.clear();
         roleModuleAccess.clear();
-        modulesUsers = mousService.getList("ModulesUsers.findAll");
-        rolesUsers = rousService.getList("RolesUsers.findAll");
-        rolesModules = romoService.getList("RolesModules.findAll");
+        modulesUsers = mousService.getList();
+        rolesUsers = rousService.getList();
+        rolesModules = romoService.getList();
         
         for (RolesModules r : rolesModules) {
             addRoleModuleAccess(r.getIdRole(), r.getIdModule());

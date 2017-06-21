@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
     <h:head>
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -11,19 +12,26 @@
         <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
         <meta name="viewport" content="width=device-width" />
         <link rel="icon" type="image/png" href="../images/utils/bug-silhouette-dark.png" />
-        <link href="light-bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="../bootstrap/css/bootstrap.css" type="text/css" rel="stylesheet"/>
         <link href="light-bootstrap/css/animate.min.css" rel="stylesheet"/>
         <link href="light-bootstrap/css/light-bootstrap-dashboard.css" rel="stylesheet"/>
         <link href="light-bootstrap/css/pe-icon-7-stroke.css" rel="stylesheet" />
         <link href="../css/default.css" rel="stylesheet" />
         <link href="../css/jquery.steps.css" rel="stylesheet" />
     </h:head>
+    <h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
     <h:body>
+        <div id="loading" class="oculto topcorner">
+            <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
+            <p>Procesando...</p>
+        </div>
+        <p:ajaxStatus onstart="$('#loading').removeClass('oculto')" onsuccess="$('#loading').addClass('oculto')" />
+        <p:growl id="growl" showDetail="true"/>
         <div class="wrapper">
             <h:form id="menuForm">
                 <h:commandLink id="new-specimen" styleClass="new-specimen" value="" title="Agregar un nuevo espécimen">
-                        <img src="../images/utils/bug-silhouette-light.png" class="img-responsive"/>
-                    </h:commandLink>
+                    <img src="../images/utils/bug-silhouette-light.png" class="img-responsive"/>
+                </h:commandLink>
                 <div class="sidebar" data-color="green" data-image="../images/sidebar-bee.png">
                     <div class="sidebar-wrapper">
                         <div class="logo">

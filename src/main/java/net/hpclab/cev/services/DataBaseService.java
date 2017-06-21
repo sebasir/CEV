@@ -25,22 +25,64 @@ public class DataBaseService<T> implements Serializable {
     private static final long serialVersionUID = 1L;
     private static final String SELECT = "SELECT";
     private static final Logger LOGGER = Logger.getLogger(DataBaseService.class.getSimpleName());
+    private static int currentPage;
+    private static int numberOfResults;
     private EntityManagerFactory entityManagerFactory;
     private EntityManager entityManager;
-    protected Class<T> entityClass;
     private int queryMaxResults;
+    protected Class<T> entityClass;
 
     public DataBaseService(Class<T> entityClass, int queryMaxResults) throws PersistenceException, Exception {
         this.entityClass = entityClass;
         this.queryMaxResults = queryMaxResults;
+        numberOfResults = 0;
         getEntityManager();
         if (entityManagerFactory != null) {
             LOGGER.log(Level.INFO, "DataBaseService ya había iniciado...");
         }
     }
-    
+
     public DataBaseService(Class<T> entityClass) throws PersistenceException, Exception {
         this(entityClass, Constant.QUERY_MAX_RESULTS);
+    }
+
+    public List<T> getList() throws NoResultException, Exception {
+        return getList(new HashMap<String, Object>());
+    }
+
+    public List<T> getList(int page) throws NoResultException, Exception {
+        currentPage = page;
+        return getList(new HashMap<String, Object>());
+    }
+
+    public List<T> getList(String query) throws NoResultException, Exception {
+        return getList(query, null);
+    }
+
+    public List<T> getList(String query, int page) throws NoResultException, Exception {
+        currentPage = page;
+        return getList(query, null);
+    }
+
+    public void getCount() {
+        LOGGER.log(Level.INFO, "Counting {0}, OK", entityClass.getSimpleName());
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
+        countQuery.select(criteriaBuilder.count(countQuery.from(entityClass)));
+        numberOfResults = entityManager.createQuery(countQuery).getSingleResult().intValue();
+        LOGGER.log(Level.INFO, "Count {0}, OK", entityClass.getSimpleName());
+    }
+
+    public int getNumberOfResults() {
+        return numberOfResults;
+    }
+
+    public int getNumberOfPages() {
+        return (int) Math.ceil((double) numberOfResults / queryMaxResults);
+    }
+
+    public int getCurrentPage() {
+        return currentPage;
     }
 
     public List<T> getList(String query, HashMap<String, Object> params) throws NoResultException, Exception {
@@ -51,14 +93,7 @@ public class DataBaseService<T> implements Serializable {
                 typedQuery.setParameter(param, params.get(param));
             }
         }
-        List<T> result = typedQuery.setMaxResults(queryMaxResults).getResultList();
-        LOGGER.log(Level.INFO, "Listing {0}, OK", entityClass.getSimpleName());
-        return result;
-    }
-
-    public List<T> getList(String query) throws NoResultException, Exception {
-        LOGGER.log(Level.INFO, "Listing {0}...", entityClass.getSimpleName());
-        List<T> result = entityManager.createNamedQuery(query, entityClass).setMaxResults(queryMaxResults).getResultList();
+        List<T> result = getListOfResults(typedQuery);
         LOGGER.log(Level.INFO, "Listing {0}, OK", entityClass.getSimpleName());
         return result;
     }
@@ -69,7 +104,7 @@ public class DataBaseService<T> implements Serializable {
         CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entityClass);
         Root<T> root = criteriaQuery.from(entityClass);
 
-        if (params != null) {
+        if (params != null && !params.isEmpty()) {
             Predicate predicate = criteriaBuilder.conjunction();
             Predicate auxPredicate;
             Object value;
@@ -94,10 +129,20 @@ public class DataBaseService<T> implements Serializable {
             }
             criteriaQuery.select(root).where(predicate);
         }
-
-        List<T> result = entityManager.createQuery(criteriaQuery).setMaxResults(queryMaxResults).getResultList();
+        List<T> result = getListOfResults(entityManager.createQuery(criteriaQuery));
         LOGGER.log(Level.INFO, "Listing {0}, OK", entityClass.getSimpleName());
         return result;
+    }
+
+    private List<T> getListOfResults(Query query) {
+        if (numberOfResults == 0) {
+            getCount();
+        }
+        if (currentPage > 0) {
+            LOGGER.log(Level.INFO, "Page {0} of {1}", new Object[]{currentPage, getNumberOfPages()});
+            query.setFirstResult(currentPage - 1);
+        }
+        return query.setMaxResults(queryMaxResults).getResultList();
     }
 
     private T getSingleRecord(TypedQuery<T> typedQuery, HashMap<String, Object> params) throws NoResultException, Exception {
