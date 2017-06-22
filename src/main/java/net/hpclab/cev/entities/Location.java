@@ -25,7 +25,16 @@ import org.hibernate.annotations.TypeDef;
 @Entity
 @Table(name = "location")
 @NamedQueries({
-    @NamedQuery(name = "Location.findAll", query = "SELECT l FROM Location l")})
+    @NamedQuery(name = "Location.findAll", query = "SELECT l FROM Location l"),
+    @NamedQuery(name = "Location.findByIdLocation", query = "SELECT l FROM Location l WHERE l.idLocation = :idLocation"),
+    @NamedQuery(name = "Location.findByLocationName", query = "SELECT l FROM Location l WHERE l.locationName = :locationName"),
+    @NamedQuery(name = "Location.findByLatitude", query = "SELECT l FROM Location l WHERE l.latitude = :latitude"),
+    @NamedQuery(name = "Location.findByLongitude", query = "SELECT l FROM Location l WHERE l.longitude = :longitude"),
+    @NamedQuery(name = "Location.findByAltitude", query = "SELECT l FROM Location l WHERE l.altitude = :altitude"),
+    @NamedQuery(name = "Location.findByRadio", query = "SELECT l FROM Location l WHERE l.radio = :radio"),
+    @NamedQuery(name = "Location.findOrderedDesc", query = "SELECT l FROM Location l ORDER BY l.idLoclevel.loclevelRank DESC"),
+    @NamedQuery(name = "Location.findOrderedAsc", query = "SELECT l FROM Location l ORDER BY l.idLoclevel.loclevelRank")
+})
 @TypeDef(name = "StatusEnumConverter", typeClass = StatusEnumConverter.class)
 public class Location implements Serializable {
 
@@ -41,7 +50,6 @@ public class Location implements Serializable {
     @Size(min = 1, max = 64)
     @Column(name = "location_name")
     private String locationName;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "latitude")
     private Double latitude;
     @Column(name = "longitude")
@@ -176,7 +184,6 @@ public class Location implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Location)) {
             return false;
         }
@@ -186,6 +193,6 @@ public class Location implements Serializable {
 
     @Override
     public String toString() {
-        return "net.hpclab.entities.Location[ idLocation=" + idLocation + " ]";
+        return this.locationName;
     }
 }

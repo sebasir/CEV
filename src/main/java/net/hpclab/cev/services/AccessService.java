@@ -40,9 +40,9 @@ public class AccessService implements Serializable {
 
     private AccessService() throws Exception {
         try {
-            mousService = new DataBaseService<>(ModulesUsers.class, 100);
-            rousService = new DataBaseService<>(RolesUsers.class, 100);
-            romoService = new DataBaseService<>(RolesModules.class, 100);
+            mousService = new DataBaseService<>(ModulesUsers.class, -1);
+            rousService = new DataBaseService<>(RolesUsers.class, -1);
+            romoService = new DataBaseService<>(RolesModules.class, -1);
             userAccess = new HashMap<>();
             roleUserAccess = new HashMap<>();
             roleModuleAccess = new HashMap<>();

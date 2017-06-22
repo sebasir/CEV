@@ -49,4 +49,31 @@
 
 .ui-tree.ui-tree-horizontal .ui-treenode.ui-treenode-leaf, .ui-tree.ui-tree-horizontal .ui-treenode.ui-treenode-collapsed {
     padding-right: 0px !important;
+    min-width: 12em;
+}
+
+.ui-tree.ui-tree-horizontal .ui-treenode, .ui-treenode ui-treenode-parent ui-treenode-selected {
+    min-width: 12em;
+    text-align: center;
+}
+
+.ui-tree-horizontal .ui-treenode-parent .ui-treenode-content, .ui-tree-horizontal .ui-treenode-leaf .ui-treenode-content {
+    font-weight: bolder;
+}
+
+.ui-tree.ui-tree-horizontal .ui-tree-toggler {
+    vertical-align: text-top;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+    border: 1px solid #72ab19;
+    background: #d9efb5;
+    font-weight: bold;
+    color: #557b18;
+}
+
+.ui-widget-content {
+    border: 1px solid #72ab19;
+    background: rgba(238, 238, 238, 0.8);
+    /* color: #222222; */
 }

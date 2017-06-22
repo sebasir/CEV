@@ -1,76 +1,75 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-			 xmlns:h="http://java.sun.com/jsf/html"
-			 xmlns:ui="http://java.sun.com/jsf/facelets"
-			 xmlns:p="http://primefaces.org/ui"
-			 xmlns:f="http://java.sun.com/jsf/core"
-			 template="admin.xhtml">
-    <ui:define name="body">
-	   <h:form id="formLocation">
-		  <p:panel id="data">
-			 <f:facet name="header">
-				<h:outputText value="Ubicaciones" />
-			 </f:facet>
-			 <p:tree id="locTree" value="#{locationBean.root}" var="loc" orientation="vertical" cache="true" selectionMode="single" selection="#{locationBean.selectedNode}" dynamic="true" animate="true">
-				<p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
-				    <h:outputText value="#{loc}" />
-				</p:treeNode>
-			 </p:tree>
-			 <p:contextMenu for="locTree">
-				<p:menuitem value="Agregar Ubicación" update="locTree :createDialog" actionListener="#{locationBean.setTaxfromNode('create')}" icon="ui-icon-plusthick"/>
-				<p:menuitem value="Ver detalle de Especies" update="detailDialog" actionListener="#{locationBean.setTaxfromNode('detail')}" icon="ui-icon-folder-open" />
-				<p:menuitem value="Editar" update="locTree :editDialog :displayEdit" actionListener="#{locationBean.setTaxfromNode('edit')}" icon="ui-icon-pencil"/>
-				<p:menuitem value="Borrar" update="locTree" actionListener="#{locationBean.setTaxfromNode('delete')}" icon="ui-icon-trash"/>
-			 </p:contextMenu>
-		  </p:panel>
-		  <p:growl id="messages" showDetail="true"/>
-	   </h:form>
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core">
+    <h:body>
+        <h:form id="formLocation">
+            <p:panel id="data">
+                <f:facet name="header">
+                    <h:outputText value="Ubicaciones" />
+                </f:facet>
+                <p:tree id="locTree" value="#{locationBean.root}" var="loc" orientation="vertical" cache="true" selectionMode="single" selection="#{locationBean.selectedNode}" dynamic="true" animate="true">
+                    <p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
+                        <h:outputText value="#{loc}" />
+                    </p:treeNode>
+                </p:tree>
+                <p:contextMenu for="locTree">
+                    <p:menuitem value="Agregar Ubicación" update="locTree :createDialog" actionListener="#{locationBean.setTaxfromNode('create')}" icon="ui-icon-plusthick"/>
+                    <p:menuitem value="Ver detalle de Especies" update="detailDialog" actionListener="#{locationBean.setTaxfromNode('detail')}" icon="ui-icon-folder-open" />
+                    <p:menuitem value="Editar" update="locTree :editDialog :displayEdit" actionListener="#{locationBean.setTaxfromNode('edit')}" icon="ui-icon-pencil"/>
+                    <p:menuitem value="Borrar" update="locTree" actionListener="#{locationBean.setTaxfromNode('delete')}" icon="ui-icon-trash"/>
+                </p:contextMenu>
+            </p:panel>
+            <p:growl id="messages" showDetail="true"/>
+        </h:form>
 
-	   <p:dialog id="detailDialog" width="500px" appendTo="@(body)" widgetVar="locationDetail" modal="true" dynamic="true" resizable="false" header="#{locationBean.location.locationName}" closeOnEscape="true">
-		  <p:dataList id="dataListSpecimen" paginator="true" rows="5" value="#{locationBean.locationSpecimens}" var="specimen" emptyMessage="No se encontraron especímenes asociados a esta ubicación" paginatorPosition="bottom">
-			 #{specimen.commonName} <span style="font-style: italic;">(#{specimen.specificEpithet})</span>
-		  </p:dataList>
-	   </p:dialog>
+        <p:dialog id="detailDialog" width="500px" appendTo="@(body)" widgetVar="locationDetail" modal="true" dynamic="true" resizable="false" header="#{locationBean.location.locationName}" closeOnEscape="true">
+            <p:dataList id="dataListSpecimen" paginator="true" rows="5" value="#{locationBean.locationSpecimens}" var="specimen" emptyMessage="No se encontraron especímenes asociados a esta ubicación" paginatorPosition="bottom">
+                #{specimen.commonName} <span style="font-style: italic;">(#{specimen.specificEpithet})</span>
+            </p:dataList>
+        </p:dialog>
 
-	   <p:dialog id="editDialog" widgetVar="locationEdit" modal="true" resizable="false" appendTo="@(body)" header="Editar a #{locationBean.location.description}" closeOnEscape="true" > 
-		  <h:form id="locationEditForm" prependId="false">
-			 <p:panelGrid id="displayEdit" columns="2">
-				<p:outputLabel value="Nombre Ubicación:" for="locEName" />
-				<p:inputText id="locEName" value="#{locationBean.location.locationName}" title="Nombre Ubicación" rendered="true" style="width: 100%" required="true" requiredMessage="Debes definir el nombre de la ubicación!"/>
-				<p:outputLabel value="Nivel Ubicación:" for="levelE" />
-				<p:selectOneMenu id="levelE" value="#{locationBean.selectedLevel}" effect="fade" style="width: 100%" required="true" rendered="true" requiredMessage="Debes escoger una jerarquía!">
-				    <f:selectItem itemLabel="Selecciona una jerarquía" itemValue="" />
-				    <f:selectItems value="#{locationBean.allLevels}" var="lev" itemLabel="#{lev.loclevelName}" itemValue="#{lev.idLoclevel}" />
-				</p:selectOneMenu>
-			 </p:panelGrid>
-			 <p:commandButton id="editSave" value="Guardar" action="#{locationBean.edit()}" update=":formLocation" oncomplete="PF('locationEdit').hide()"/>
-		  </h:form>
-	   </p:dialog>
+        <p:dialog id="editDialog" widgetVar="locationEdit" modal="true" resizable="false" appendTo="@(body)" header="Editar a #{locationBean.location.locationName}" closeOnEscape="true" > 
+            <h:form id="locationEditForm" prependId="false">
+                <p:panelGrid id="displayEdit" columns="2">
+                    <p:outputLabel value="Nombre Ubicación:" for="locEName" />
+                    <p:inputText id="locEName" value="#{locationBean.location.locationName}" title="Nombre Ubicación" rendered="true" style="width: 100%" required="true" requiredMessage="Debes definir el nombre de la ubicación!"/>
+                    <p:outputLabel value="Nivel Ubicación:" for="levelE" />
+                    <p:selectOneMenu id="levelE" value="#{locationBean.selectedLevel}" effect="fade" style="width: 100%" required="true" rendered="true" requiredMessage="Debes escoger una jerarquía!">
+                        <f:selectItem itemLabel="Selecciona una jerarquía" itemValue="" />
+                        <f:selectItems value="#{locationBean.allLevels}" var="lev" itemLabel="#{lev.loclevelName}" itemValue="#{lev.idLoclevel}" />
+                    </p:selectOneMenu>
+                </p:panelGrid>
+                <p:commandButton id="editSave" value="Guardar" action="#{locationBean.edit()}" update=":formLocation" oncomplete="PF('locationEdit').hide()"/>
+            </h:form>
+        </p:dialog>
 
-	   <p:dialog id="createDialog" widgetVar="locationCreate" modal="true" resizable="false" appendTo="@(body)" header="Nueva Ubicación" closeOnEscape="true" > 
-		  <h:form id="locationCreateForm" prependId="false">
-			 <p:panelGrid id="displayCreate" columns="2">
-				<p:outputLabel value="Nombre Ubicación:" for="locName" />
-				<p:inputText id="locName" value="#{locationBean.location.locationName}" title="Nombre Ubicación" rendered="true" style="width: 100%" required="true" requiredMessage="Debes definir el nombre de la ubicación!"/>
-				<p:outputLabel value="Longitud:" for="lon" />
-				<p:inputText id="lon" value="#{locationBean.location.longitude}" title="Longitud Decimal" rendered="true" style="width: 100%"/>
-				<p:outputLabel value="Latitud:" for="lat" />
-				<p:inputText id="lat" value="#{locationBean.location.latitude}" title="Latitud Decimal" rendered="true" style="width: 100%"/>
-				<p:outputLabel value="Altitud:" for="alt" />
-				<p:inputText id="alt" value="#{locationBean.location.altitude}" title="Altitud" rendered="true" style="width: 100%"/>
-				<p:outputLabel value="Jerarquía" for="level" />
-				<p:selectOneMenu id="level" value="#{locationBean.selectedLevel}" effect="fade" style="width: 100%" required="true" rendered="true" requiredMessage="Debes escoger una jerarquía!">
-				    <f:selectItem itemLabel="Selecciona una jerarquía" itemValue="" />
-				    <f:selectItems value="#{locationBean.allLevels}" var="lev" itemLabel="#{lev.loclevelName}" itemValue="#{lev.idLoclevel}" />
-				</p:selectOneMenu>
-			 </p:panelGrid>
-			 <p:commandButton id="createSave" value="Guardar" action="#{locationBean.persist()}" update=":formLocation" oncomplete="PF('locationCreate').hide()"/>
-		  </h:form>
-	   </p:dialog>
-	   <p:confirmDialog id="deleteDialog" appendTo="@(body)" widgetVar="locationDelete" message="¿Está seguro que desea eliminar este registro?" showEffect="fade" hideEffect="fade" header="Confirmar eliminación" severity="alarm">
-		  <h:form id="deleteForm" style=""> 
-			 <p:commandButton id="deleteYesButton" value="Eliminar" action="#{locationBean.delete}" update=":formLocation" oncomplete="PF('locationDelete').hide()" />
-			 <p:commandButton id="deleteNoButton" value="Cancelar" onclick="PF('locationDelete').hide()" type="button" />
-		  </h:form>
-	   </p:confirmDialog>
-    </ui:define>
+        <p:dialog id="createDialog" widgetVar="locationCreate" modal="true" resizable="false" appendTo="@(body)" header="Nueva Ubicación" closeOnEscape="true" > 
+            <h:form id="locationCreateForm" prependId="false">
+                <p:panelGrid id="displayCreate" columns="2">
+                    <p:outputLabel value="Nombre Ubicación:" for="locName" />
+                    <p:inputText id="locName" value="#{locationBean.location.locationName}" title="Nombre Ubicación" rendered="true" style="width: 100%" required="true" requiredMessage="Debes definir el nombre de la ubicación!"/>
+                    <p:outputLabel value="Longitud:" for="lon" />
+                    <p:inputText id="lon" value="#{locationBean.location.longitude}" title="Longitud Decimal" rendered="true" style="width: 100%"/>
+                    <p:outputLabel value="Latitud:" for="lat" />
+                    <p:inputText id="lat" value="#{locationBean.location.latitude}" title="Latitud Decimal" rendered="true" style="width: 100%"/>
+                    <p:outputLabel value="Altitud:" for="alt" />
+                    <p:inputText id="alt" value="#{locationBean.location.altitude}" title="Altitud" rendered="true" style="width: 100%"/>
+                    <p:outputLabel value="Jerarquía" for="level" />
+                    <p:selectOneMenu id="level" value="#{locationBean.selectedLevel}" effect="fade" style="width: 100%" required="true" rendered="true" requiredMessage="Debes escoger una jerarquía!">
+                        <f:selectItem itemLabel="Selecciona una jerarquía" itemValue="" />
+                        <f:selectItems value="#{locationBean.allLevels}" var="lev" itemLabel="#{lev.loclevelName}" itemValue="#{lev.idLoclevel}" />
+                    </p:selectOneMenu>
+                </p:panelGrid>
+                <p:commandButton id="createSave" value="Guardar" action="#{locationBean.persist()}" update=":formLocation" oncomplete="PF('locationCreate').hide()"/>
+            </h:form>
+        </p:dialog>
+        <p:confirmDialog id="deleteDialog" appendTo="@(body)" widgetVar="locationDelete" message="¿Está seguro que desea eliminar este registro?" showEffect="fade" hideEffect="fade" header="Confirmar eliminación" severity="alarm">
+            <h:form id="deleteForm" style=""> 
+                <p:commandButton id="deleteYesButton" value="Eliminar" action="#{locationBean.delete}" update=":formLocation" oncomplete="PF('locationDelete').hide()" />
+                <p:commandButton id="deleteNoButton" value="Cancelar" onclick="PF('locationDelete').hide()" type="button" />
+            </h:form>
+        </p:confirmDialog>
+    </h:body>
 </ui:composition>

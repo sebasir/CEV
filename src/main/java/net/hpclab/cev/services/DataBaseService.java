@@ -87,13 +87,18 @@ public class DataBaseService<T> implements Serializable {
 
     public List<T> getList(String query, HashMap<String, Object> params) throws NoResultException, Exception {
         LOGGER.log(Level.INFO, "Listing {0}, params: '{'{1}'}'", new Object[]{entityClass.getSimpleName(), params == null ? "N/A" : params.size()});
-        TypedQuery<T> typedQuery = entityManager.createQuery(query, entityClass);
+        Query finalQuery;
+        if (query.toLowerCase().contains(SELECT)) {
+            finalQuery = entityManager.createQuery(query, entityClass);
+        } else {
+            finalQuery = entityManager.createNamedQuery(query, entityClass);
+        }
         if (params != null) {
             for (String param : params.keySet()) {
-                typedQuery.setParameter(param, params.get(param));
+                finalQuery.setParameter(param, params.get(param));
             }
         }
-        List<T> result = getListOfResults(typedQuery);
+        List<T> result = getListOfResults(finalQuery);
         LOGGER.log(Level.INFO, "Listing {0}, OK", entityClass.getSimpleName());
         return result;
     }
@@ -142,7 +147,7 @@ public class DataBaseService<T> implements Serializable {
             LOGGER.log(Level.INFO, "Page {0} of {1}", new Object[]{currentPage, getNumberOfPages()});
             query.setFirstResult(currentPage - 1);
         }
-        return query.setMaxResults(queryMaxResults).getResultList();
+        return queryMaxResults > 0 ? query.setMaxResults(queryMaxResults).getResultList() : query.getResultList();
     }
 
     private T getSingleRecord(TypedQuery<T> typedQuery, HashMap<String, Object> params) throws NoResultException, Exception {

@@ -145,6 +145,6 @@ public class Taxonomy implements Serializable {
 
     @Override
     public String toString() {
-        return "net.hpclab.entities.Taxonomy[ idTaxonomy=" + idTaxonomy + " ]";
+        return this.taxonomyName;
     }
 }
