@@ -1,67 +1,64 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-			 xmlns:h="http://java.sun.com/jsf/html"
-			 xmlns:ui="http://java.sun.com/jsf/facelets"
-			 xmlns:p="http://primefaces.org/ui"
-			 xmlns:f="http://java.sun.com/jsf/core"
-			 template="admin.xhtml">
-    <ui:define name="body">
-	   <h:form id="formSCon">
-		  <p:dataTable id="dataTableScon" paginator="true" rows="5" value="#{specimenContentBean.allSpecimenContents}" var="scon" emptyMessage="No se encontraron contenidos para los especímenes" paginatorPosition="top">
-			 <p:column headerText="Nombre Científico">
-				<h:outputText styleClass="cursive" value="#{scon.idSpecimen.idTaxonomy.taxonomyName} #{scon.idSpecimen.specificEpithet}"/>
-			 </p:column>
-			 <p:column headerText="Nombre Común">
-				<h:outputText value="#{scon.idSpecimen.commonName}" />
-			 </p:column>
-			 <p:column headerText="Descripción Básica">
-				<h:outputText value="#{scon.shortDescription}" />
-			 </p:column>
-			 <p:column headerText="Nombre del Archivo">
-				<h:outputText value="#{scon.fileName}" />
-			 </p:column>
-			 <p:column headerText="Fecha de Carga">
-				<h:outputText value="#{specimenContentBean.formatDate(scon.fileUploadDate, 'dd/MM/yyyy HH:mm:ss')}" />
-			 </p:column>
-			 <p:column headerText="Se publica?">
-				<h:outputText value="#{scon.publish == 'S'?'Si':'No'}" />
-			 </p:column>
-			 <p:column headerText="Fecha de publicación">
-				<h:outputText value="#{specimenContentBean.formatDate(scon.publishDate)}" />
-			 </p:column>
-			 <p:column headerText="Acciones" style="">
-				<p:commandButton id="editButton" icon="ui-icon-pencil" oncomplete="PF('sconDialog').show()" update="detailDialog :sconDialogForm" title="Editar contenido de #{scon.idSpecimen.idTaxonomy.taxonomyName} #{scon.idSpecimen.specificEpithet}" actionListener="#{specimenContentBean.prepareUpdate(scon)}"/>
-				<p:commandButton id="deleteButton" icon="ui-icon-trash" oncomplete="PF('sconDelete').show()" title="Eliminar #{specimen.commonName}" actionListener="#{specimenContentBean.prepareDelete(scon)}"/>
-			 </p:column>
-			 <f:facet name="footer">
-				<p:commandButton id="btnCreate" value="Nuevo Contenido" oncomplete="PF('sconDialog').show()" update=":detailDialog" title="Crear contenido nuevo" actionListener="#{specimenContentBean.prepareCreate()}"/>
-			 </f:facet>
-		  </p:dataTable>
-		  <p:growl id="messages" showDetail="true"/>
-	   </h:form>
-	   <p:dialog id="detailDialog" widgetVar="sconDialog" modal="true" resizable="false" appendTo="@(body)" header="#{specimenContentBean.header}" closeOnEscape="true" > 
-		  <h:form id="sconDialogForm" enctype="multipart/form-data">
-			 <p:panelGrid id="displayCreate" columns="2">
-				<p:outputLabel value="Espécimen:" for="speId" />
-				<p:selectOneMenu id="speId" value="#{specimenContentBean.selectedSpecimen}" effect="fade" required="true" rendered="true" requiredMessage="Debes escoger un espécimen!">
-				    <f:selectItem itemLabel="Selecciona un espécimen" itemValue="" />
-				    <f:selectItems value="#{specimenContentBean.allSpecimens}" var="spe" itemLabel="#{spe.idTaxonomy.taxonomyName} #{spe.specificEpithet}" itemValue="#{spe.idSpecimen}" />
-				</p:selectOneMenu>
-				<p:outputLabel value="Descripción de la imagen:" for="desc" />
-				<p:inputTextarea id="desc" value="#{specimenContentBean.specimenContent.shortDescription}" rows="3" title="Descripción del pie de la imagen" rendered="true" required="true" requiredMessage="Debes definir una descripción!"/>
-				<p:outputLabel value="Para publicar:" for="pub" />
-				<p:selectBooleanCheckbox id="pub" value="#{specimenContentBean.publish}"/>
-				<p:outputLabel value="Archivo de Imagen:" />
-				<p:fileUpload value="#{specimenContentBean.contentFile}" mode="simple" fileLimit="1" label="Adjuntar" required="true" invalidFileMessage="Debe ser un archivo de imagen!!" skinSimple="true"/>
-			 </p:panelGrid>
-			 <p:commandButton id="createSave" value="Guardar" action="#{specimenContentBean.persist()}" ajax="false"/>
-		  </h:form>
-	   </p:dialog>
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core">
+    <h:form id="formSCon">
+        <p:dataTable id="dataTableScon" paginator="true" rows="5" value="#{specimenContentBean.allSpecimenContents}" var="scon" emptyMessage="No se encontraron contenidos para los especímenes" paginatorPosition="top">
+            <p:column headerText="Nombre Científico">
+                <h:outputText styleClass="cursive" value="#{scon.idSpecimen.idTaxonomy.taxonomyName} #{scon.idSpecimen.specificEpithet}"/>
+            </p:column>
+            <p:column headerText="Nombre Común">
+                <h:outputText value="#{scon.idSpecimen.commonName}" />
+            </p:column>
+            <p:column headerText="Descripción Básica">
+                <h:outputText value="#{scon.shortDescription}" />
+            </p:column>
+            <p:column headerText="Nombre del Archivo">
+                <h:outputText value="#{scon.fileName}" />
+            </p:column>
+            <p:column headerText="Fecha de Carga">
+                <h:outputText value="#{specimenContentBean.formatDate(scon.fileUploadDate, 'dd/MM/yyyy HH:mm:ss')}" />
+            </p:column>
+            <p:column headerText="Se publica?">
+                <h:outputText value="#{scon.publish == 'S'?'Si':'No'}" />
+            </p:column>
+            <p:column headerText="Fecha de publicación">
+                <h:outputText value="#{specimenContentBean.formatDate(scon.publishDate)}" />
+            </p:column>
+            <p:column headerText="Acciones" style="">
+                <p:commandButton id="editButton" icon="ui-icon-pencil" oncomplete="PF('sconDialog').show()" update="detailDialog :sconDialogForm" title="Editar contenido de #{scon.idSpecimen.idTaxonomy.taxonomyName} #{scon.idSpecimen.specificEpithet}" actionListener="#{specimenContentBean.prepareUpdate(scon)}"/>
+                <p:commandButton id="deleteButton" icon="ui-icon-trash" oncomplete="PF('sconDelete').show()" title="Eliminar #{specimen.commonName}" actionListener="#{specimenContentBean.prepareDelete(scon)}"/>
+            </p:column>
+            <f:facet name="footer">
+                <p:commandButton id="btnCreate" value="Nuevo Contenido" oncomplete="PF('sconDialog').show()" update=":detailDialog" title="Crear contenido nuevo" actionListener="#{specimenContentBean.prepareCreate()}"/>
+            </f:facet>
+        </p:dataTable>
+        <p:growl id="messages" showDetail="true"/>
+    </h:form>
+    <p:dialog id="detailDialog" widgetVar="sconDialog" modal="true" resizable="false" appendTo="@(body)" header="#{specimenContentBean.header}" closeOnEscape="true" > 
+        <h:form id="sconDialogForm" enctype="multipart/form-data">
+            <p:panelGrid id="displayCreate" columns="2">
+                <p:outputLabel value="Espécimen:" for="speId" />
+                <p:selectOneMenu id="speId" value="#{specimenContentBean.selectedSpecimen}" effect="fade" required="true" rendered="true" requiredMessage="Debes escoger un espécimen!">
+                    <f:selectItem itemLabel="Selecciona un espécimen" itemValue="" />
+                    <f:selectItems value="#{specimenContentBean.allSpecimens}" var="spe" itemLabel="#{spe.idTaxonomy.taxonomyName} #{spe.specificEpithet}" itemValue="#{spe.idSpecimen}" />
+                </p:selectOneMenu>
+                <p:outputLabel value="Descripción de la imagen:" for="desc" />
+                <p:inputTextarea id="desc" value="#{specimenContentBean.specimenContent.shortDescription}" rows="3" title="Descripción del pie de la imagen" rendered="true" required="true" requiredMessage="Debes definir una descripción!"/>
+                <p:outputLabel value="Para publicar:" for="pub" />
+                <p:selectBooleanCheckbox id="pub" value="#{specimenContentBean.publish}"/>
+                <p:outputLabel value="Archivo de Imagen:" />
+                <p:fileUpload value="#{specimenContentBean.contentFile}" mode="simple" fileLimit="1" label="Adjuntar" required="true" invalidFileMessage="Debe ser un archivo de imagen!!" skinSimple="true"/>
+            </p:panelGrid>
+            <p:commandButton id="createSave" value="Guardar" action="#{specimenContentBean.persist()}" ajax="false"/>
+        </h:form>
+    </p:dialog>
 
-	   <p:confirmDialog id="deleteDialog" appendTo="@(body)" widgetVar="sconDelete" message="¿Está seguro que desea eliminar este registro?" showEffect="fade" hideEffect="fade" header="Confirmar eliminación" severity="alarm">
-		  <h:form id="deleteForm" style=""> 
-			 <p:commandButton id="deleteYesButton" value="Eliminar" action="#{specimenContentBean.delete()}" update=":formSCon" oncomplete="PF('sconDelete').hide()" />
-			 <p:commandButton id="deleteNoButton" value="Cancelar" onclick="PF('sconDelete').hide()" type="button" />
-		  </h:form>
-	   </p:confirmDialog>
-    </ui:define>
+    <p:confirmDialog id="deleteDialog" appendTo="@(body)" widgetVar="sconDelete" message="¿Está seguro que desea eliminar este registro?" showEffect="fade" hideEffect="fade" header="Confirmar eliminación" severity="alarm">
+        <h:form id="deleteForm" style=""> 
+            <p:commandButton id="deleteYesButton" value="Eliminar" action="#{specimenContentBean.delete()}" update=":formSCon" oncomplete="PF('sconDelete').hide()" />
+            <p:commandButton id="deleteNoButton" value="Cancelar" onclick="PF('sconDelete').hide()" type="button" />
+        </h:form>
+    </p:confirmDialog>
 </ui:composition>

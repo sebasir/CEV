@@ -10,6 +10,7 @@ import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.context.Flash;
 import javax.servlet.http.HttpServletRequest;
 import net.hpclab.cev.entities.Location;
 import net.hpclab.cev.entities.LocationLevel;
@@ -169,6 +170,9 @@ public class UtilsBean implements Serializable {
                 fMess = new FacesMessage(FacesMessage.SEVERITY_WARN, "ET llama a casa", "Hola. Probando un mensaje no contemplado!! [" + action + "]");
                 break;
         }
+        Flash flash = facesContext.getExternalContext().getFlash();
+        flash.setKeepMessages(true);
+        flash.setRedirect(true);
         facesContext.addMessage(null, fMess);
     }
 

@@ -4,7 +4,6 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
-    <f:event type="preRenderView" listener="#{loginBean.checkAuthentication}" />
     <h:head>
         <title>Bienvenido a CEV :: Ingreso</title>
         <link rel="icon" type="image/png" href="images/utils/bug-silhouette-dark.png" />
@@ -57,9 +56,9 @@
                 <div class="form-group">
                     <label for="inputEmail">Usuario</label>
                     <div class="input-group">
-                        <h:inputText id="inputEmail" class="form-control" required="true" requiredMessage="Se necesita un nombre de usuario" value="#{loginBean.user}"/>
+                        <p:inputText id="inputEmail" class="form-control" required="true" requiredMessage="Se necesita un nombre de usuario" value="#{loginBean.user}"/>
                         <span class="input-group-addon">|</span>
-                        <h:selectOneMenu id="domain" class="form-control" required="true" requiredMessage="Se necesita un dominio registrado" value="#{loginBean.domain}">
+                        <h:selectOneMenu id="domain" class="form-control ui-state-default" required="true" requiredMessage="Se necesita un dominio registrado" value="#{loginBean.domain}">
                             <f:selectItem itemLabel="Selecciona"/>
                             <f:selectItems value="#{loginBean.institutions}" var="inst" itemLabel="#{inst.domainUrl}" itemValue="#{inst.domainUrl}"/>
                         </h:selectOneMenu>
@@ -75,7 +74,7 @@
                 <hr />
                 <div class="row">
                     <div class="col-md-6">
-                        <p:commandButton id="buttonLogin" class="btn btn-default btn-block" ajax="true" update="growl" actionListener="#{loginBean.authenticate()}" value="Ingresar"/>
+                        <h:commandButton id="buttonLogin" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only btn btn-default btn-block" action="#{loginBean.authenticate}" value="Ingresar"/>
                     </div>
                     <div class="col-md-6">
                         <h:outputLink value="/CEV" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only btn btn-default btn-block">

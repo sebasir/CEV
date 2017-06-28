@@ -292,3 +292,14 @@ div.logo-dashboard {
     background-color: rgba(113, 189, 11, 0.45);
     border-color: #8ab546;
 }
+
+.ui-widget-header {
+    border: 1px solid #76ad17;
+    background: rgba(113, 171, 26, 0.33);
+}
+
+.ui-state-default {
+        border: 1px solid #9dd43f;
+    background: rgba(228, 241, 209, 0.33);
+    color: #3c763d;
+}

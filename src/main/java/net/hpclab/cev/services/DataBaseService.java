@@ -25,8 +25,8 @@ public class DataBaseService<T> implements Serializable {
     private static final long serialVersionUID = 1L;
     private static final String SELECT = "SELECT";
     private static final Logger LOGGER = Logger.getLogger(DataBaseService.class.getSimpleName());
-    private static int currentPage;
-    private static int numberOfResults;
+    private int currentPage;
+    private int numberOfResults;
     private EntityManagerFactory entityManagerFactory;
     private EntityManager entityManager;
     private int queryMaxResults;
