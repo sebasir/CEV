@@ -4,11 +4,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.el.ELContext;
 import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UISelectItem;
 import javax.faces.component.UISelectItems;
@@ -36,11 +37,14 @@ import org.primefaces.json.JSONArray;
 import org.primefaces.json.JSONObject;
 
 @ManagedBean
-@SessionScoped
+@ViewScoped
 public class SpecimenBean extends UtilsBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private DataBaseService<Specimen> specimenService;
+    private List<Specimen> allSpecimens;
+    private List<Location> allLocations;
+    private List<Taxonomy> allTaxonomys;
     private Specimen specimen;
     private Location location;
     private Taxonomy taxonomy;
@@ -69,12 +73,15 @@ public class SpecimenBean extends UtilsBean implements Serializable {
     @PostConstruct
     public void init() {
         try {
-            if (allSpecimens == null) {
-                allSpecimens = specimenService.getList(1);
-            }
+            allSpecimens = specimenService.getList(1);
         } catch (Exception e) {
 
         }
+    }
+    
+    @PreDestroy
+    public void destroy() {
+        specimenService = null;
     }
 
     public void firstPage() {

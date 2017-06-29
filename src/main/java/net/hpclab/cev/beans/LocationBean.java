@@ -25,6 +25,7 @@ public class LocationBean extends UtilsBean implements Serializable {
     private DataBaseService<LocationLevel> locationLevelService;
     private static final long serialVersionUID = 1L;
     private Location location;
+    private List<Location> allLocations;
     private Location parentLocation;
     private HashMap<Integer, TreeNode> tree;
     private TreeNode root;

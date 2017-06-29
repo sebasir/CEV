@@ -74,7 +74,7 @@
                 <hr />
                 <div class="row">
                     <div class="col-md-6">
-                        <h:commandButton id="buttonLogin" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only btn btn-default btn-block" action="#{loginBean.authenticate}" value="Ingresar"/>
+                        <p:commandButton id="buttonLogin" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only btn btn-default btn-block" ajax="true" action="#{loginBean.authenticate}" value="Ingresar"/>
                     </div>
                     <div class="col-md-6">
                         <h:outputLink value="/CEV" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only btn btn-default btn-block">

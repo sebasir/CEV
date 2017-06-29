@@ -33,7 +33,7 @@ public class AuditEnumConverter implements UserType, Serializable {
             String value = (String) valueMethod.invoke(pgObject);
             return AuditEnum.valueOf(value);
         } catch (IllegalAccessException | IllegalArgumentException | NoSuchMethodException | SecurityException | InvocationTargetException | SQLException ex) {
-            Logger.getLogger(AuditEnumConverter.class.getName()).log(Level.SEVERE, null, ex);
+            
         }
         return null;
     }

@@ -37,9 +37,6 @@ public class DataBaseService<T> implements Serializable {
         this.queryMaxResults = queryMaxResults;
         numberOfResults = 0;
         getEntityManager();
-        if (entityManagerFactory != null) {
-            LOGGER.log(Level.INFO, "DataBaseService ya había iniciado...");
-        }
     }
 
     public DataBaseService(Class<T> entityClass) throws PersistenceException, Exception {

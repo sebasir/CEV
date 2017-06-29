@@ -11,7 +11,6 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.persistence.NoResultException;
-import javax.servlet.http.HttpServletRequest;
 import net.hpclab.cev.entities.Institution;
 import net.hpclab.cev.entities.Modules;
 import net.hpclab.cev.entities.Users;
@@ -48,9 +47,8 @@ public class LoginBean extends UtilsBean implements Serializable {
         }
     }
 
-    public String authenticate() {
+    public void authenticate() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
-        String urlReturn = null;
         try {
             String message, logMessage;
             AuthenticateEnum authenticateEnum = LoginService.getInstance().login(facesContext, user, password, domain);
@@ -60,7 +58,7 @@ public class LoginBean extends UtilsBean implements Serializable {
                     message = MessagesService.getInstance().getMessage(authenticateEnum, users.getUserNames(), users.getUserLastnames());
                     logMessage = MessagesService.getInstance().getMessage(authenticateEnum.name() + Constant.LOG, users.getIdUser());
                     userModules = AccessService.getInstance().getUserMenu(users);
-                    urlReturn = ((HttpServletRequest) facesContext.getExternalContext().getRequest()).getContextPath() + Constant.MAIN_ADMIN_PAGE + Constant.FACES_REDIRECT;
+                    redirect(Constant.MAIN_ADMIN_PAGE);
                     break;
                 case LOGIN_USER_NOT_ACTIVE_ERROR:
                     users = SessionService.getUserSession(getSessionId(facesContext)).getUser();
@@ -82,12 +80,11 @@ public class LoginBean extends UtilsBean implements Serializable {
             LOGGER.log(Level.INFO, "Error autenticando: {0}", e.getMessage());
             showAuthenticationMessage(facesContext, AuthenticateEnum.LOGIN_ERROR, "Intenta nuevamente");
         }
-        return urlReturn;
     }
 
-    public String logOut() throws IOException {
+    public void logOut() throws IOException {
         invalidateSession(FacesContext.getCurrentInstance());
-        return Constant.LOGIN_PAGE + Constant.FACES_REDIRECT;
+        redirect(Constant.LOGIN_PAGE + Constant.FACES_REDIRECT);
     }
 
     public void recoverPassword() {

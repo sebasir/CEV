@@ -78,6 +78,12 @@ public class ApplicationListener implements ServletContextListener, HttpSessionL
 
     @Override
     public void sessionDestroyed(HttpSessionEvent se) {
+        try {
+            DataBaseService<Institution> dbs = new DataBaseService<>(Institution.class);
+            dbs.disconnect();
+        } catch (Exception e) {
+            
+        }
         SessionService.removeUser(se.getSession().getId());
     }
 }

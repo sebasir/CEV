@@ -299,7 +299,32 @@ div.logo-dashboard {
 }
 
 .ui-state-default {
-        border: 1px solid #9dd43f;
+    border: 1px solid #9dd43f;
     background: rgba(228, 241, 209, 0.33);
     color: #3c763d;
+}
+
+.ui-widget-content {
+    border: 1px solid #76ac16;
+    background: rgba(237, 245, 229, 0.88);
+    font-weight: bolder;
+}
+
+.fa {
+    color: #9dd43f;
+}
+
+.flexContainer {
+    display: flex;
+}
+
+.treeHeight {
+    height: 40em;
+}
+
+.locationMap {
+    margin-left: 15px;
+    border: 1px solid #76ac16;
+    border-radius: 5px;
+    width: 100%;
 }

@@ -26,7 +26,6 @@ public class AuthorizationFilter implements Filter {
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
-        System.out.println("URL -> " + request.getRequestURI());
         HttpSession session = request.getSession(false);
         String loginURL = request.getContextPath() + Constant.LOGIN_PAGE;
         boolean loggedIn = false;

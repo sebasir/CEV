@@ -23,6 +23,8 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
     private DataBaseService<Taxonomy> taxonomySession;
     private static final long serialVersionUID = 1L;
     private Taxonomy taxonomy;
+    private List<Taxonomy> allTaxonomys;
+    private List<TaxonomyLevel> allTaxonomyLevels;
     private Taxonomy parentTaxonomy;
     private TreeNode root;
     private TreeNode selectedNode;

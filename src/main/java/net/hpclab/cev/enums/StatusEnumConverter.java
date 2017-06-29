@@ -34,11 +34,9 @@ public class StatusEnumConverter implements UserType, Serializable {
             try {
                 valueMethod = pgObject.getClass().getMethod("getValue");
             } catch (NoSuchMethodException nsm) {
-                LOGGER.log(Level.SEVERE, "Error obteniendo getValue(): {0}", nsm.getMessage());
                 try {
                     valueMethod = pgObject.getClass().getMethod("toString");
                 } catch (NoSuchMethodException nsm2) {
-                    LOGGER.log(Level.SEVERE, "Error obteniendo toString(): {0}", nsm2.getMessage());
                     value = "Activo";
                 }
             }

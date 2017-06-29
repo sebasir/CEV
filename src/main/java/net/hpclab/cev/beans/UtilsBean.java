@@ -6,19 +6,12 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.context.Flash;
 import javax.servlet.http.HttpServletRequest;
-import net.hpclab.cev.entities.Location;
-import net.hpclab.cev.entities.LocationLevel;
 import net.hpclab.cev.enums.OutcomeEnum;
-import net.hpclab.cev.entities.Specimen;
-import net.hpclab.cev.entities.SpecimenContent;
-import net.hpclab.cev.entities.Taxonomy;
-import net.hpclab.cev.entities.TaxonomyLevel;
 import net.hpclab.cev.entities.Users;
 import net.hpclab.cev.enums.AuthenticateEnum;
 import net.hpclab.cev.services.Constant;
@@ -28,13 +21,6 @@ import net.hpclab.cev.services.Util;
 import org.apache.commons.io.IOUtils;
 
 public class UtilsBean implements Serializable {
-
-    public static List<Specimen> allSpecimens;
-    public static List<SpecimenContent> allSpecimenContents;
-    public static List<Taxonomy> allTaxonomys;
-    public static List<Location> allLocations;
-    public static List<TaxonomyLevel> allTaxonomyLevels;
-    public static List<LocationLevel> allLocationLevels;
 
     public UserSession loadUserSession(FacesContext facesContext, Users user) {
         UserSession userSession = new UserSession(user, getRemoteAddress(facesContext));
@@ -50,15 +36,14 @@ public class UtilsBean implements Serializable {
         return facesContext.getExternalContext().getSessionId(false);
     }
 
-    public void checkAuthentication() throws IOException {
+    public void redirect(String destination) throws IOException {
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
-        if (getUserSession(FacesContext.getCurrentInstance()) != null) {
-            externalContext.redirect(externalContext.getRequestContextPath() + Constant.MAIN_ADMIN_PAGE);
-        }
+        externalContext.redirect(externalContext.getRequestContextPath() + destination);
     }
 
     public void invalidateSession(FacesContext facesContext) {
         SessionService.removeUser(getSessionId(facesContext));
+        facesContext.getExternalContext().getSessionMap().clear();
         facesContext.getExternalContext().invalidateSession();
     }
 

@@ -26,6 +26,9 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
     private boolean publish;
     private Specimen specimen;
     private SpecimenContent specimenContent;
+    private List<SpecimenContent> allSpecimenContents;
+    private List<Specimen> allSpecimens;
+    private List<Taxonomy> allTaxonomys;
     private String selectedSpecimen;
     private String specimenDetail;
     private UploadedFile contentFile;
