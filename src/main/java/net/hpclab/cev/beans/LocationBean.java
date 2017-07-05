@@ -14,6 +14,8 @@ import net.hpclab.cev.entities.LocationLevel;
 import net.hpclab.cev.entities.Specimen;
 import net.hpclab.cev.services.DataBaseService;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.NodeSelectEvent;
+import org.primefaces.json.JSONObject;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
@@ -260,5 +262,26 @@ public class LocationBean extends UtilsBean implements Serializable {
                 context.execute("PF('locationDelete').show()");
             }
         }
+    }
+    
+    public void onNodeSelect(NodeSelectEvent event) {
+        selectedNode = event.getTreeNode();
+    }
+
+    public String setMapCenter() {
+        JSONObject json = new JSONObject();
+        try {
+            location = getNodeName();
+            json.put("latitude", location.getLatitude());
+            json.put("longitude", location.getLongitude());
+            json.put("name", location.getLocationName());
+            json.put("zoom", 12);
+        } catch (Exception e) {
+            json.put("latitude", 4.583333);
+            json.put("longitude", -74.066667);
+            json.put("name", "Colombia");
+            json.put("zoom", 9);
+        }
+        return json.toString();
     }
 }

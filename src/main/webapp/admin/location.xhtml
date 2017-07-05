@@ -3,16 +3,23 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://java.sun.com/jsf/core">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBR3PcM4cz5r0TULxJuDBgF2xvLqLE73c"></script>
     <h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
     <h:outputScript library="js" name="locationMap.js" target="head"/>
+    <h:panelGroup id="mapCenter">
+        <h:outputScript>
+            setMapCenter(#{locationBean.setMapCenter()});
+        </h:outputScript>
+    </h:panelGroup>
     <h:body>
         <h:form id="formLocation">
             <p:panel id="data">
                 <f:facet name="header">
                     <h:outputText value="Ubicaciones" />
                 </f:facet>
-                <p:tree id="locTree" value="#{locationBean.root}" var="loc" orientation="vertical" cache="true" selectionMode="single" selection="#{locationBean.selectedNode}" dynamic="true" animate="true">
-                    <p:treeNode expandedIcon="fa fa-folder-open" collapsedIcon="fa fa-folder">
+                <p:tree id="locTree" value="#{locationBean.root}" var="loc" orientation="vertical" selectionMode="single" selection="#{locationBean.selectedNode}">
+                    <p:ajax event="select" listener="#{locationBean.onNodeSelect}" update="mapCenter"/>
+                    <p:treeNode expandedIcon="fa fa-folder-open" collapsedIcon="fa fa-folder" >
                         <h:outputText value="#{loc}" />
                     </p:treeNode>
                 </p:tree>
@@ -74,5 +81,4 @@
             </h:form>
         </p:confirmDialog>
     </h:body>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBR3PcM4cz5r0TULxJuDBgF2xvLqLE73c"></script>
 </ui:composition>
