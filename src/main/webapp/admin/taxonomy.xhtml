@@ -3,6 +3,7 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://java.sun.com/jsf/core">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBR3PcM4cz5r0TULxJuDBgF2xvLqLE73c"></script>
     <h:outputStylesheet library="css" name="pstyle.css" />
     <h:body>
         <h:form id="formTaxonomy">
@@ -12,10 +13,10 @@
                 </p:treeNode>
             </p:tree>
             <p:contextMenu for="taxTree">
-                <p:menuitem value="Agregar Clasificación" update="taxTree :createDialog" actionListener="#{taxonomyBean.setTaxfromNode('create')}" icon="ui-icon-plusthick"/>
-                <p:menuitem value="Ver detalle de Especies" update="detailDialog" actionListener="#{taxonomyBean.setTaxfromNode('detail')}" icon="ui-icon-folder-open" />
-                <p:menuitem value="Editar" update="taxTree :editDialog :displayEdit" actionListener="#{taxonomyBean.setTaxfromNode('edit')}" icon="ui-icon-pencil"/>
-                <p:menuitem value="Borrar" update="taxTree" actionListener="#{taxonomyBean.setTaxfromNode('delete')}" icon="ui-icon-trash"/>
+                <p:menuitem value="Agregar Clasificación" update="taxTree :createDialog" actionListener="#{taxonomyBean.setTaxfromNode('create')}" icon="fa fa-plus"/>
+                <p:menuitem value="Ver detalle de Especies" update="detailDialog" actionListener="#{taxonomyBean.setTaxfromNode('detail')}" icon="fa fa-folder-open" />
+                <p:menuitem value="Editar" update="taxTree :editDialog :displayEdit" actionListener="#{taxonomyBean.setTaxfromNode('edit')}" icon="fa fa-pencil"/>
+                <p:menuitem value="Borrar" update="taxTree" actionListener="#{taxonomyBean.setTaxfromNode('delete')}" icon="fa fa-trash"/>
             </p:contextMenu>
             <p:growl id="messages" showDetail="true"/>
         </h:form>

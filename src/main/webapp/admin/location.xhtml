@@ -24,10 +24,10 @@
                     </p:treeNode>
                 </p:tree>
                 <p:contextMenu for="locTree">
-                    <p:menuitem value="Agregar Ubicación" update="locTree :createDialog" actionListener="#{locationBean.setTaxfromNode('create')}" icon="ui-icon-plusthick"/>
-                    <p:menuitem value="Ver detalle de Especies" update="detailDialog" actionListener="#{locationBean.setTaxfromNode('detail')}" icon="ui-icon-folder-open" />
-                    <p:menuitem value="Editar" update="locTree :editDialog :displayEdit" actionListener="#{locationBean.setTaxfromNode('edit')}" icon="ui-icon-pencil"/>
-                    <p:menuitem value="Borrar" update="locTree" actionListener="#{locationBean.setTaxfromNode('delete')}" icon="ui-icon-trash"/>
+                    <p:menuitem value="Agregar Ubicación" update="locTree :createDialog" actionListener="#{locationBean.setTaxfromNode('create')}" icon="fa fa-plus"/>
+                    <p:menuitem value="Ver detalle de Especies" update="detailDialog" actionListener="#{locationBean.setTaxfromNode('detail')}" icon="fa fa-folder-open" />
+                    <p:menuitem value="Editar" update="locTree :editDialog :displayEdit" actionListener="#{locationBean.setTaxfromNode('edit')}" icon="fa fa-pencil"/>
+                    <p:menuitem value="Borrar" update="locTree" actionListener="#{locationBean.setTaxfromNode('delete')}" icon="fa fa-trash"/>
                 </p:contextMenu>
             </p:panel>
             <p:growl id="messages" showDetail="true"/>

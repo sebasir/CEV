@@ -15,11 +15,23 @@ body {
     border-color: rgba(48, 115, 61, 0.31);
 }
 
-.panel-default>.panel-heading {
-    background-color: rgba(48, 115, 61, 0.31);
+.panel-default {
     border-color: rgba(48, 115, 61, 0.31);
+}
+
+.panel-default {
+    border-color: #ddd;
+}
+
+.panel {
+    background-color: rgba(245, 247, 241, 0.48);
+}
+
+.panel-default>.panel-heading {
+    background-color: rgba(119, 173, 23, 0.75);
+    border-color: rgb(116, 173, 24);
     font-weight: bold;
-    color: #173B1E;
+    color: #ffffff;
 }
 
 .navbar-inverse {
@@ -295,7 +307,14 @@ div.logo-dashboard {
 
 .ui-widget-header {
     border: 1px solid #76ad17;
-    background: rgba(113, 171, 26, 0.33);
+    background: rgba(119, 173, 23, 0.75);
+}
+
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus {
+    border: 1px solid #76ad17;
+    background: rgba(148, 191, 74, 0.5);
+    font-weight: bold;
+    color: #395605;
 }
 
 .ui-state-default {
@@ -327,4 +346,9 @@ div.logo-dashboard {
     border: 1px solid #76ac16;
     border-radius: 5px;
     width: 100%;
+}
+
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+    background: #6fab1a;
+    color: #edf5e5;
 }

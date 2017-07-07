@@ -15,6 +15,7 @@ import net.hpclab.cev.entities.Specimen;
 import net.hpclab.cev.services.DataBaseService;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.NodeSelectEvent;
+import org.primefaces.json.JSONArray;
 import org.primefaces.json.JSONObject;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -250,20 +251,27 @@ public class LocationBean extends UtilsBean implements Serializable {
             }
             RequestContext context = RequestContext.getCurrentInstance();
 
-            if (order.equals("detail")) {
-                context.execute("PF('locationDetail').show()");
-            } else if (order.equals("create")) {
-                prepareCreate();
-                context.execute("PF('locationCreate').show()");
-            } else if (order.equals("edit")) {
-                prepareUpdate();
-                context.execute("PF('locationEdit').show()");
-            } else if (order.equals("delete")) {
-                context.execute("PF('locationDelete').show()");
+            switch (order) {
+                case "detail":
+                    context.execute("PF('locationDetail').show()");
+                    break;
+                case "create":
+                    prepareCreate();
+                    context.execute("PF('locationCreate').show()");
+                    break;
+                case "edit":
+                    prepareUpdate();
+                    context.execute("PF('locationEdit').show()");
+                    break;
+                case "delete":
+                    context.execute("PF('locationDelete').show()");
+                    break;
+                default:
+                    break;
             }
         }
     }
-    
+
     public void onNodeSelect(NodeSelectEvent event) {
         selectedNode = event.getTreeNode();
     }
@@ -276,11 +284,26 @@ public class LocationBean extends UtilsBean implements Serializable {
             json.put("longitude", location.getLongitude());
             json.put("name", location.getLocationName());
             json.put("zoom", 12);
+            List<Specimen> specimens = location.getSpecimenList();
+            if (specimens != null && !specimens.isEmpty()) {
+                JSONArray jsonSpecimensArray = new JSONArray();
+                JSONObject jsonSpecimens;
+                for (Specimen specimen : specimens) {
+                    jsonSpecimens = new JSONObject();
+                    jsonSpecimens.put("scientificName", specimen.getIdTaxonomy().getTaxonomyName() + (specimen.getSpecificEpithet() == null ? "" : " " + specimen.getSpecificEpithet()));
+                    jsonSpecimens.put("commonName", specimen.getCommonName());
+                    jsonSpecimensArray.put(jsonSpecimens);
+                }
+                json.put("tooltip", jsonSpecimensArray);
+            } else {
+                json.put("tooltip", "none");
+            }
         } catch (Exception e) {
             json.put("latitude", 4.583333);
             json.put("longitude", -74.066667);
             json.put("name", "Colombia");
             json.put("zoom", 9);
+            json.put("tooltip", "none");
         }
         return json.toString();
     }

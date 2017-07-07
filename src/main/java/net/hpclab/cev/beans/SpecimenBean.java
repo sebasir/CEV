@@ -537,6 +537,10 @@ public class SpecimenBean extends UtilsBean implements Serializable {
     public int getCurrentPage() {
         return specimenService.getCurrentPage();
     }
+    
+    public int getNumberOfResults() {
+        return specimenService.getNumberOfResults();
+    }
 
     public List<Integer> getPages() {
         ArrayList<Integer> pages = new ArrayList<>();
