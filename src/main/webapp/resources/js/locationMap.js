@@ -5,6 +5,8 @@ var defaultCenter = {lat: 4.583333, lng: -74.066667};
 
 $(window).ready(function () {
     var $tree = $('#formLocation\\:data_content');
+    $tree.parent().css('height', '96%');
+    $tree.parent().parent().css('height', '100%');
     $tree.addClass('flexContainer');
     $tree.append('<div id="map" class="locationMap treeHeight"><p>aqui va el mapa</p></div>');
     $tree.find('.ui-tree-container').each(function () {
@@ -33,7 +35,7 @@ function setMapCenter(params) {
     } else {
         tooltipText = '<div>';
         for (var s in params.tooltip) {
-            tooltipText = tooltipText + '<h3>' + params.tooltip[s].scientificName + '</h3>';
+            tooltipText = tooltipText + '<h3>   ' + params.tooltip[s].scientificName + '</h3>';
             tooltipText = tooltipText + '<br/>';
             tooltipText = tooltipText + '<p>' + params.tooltip[s].commonName + '</p>';
             tooltipText = tooltipText + '<hr />';

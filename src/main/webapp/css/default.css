@@ -310,17 +310,17 @@ div.logo-dashboard {
     background: rgba(119, 173, 23, 0.75);
 }
 
+.ui-state-default {
+    border: 1px solid #9dd43f;
+    background: rgba(228, 241, 209, 0.33);
+    color: #395605;
+}
+
 .ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus {
     border: 1px solid #76ad17;
     background: rgba(148, 191, 74, 0.5);
     font-weight: bold;
     color: #395605;
-}
-
-.ui-state-default {
-    border: 1px solid #9dd43f;
-    background: rgba(228, 241, 209, 0.33);
-    color: #3c763d;
 }
 
 .ui-widget-content {
@@ -335,10 +335,11 @@ div.logo-dashboard {
 
 .flexContainer {
     display: flex;
+    height: 90%;
 }
 
 .treeHeight {
-    height: 40em;
+    height: 100%;
 }
 
 .locationMap {
@@ -351,4 +352,8 @@ div.logo-dashboard {
 .ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
     background: #6fab1a;
     color: #edf5e5;
+}
+
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+    padding: 4px 15px;
 }
