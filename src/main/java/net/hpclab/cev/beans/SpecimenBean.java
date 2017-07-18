@@ -21,7 +21,7 @@ import net.hpclab.cev.entities.RegType;
 import net.hpclab.cev.entities.SampleType;
 import net.hpclab.cev.entities.Specimen;
 import net.hpclab.cev.entities.Taxonomy;
-import net.hpclab.cev.services.Constant;
+import net.hpclab.cev.enums.OutcomeEnum;
 import net.hpclab.cev.services.DataBaseService;
 import org.primefaces.component.calendar.Calendar;
 import org.primefaces.component.column.Column;
@@ -72,46 +72,15 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        try {
-            allSpecimens = specimenService.getList(1);
-        } catch (Exception e) {
-
-        }
     }
-    
+
     @PreDestroy
     public void destroy() {
         specimenService = null;
     }
 
-    public void firstPage() {
-        getPageResults(1);
-    }
-
-    public void lastPage() {
-        getPageResults(specimenService.getNumberOfPages());
-    }
-
-    public void nextPage() {
-        if (specimenService.getCurrentPage() + 1 <= specimenService.getNumberOfPages()) {
-            getPageResults(specimenService.getCurrentPage() + 1);
-        }
-    }
-
-    public void previousPage() {
-        if (specimenService.getCurrentPage() - 1 > 0) {
-            getPageResults(specimenService.getCurrentPage() - 1);
-        }
-    }
-
-    public void getPageResults(int page) {
-        try {
-            if(page != specimenService.getCurrentPage()) {
-                allSpecimens = specimenService.getList(page);
-            }
-        } catch (Exception e) {
-
-        }
+    public DataBaseService<Specimen>.Pager getPager() {
+        return specimenService.getPager();
     }
 
     public void persist() {
@@ -126,8 +95,8 @@ public class SpecimenBean extends UtilsBean implements Serializable {
                 allSpecimens.add(specimen);
             }
             resetForm();
-        } catch (Exception ex) {
-
+        } catch (Exception e) {
+            showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.CREATE_ERROR, specimen.getCommonName());
         }
     }
 
@@ -142,7 +111,7 @@ public class SpecimenBean extends UtilsBean implements Serializable {
             allSpecimens.remove(specimen);
             allSpecimens.add(specimen);
         } catch (Exception e) {
-
+            showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.UPDATE_ERROR, specimen.getCommonName());
         }
         resetForm();
     }
@@ -152,7 +121,7 @@ public class SpecimenBean extends UtilsBean implements Serializable {
             specimenService.delete(specimen);
             allSpecimens.remove(specimen);
         } catch (Exception e) {
-
+            showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.DELETE_ERROR, specimen.getCommonName());
         }
     }
 
@@ -164,6 +133,14 @@ public class SpecimenBean extends UtilsBean implements Serializable {
         selectedDeterminer = null;
         selectedRegType = null;
         selectedSampleType = null;
+    }
+
+    public void search() {
+        try {
+            allSpecimens = specimenService.getList(specimen);
+        } catch (Exception ex) {
+
+        }
     }
 
     private void updateLists() {
@@ -532,26 +509,6 @@ public class SpecimenBean extends UtilsBean implements Serializable {
     public void setSpecimenDetail(String specimenDetail) {
         this.specimenDetail = specimenDetail;
         setSpecimenfromId();
-    }
-    
-    public int getCurrentPage() {
-        return specimenService.getCurrentPage();
-    }
-    
-    public int getNumberOfResults() {
-        return specimenService.getNumberOfResults();
-    }
-
-    public List<Integer> getPages() {
-        ArrayList<Integer> pages = new ArrayList<>();
-        int bottomIndex = specimenService.getCurrentPage() - (Constant.MAX_PAGE_INDEX / 2);
-        bottomIndex = bottomIndex <= 0 ? 1 : bottomIndex;
-        int topIndex = bottomIndex + Constant.MAX_PAGE_INDEX;
-        topIndex = topIndex > specimenService.getNumberOfPages() ? specimenService.getNumberOfPages() : topIndex;
-        for (int i = bottomIndex; i <= topIndex; i++) {
-            pages.add(i);
-        }
-        return pages;
     }
 
     public String printJSON() {

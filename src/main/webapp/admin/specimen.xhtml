@@ -19,7 +19,7 @@
                     <div class="modal-footer">
                         <div class="input-group">
                             <p:commandButton id="deleteYesButton" value="Eliminar" action="#{specimenBean.delete}" update=":formSpecimen" oncomplete="$('#deleteModal').modal('hide')"/>
-                            <p:commandButton id="deleteNoButton" value="Cancelar" type="button" />
+                            <p:commandButton id="deleteNoButton" value="Cancelar" type="button" onclick="$('#deleteModal').modal('hide')"/>
                         </div>
                     </div>
                 </div>
@@ -27,13 +27,33 @@
         </div>
     </h:form>
 
-    <h:form id="formSpecimen">
+    <h:form id="formSpecimen" >
         <div class="panel panel-default">
             <div class="panel-heading">Especímenes</div>
             <div class="panel-body">
-                <p>Mostrando <b>#{specimenBean.allSpecimens.size()}</b> de <b>#{specimenBean.numberOfResults}</b> registros</p>
+                <div class="row">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="nombreComun">Nombre Común:</label>
+                        <div class="col-md-3">
+                            <h:inputText id="nombreComun" styleClass="fecha form-control input-block-level required" value="#{specimenBean.specimen.commonName}">
+                                <p:ajax process="@this"/>
+                            </h:inputText>
+                        </div>
+                        <label class="col-md-3 control-label" for="epiteto">Epiteto Científico:</label>
+                        <div class="col-md-3">
+                            <h:inputText id="epiteto" styleClass="fecha form-control input-block-level required" value="#{specimenBean.specimen.specificEpithet}">
+                                <p:ajax process="@this"/>
+                            </h:inputText>
+                        </div>
+                    </div>
+                </div>
+                <h:panelGroup layout="block" rendered="#{specimenBean.allSpecimens != null and !specimenBean.allSpecimens.isEmpty()}" styleClass="pull-right">
+                    <p>Mostrando <b>#{specimenBean.allSpecimens.size()}</b> de <b>#{specimenBean.pager.numberOfResults}</b> registros</p>
+                </h:panelGroup>
+                <p:commandButton id="search" actionListener="#{specimenBean.search()}" update="formSpecimen" value="Consultar"/>
+                <p:commandButton id="clear" actionListener="#{specimenBean.search()}" update="formSpecimen" value="Limpiar"/>
             </div>
-            <h:dataTable id="dataTableSpecimen" value="#{specimenBean.allSpecimens}" var="specimen" styleClass="table table-hover table-condensed">
+            <h:dataTable id="dataTableSpecimen" rendered="#{specimenBean.allSpecimens != null and !specimenBean.allSpecimens.isEmpty()}" value="#{specimenBean.allSpecimens}" var="specimen" styleClass="table table-hover table-condensed">
                 <h:column>
                     <f:facet name="header">Nombre Científico</f:facet>
                     <h:outputText value="#{specimen.idTaxonomy.taxonomyName} #{specimen.specificEpithet}" />
@@ -67,31 +87,31 @@
                     </p:commandLink>
                 </h:column>
             </h:dataTable>
-            <h:panelGroup id="paginator">
+            <h:panelGroup id="paginator" rendered="#{specimenBean.allSpecimens != null and !specimenBean.allSpecimens.isEmpty()}">
                 <nav aria-label="Page navigation" class="paginador">
                     <ul class="pagination pagination-lg">
                         <li>
-                            <p:commandLink id="first" title="Primera página" actionListener="#{specimenBean.firstPage()}" update="dataTableSpecimen, paginator">
+                            <p:commandLink id="first" title="Primera página" actionListener="#{specimenBean.pager.firstPage()}" update="dataTableSpecimen, paginator">
                                 <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
                             </p:commandLink>
                         </li>
                         <li>
-                            <p:commandLink id="prev" title="Anterior página" actionListener="#{specimenBean.previousPage()}" update="dataTableSpecimen, paginator">
+                            <p:commandLink id="prev" title="Anterior página" actionListener="#{specimenBean.pager.previousPage()}" update="dataTableSpecimen, paginator">
                                 <span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>
                             </p:commandLink>
                         </li>
-                        <ui:repeat id="pager" var="i" value="#{specimenBean.pages}">
+                        <ui:repeat id="pager" var="i" value="#{specimenBean.pager.pages}">
                             <li>
-                                <p:commandLink id="pageNumer" actionListener="#{specimenBean.getPageResults(i)}" class="#{specimenBean.currentPage == i? 'active-page': ''}" update="formSpecimen:paginator, formSpecimen:dataTableSpecimen">#{i}</p:commandLink>
+                                <p:commandLink id="pageNumer" actionListener="#{specimenBean.pager.getPageResults(i)}" class="#{specimenBean.pager.currentPage == i? 'active-page': ''}" update="formSpecimen:paginator, formSpecimen:dataTableSpecimen">#{i}</p:commandLink>
                             </li>
                         </ui:repeat>
                         <li>
-                            <p:commandLink id="next" title="Siguiente página" actionListener="#{specimenBean.nextPage()}" update="dataTableSpecimen, paginator">
+                            <p:commandLink id="next" title="Siguiente página" actionListener="#{specimenBean.pager.nextPage()}" update="dataTableSpecimen, paginator">
                                 <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
                             </p:commandLink>
                         </li>
                         <li>
-                            <p:commandLink id="last" title="Última página" actionListener="#{specimenBean.lastPage()}" update="dataTableSpecimen, paginator">
+                            <p:commandLink id="last" title="Última página" actionListener="#{specimenBean.pager.lastPage()}" update="dataTableSpecimen, paginator">
                                 <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
                             </p:commandLink>
                         </li>

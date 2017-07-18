@@ -1,6 +1,8 @@
 package net.hpclab.cev.services;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -22,20 +24,30 @@ import javax.persistence.criteria.Root;
 
 public class DataBaseService<T> implements Serializable {
 
+    private static enum QueryMethod {
+        MAP, ENTITY, NAMED_QUERY, QUERY_MAP
+    };
+
     private static final long serialVersionUID = 1L;
     private static final String SELECT = "SELECT";
     private static final Logger LOGGER = Logger.getLogger(DataBaseService.class.getSimpleName());
-    private int currentPage;
-    private int numberOfResults;
+    private Pager pager;
+    private QueryMethod queryMethod;
     private EntityManagerFactory entityManagerFactory;
     private EntityManager entityManager;
+    private int currentPage;
+    private int numberOfResults;
     private int queryMaxResults;
+    private T entityParam;
+    private HashMap<String, Object> mapParam;
+    private String queryParam;
     protected Class<T> entityClass;
 
     public DataBaseService(Class<T> entityClass, int queryMaxResults) throws PersistenceException, Exception {
         this.entityClass = entityClass;
         this.queryMaxResults = queryMaxResults;
         numberOfResults = 0;
+        this.pager = new Pager();
         getEntityManager();
     }
 
@@ -44,45 +56,54 @@ public class DataBaseService<T> implements Serializable {
     }
 
     public List<T> getList() throws NoResultException, Exception {
-        return getList(new HashMap<String, Object>());
+        if (queryMethod == null) {
+            queryMethod = QueryMethod.MAP;
+        }
+        switch (queryMethod) {
+            case MAP:
+                return getList(mapParam);
+            case ENTITY:
+                return getList(entityParam);
+            case NAMED_QUERY:
+                return getList(queryParam);
+            case QUERY_MAP:
+                return getList(queryParam, mapParam);
+            default:
+                return getList(new HashMap<String, Object>());
+        }
     }
 
     public List<T> getList(int page) throws NoResultException, Exception {
         currentPage = page;
-        return getList(new HashMap<String, Object>());
+        return getList();
+    }
+
+    public List<T> getList(T entityFilters) throws NoResultException, Exception {
+        restartFilters(QueryMethod.ENTITY);
+        entityParam = entityFilters;
+        HashMap<String, Object> filters = new HashMap<>();
+        if (entityFilters != null) {
+            Class cls = entityFilters.getClass();
+            Field[] fields = cls.getDeclaredFields();
+            for (Field field : fields) {
+                field.setAccessible(true);
+                filters.put(":" + field.getName(), field.get(entityFilters));
+            }
+        }
+        return getList(filters);
     }
 
     public List<T> getList(String query) throws NoResultException, Exception {
+        restartFilters(QueryMethod.NAMED_QUERY);
+        queryParam = query;
+        mapParam = null;
         return getList(query, null);
-    }
-
-    public List<T> getList(String query, int page) throws NoResultException, Exception {
-        currentPage = page;
-        return getList(query, null);
-    }
-
-    public void getCount() {
-        LOGGER.log(Level.INFO, "Counting {0}, OK", entityClass.getSimpleName());
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
-        countQuery.select(criteriaBuilder.count(countQuery.from(entityClass)));
-        numberOfResults = entityManager.createQuery(countQuery).getSingleResult().intValue();
-        LOGGER.log(Level.INFO, "Count {0}, OK", entityClass.getSimpleName());
-    }
-
-    public int getNumberOfResults() {
-        return numberOfResults;
-    }
-
-    public int getNumberOfPages() {
-        return (int) Math.ceil((double) numberOfResults / queryMaxResults);
-    }
-
-    public int getCurrentPage() {
-        return currentPage;
     }
 
     public List<T> getList(String query, HashMap<String, Object> params) throws NoResultException, Exception {
+        restartFilters(QueryMethod.QUERY_MAP);
+        queryParam = query;
+        mapParam = params;
         LOGGER.log(Level.INFO, "Listing {0}, params: '{'{1}'}'", new Object[]{entityClass.getSimpleName(), params == null ? "N/A" : params.size()});
         Query finalQuery;
         if (query.toLowerCase().contains(SELECT)) {
@@ -101,6 +122,8 @@ public class DataBaseService<T> implements Serializable {
     }
 
     public List<T> getList(HashMap<String, Object> params) throws NoResultException, Exception {
+        restartFilters(QueryMethod.MAP);
+        mapParam = params;
         LOGGER.log(Level.INFO, "Listing (CriteriaQuery) {0}, params: '{'{1}'}'", new Object[]{entityClass.getSimpleName(), params == null ? "N/A" : params.size()});
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entityClass);
@@ -134,6 +157,27 @@ public class DataBaseService<T> implements Serializable {
         List<T> result = getListOfResults(entityManager.createQuery(criteriaQuery));
         LOGGER.log(Level.INFO, "Listing {0}, OK", entityClass.getSimpleName());
         return result;
+    }
+
+    public void getCount() {
+        LOGGER.log(Level.INFO, "Counting {0}, OK", entityClass.getSimpleName());
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
+        countQuery.select(criteriaBuilder.count(countQuery.from(entityClass)));
+        numberOfResults = entityManager.createQuery(countQuery).getSingleResult().intValue();
+        LOGGER.log(Level.INFO, "Count {0}, OK", entityClass.getSimpleName());
+    }
+
+    public int getActualNumberOfResults() {
+        return numberOfResults;
+    }
+
+    public int getNumberOfPages() {
+        return (int) Math.ceil((double) numberOfResults / queryMaxResults);
+    }
+
+    public int getActualCurrentPage() {
+        return currentPage;
     }
 
     private List<T> getListOfResults(Query query) {
@@ -244,5 +288,66 @@ public class DataBaseService<T> implements Serializable {
 
     public boolean isConnected() {
         return entityManagerFactory != null && entityManager != null && entityManager.isOpen();
+    }
+
+    private void restartFilters(QueryMethod queryMethod) {
+        if (this.queryMethod != queryMethod) {
+            this.queryMethod = queryMethod;
+            currentPage = 1;
+            entityParam = null;
+            queryParam = null;
+            mapParam = null;
+        }
+    }
+
+    public Pager getPager() {
+        return pager;
+    }
+
+    public class Pager {
+
+        public void firstPage() throws Exception {
+            getPageResults(1);
+        }
+
+        public void lastPage() throws Exception {
+            getPageResults(getNumberOfPages());
+        }
+
+        public void nextPage() throws Exception {
+            if (getCurrentPage() + 1 <= getNumberOfPages()) {
+                getPageResults(getCurrentPage() + 1);
+            }
+        }
+
+        public void previousPage() throws Exception {
+            if (getCurrentPage() - 1 > 0) {
+                getPageResults(getCurrentPage() - 1);
+            }
+        }
+
+        public List<T> getPageResults(int page) throws Exception {
+            return getList(page);
+        }
+
+        public List<Integer> getPages() {
+            ArrayList<Integer> pages = new ArrayList<>();
+            int bottomIndex = getCurrentPage() - (Constant.MAX_PAGE_INDEX / 2);
+            bottomIndex = bottomIndex <= 0 ? 1 : bottomIndex;
+            int topIndex = bottomIndex + Constant.MAX_PAGE_INDEX;
+            topIndex = topIndex > getNumberOfPages() ? getNumberOfPages() : topIndex;
+            for (int i = bottomIndex; i <= topIndex; i++) {
+                pages.add(i);
+            }
+            return pages;
+        }
+
+        public int getCurrentPage() {
+            return getActualCurrentPage();
+        }
+
+        public int getNumberOfResults() {
+            return getActualNumberOfResults();
+        }
     }
 }
