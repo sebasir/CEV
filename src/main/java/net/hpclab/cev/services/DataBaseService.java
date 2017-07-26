@@ -87,7 +87,10 @@ public class DataBaseService<T> implements Serializable {
             Field[] fields = cls.getDeclaredFields();
             for (Field field : fields) {
                 field.setAccessible(true);
-                filters.put(":" + field.getName(), field.get(entityFilters));
+                LOGGER.log(Level.SEVERE, ":" + field.getName() + " " + field.get(entityFilters));
+                if (!field.getName().equals("serialVersionUID") && field.get(entityFilters) != null) {
+                    filters.put(field.getName(), field.get(entityFilters));
+                }
             }
         }
         return getList(filters);
@@ -137,7 +140,7 @@ public class DataBaseService<T> implements Serializable {
             String[] attributes;
             for (String param : params.keySet()) {
                 value = params.get(param);
-                if (value == null) {
+                if (value == null || (value instanceof String && value.toString().isEmpty())) {
                     continue;
                 }
                 path = null;
@@ -163,7 +166,35 @@ public class DataBaseService<T> implements Serializable {
         LOGGER.log(Level.INFO, "Counting {0}, OK", entityClass.getSimpleName());
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
-        countQuery.select(criteriaBuilder.count(countQuery.from(entityClass)));
+        Root<T> root = countQuery.from(entityClass);
+        countQuery.select(criteriaBuilder.count(root));
+        if (mapParam != null && !mapParam.isEmpty()) {
+            Predicate predicate = criteriaBuilder.conjunction();
+            Predicate auxPredicate;
+            Object value;
+            Path<T> path;
+            String[] attributes;
+            for (String param : mapParam.keySet()) {
+                value = mapParam.get(param);
+                if (value == null || (value instanceof String && value.toString().isEmpty())) {
+                    continue;
+                }
+                path = null;
+                attributes = param.split(Constant.POINT);
+                for (String attribute : attributes) {
+                    if (path == null) {
+                        path = root.get(attribute);
+                    } else {
+                        path = path.get(attribute);
+                    }
+                }
+                auxPredicate = criteriaBuilder.equal(path, value);
+                predicate = criteriaBuilder.and(predicate, auxPredicate);
+            }
+            countQuery.select(criteriaBuilder.count(root)).where(predicate);
+        } else {
+            countQuery.select(criteriaBuilder.count(root));
+        }
         numberOfResults = entityManager.createQuery(countQuery).getSingleResult().intValue();
         LOGGER.log(Level.INFO, "Count {0}, OK", entityClass.getSimpleName());
     }

@@ -155,9 +155,6 @@ public class UtilsBean implements Serializable {
                 fMess = new FacesMessage(FacesMessage.SEVERITY_WARN, "ET llama a casa", "Hola. Probando un mensaje no contemplado!! [" + action + "]");
                 break;
         }
-        Flash flash = facesContext.getExternalContext().getFlash();
-        flash.setKeepMessages(true);
-        flash.setRedirect(true);
         facesContext.addMessage(null, fMess);
     }
 

@@ -33,20 +33,34 @@
             <div class="panel-body">
                 <div class="row">
                     <div class="form-group">
-                        <label class="col-md-3 control-label" for="nombreComun">Nombre Común:</label>
-                        <div class="col-md-3">
+                        <label class="col-md-2 control-label" for="nombreComun">Nombre Común:</label>
+                        <div class="col-md-2">
                             <h:inputText id="nombreComun" styleClass="fecha form-control input-block-level required" value="#{specimenBean.specimen.commonName}">
                                 <p:ajax process="@this"/>
+                                <f:validateBean disabled="true"/>
                             </h:inputText>
                         </div>
-                        <label class="col-md-3 control-label" for="epiteto">Epiteto Científico:</label>
-                        <div class="col-md-3">
-                            <h:inputText id="epiteto" styleClass="fecha form-control input-block-level required" value="#{specimenBean.specimen.specificEpithet}">
+                        <label class="col-md-2 control-label" for="epiteto">Epiteto Específico:</label>
+                        <div class="col-md-2">
+                            <h:inputText id="epiteto" styleClass="form-control input-block-level required" value="#{specimenBean.specimen.specificEpithet}">
                                 <p:ajax process="@this"/>
+                                <f:validateBean disabled="true"/>
+                            </h:inputText>
+                        </div>
+                        <label class="col-md-2 control-label" for="epiteto">ID Registro Biológico:</label>
+                        <div class="col-md-2">
+                            <h:inputText id="bioreg" styleClass="form-control input-block-level required" value="#{specimenBean.specimen.idBioreg}">
+                                <p:ajax process="@this"/>
+                                <f:validateBean disabled="true"/>
                             </h:inputText>
                         </div>
                     </div>
+                    <p:autoComplete id="dd" dropdown="true" value="#{specimenBean.specimen.idTaxonomy}" completeMethod="#{specimenBean.taxonomysQuery}" var="tax"
+                                    itemLabel="#{tax.taxonomyName}" itemValue="#{tax}" forceSelection="true" converter="TaxonomyConverter">
+                        <p:ajax process="@this"/>
+                    </p:autoComplete>
                 </div>
+                <hr />
                 <h:panelGroup layout="block" rendered="#{specimenBean.allSpecimens != null and !specimenBean.allSpecimens.isEmpty()}" styleClass="pull-right">
                     <p>Mostrando <b>#{specimenBean.allSpecimens.size()}</b> de <b>#{specimenBean.pager.numberOfResults}</b> registros</p>
                 </h:panelGroup>

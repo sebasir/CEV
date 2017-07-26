@@ -42,6 +42,7 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private DataBaseService<Specimen> specimenService;
+    private DataBaseService<Taxonomy> taxonomyService;
     private List<Specimen> allSpecimens;
     private List<Location> allLocations;
     private List<Taxonomy> allTaxonomys;
@@ -65,6 +66,9 @@ public class SpecimenBean extends UtilsBean implements Serializable {
     public SpecimenBean() {
         try {
             specimenService = new DataBaseService<>(Specimen.class);
+            taxonomyService = new DataBaseService<>(Taxonomy.class);
+            allTaxonomys = taxonomyService.getList();
+            specimen = new Specimen();
         } catch (Exception e) {
 
         }
@@ -139,8 +143,18 @@ public class SpecimenBean extends UtilsBean implements Serializable {
         try {
             allSpecimens = specimenService.getList(specimen);
         } catch (Exception ex) {
-
+            ex.printStackTrace();
         }
+    }
+
+    public List<Taxonomy> taxonomysQuery(String query) {
+        ArrayList<Taxonomy> taxs = new ArrayList<>();
+        for (Taxonomy t : allTaxonomys) {
+            if (t.getTaxonomyName().toLowerCase().contains(query.toLowerCase())) {
+                taxs.add(t);
+            }
+        }
+        return taxs;
     }
 
     private void updateLists() {
