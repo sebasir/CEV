@@ -1278,21 +1278,22 @@ insert into specimen values(default, null, 'Mosco', 26, 2, null , to_date('01/01
 -----> module
 
 /*1*/insert into modules values (default, 'Gestión de Colecciones', 'Permite a los administradores estructurar los catálogos y las colecciones donde yacen los especímenes.', 1, null, null, null);
-/*2*/insert into modules values (default, 'Gestión de Usuarios', 'Permite controlar y realizar seguimiento a los usuarios de la colección entomológica, además de cambiar y asignar roles de usuario (compuestos por accesos a la aplicación), nivel de acceso, cambio de credenciales e información del perfil.', 8, null, null, null);
-/*3*/insert into modules values (default, 'Reporteador', 'Permite extraer estadísticos en listados de la información contenida en la colección así como el uso que se le da a esta, permitiendo su exportación.', 13, 'dummy.xhtml', 'pe-7s-display2', null);
-/*4*/insert into modules values (default, 'Configuración', 'Permite definir algunas configuraciones del Centro Cntomológico Virtual.', 14, 'dummy.xhtml', 'pe-7s-config', null);
+/*2*/insert into modules values (default, 'Gestión de Usuarios', 'Permite controlar y realizar seguimiento a los usuarios de la colección entomológica, además de cambiar y asignar roles de usuario (compuestos por accesos a la aplicación), nivel de acceso, cambio de credenciales e información del perfil.', 9, null, null, null);
+/*3*/insert into modules values (default, 'Reporteador', 'Permite extraer estadísticos en listados de la información contenida en la colección así como el uso que se le da a esta, permitiendo su exportación.', 14, 'dummy.xhtml', 'pe-7s-display2', null);
+/*4*/insert into modules values (default, 'Configuración', 'Permite definir algunas configuraciones del Centro Cntomológico Virtual.', 15, 'dummy.xhtml', 'pe-7s-config', null);
 
-/*5*/insert into modules values (default, 'Asistente de Creación', 'Permite crear ejemplares en la colección.', 2, 'dummy.xhtml', 'pe-7s-plus', 1);
-/*6*/insert into modules values (default, 'Clasificaciones', 'Permite realizar cambios en la lista de dominio de la clasificación taxonómica de manera jerárquica.', 3, 'dummy.xhtml', 'pe-7s-ticket', 1);
-/*7*/insert into modules values (default, 'Ubicaciones', 'Permite realizar cambios en la lista de dominio de la ubicación de manera jerárquica.', 4, 'dummy.xhtml', 'pe-7s-map-marker', 1);
+/*5*/insert into modules values (default, 'Asistente de Creación', 'Permite crear ejemplares en la colección.', 2, 'wizard.xhtml', 'pe-7s-plus', 1);
+/*6*/insert into modules values (default, 'Clasificaciones', 'Permite realizar cambios en la lista de dominio de la clasificación taxonómica de manera jerárquica.', 3, 'taxonomy.xhtml', 'pe-7s-ticket', 1);
+/*7*/insert into modules values (default, 'Ubicaciones', 'Permite realizar cambios en la lista de dominio de la ubicación de manera jerárquica.', 4, 'location.xhtml', 'pe-7s-map-marker', 1);
 /*8*/insert into modules values (default, 'Autores', 'Permite definir los autores que recolectan y clasifican a los especímenes.', 5, 'dummy.xhtml', 'pe-7s-add-user', 1);
 /*9*/insert into modules values (default, 'Catálogos y Colecciones', 'Permite estructurar los catálogos y las colecciones donde yacen los especímenes.', 6, 'dummy.xhtml', 'pe-7s-albums', 1);
-/*10*/insert into modules values (default, 'Especímenes', 'Permite incluir en la colección virtual los especímenes utilizando las listas de dominio definidas en los otros módulos.', 7, 'dummy.xhtml', 'pe-7s-magic-wand', 1);
+/*10*/insert into modules values (default, 'Especímenes', 'Permite incluir en la colección virtual los especímenes utilizando las listas de dominio definidas en los otros módulos.', 7, 'specimen.xhtml', 'pe-7s-magic-wand', 1);
 
-/*11*/insert into modules values (default, 'Editar Perfil', 'Permite a los usuarios administrar el perfil.', 9, 'dummy.xhtml', 'pe-7s-id', 2);
-/*12*/insert into modules values (default, 'Credenciales', 'Permite a los usuarios cambiar las credenciales de acceso.', 10, 'dummy.xhtml', 'pe-7s-door-lock', 2);
-/*13*/insert into modules values (default, 'Auditoria', 'Este módulo permite conocer la auditoría realizada a los usuarios.', 11, 'dummy.xhtml', 'pe-7s-timer', 2);
-/*14*/insert into modules values (default, 'Usuarios e Instituciones', 'Este módulo permite administrar a los usuarios.', 12, 'dummy.xhtml', 'pe-7s-users', 2);
+/*11*/insert into modules values (default, 'Editar Perfil', 'Permite a los usuarios administrar el perfil.', 10, 'dummy.xhtml', 'pe-7s-id', 2);
+/*12*/insert into modules values (default, 'Credenciales', 'Permite a los usuarios cambiar las credenciales de acceso.', 11, 'dummy.xhtml', 'pe-7s-door-lock', 2);
+/*13*/insert into modules values (default, 'Auditoria', 'Este módulo permite conocer la auditoría realizada a los usuarios.', 12, 'dummy.xhtml', 'pe-7s-timer', 2);
+/*14*/insert into modules values (default, 'Usuarios e Instituciones', 'Este módulo permite administrar a los usuarios.', 13, 'dummy.xhtml', 'pe-7s-users', 2);
+/*15*/insert into modules values (default, 'Contenido Gráfico', 'Permite definir el contenido gráfico de los especímenes, tales como las imágenes de alta definición.', 8, 'specimenManager.xhtml', 'pe-7s-photo', 1);
 
 -----> roles
 
@@ -1316,6 +1317,7 @@ insert into roles_modules values (default, 1, 11);
 insert into roles_modules values (default, 1, 12);
 insert into roles_modules values (default, 1, 13);
 insert into roles_modules values (default, 1, 14);
+insert into roles_modules values (default, 1, 15);
 
 insert into roles_modules values (default, 2, 1);
 insert into roles_modules values (default, 2, 2);
@@ -1329,6 +1331,7 @@ insert into roles_modules values (default, 2, 9);
 insert into roles_modules values (default, 2, 10);
 insert into roles_modules values (default, 2, 11);
 insert into roles_modules values (default, 2, 12);
+insert into roles_modules values (default, 2, 15);
 
 insert into roles_modules values (default, 3, 1);
 insert into roles_modules values (default, 3, 2);
@@ -1336,8 +1339,9 @@ insert into roles_modules values (default, 3, 3);
 insert into roles_modules values (default, 3, 4);
 insert into roles_modules values (default, 3, 5);
 insert into roles_modules values (default, 3, 12);
+insert into roles_modules values (default, 3, 15);
 
 ---> roles_users
 
 insert into roles_users values (default, 1, 1, 3);
-insert into ROLES_USERS values (default, 3, 2, 3);
+insert into roles_users values (default, 3, 2, 3);

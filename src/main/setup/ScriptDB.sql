@@ -1,3 +1,5 @@
+CREATE DATABASE CEV;
+
 CREATE TYPE STATUS_ENUM AS ENUM ('Activo', 'Deshabilitado', 'Bloqueado', 'Incompleto', 'Completo');
 COMMENT ON TYPE STATUS_ENUM IS 'Enumeracion que define los estados posibles de todas las tablas.';
 
