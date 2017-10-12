@@ -69,7 +69,7 @@ public class DataBaseService<T> implements Serializable {
             case QUERY_MAP:
                 return getList(queryParam, mapParam);
             default:
-                return getList(new HashMap<>());
+                return getList(new HashMap<String, Object>());
         }
     }
 
