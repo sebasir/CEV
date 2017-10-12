@@ -3,16 +3,12 @@ package net.hpclab.cev.beans;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.el.ELContext;
-import javax.el.ExpressionFactory;
-import javax.el.ValueExpression;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UISelectItem;
-import javax.faces.component.UISelectItems;
 import javax.faces.context.FacesContext;
 import net.hpclab.cev.entities.Catalog;
 import net.hpclab.cev.entities.Collection;
@@ -22,15 +18,9 @@ import net.hpclab.cev.entities.SampleType;
 import net.hpclab.cev.entities.Specimen;
 import net.hpclab.cev.entities.Taxonomy;
 import net.hpclab.cev.enums.OutcomeEnum;
+import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
-import org.primefaces.component.calendar.Calendar;
-import org.primefaces.component.column.Column;
-import org.primefaces.component.inputtext.InputText;
-import org.primefaces.component.inputtextarea.InputTextarea;
-import org.primefaces.component.outputlabel.OutputLabel;
 import org.primefaces.component.panelgrid.PanelGrid;
-import org.primefaces.component.row.Row;
-import org.primefaces.component.selectonemenu.SelectOneMenu;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.FlowEvent;
 import org.primefaces.json.JSONArray;
@@ -56,21 +46,21 @@ public class SpecimenBean extends UtilsBean implements Serializable {
     private PanelGrid specimenForm;
     private boolean create;
     private String specimenDetail;
-    private String selectedDeterminer;
-    private String selectedCollector;
     private String selectedCatalog;
     private String selectedCollection;
     private String selectedRegType;
     private String selectedSampleType;
 
+    private static final Logger LOGGER = Logger.getLogger(SpecimenBean.class.getSimpleName());
+
     public SpecimenBean() {
         try {
             specimenService = new DataBaseService<>(Specimen.class);
-            taxonomyService = new DataBaseService<>(Taxonomy.class);
+            taxonomyService = new DataBaseService<>(Taxonomy.class, Constant.UNLIMITED_QUERY_RESULTS);
             allTaxonomys = taxonomyService.getList();
             specimen = new Specimen();
         } catch (Exception e) {
-
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
     }
 
@@ -81,6 +71,11 @@ public class SpecimenBean extends UtilsBean implements Serializable {
     @PreDestroy
     public void destroy() {
         specimenService = null;
+    }
+
+    public void limpiarFiltros() {
+        specimen = new Specimen();
+        allSpecimens = null;
     }
 
     public DataBaseService<Specimen>.Pager getPager() {
@@ -101,6 +96,7 @@ public class SpecimenBean extends UtilsBean implements Serializable {
             resetForm();
         } catch (Exception e) {
             showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.CREATE_ERROR, specimen.getCommonName());
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
     }
 
@@ -116,6 +112,7 @@ public class SpecimenBean extends UtilsBean implements Serializable {
             allSpecimens.add(specimen);
         } catch (Exception e) {
             showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.UPDATE_ERROR, specimen.getCommonName());
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
         resetForm();
     }
@@ -126,6 +123,7 @@ public class SpecimenBean extends UtilsBean implements Serializable {
             allSpecimens.remove(specimen);
         } catch (Exception e) {
             showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.DELETE_ERROR, specimen.getCommonName());
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
     }
 
@@ -133,8 +131,6 @@ public class SpecimenBean extends UtilsBean implements Serializable {
         specimen = new Specimen();
         selectedCatalog = null;
         selectedCollection = null;
-        selectedCollector = null;
-        selectedDeterminer = null;
         selectedRegType = null;
         selectedSampleType = null;
     }
@@ -143,7 +139,7 @@ public class SpecimenBean extends UtilsBean implements Serializable {
         try {
             allSpecimens = specimenService.getList(specimen);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOGGER.log(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -157,211 +153,18 @@ public class SpecimenBean extends UtilsBean implements Serializable {
         return taxs;
     }
 
-    private void updateLists() {
-    }
-
-    private void prepareBeans() {
-
-    }
-
     public void prepareCreate() {
-        prepareBeans();
         resetForm();
-        updateLists();
     }
 
     public void prepareUpdate(Specimen onEdit) {
-        prepareBeans();
         RequestContext context = RequestContext.getCurrentInstance();
         context.reset("specimenWizardForm");
         specimen = onEdit;
         selectedCatalog = specimen.getIdCatalog().getIdCatalog().toString();
         selectedCollection = specimen.getIdCatalog().getIdCollection().getIdCollection().toString();
-        filterCatalog();
-
         selectedRegType = specimen.getIdRety().getIdRety().toString();
         selectedSampleType = specimen.getIdSaty().getIdSaty().toString();
-        updateLists();
-    }
-
-    private void createSpecimenForm() {
-        if (specimen == null || specimen.getIdSpecimen() == null) {
-            return;
-        }
-
-        Taxonomy tax = specimen.getIdTaxonomy();
-        ArrayList<Taxonomy> taxList = new ArrayList<>();
-        while (tax != null) {
-            taxList.add(0, tax);
-            tax = tax.getIdContainer();
-        }
-
-        Location loc = specimen.getIdLocation();
-        ArrayList<Location> locList = new ArrayList<>();
-        while (loc != null) {
-            locList.add(0, loc);
-            loc = loc.getIdContainer();
-        }
-
-        String user = "";
-        specimenForm = new PanelGrid();
-        addRow(addOut("idenHeader", "Datos de Identificación"), null);
-        addRow(addOut("scientificName", "Nombre Científico:"), addOut("scientificNameVal", specimen.getIdTaxonomy().getTaxonomyName() + " " + specimen.getSpecificEpithet()));
-
-        for (Taxonomy t : taxList) {
-            addRow(addOut("idTaxLevel" + t.getIdTaxlevel().getIdTaxlevel(), t.getIdTaxlevel().getTaxlevelName() + ":"), addOut("idTaxId" + t.getIdTaxonomy(), t.getTaxonomyName()));
-        }
-        if (!user.equals("")) {
-            addRow(addOut("specificEpithetId", "Epiteto Específico:"), addIn("specificEpithetIn", specimen.getSpecificEpithet()));
-            addRow(addOut("commonNameId", "Nombre Común:"), addIn("commonNameIn", specimen.getCommonName()));
-            addRow(addOut("idenCommentId", "Comentario Identificación"), addArea("#{specimenBean.specimen.idenComment}"));
-            addList("det", "Determinador:", "Selecciona un Determinador", "Debes seleccionar un Determinador!", "author", "#{author.idAuthor.authorName}", "#{author.idAuro}", "#{specimenBean.selectedDeterminer}", "#{specimenBean.allDeterminer}");
-            addRow(addOut("idenDateId", "Fecha Identificación:"), addCal("#{specimenBean.specimen.idenDate}"));
-        } else {
-            addRow(addOut("specificEpithetId", "Epiteto Específico:"), addOut("specificEpithetOut", specimen.getSpecificEpithet()));
-            addRow(addOut("commonNameId", "Nombre Común:"), addOut("commonNameOut", specimen.getCommonName()));
-            addRow(addOut("idenCommentId", "Comentario de Identificación:"), addOut("idenCommentOut", specimen.getIdenComment()));
-
-            addRow(addOut("idenDateId", "Fecha Identificación:"), addOut("idenDateOut", formatDate(specimen.getIdenDate())));
-        }
-        addRow(addOut("localHeader", "Datos de Localización"), null);
-        for (Location l : locList) {
-            addRow(addOut("idLocLevel" + l.getIdLoclevel().getIdLoclevel(), l.getIdLoclevel().getLoclevelName() + ":"), addOut("idLocId" + l.getIdLocation(), l.getLocationName()));
-        }
-        if (!user.equals("")) {
-            addList("col", "Colector:", "Selecciona un Colector", "Debes seleccionar un Colector!", "author", "#{author.idAuthor.authorName}", "#{author.idAuro}", "#{specimenBean.selectedCollector}", "#{specimenBean.allCollector}");
-            addRow(addOut("collectDateId", "Fecha Colecta:"), addCal("#{specimenBean.specimen.collectDate}"));
-            addRow(addOut("collectCommentId", "Comentario Colecta:"), addArea("#{specimenBean.specimen.collectComment}"));
-        } else {
-
-            addRow(addOut("collectDateId", "Fecha Colecta:"), addOut("collectDateOut", formatDate(specimen.getCollectDate())));
-            addRow(addOut("collectCommentId", "Comentario Colecta:"), addOut("collectCommenOut", specimen.getCollectComment()));
-        }
-        addRow(addOut("collectionHeader", "Datos de Colección"), null);
-        if (!user.equals("")) {
-            addList("colection", "Colector:", "Selecciona una Colección", "Debes seleccionar una Colección!", "col", "#{col.collectionName} - #{col.companyName}", "#{col.idCollection}", "#{specimenBean.selectedCollection}", "#{specimenBean.allCollection}");
-        } else {
-
-        }
-    }
-
-    private void addRow(UIComponent d, UIComponent v) {
-        Column c1 = new Column();
-        Column c2 = new Column();
-        if (v == null) {
-            c1.setColspan(2);
-        } else {
-            c1.getChildren().add(d);
-            c2.getChildren().add(v);
-        }
-        Row r = new Row();
-        r.getChildren().add(c1);
-        if (v != null) {
-            r.getChildren().add(c2);
-        }
-        specimenForm.getChildren().add(r);
-    }
-
-    private ValueExpression getValueExpression(String expression) {
-        ExpressionFactory expressionFactory = FacesContext.getCurrentInstance().getApplication().getExpressionFactory();
-        ELContext expressionContext = FacesContext.getCurrentInstance().getELContext();
-        return expressionFactory.createValueExpression(expressionContext, expression, Object.class);
-    }
-
-    private void addList(String id, String text, String title, String rMessage, String var, String iLabel, String iValue, String cont, String list) {
-        SelectOneMenu sOne = new SelectOneMenu();
-        sOne.setId("sOne" + id);
-        sOne.setRequired(true);
-        sOne.setRequiredMessage(rMessage);
-        sOne.setEffect("fade");
-        sOne.setRendered(true);
-        sOne.setValueExpression("value", getValueExpression(cont));
-        UISelectItem item = new UISelectItem();
-        item.setItemLabel(title);
-        item.setItemValue("");
-        UISelectItems items = new UISelectItems();
-        items.setValueExpression("var", getValueExpression(var));
-        items.setValueExpression("value", getValueExpression(list));
-        items.setValueExpression("itemLabel", getValueExpression(iLabel));
-        items.setValueExpression("itemValue", getValueExpression(iValue));
-        sOne.getChildren().add(item);
-        sOne.getChildren().add(items);
-        addRow(addOut(id + "outList", text), sOne);
-    }
-
-    private Calendar addCal(String value) {
-        Calendar c = new Calendar();
-        c.setEffect("fade");
-        c.setValueExpression("value", getValueExpression(value));
-        c.setPattern("dd-MM-yyyy");
-        return c;
-    }
-
-    private OutputLabel addOut(String id, String value) {
-        OutputLabel hOut = new OutputLabel();
-        hOut.setId(id);
-        hOut.setValue(value);
-        return hOut;
-    }
-
-    private InputText addIn(String id, String value) {
-        InputText hIn = new InputText();
-        hIn.setId(id);
-        hIn.setValue(value);
-        return hIn;
-    }
-
-    private InputTextarea addArea(String value) {
-        InputTextarea iA = new InputTextarea();
-        iA.setRows(5);
-        iA.setCols(30);
-        iA.setValueExpression("value", getValueExpression(value));
-        return iA;
-    }
-
-    public void filterCatalog() {
-
-    }
-
-    private RegType getRegTypeFromList(String idRegType) {
-        Integer idR;
-        try {
-            idR = new Integer(idRegType);
-        } catch (NumberFormatException e) {
-            return null;
-        }
-
-        return null;
-    }
-
-    private SampleType getSamTypeFromList(String idSamType) {
-        Integer idS;
-        try {
-            idS = new Integer(idSamType);
-        } catch (NumberFormatException e) {
-            return null;
-        }
-        return null;
-    }
-
-    private Catalog getCatalogFromList(String idCatalog) {
-        Integer idC;
-        try {
-            idC = new Integer(idCatalog);
-        } catch (NumberFormatException e) {
-            return null;
-        }
-        return null;
-    }
-
-    private Collection getCollectionFromList(String idCollection) {
-        Integer idC;
-        try {
-            idC = new Integer(idCollection);
-        } catch (NumberFormatException e) {
-            return null;
-        }
-        return null;
     }
 
     public Specimen getSpecimen() {
@@ -409,7 +212,6 @@ public class SpecimenBean extends UtilsBean implements Serializable {
     }
 
     public PanelGrid getSpecimenForm() {
-        createSpecimenForm();
         return specimenForm;
     }
 
@@ -435,7 +237,6 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 
     public void setSelectedCollection(String selectedCollection) {
         this.selectedCollection = selectedCollection;
-        this.collection = getCollectionFromList(selectedCollection);
     }
 
     public String getSelectedRegType() {
@@ -444,7 +245,6 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 
     public void setSelectedRegType(String selectedRegType) {
         this.selectedRegType = selectedRegType;
-        this.regType = getRegTypeFromList(selectedRegType);
     }
 
     public String getSelectedSampleType() {
@@ -453,7 +253,6 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 
     public void setSelectedSampleType(String selectedSampleType) {
         this.selectedSampleType = selectedSampleType;
-        this.sampleType = getSamTypeFromList(selectedSampleType);
     }
 
     public String getSelectedCatalog() {
@@ -462,7 +261,6 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 
     public void setSelectedCatalog(String selectedCatalog) {
         this.selectedCatalog = selectedCatalog;
-        this.catalog = getCatalogFromList(selectedCatalog);
     }
 
     public Catalog getCatalog() {
@@ -511,7 +309,7 @@ public class SpecimenBean extends UtilsBean implements Serializable {
                 }
             }
         } catch (NumberFormatException e) {
-
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
         return null;
     }

@@ -69,7 +69,7 @@ public class DataBaseService<T> implements Serializable {
             case QUERY_MAP:
                 return getList(queryParam, mapParam);
             default:
-                return getList(new HashMap<String, Object>());
+                return getList(new HashMap<>());
         }
     }
 
@@ -83,17 +83,33 @@ public class DataBaseService<T> implements Serializable {
         entityParam = entityFilters;
         HashMap<String, Object> filters = new HashMap<>();
         if (entityFilters != null) {
-            Class cls = entityFilters.getClass();
+            Class<?> cls = entityFilters.getClass();
             Field[] fields = cls.getDeclaredFields();
+            Object value;
             for (Field field : fields) {
                 field.setAccessible(true);
-                LOGGER.log(Level.SEVERE, ":" + field.getName() + " " + field.get(entityFilters));
-                if (!field.getName().equals("serialVersionUID") && field.get(entityFilters) != null) {
-                    filters.put(field.getName(), field.get(entityFilters));
+                value = field.get(entityFilters);
+                if (!field.getName().equals("serialVersionUID") && value != null) {
+                    if (value.getClass().getName().contains("hpclab")) {
+                        value = getInnerValue(value);
+                    }
+                    filters.put(field.getName(), value);
                 }
             }
         }
+        LOGGER.log(Level.SEVERE, "Filters: {0}", filters);
         return getList(filters);
+    }
+
+    public Object getInnerValue(Object obj) throws Exception {
+        Field[] fields = obj.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            if (field.getType().getSimpleName().equals("Integer")) {
+                return field.get(obj);
+            }
+        }
+        return null;
     }
 
     public List<T> getList(String query) throws NoResultException, Exception {
@@ -204,7 +220,7 @@ public class DataBaseService<T> implements Serializable {
     }
 
     public int getNumberOfPages() {
-        return (int) Math.ceil((double) numberOfResults / queryMaxResults);
+        return queryMaxResults > 0 ? (int) Math.ceil((double) numberOfResults / queryMaxResults) : 1;
     }
 
     public int getActualCurrentPage() {
@@ -212,9 +228,7 @@ public class DataBaseService<T> implements Serializable {
     }
 
     private List<T> getListOfResults(Query query) {
-        if (numberOfResults == 0) {
-            getCount();
-        }
+        getCount();
         if (currentPage > 0) {
             LOGGER.log(Level.INFO, "Page {0} of {1}", new Object[]{currentPage, getNumberOfPages()});
             query.setFirstResult(currentPage - 1);

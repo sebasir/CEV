@@ -160,7 +160,6 @@ div.logo-dashboard {
     opacity: 0.2;
 }
 
-
 .main-panel > .footer {
     right: 0;
     bottom: 0;
@@ -194,21 +193,6 @@ div.logo-dashboard {
     border-radius: 13px;
     border: solid 5px rgb(237, 245, 229);
     background-color: #73ac17;
-}
-
-.new-specimen {
-    position: absolute;
-    left: 230px;
-    bottom: 30px;
-    width: 90px;
-    z-index: 999;
-    background-color: rgb(115, 172, 23);
-    border-radius: 45px;
-    margin: 50px;
-    padding: 5px;
-    -webkit-box-shadow: 1px 1px 10px 0px rgba(14,87,8,1);
-    -moz-box-shadow: 1px 1px 10px 0px rgba(14,87,8,1);
-    box-shadow: 1px 1px 10px 0px rgba(14,87,8,1);
 }
 
 .tooltip {
@@ -356,4 +340,16 @@ div.logo-dashboard {
 
 .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
     padding: 4px 15px;
+}
+
+.input-sm {
+    font-size: 14px;
+}
+
+div.form-group > label.control-label {
+    text-align: right;
+}
+
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+
 }
