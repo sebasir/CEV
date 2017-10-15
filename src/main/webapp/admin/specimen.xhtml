@@ -31,8 +31,8 @@
         <div class="panel panel-default">
             <div class="panel-heading">Especímenes</div>
             <div class="panel-body">
-                <div class="row">
-                    <div class="form-group">
+                <div class="form-group">
+                    <div class="row">
                         <label class="col-md-1 control-label" for="nombreComun">Nombre Común:</label>
                         <div class="col-md-2">
                             <h:inputText id="nombreComun" styleClass="ui-state-default form-control input-sm input-block-level required" value="#{specimenBean.specimen.commonName}">
@@ -54,7 +54,9 @@
                                 <f:validateBean disabled="true"/>
                             </h:inputText>
                         </div>
-                        <label class="col-md-1 control-label" for="epiteto">Nombre Taxonómico:</label>
+                    </div>
+                    <div class="row">
+                        <label class="col-md-2 control-label" for="epiteto">Nombre Taxonómico:</label>
                         <div class="col-md-2">
                             <p:autoComplete id="dd" dropdown="true" value="#{specimenBean.specimen.idTaxonomy}" completeMethod="#{specimenBean.taxonomysQuery}" var="tax"
                                             itemLabel="#{tax.taxonomyName}" itemValue="#{tax}" forceSelection="true" converter="TaxonomyConverter">

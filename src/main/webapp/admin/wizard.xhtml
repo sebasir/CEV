@@ -2,13 +2,23 @@
 <!DOCTYPE html>
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core">
     <h:outputScript library="js" name="main.js" />
+    <h:outputStylesheet library="css" name="pstyle.css" />
     <h:body>
+        <h3>Creación de Especímenes</h3>
         <h:form id="specimenForm">
-            <h3>Bienvenido a Fertitom</h3>
+            <h3>Datos de Clasificación</h3>
             <section style="width:100%">
-                <p>HOLA_1</p>
+                <p:outputLabel value="Selecciona una clasificación del arbol:"/>
+                <p:tree id="taxTree" value="#{taxonomyBean.taxRoot}" var="tax" orientation="horizontal" cache="false" selectionMode="single" selection="#{taxonomyBean.selectedNode}">
+                    <p:treeNode>
+                        <h:outputText value="#{tax}" />
+                    </p:treeNode>
+                </p:tree>
+
             </section>
             <h3>ASDASD</h3>
             <section style="width:100%">

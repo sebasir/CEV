@@ -4,7 +4,7 @@ public class Constant {
 
     public static final String POINT = "\\.";
     public static final String LOG = "_LOG";
-    public static final String PERSISTENCE_UNIT = "CEV_PU_LOCAL";
+    public static final String PERSISTENCE_UNIT = "CEV_PU";
     public static final String CHAR_ENCODING = "UTF-8";
     public static final String HASH_ALGORITHM = "MD5";
     public static final String ENCRYPT_KEY = "_B1cH05";

@@ -13,6 +13,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
+import javax.persistence.PersistenceUnit;
 import javax.persistence.Query;
 
 import javax.persistence.TypedQuery;
@@ -33,7 +34,10 @@ public class DataBaseService<T> implements Serializable {
     private static final Logger LOGGER = Logger.getLogger(DataBaseService.class.getSimpleName());
     private Pager pager;
     private QueryMethod queryMethod;
+
+    @PersistenceUnit(unitName = Constant.PERSISTENCE_UNIT)
     private EntityManagerFactory entityManagerFactory;
+
     private EntityManager entityManager;
     private int currentPage;
     private int numberOfResults;
@@ -324,6 +328,8 @@ public class DataBaseService<T> implements Serializable {
         if (entityManagerFactory == null) {
             LOGGER.log(Level.INFO, "entityManagerFactory is null");
             entityManagerFactory = Persistence.createEntityManagerFactory(Constant.PERSISTENCE_UNIT);
+        } else {
+            LOGGER.log(Level.INFO, "entityManagerFactory is injected!");
         }
         if (entityManager == null) {
             LOGGER.log(Level.INFO, "entityManager is null");
