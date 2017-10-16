@@ -47,7 +47,7 @@ public class AccessService implements Serializable {
             roleUserAccess = new HashMap<>();
             roleModuleAccess = new HashMap<>();
         } catch (Exception e) {
-            e.printStackTrace();
+        	e.printStackTrace();
             LOGGER.log(Level.SEVERE, "El servicio de acceso no ha podido iniciar correctamente: {0}.", e.getMessage());
             throw new Exception("El servicio de acceso no ha podido iniciar correctamente: " + e.getMessage());
         }
@@ -124,7 +124,7 @@ public class AccessService implements Serializable {
                 params.put(":idModule", idModule);
                 params.put(":idUser", idUser);
                 moduleUser = mousService.getSingleRecord("ModuleUser.findByKey", params);
-                moduleUser.setStatus(status);
+                moduleUser.setStatus(status.get());
                 mousService.merge(moduleUser);
                 if (userAccess.get(idUser) == null || userAccess.get(idUser).get(idModule) == null) {
                     addUserAccess(idUser, idModule, accessLevel);
@@ -184,7 +184,7 @@ public class AccessService implements Serializable {
                 params.put(":idRole", idRole);
                 params.put(":idUser", idUser);
                 roleUser = rousService.getSingleRecord("RoleUser.findByKey", params);
-                roleUser.setStatus(status);
+                roleUser.setStatus(status.get());
                 rousService.merge(roleUser);
 
                 if (roleUserAccess.get(idUser) == null || roleUserAccess.get(idUser).get(idRole) == null) {
@@ -233,7 +233,7 @@ public class AccessService implements Serializable {
                 params.put(":idRole", idRole);
                 params.put(":idModule", idModule);
                 roleModule = romoService.getSingleRecord("RoleUser.findByKey", params);
-                roleModule.setStatus(status);
+                roleModule.setStatus(status.get());
                 romoService.merge(roleModule);
 
                 if (roleModuleAccess.get(idRole) == null || !roleModuleAccess.get(idRole).contains(idModule)) {

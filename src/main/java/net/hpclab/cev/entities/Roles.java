@@ -1,7 +1,5 @@
 package net.hpclab.cev.entities;
 
-import net.hpclab.cev.enums.StatusEnum;
-import net.hpclab.cev.enums.StatusEnumConverter;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -20,14 +18,11 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 
 @Entity
 @Table(name = "roles")
 @NamedQueries({
     @NamedQuery(name = "Roles.findAll", query = "SELECT r FROM Roles r")})
-@TypeDef(name = "StatusEnumConverter", typeClass = StatusEnumConverter.class)
 public class Roles implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -54,10 +49,9 @@ public class Roles implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date roleModified;
 
-    @Size(max = 2147483647)
+    @Size(max = 32)
     @Column(name = "status")
-    @Type(type = "StatusEnumConverter")
-    private StatusEnum status;
+    private String status;
 
     @OneToMany(mappedBy = "idRole")
     private List<RolesModules> rolesModulesList;
@@ -117,11 +111,11 @@ public class Roles implements Serializable {
         this.roleModified = roleModified;
     }
 
-    public StatusEnum getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(StatusEnum status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

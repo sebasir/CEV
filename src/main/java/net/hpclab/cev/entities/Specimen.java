@@ -1,7 +1,5 @@
 package net.hpclab.cev.entities;
 
-import net.hpclab.cev.enums.StatusEnum;
-import net.hpclab.cev.enums.StatusEnumConverter;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -21,14 +19,11 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 
 @Entity
 @Table(name = "specimen")
 @NamedQueries({
     @NamedQuery(name = "Specimen.findAll", query = "SELECT s FROM Specimen s")})
-@TypeDef(name = "StatusEnumConverter", typeClass = StatusEnumConverter.class)
 public class Specimen implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -66,10 +61,9 @@ public class Specimen implements Serializable {
     @Column(name = "collect_comment")
     private String collectComment;
 
-    @Size(max = 2147483647)
+    @Size(max = 32)
     @Column(name = "status")
-    @Type(type = "StatusEnumConverter")
-    private StatusEnum status;
+    private String status;
 
     @OneToOne(mappedBy = "idSpecimen")
     private SpecimenContent specimenContent;
@@ -176,11 +170,11 @@ public class Specimen implements Serializable {
         this.collectComment = collectComment;
     }
 
-    public StatusEnum getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(StatusEnum status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

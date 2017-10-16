@@ -6,23 +6,27 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.context.Flash;
 import javax.servlet.http.HttpServletRequest;
-import net.hpclab.cev.enums.OutcomeEnum;
+
+import org.apache.commons.io.IOUtils;
+
 import net.hpclab.cev.entities.Users;
 import net.hpclab.cev.enums.AuthenticateEnum;
+import net.hpclab.cev.enums.OutcomeEnum;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.SessionService;
 import net.hpclab.cev.services.UserSession;
 import net.hpclab.cev.services.Util;
-import org.apache.commons.io.IOUtils;
 
 public class UtilsBean implements Serializable {
 
-    public UserSession loadUserSession(FacesContext facesContext, Users user) {
+	private static final long serialVersionUID = 8618879958425181360L;
+
+	public UserSession loadUserSession(FacesContext facesContext, Users user) {
         UserSession userSession = new UserSession(user, getRemoteAddress(facesContext));
         facesContext.getExternalContext().getSessionMap().put(Constant.USER_DATA, userSession);
         return userSession;

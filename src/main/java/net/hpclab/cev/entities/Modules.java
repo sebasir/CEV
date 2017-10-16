@@ -56,7 +56,7 @@ public class Modules implements Serializable {
     @Size(max = 16)
     @Column(name = "module_icon")
     private String moduleIcon;
-    @Size(max = 2147483647)
+    @Size(max = 32)
     @Column(name = "status")
     private String status;
     @OneToMany(mappedBy = "idContainer")

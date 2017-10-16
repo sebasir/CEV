@@ -1,7 +1,5 @@
 package net.hpclab.cev.entities;
 
-import net.hpclab.cev.enums.StatusEnum;
-import net.hpclab.cev.enums.StatusEnumConverter;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -17,14 +15,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 
 @Entity
 @Table(name = "sample_type")
 @NamedQueries({
     @NamedQuery(name = "SampleType.findAll", query = "SELECT s FROM SampleType s")})
-@TypeDef(name = "StatusEnumConverter", typeClass = StatusEnumConverter.class)
 public class SampleType implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -40,10 +35,9 @@ public class SampleType implements Serializable {
     @Column(name = "saty_name")
     private String satyName;
 
-    @Size(max = 2147483647)
+    @Size(max = 32)
     @Column(name = "status")
-    @Type(type = "StatusEnumConverter")
-    private StatusEnum status;
+    private String status;
 
     @OneToMany(mappedBy = "idSaty")
     private List<Specimen> specimenList;
@@ -76,11 +70,11 @@ public class SampleType implements Serializable {
         this.satyName = satyName;
     }
 
-    public StatusEnum getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(StatusEnum status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

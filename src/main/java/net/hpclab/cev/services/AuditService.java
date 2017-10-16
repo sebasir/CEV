@@ -33,7 +33,7 @@ public class AuditService implements Serializable {
             auditLog.setIdModule(idModule);
             auditLog.setAulogTime(new Date());
             auditLog.setAulogIpAddress(aulogIpAddress);
-            auditLog.setAulogAction(aulogAction);
+            auditLog.setAulogAction(aulogAction.get());
             auditLog.setAulogTarget(aulogTarget);
             auditDBService.persist(auditLog);
         } catch (Exception e) {

@@ -33,7 +33,7 @@ public class AuthorizationFilter implements Filter {
         try {
             UserSession userSession = (UserSession) session.getAttribute(Constant.USER_DATA);
             loggedIn = true;
-            if (userSession.getUser().getStatus() == StatusEnum.Activo) {
+            if (userSession.getUser().getStatus().equals(StatusEnum.Activo.get())) {
                 userActive = true;
             }
         } catch (Exception e) {

@@ -77,6 +77,7 @@ public class LoginBean extends UtilsBean implements Serializable {
             LOGGER.log(Level.INFO, "Error autenticando: {0}", e.getMessage());
             showAuthenticationMessage(facesContext, AuthenticateEnum.LOGIN_UNKNOWN_ERROR, MessagesService.getInstance().getMessage(AuthenticateEnum.LOGIN_UNKNOWN_ERROR));
         } catch (Exception e) {
+            e.printStackTrace();
             LOGGER.log(Level.INFO, "Error autenticando: {0}", e.getMessage());
             showAuthenticationMessage(facesContext, AuthenticateEnum.LOGIN_ERROR, "Intenta nuevamente");
         }

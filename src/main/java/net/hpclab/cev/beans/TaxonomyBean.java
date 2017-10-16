@@ -4,17 +4,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.context.FacesContext;
+
+import org.primefaces.context.RequestContext;
+import org.primefaces.model.DefaultTreeNode;
+import org.primefaces.model.TreeNode;
+
 import net.hpclab.cev.entities.Specimen;
 import net.hpclab.cev.entities.Taxonomy;
 import net.hpclab.cev.entities.TaxonomyLevel;
 import net.hpclab.cev.services.DataBaseService;
-import org.primefaces.context.RequestContext;
-import org.primefaces.model.DefaultTreeNode;
-import org.primefaces.model.TreeNode;
 
 @ManagedBean
 @SessionScoped
@@ -91,7 +93,7 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
     }
 
     private void prepareBeans() {
-        FacesContext fCon = FacesContext.getCurrentInstance();
+        
     }
 
     public void prepareCreate() {

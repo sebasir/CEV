@@ -1,18 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
              http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
-             version="2.1">
-    <persistence-unit name="CEV_PU" transaction-type="JTA">
-        <provider>org.hibernate.ejb.HibernatePersistence</provider>
-        <jta-data-source>jdbc/CEVPool</jta-data-source>
-        <exclude-unlisted-classes>false</exclude-unlisted-classes>
-        <properties>
-            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
-            <property name="hibernate.transaction.factory_class" value="org.hibernate.transaction.JTATransactionFactory"/>
-            <property name="hibernate.show_sql" value="true"/>
-            <property name="hibernate.format_sql" value="false"/>
-        </properties>
-    </persistence-unit>
+	version="2.1">
+	<persistence-unit name="CEV_PU" transaction-type="JTA">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<jta-data-source>java:/CEV</jta-data-source>
+		<class>net.hpclab.cev.entities.AuditLog</class>
+		<class>net.hpclab.cev.entities.Author</class>
+		<class>net.hpclab.cev.entities.Catalog</class>
+		<class>net.hpclab.cev.entities.Collection</class>
+		<class>net.hpclab.cev.entities.Institution</class>
+		<class>net.hpclab.cev.entities.Location</class>
+		<class>net.hpclab.cev.entities.LocationLevel</class>
+		<class>net.hpclab.cev.entities.Modules</class>
+		<class>net.hpclab.cev.entities.ModulesUsers</class>
+		<class>net.hpclab.cev.entities.RegType</class>
+		<class>net.hpclab.cev.entities.Roles</class>
+		<class>net.hpclab.cev.entities.RolesModules</class>
+		<class>net.hpclab.cev.entities.RolesUsers</class>
+		<class>net.hpclab.cev.entities.SampleType</class>
+		<class>net.hpclab.cev.entities.Specimen</class>
+		<class>net.hpclab.cev.entities.SpecimenContent</class>
+		<class>net.hpclab.cev.entities.Taxonomy</class>
+		<class>net.hpclab.cev.entities.TaxonomyLevel</class>
+		<class>net.hpclab.cev.entities.Users</class>
+		<exclude-unlisted-classes>false</exclude-unlisted-classes>
+		<properties>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
+			<property name="hibernate.transaction.factory_class"
+				value="org.hibernate.transaction.JTATransactionFactory" />
+			<property name="hibernate.transaction.jta.platform"
+				value="org.hibernate.service.jta.platform.internal.JBossStandAloneJtaPlatform" />
+			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.format_sql" value="false" />
+		</properties>
+	</persistence-unit>
 </persistence>

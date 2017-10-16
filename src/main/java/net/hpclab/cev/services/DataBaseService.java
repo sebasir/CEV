@@ -128,7 +128,7 @@ public class DataBaseService<T> implements Serializable {
         queryParam = query;
         mapParam = params;
         LOGGER.log(Level.INFO, "Listing {0}, params: '{'{1}'}'", new Object[]{entityClass.getSimpleName(), params == null ? "N/A" : params.size()});
-        Query finalQuery;
+        TypedQuery<T> finalQuery;
         if (query.toLowerCase().contains(SELECT)) {
             finalQuery = entityManager.createQuery(query, entityClass);
         } else {
@@ -231,7 +231,7 @@ public class DataBaseService<T> implements Serializable {
         return currentPage;
     }
 
-    private List<T> getListOfResults(Query query) {
+    private List<T> getListOfResults(TypedQuery<T> query) {
         getCount();
         if (currentPage > 0) {
             LOGGER.log(Level.INFO, "Page {0} of {1}", new Object[]{currentPage, getNumberOfPages()});
@@ -261,7 +261,6 @@ public class DataBaseService<T> implements Serializable {
     }
 
     public T mergeFromQuery(String queryUpdate, String query, HashMap<String, Object> params) throws NoResultException, Exception {
-        entityManager.getTransaction().begin();
         LOGGER.log(Level.INFO, "Merging {0} from Query: {1}", new Object[]{entityClass.getSimpleName(), queryUpdate});
         Query typedQuery = entityManager.createQuery(queryUpdate);
         HashMap<String, Object> nParams = new HashMap<>();
@@ -275,39 +274,31 @@ public class DataBaseService<T> implements Serializable {
         }
         if (typedQuery.executeUpdate() == 1) {
             LOGGER.log(Level.INFO, "Merged {0}, OK", entityClass.getSimpleName());
-            entityManager.getTransaction().commit();
             return getSingleRecord(query, nParams);
         } else {
-            entityManager.getTransaction().rollback();
             throw new PersistenceException("No entities Updated");
         }
     }
 
     public T merge(T entity) throws Exception {
-        entityManager.getTransaction().begin();
         LOGGER.log(Level.INFO, "Merging {0}", entityClass.getSimpleName());
         entity = entityManager.merge(entity);
         LOGGER.log(Level.INFO, "Merged {0}, OK", entityClass.getSimpleName());
-        entityManager.getTransaction().commit();
         return entity;
     }
 
     public T persist(T entity) throws Exception {
         LOGGER.log(Level.INFO, "Persiting {0}", entityClass.getSimpleName());
-        entityManager.getTransaction().begin();
         entityManager.persist(entity);
         entity = entityManager.merge(entity);
         LOGGER.log(Level.INFO, "Persist {0}, OK", entityClass.getSimpleName());
-        entityManager.getTransaction().commit();
         return entity;
     }
 
     public void delete(T entity) throws Exception {
-        entityManager.getTransaction().begin();
         LOGGER.log(Level.INFO, "Removing {0}", entityClass.getSimpleName());
         entityManager.remove(entity);
         LOGGER.log(Level.INFO, "Removed {0}, OK", entityClass.getSimpleName());
-        entityManager.getTransaction().commit();
     }
 
     public void disconnect() {

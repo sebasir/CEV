@@ -1,7 +1,5 @@
 package net.hpclab.cev.entities;
 
-import net.hpclab.cev.enums.StatusEnum;
-import net.hpclab.cev.enums.StatusEnumConverter;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -16,16 +14,12 @@ import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 
 @Entity
 @Table(name = "roles_modules")
 @NamedQueries({
-    @NamedQuery(name = "RolesModules.findAll", query = "SELECT r FROM RolesModules r")
-    ,
+    @NamedQuery(name = "RolesModules.findAll", query = "SELECT r FROM RolesModules r"),
     @NamedQuery(name = "RolesModules.findByKey", query = "SELECT r FROM RolesModules r WHERE r.idModule.idModule = :idModule AND r.idRole.idRole = :idRole")})
-@TypeDef(name = "StatusEnumConverter", typeClass = StatusEnumConverter.class)
 public class RolesModules implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -36,10 +30,9 @@ public class RolesModules implements Serializable {
     @Column(name = "id_romo")
     private Integer idRomo;
 
-    @Size(max = 2147483647)
+    @Size(max = 32)
     @Column(name = "status")
-    @Type(type = "StatusEnumConverter")
-    private StatusEnum status;
+    private String status;
 
     @JoinColumn(name = "id_module", referencedColumnName = "id_module")
     @ManyToOne
@@ -63,11 +56,11 @@ public class RolesModules implements Serializable {
         this.idRomo = idRomo;
     }
 
-    public StatusEnum getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(StatusEnum status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

@@ -1,7 +1,5 @@
 package net.hpclab.cev.entities;
 
-import net.hpclab.cev.enums.StatusEnum;
-import net.hpclab.cev.enums.StatusEnumConverter;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -17,14 +15,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 
 @Entity
 @Table(name = "taxonomy_level")
 @NamedQueries({
     @NamedQuery(name = "TaxonomyLevel.findAll", query = "SELECT t FROM TaxonomyLevel t")})
-@TypeDef(name = "StatusEnumConverter", typeClass = StatusEnumConverter.class)
 public class TaxonomyLevel implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -44,11 +39,11 @@ public class TaxonomyLevel implements Serializable {
     @Column(name = "taxlevel_rank")
     private int taxlevelRank;
 
-    @Size(max = 2147483647)
+    @Size(max = 32)
     @Column(name = "status")
-    @Type(type = "StatusEnumConverter")
-    private StatusEnum status;
+    private String status;
 
+    
     @OneToMany(mappedBy = "idTaxlevel")
     private List<Taxonomy> taxonomyList;
 
@@ -89,11 +84,11 @@ public class TaxonomyLevel implements Serializable {
         this.taxlevelRank = taxlevelRank;
     }
 
-    public StatusEnum getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(StatusEnum status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

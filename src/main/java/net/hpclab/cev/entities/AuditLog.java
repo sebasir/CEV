@@ -1,7 +1,5 @@
 package net.hpclab.cev.entities;
 
-import net.hpclab.cev.enums.AuditEnum;
-import net.hpclab.cev.enums.AuditEnumConverter;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
@@ -17,14 +15,12 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "audit_log")
 @NamedQueries({
     @NamedQuery(name = "AuditLog.findAll", query = "SELECT a FROM AuditLog a")})
-@TypeDef(name = "AuditEnumConverter", typeClass = AuditEnumConverter.class)
 public class AuditLog implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -39,9 +35,9 @@ public class AuditLog implements Serializable {
     @Column(name = "aulog_ip_address")
     private String aulogIpAddress;
 
+    @Size(max = 32)
     @Column(name = "aulog_action")
-    @Type(type = "AuditEnumConverter")
-    private AuditEnum aulogAction;
+    private String aulogAction;
 
     @Column(name = "aulog_target")
     private String aulogTarget;
@@ -88,11 +84,11 @@ public class AuditLog implements Serializable {
         this.aulogIpAddress = aulogIpAddress;
     }
 
-    public AuditEnum getAulogAction() {
+    public String getAulogAction() {
         return aulogAction;
     }
 
-    public void setAulogAction(AuditEnum aulogAction) {
+    public void setAulogAction(String aulogAction) {
         this.aulogAction = aulogAction;
     }
 

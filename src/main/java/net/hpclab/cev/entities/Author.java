@@ -1,7 +1,5 @@
 package net.hpclab.cev.entities;
 
-import net.hpclab.cev.enums.StatusEnum;
-import net.hpclab.cev.enums.StatusEnumConverter;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -19,14 +17,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 
 @Entity
 @Table(name = "author")
 @NamedQueries({
     @NamedQuery(name = "Author.findAll", query = "SELECT a FROM Author a")})
-@TypeDef(name = "StatusEnumConverter", typeClass = StatusEnumConverter.class)
 public class Author implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -54,10 +49,9 @@ public class Author implements Serializable {
     @Column(name = "author_col")
     private int authorCol;
 
-    @Size(max = 2147483647)
+    @Size(max = 32)
     @Column(name = "status")
-    @Type(type = "StatusEnumConverter")
-    private StatusEnum status;
+    private String status;
 
     @JoinColumn(name = "id_user", referencedColumnName = "id_user")
     @ManyToOne
@@ -122,11 +116,11 @@ public class Author implements Serializable {
         this.authorCol = authorCol;
     }
 
-    public StatusEnum getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(StatusEnum status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

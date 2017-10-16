@@ -1,7 +1,5 @@
 package net.hpclab.cev.entities;
 
-import net.hpclab.cev.enums.StatusEnum;
-import net.hpclab.cev.enums.StatusEnumConverter;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -23,8 +21,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 
 @Entity
 @Table(name = "users")
@@ -32,7 +28,6 @@ import org.hibernate.annotations.TypeDef;
     @NamedQuery(name = "Users.findAll", query = "SELECT u FROM Users u")
     ,
     @NamedQuery(name = "Users.authenticate", query = "SELECT u FROM Users u WHERE u.userEmail = :userEmail AND u.userPassword = :userPassword")})
-@TypeDef(name = "StatusEnumConverter", typeClass = StatusEnumConverter.class)
 public class Users implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -77,10 +72,9 @@ public class Users implements Serializable {
     @Column(name = "user_password")
     private String userPassword;
 
-    @Size(max = 2147483647)
+    @Size(max = 32)
     @Column(name = "status")
-    @Type(type = "StatusEnumConverter")
-    private StatusEnum status;
+    private String status;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idUser")
     private List<AuditLog> auditLogList;
@@ -184,11 +178,11 @@ public class Users implements Serializable {
         this.userPassword = userPassword;
     }
 
-    public StatusEnum getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(StatusEnum status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
