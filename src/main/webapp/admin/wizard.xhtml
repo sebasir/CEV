@@ -1,37 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                xmlns:p="http://primefaces.org/ui"
-                xmlns:f="http://java.sun.com/jsf/core">
-    <h:outputScript library="js" name="main.js" />
-    <h:outputStylesheet library="css" name="pstyle.css" />
-    <h:body>
-        <h3>Creación de Especímenes</h3>
-        <h:form id="specimenForm">
-            <h3>Datos de Clasificación</h3>
-            <section style="width:100%">
-                <p:outputLabel value="Selecciona una clasificación del arbol:"/>
-                <p:tree id="taxTree" value="#{taxonomyBean.taxRoot}" var="tax" orientation="horizontal" cache="false" selectionMode="single" selection="#{taxonomyBean.selectedNode}">
-                    <p:treeNode>
-                        <h:outputText value="#{tax}" />
-                    </p:treeNode>
-                </p:tree>
-
-            </section>
-            <h3>ASDASD</h3>
-            <section style="width:100%">
-                <p>HOLA_2</p>
-            </section>
-            <h3>ASASDF</h3>
-            <section style="width:100%">
-                <p>HOLA_3</p>
-            </section>
-            <h3>ASGASDF</h3>
-            <section style="width:100%">
-                <p>HOLA_4</p>
-            </section>
-        </h:form>
-    </h:body>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
+	<h:outputScript library="js" name="main.js" />
+	<h:outputStylesheet library="css" name="pstyle.css" />
+	<h:body>
+		<h3>Creación de Especímenes</h3>
+		<h:form id="specimenForm">
+			<h3>Datos de Clasificación</h3>
+			<section style="width: 100%">
+				<p:outputLabel value="Selecciona una clasificación del arbol:" />
+				<p:tree id="taxTree" value="#{taxonomyBean.taxRoot}" var="tax" orientation="horizontal" cache="false"
+					selectionMode="single" selection="#{taxonomyBean.selectedNode}">
+					<p:treeNode>
+						<h:outputText value="#{tax}" />
+					</p:treeNode>
+				</p:tree>
+				<p:contextMenu for="taxTree">
+					<p:menuitem value="Agregar Clasificación" update="taxTree :createDialog"
+						actionListener="#{taxonomyBean.setTaxfromNode('create')}" icon="fa fa-plus" />
+					<p:menuitem value="Ver detalle de Especies" update="detailDialog"
+						actionListener="#{taxonomyBean.setTaxfromNode('detail')}" icon="fa fa-folder-open" />
+					<p:menuitem value="Editar" update="taxTree :editDialog :displayEdit"
+						actionListener="#{taxonomyBean.setTaxfromNode('edit')}" icon="fa fa-pencil" />
+					<p:menuitem value="Borrar" update="taxTree" actionListener="#{taxonomyBean.setTaxfromNode('delete')}"
+						icon="fa fa-trash" />
+				</p:contextMenu>
+			</section>
+			<h3>ASDASD</h3>
+			<section style="width: 100%">
+				<p>HOLA_2</p>
+			</section>
+			<h3>ASASDF</h3>
+			<section style="width: 100%">
+				<p>HOLA_3</p>
+			</section>
+			<h3>ASGASDF</h3>
+			<section style="width: 100%">
+				<p>HOLA_4</p>
+			</section>
+		</h:form>
+	</h:body>
 </ui:composition>
