@@ -4,12 +4,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -17,6 +19,8 @@ import org.primefaces.model.TreeNode;
 import net.hpclab.cev.entities.Specimen;
 import net.hpclab.cev.entities.Taxonomy;
 import net.hpclab.cev.entities.TaxonomyLevel;
+import net.hpclab.cev.enums.OutcomeEnum;
+import net.hpclab.cev.model.TreeHierachyModel;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
 
@@ -25,6 +29,7 @@ import net.hpclab.cev.services.DataBaseService;
 public class TaxonomyBean extends UtilsBean implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	private DataBaseService<Specimen> specimenService;
 	private DataBaseService<Taxonomy> taxonomyService;
 	private DataBaseService<TaxonomyLevel> taxonomyLevelService;
 	private String selectedLevel;
@@ -33,24 +38,30 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 	private TreeNode root;
 	private TreeNode selectedNode;
 	private HashMap<Integer, TreeNode> tree;
+	private HashMap<Integer, TreeHierachyModel> abstractMap;
+	private HashMap<Integer, Specimen> specimenTaxonomy;
+	private TreeHierachyModel abstractTree;
 	private List<Taxonomy> allTaxonomys;
+	private List<Specimen> allSpecimens;
 	private List<TaxonomyLevel> allTaxonomyLevels;
 	private List<TaxonomyLevel> avalLevels;
+
 	private List<Specimen> taxonomySpecimens;
 
 	private static final Logger LOGGER = Logger.getLogger(TaxonomyBean.class.getSimpleName());
 
 	public TaxonomyBean() throws Exception {
+		specimenService = new DataBaseService<>(Specimen.class, Constant.UNLIMITED_QUERY_RESULTS);
 		taxonomyService = new DataBaseService<>(Taxonomy.class, Constant.UNLIMITED_QUERY_RESULTS);
 		taxonomyLevelService = new DataBaseService<>(TaxonomyLevel.class, Constant.UNLIMITED_QUERY_RESULTS);
 	}
 
 	@PostConstruct
 	public void init() {
-		System.out.println("Inicializando lista 'Taxonomys'");
 		try {
 			allTaxonomys = taxonomyService.getList();
 			allTaxonomyLevels = taxonomyLevelService.getList();
+			allSpecimens = specimenService.getList();
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
@@ -58,42 +69,54 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 	}
 
 	public void persist() {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		OutcomeEnum outcomeEnum = OutcomeEnum.CREATE_ERROR;
+		String transactionMessage = taxonomy.getTaxonomyName();
 		try {
 			taxonomy.setIdContainer(new Taxonomy(parentTaxonomy.getIdTaxonomy()));
 			taxonomy.setIdTaxlevel(new TaxonomyLevel(new Integer(selectedLevel)));
-			setTaxonomy(taxonomyService.persist(getTaxonomy()));
-			if (getTaxonomy() != null && getTaxonomy().getIdTaxonomy() != null) {
+			taxonomy = taxonomyService.persist(taxonomy);
+			if (taxonomy != null && taxonomy.getIdTaxonomy() != null) {
 				allTaxonomys.add(taxonomy);
-				System.out.println("mensaje");
+				outcomeEnum = OutcomeEnum.CREATE_SUCCESS;
 				createTaxTree();
-			} else {
-				System.out.println("mensaje");
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("mensaje");
+			LOGGER.log(Level.SEVERE, "Error persisting", e);
 		}
+		showMessage(facesContext, outcomeEnum, transactionMessage);
 		selectedLevel = null;
 	}
 
 	public void edit() {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		OutcomeEnum outcomeEnum = OutcomeEnum.UPDATE_ERROR;
+		String transactionMessage = taxonomy.getTaxonomyName();
 		try {
-			setTaxonomy(taxonomyService.merge(getTaxonomy()));
-			System.out.println("mensaje");
+			Taxonomy tempTaxonomy = taxonomyService.merge(taxonomy);
+			allTaxonomys.remove(taxonomy);
+			allTaxonomys.add(tempTaxonomy);
+			outcomeEnum = OutcomeEnum.UPDATE_SUCCESS;
 			createTaxTree();
 		} catch (Exception e) {
-			System.out.println("mensaje");
+			LOGGER.log(Level.SEVERE, "Error editing", e);
 		}
+		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
 
 	public void delete() {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		OutcomeEnum outcomeEnum = OutcomeEnum.DELETE_ERROR;
+		String transactionMessage = taxonomy.getTaxonomyName();
 		try {
 			taxonomyService.delete(taxonomy);
+			allTaxonomys.remove(taxonomy);
 			createTaxTree();
-			System.out.println("mensaje");
+			outcomeEnum = OutcomeEnum.DELETE_SUCCESS;
 		} catch (Exception e) {
-			System.out.println("mensaje " + e.getMessage());
+			LOGGER.log(Level.SEVERE, "Error deleting", e);
 		}
+		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
 
 	public void setTaxonomyTree() {
@@ -126,13 +149,22 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 	}
 
 	private void createTaxTree() {
-		tree = new HashMap<Integer, TreeNode>();
+		tree = new HashMap<>();
+		abstractMap = new HashMap<>();
+		TreeHierachyModel fatherNode = new TreeHierachyModel();
+		TreeHierachyModel childNode = new TreeHierachyModel();
 		root = null;
 		if (allTaxonomys != null) {
 			for (Taxonomy t : allTaxonomys) {
 				if (root == null) {
+					abstractTree = new TreeHierachyModel(t.getIdTaxonomy());
 					tree.put(t.getIdTaxonomy(), (root = new DefaultTreeNode(t, null)));
+					abstractMap.put(t.getIdTaxonomy(), abstractTree);
 				} else {
+					childNode = new TreeHierachyModel(t.getIdTaxonomy());
+					fatherNode = abstractMap.get(t.getIdContainer().getIdTaxonomy());
+					fatherNode.addNode(childNode);
+					abstractMap.put(t.getIdTaxonomy(), childNode);
 					tree.put(t.getIdTaxonomy(), new DefaultTreeNode(t, tree.get(t.getIdContainer().getIdTaxonomy())));
 				}
 			}
@@ -144,6 +176,13 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 				n = tree.get(taxonomy.getIdTaxonomy());
 			}
 			openBranch(n);
+		}
+
+		if (allSpecimens != null) {
+			specimenTaxonomy = new HashMap<>();
+			for (Specimen s : allSpecimens) {
+				specimenTaxonomy.put(s.getIdTaxonomy().getIdTaxonomy(), s);
+			}
 		}
 	}
 
@@ -184,9 +223,21 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 				if (Constant.CREATE_COMMAND.equals(command)) {
 					parentTaxonomy = (Taxonomy) selectedNode.getData();
 					taxonomy = new Taxonomy();
+				} else if (Constant.DETAIL_COMMAND.equals(command)) {
+					taxonomySpecimens = new ArrayList<>();
+					Stack<TreeHierachyModel> searchList = new Stack<>();
+					searchList.add(abstractMap.get(taxonomy.getIdTaxonomy()));
+					TreeHierachyModel node = null;
+					while (!searchList.isEmpty()) {
+						node = searchList.pop();
+						if (specimenTaxonomy.containsKey(node.getNode())) {
+							taxonomySpecimens.add(specimenTaxonomy.get(node.getNode()));
+						}
+						searchList.addAll(node.getLeaves());
+					}
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.log(Level.SEVERE, "Error setting TaxFromNode", e);
 			}
 		}
 	}

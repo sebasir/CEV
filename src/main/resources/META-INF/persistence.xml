@@ -29,8 +29,6 @@
 		<exclude-unlisted-classes>false</exclude-unlisted-classes>
 		<properties>
 			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
-			<property name="hibernate.transaction.factory_class"
-				value="org.hibernate.transaction.JTATransactionFactory" />
 			<property name="hibernate.transaction.jta.platform"
 				value="org.hibernate.service.jta.platform.internal.JBossStandAloneJtaPlatform" />
 			<property name="hibernate.show_sql" value="true" />

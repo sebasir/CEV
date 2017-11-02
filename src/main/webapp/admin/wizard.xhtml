@@ -16,16 +16,6 @@
 						<h:outputText value="#{tax}" />
 					</p:treeNode>
 				</p:tree>
-				<p:contextMenu for="taxTree">
-					<p:menuitem value="Agregar Clasificación" update="taxTree :createDialog"
-						actionListener="#{taxonomyBean.setTaxfromNode('create')}" icon="fa fa-plus" />
-					<p:menuitem value="Ver detalle de Especies" update="detailDialog"
-						actionListener="#{taxonomyBean.setTaxfromNode('detail')}" icon="fa fa-folder-open" />
-					<p:menuitem value="Editar" update="taxTree :editDialog :displayEdit"
-						actionListener="#{taxonomyBean.setTaxfromNode('edit')}" icon="fa fa-pencil" />
-					<p:menuitem value="Borrar" update="taxTree" actionListener="#{taxonomyBean.setTaxfromNode('delete')}"
-						icon="fa fa-trash" />
-				</p:contextMenu>
 			</section>
 			<h3>ASDASD</h3>
 			<section style="width: 100%">

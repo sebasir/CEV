@@ -37,6 +37,7 @@ public class AuditService implements Serializable {
             auditLog.setAulogTarget(aulogTarget);
             auditDBService.persist(auditLog);
         } catch (Exception e) {
+        	e.printStackTrace();
             LOGGER.log(Level.SEVERE, "Error realizando inserción en AuditLog: {0}", e.getMessage());
         }
     }

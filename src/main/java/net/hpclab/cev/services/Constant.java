@@ -17,6 +17,7 @@ public class Constant {
     public static final String MESSAGES_FILE = "/WEB-INF/classes/META-INF/messages.properties";
     public static final String CREATE_COMMAND = "create";
     public static final String EDIT_COMMAND = "edit";
+    public static final String DETAIL_COMMAND = "detail";
     public static final int QUERY_MAX_RESULTS = 10;
     public static final int UNLIMITED_QUERY_RESULTS = -1;
     public static final int MAX_PAGE_INDEX = 4;

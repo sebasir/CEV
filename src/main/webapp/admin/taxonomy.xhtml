@@ -67,9 +67,9 @@
 						</div>
 						<div class="modal-footer">
 							<div class="input-group">
-								<p:commandButton id="deleteYesButton" value="Guardar" action="#{taxonomyBean.edit()}" update=":formTaxonomy"
-									oncomplete="$('#deleteModal').modal('hide')" />
-								<p:commandButton id="deleteNoButton" value="Cancelar" type="button" onclick="$('#editModal').modal('hide')" />
+								<p:commandButton id="editYesButton" value="Guardar" action="#{taxonomyBean.edit()}" update=":formTaxonomy"
+									oncomplete="$('#editModal').modal('hide')" />
+								<p:commandButton id="editNoButton" value="Cancelar" type="button" onclick="$('#editModal').modal('hide')" />
 							</div>
 						</div>
 					</div>
@@ -77,7 +77,7 @@
 			</div>
 		</h:form>
 		<!-- end edit Modal -->
-		
+
 		<!-- create Modal -->
 		<h:form id="createModalForm">
 			<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="Crear Clasificación">
@@ -124,9 +124,9 @@
 						</div>
 						<div class="modal-footer">
 							<div class="input-group">
-								<p:commandButton id="deleteYesButton" value="Guardar" action="#{taxonomyBean.edit()}" update=":formTaxonomy"
-									oncomplete="$('#deleteModal').modal('hide')" />
-								<p:commandButton id="deleteNoButton" value="Cancelar" type="button" onclick="$('#createModal').modal('hide')" />
+								<p:commandButton id="createYesButton" value="Guardar" action="#{taxonomyBean.persist()}" update=":formTaxonomy"
+									oncomplete="$('#createModal').modal('hide')" />
+								<p:commandButton id="createNoButton" value="Cancelar" type="button" onclick="$('#createModal').modal('hide')" />
 							</div>
 						</div>
 					</div>
@@ -135,11 +135,47 @@
 		</h:form>
 		<!-- end create Modal -->
 
+		<!-- detail Modal -->
+		<h:form id="detailModalForm">
+			<div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="Detalle de Especímenes">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+							</button>
+							<h4 class="modal-title" id="myModalLabel">Detalle de Especímenes</h4>
+						</div>
+						<div class="modal-body">
+							<div class="form-group">
+								<ui:repeat var="specimen" value="#{taxonomyBean.taxonomySpecimens}">
+									<div class="row">
+										<h:outputText class="col-md-10"
+											value="#{specimen.idTaxonomy.taxonomyName} #{specimen.specificEpithet} (#{specimen.commonName})" />
+										<p:commandLink id="viewButton" class="btn btn-default btn-sm btn-action"
+											oncomplete="PF('specimenDetail').show()" 
+											title="Ficha técnica de #{specimen.commonName}" actionListener="#{specimenBean.setSpecimen(specimen)}">
+											<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
+										</p:commandLink>
+									</div>
+									<hr />
+								</ui:repeat>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<div class="input-group">
+								<p:commandButton id="detailNoButton" value="Cerrar" type="button" onclick="$('#detailModal').modal('hide')" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</h:form>
+		<!-- end detail Modal -->
+
 		<h:form id="formTaxonomy">
-			<p:tree id="taxTree" value="#{taxonomyBean.taxRoot}" var="tax" orientation="horizontal" cache="false"
-				selectionMode="single" selection="#{taxonomyBean.selectedNode}" dynamic="true">
-				<p:ajax event="select" process="@this" listener="#{taxonomyBean.setTaxonomyTree()}" />
-				<p:ajax event="contextMenu" process="@this" listener="#{taxonomyBean.setTaxonomyTree()}" update=":formTaxonomy" />
+			<p:tree id="taxTree" value="#{taxonomyBean.taxRoot}" var="tax" orientation="horizontal" selectionMode="single"
+				selection="#{taxonomyBean.selectedNode}">
 				<p:treeNode>
 					<h:outputText value="#{tax}" />
 				</p:treeNode>
@@ -152,85 +188,14 @@
 				<p:menuitem value="Editar" update="editModalForm" actionListener="#{taxonomyBean.setTaxfromNode('edit')}"
 					icon="fa fa-pencil" oncomplete="$('#editModal').modal({backdrop: false})" />
 
-				<p:menuitem value="Ver detalle de Especies" update="detailDialog"
-					actionListener="#{taxonomyBean.setTaxfromNode('detail')}" icon="fa fa-folder-open" />
+				<p:menuitem value="Ver detalle de Especies" update="detailModalForm"
+					actionListener="#{taxonomyBean.setTaxfromNode('detail')}" icon="fa fa-folder-open"
+					oncomplete="$('#detailModal').modal({backdrop: false})" />
 
 				<p:menuitem value="Borrar" update="taxTree" actionListener="#{taxonomyBean.setTaxfromNode('delete')}"
 					icon="fa fa-trash" oncomplete="$('#deleteModal').modal({backdrop: false})" />
 			</p:contextMenu>
 			<p:growl id="messages" showDetail="true" />
 		</h:form>
-
-		<p:dialog id="detailDialog" width="500px" appendTo="@(body)" widgetVar="taxonomyDetail" modal="true" dynamic="true"
-			resizable="false" header="#{taxonomyBean.taxonomy.taxonomyName}" closeOnEscape="true">
-			<p:dataList id="dataListSpecimen" paginator="true" rows="5" value="#{taxonomyBean.taxonomySpecimens}" var="specimen"
-				emptyMessage="No se encontraron especímenes asociados a esta clasificación" paginatorPosition="bottom">
-                #{specimen.commonName} <span class="cursive">(#{specimen.specificEpithet})</span>
-			</p:dataList>
-		</p:dialog>
-
-		<p:dialog id="createDialog" widgetVar="taxonomyCreate" modal="true" resizable="false" appendTo="@(body)"
-			header="Nueva Clasificación" closeOnEscape="true">
-			<h:form id="taxonomyCreateForm" prependId="false">
-				<div class="form-group">
-					<div class="row">
-						<label class="col-md-4 control-label" for="taxName">Nombre Clasificación:</label>
-						<div class="col-md-8">
-							<h:inputText id="taxName" styleClass="ui-state-default form-control input-sm input-block-level required"
-								value="#{taxonomyBean.taxonomy.taxonomyName}" required="true"
-								requiredMessage="Debes definir el nombre de la clasificación!">
-								<p:ajax process="@this" />
-								<f:validateBean disabled="true" />
-							</h:inputText>
-						</div>
-					</div>
-					<div class="row">
-						<label class="col-md-4 control-label" for="level">Nivel Clasificación:</label>
-						<div class="col-md-8">
-							<h:selectOneMenu id="level" styleClass="ui-state-default form-control input-sm input-block-level required"
-								value="#{specimenBean.specimen.specificEpithet}">
-								<p:ajax process="@this" />
-								<f:validateBean disabled="true" />
-								<f:selectItem itemLabel="Selecciona una jerarquía" itemValue="" />
-								<f:selectItems value="#{taxonomyBean.avalLevels}" var="lev" itemLabel="#{lev.taxlevelName}"
-									itemValue="#{lev.idTaxlevel}" />
-							</h:selectOneMenu>
-						</div>
-					</div>
-				</div>
-				<p:commandButton id="createSave" value="Guardar" action="#{taxonomyBean.persist()}" update=":formTaxonomy"
-					oncomplete="PF('taxonomyCreate').hide()" class="pull-right" />
-			</h:form>
-		</p:dialog>
-
-		<p:dialog id="editDialog" widgetVar="taxonomyEdit" modal="true" resizable="false" appendTo="@(body)"
-			header="Editar a #{taxonomyBean.taxonomy.taxonomyName}" closeOnEscape="true">
-			<h:form id="taxonomyEditForm" prependId="false">
-				<p:panelGrid id="displayEdit" columns="2">
-					<p:outputLabel value="Nombre Clasificación:" for="taxEName" />
-					<p:inputText id="taxEName" value="#{taxonomyBean.taxonomy.taxonomyName}" title="Nombre Ubicación" rendered="true"
-						style="width: 100%" required="true" requiredMessage="Debes definir el nombre de la clasificación!" />
-					<p:outputLabel value="Nivel Clasificación:" for="levelE" />
-					<p:selectOneMenu id="levelE" value="#{taxonomyBean.selectedLevel}" effect="fade" style="width: 100%"
-						required="true" rendered="true" requiredMessage="Debes escoger una jerarquía!">
-						<f:selectItem itemLabel="Selecciona una jerarquía" itemValue="" />
-						<f:selectItems value="#{taxonomyBean.allLevels}" var="lev" itemLabel="#{lev.taxlevelName}"
-							itemValue="#{lev.idTaxlevel}" />
-					</p:selectOneMenu>
-				</p:panelGrid>
-				<p:commandButton id="editSave" value="Guardar" action="#{taxonomyBean.edit()}" update=":formTaxonomy"
-					oncomplete="PF('taxonomyEdit').hide()" />
-			</h:form>
-		</p:dialog>
-
-		<p:confirmDialog id="deleteDialog" appendTo="@(body)" widgetVar="taxonomyDelete"
-			message="¿Está seguro que desea eliminar este registro?" showEffect="fade" hideEffect="fade"
-			header="Confirmar eliminación" severity="alarm">
-			<h:form id="deleteForm" style="">
-				<p:commandButton id="deleteYesButton" value="Eliminar" action="#{taxonomyBean.delete}" update=":formTaxonomy"
-					oncomplete="PF('taxonomyDelete').hide()" />
-				<p:commandButton id="deleteNoButton" value="Cancelar" onclick="PF('taxonomyDelete').hide()" type="button" />
-			</h:form>
-		</p:confirmDialog>
 	</h:body>
 </ui:composition>
