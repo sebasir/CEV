@@ -28,7 +28,7 @@ import net.hpclab.cev.services.DataBaseService;
 @ViewScoped
 public class TaxonomyBean extends UtilsBean implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -2452341929369884578L;
 	private DataBaseService<Specimen> specimenService;
 	private DataBaseService<Taxonomy> taxonomyService;
 	private DataBaseService<TaxonomyLevel> taxonomyLevelService;
@@ -45,7 +45,6 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 	private List<Specimen> allSpecimens;
 	private List<TaxonomyLevel> allTaxonomyLevels;
 	private List<TaxonomyLevel> avalLevels;
-
 	private List<Specimen> taxonomySpecimens;
 
 	private static final Logger LOGGER = Logger.getLogger(TaxonomyBean.class.getSimpleName());
@@ -59,13 +58,13 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 	@PostConstruct
 	public void init() {
 		try {
-			allTaxonomys = taxonomyService.getList();
+			allTaxonomys = taxonomyService.getList("Taxonomy.findOrderedAsc");
 			allTaxonomyLevels = taxonomyLevelService.getList();
 			allSpecimens = specimenService.getList();
+			createTree();
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
-		createTree();
 	}
 
 	public void persist() {
@@ -117,10 +116,6 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 			LOGGER.log(Level.SEVERE, "Error deleting", e);
 		}
 		showMessage(facesContext, outcomeEnum, transactionMessage);
-	}
-
-	public void setTaxonomyTree() {
-		taxonomy = (Taxonomy) selectedNode.getData();
 	}
 
 	private void updateAvalLevels(Taxonomy tax, String command) {
@@ -183,10 +178,6 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 		}
 	}
 
-	public Taxonomy getNodeName() {
-		return (Taxonomy) selectedNode.getData();
-	}
-
 	private void openBranch(TreeNode node) {
 		if (node == null) {
 			return;
@@ -206,12 +197,7 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 		}
 	}
 
-	public void selectNodeFromId(Integer idLocation) {
-		selectedNode = tree.get(idLocation);
-		openBranch(selectedNode);
-	}
-
-	public void setTaxfromNode(String command) {
+	public void setDatafromNode(String command) {
 		if (selectedNode != null) {
 			try {
 				root.setExpanded(true);
@@ -238,6 +224,10 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 				LOGGER.log(Level.SEVERE, "Error setting TaxFromNode", e);
 			}
 		}
+	}
+
+	public Taxonomy getNodeName() {
+		return (Taxonomy) selectedNode.getData();
 	}
 
 	public String getLevelName(Object node) {
@@ -307,5 +297,4 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 	public void setParentTaxonomy(Taxonomy parentTaxonomy) {
 		this.parentTaxonomy = parentTaxonomy;
 	}
-
 }

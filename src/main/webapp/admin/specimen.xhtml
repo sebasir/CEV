@@ -196,7 +196,7 @@
 					<p:separator />
 					<p:outputLabel value="Selecciona una ubicación del arbol:" />
 					<p:outputPanel styleClass="tree">
-						<p:tree id="locTree" value="#{locationBean.root}" var="loc" orientation="vertical" cache="true"
+						<p:tree id="locTree" value="#{locationBean.locRoot}" var="loc" orientation="vertical" cache="true"
 							selectionMode="single" selection="#{locationBean.selectedNode}" dynamic="true" animate="true" style="width: 95%">
 							<p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
 								<h:outputText value="#{loc}" />

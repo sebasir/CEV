@@ -4,307 +4,333 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import net.hpclab.cev.entities.Location;
-import net.hpclab.cev.entities.LocationLevel;
-import net.hpclab.cev.entities.Specimen;
-import net.hpclab.cev.services.DataBaseService;
-import org.primefaces.context.RequestContext;
+import javax.faces.context.FacesContext;
+
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.json.JSONArray;
 import org.primefaces.json.JSONObject;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
+import net.hpclab.cev.entities.Location;
+import net.hpclab.cev.entities.LocationLevel;
+import net.hpclab.cev.entities.Specimen;
+import net.hpclab.cev.enums.OutcomeEnum;
+import net.hpclab.cev.model.TreeHierachyModel;
+import net.hpclab.cev.services.Constant;
+import net.hpclab.cev.services.DataBaseService;
+
 @ManagedBean
 @SessionScoped
 public class LocationBean extends UtilsBean implements Serializable {
 
-    private DataBaseService<Location> locationService;
-    private DataBaseService<LocationLevel> locationLevelService;
-    private static final long serialVersionUID = 1L;
-    private Location location;
-    private List<Location> allLocations;
-    private Location parentLocation;
-    private HashMap<Integer, TreeNode> tree;
-    private TreeNode root;
-    private TreeNode selectedNode;
-    private List<Specimen> locationSpecimens;
-    private List<LocationLevel> allLevels;
-    private String selectedCont;
-    private String selectedLevel;
+	private static final long serialVersionUID = 6170712285673190627L;
+	private DataBaseService<Specimen> specimenService;
+	private DataBaseService<Location> locationService;
+	private DataBaseService<LocationLevel> locationLevelService;
+	private String selectedLevel;
+	private Location location;
+	private Location parentLocation;
+	private TreeNode root;
+	private TreeNode selectedNode;
+	private HashMap<Integer, TreeNode> tree;
+	private HashMap<Integer, TreeHierachyModel> abstractMap;
+	private HashMap<Integer, Specimen> specimenLocation;
+	private TreeHierachyModel abstractTree;
+	private List<Location> allLocations;
+	private List<Specimen> allSpecimens;
+	private List<LocationLevel> allLocationLevels;
+	private List<LocationLevel> avalLevels;
+	private List<Specimen> locationSpecimens;
 
-    public LocationBean() {
-        try {
-            locationService = new DataBaseService<>(Location.class, -1);
-            locationLevelService = new DataBaseService<>(LocationLevel.class);
-        } catch (Exception ex) {
-            Logger.getLogger(LocationBean.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+	private static final Logger LOGGER = Logger.getLogger(LocationBean.class.getSimpleName());
 
-    @PostConstruct
-    public void init() {
-        createLocTree();
-    }
+	public LocationBean() throws Exception {
+		specimenService = new DataBaseService<>(Specimen.class, Constant.UNLIMITED_QUERY_RESULTS);
+		locationService = new DataBaseService<>(Location.class, Constant.UNLIMITED_QUERY_RESULTS);
+		locationLevelService = new DataBaseService<>(LocationLevel.class, Constant.UNLIMITED_QUERY_RESULTS);
+	}
 
-    public void persist() {
-        try {
-            location.setIdContainer(new Location(parentLocation.getIdLocation()));
-            location.setIdLoclevel(new LocationLevel(new Integer(selectedLevel)));
-            setLocation(locationService.persist(getLocation()));
-            if (getLocation() != null && getLocation().getIdLocation() != null) {
-                System.out.println("error -> pailas");
-                createLocTree();
-            } else {
-                System.out.println("error -> pailas");
-            }
-        } catch (Exception e) {
-            System.out.println("error -> pailas" + e.getMessage());
-        }
-    }
+	@PostConstruct
+	public void init() {
+		try {
+			allLocations = locationService.getList("Location.findOrderedAsc");
+			allLocationLevels = locationLevelService.getList();
+			allSpecimens = specimenService.getList();
+			createTree();
+		} catch (Exception e) {
+			LOGGER.log(Level.SEVERE, e.getMessage());
+		}
+	}
 
-    public void delete() {
-        try {
-            locationService.delete(getLocation());
-            createLocTree();
-            System.out.println("error -> pailas");
-        } catch (Exception e) {
-            System.out.println("error -> pailas" + e.getMessage());
-        }
-    }
+	public void persist() {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		OutcomeEnum outcomeEnum = OutcomeEnum.CREATE_ERROR;
+		String transactionMessage = location.getLocationName();
+		try {
+			location.setIdContainer(new Location(parentLocation.getIdLocation()));
+			location.setIdLoclevel(new LocationLevel(new Integer(selectedLevel)));
+			location = locationService.persist(location);
+			if (location != null && location.getIdLocation() != null) {
+				allLocations.add(location);
+				outcomeEnum = OutcomeEnum.CREATE_SUCCESS;
+				createTree();
+			}
+		} catch (Exception e) {
+			LOGGER.log(Level.SEVERE, "Error persisting", e);
+		}
+		showMessage(facesContext, outcomeEnum, transactionMessage);
+		selectedLevel = null;
+	}
 
-    public void prepareCreate() {
-        try {
-            parentLocation = location;
-            location = new Location();
-            List<LocationLevel> locLevels = locationLevelService.getList();
-            allLevels = new ArrayList<>();
-            for (LocationLevel l : locLevels) {
-                if (l.getLoclevelRank() > parentLocation.getIdLoclevel().getLoclevelRank()) {
-                    allLevels.add(l);
-                }
-            }
-        } catch (Exception e) {
+	public void edit() {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		OutcomeEnum outcomeEnum = OutcomeEnum.UPDATE_ERROR;
+		String transactionMessage = location.getLocationName();
+		try {
+			Location tempLocation = locationService.merge(location);
+			allLocations.remove(location);
+			allLocations.add(tempLocation);
+			outcomeEnum = OutcomeEnum.UPDATE_SUCCESS;
+			createTree();
+		} catch (Exception e) {
+			LOGGER.log(Level.SEVERE, "Error editing", e);
+		}
+		showMessage(facesContext, outcomeEnum, transactionMessage);
+	}
 
-        }
-    }
+	public void delete() {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		OutcomeEnum outcomeEnum = OutcomeEnum.DELETE_ERROR;
+		String transactionMessage = location.getLocationName();
+		try {
+			locationService.delete(location);
+			allLocations.remove(location);
+			createTree();
+			outcomeEnum = OutcomeEnum.DELETE_SUCCESS;
+		} catch (Exception e) {
+			LOGGER.log(Level.SEVERE, "Error deleting", e);
+		}
+		showMessage(facesContext, outcomeEnum, transactionMessage);
+	}
 
-    public void edit() {
-        try {
-            setLocation(locationService.merge(getLocation()));
-            System.out.println("error -> pailas");
-        } catch (Exception e) {
-            System.out.println("error -> pailas" + e.getMessage());
-        }
-    }
+	private void updateAvalLevels(Location loc, String command) {
+		selectedLevel = loc.getIdLoclevel().getIdLoclevel().toString();
+		avalLevels = new ArrayList<>();
+		Integer highestLevel = Integer.MAX_VALUE;
+		Integer currentLevel = loc.getIdLoclevel().getLoclevelRank();
+		if (Constant.EDIT_COMMAND.equals(command)) {
+			for (TreeHierachyModel node : abstractMap.get(loc.getIdLocation()).getLeaves()) {
+				if (highestLevel > node.getLevel())
+					highestLevel = node.getLevel();
+			}
+		}
 
-    public void prepareUpdate() {
-        try {
-            selectedLevel = location.getIdLoclevel().getIdLoclevel().toString();
-            List<LocationLevel> taxLevels = locationLevelService.getList();
-            allLevels = new ArrayList<>();
-            for (LocationLevel t : taxLevels) {
-                if (t.getLoclevelRank() > parentLocation.getIdLoclevel().getLoclevelRank()) {
-                    allLevels.add(t);
-                }
-            }
-        } catch (Exception e) {
+		for (LocationLevel l : allLocationLevels) {
+			if (Constant.CREATE_COMMAND.equals(command)) {
+				if (l.getLoclevelRank() > currentLevel)
+					avalLevels.add(l);
+			} else if (l.getLoclevelRank() >= currentLevel && l.getLoclevelRank() < highestLevel) {
+				avalLevels.add(l);
+			}
+		}
+	}
 
-        }
-    }
+	private void createTree() {
+		tree = new HashMap<>();
+		abstractMap = new HashMap<>();
+		TreeHierachyModel fatherNode = new TreeHierachyModel();
+		TreeHierachyModel childNode = new TreeHierachyModel();
+		root = null;
+		if (allLocations != null) {
+			for (Location t : allLocations) {
+				if (root == null) {
+					abstractTree = new TreeHierachyModel(t.getIdLocation(), t.getIdLoclevel().getLoclevelRank());
+					tree.put(t.getIdLocation(), (root = new DefaultTreeNode(t, null)));
+					abstractMap.put(t.getIdLocation(), abstractTree);
+				} else {
+					childNode = new TreeHierachyModel(t.getIdLocation(), t.getIdLoclevel().getLoclevelRank());
+					fatherNode = abstractMap.get(t.getIdContainer().getIdLocation());
+					fatherNode.addNode(childNode);
+					abstractMap.put(t.getIdLocation(), childNode);
+					tree.put(t.getIdLocation(), new DefaultTreeNode(t, tree.get(t.getIdContainer().getIdLocation())));
+				}
+			}
 
-    public Location getLocation() {
-        return location;
-    }
+			TreeNode n = null;
+			if (parentLocation != null) {
+				n = tree.get(parentLocation.getIdLocation());
+			} else if (location != null) {
+				n = tree.get(location.getIdLocation());
+			}
+			openBranch(n);
+		}
 
-    public void setLocation(Location location) {
-        this.location = location;
-    }
+		if (allSpecimens != null) {
+			specimenLocation = new HashMap<>();
+			for (Specimen s : allSpecimens) {
+				specimenLocation.put(s.getIdLocation().getIdLocation(), s);
+			}
+		}
+	}
 
-    public List<Location> getAllLocations() {
-        return allLocations;
-    }
+	private void openBranch(TreeNode node) {
+		if (node == null) {
+			return;
+		}
+		deselectAll();
+		node.setSelected(true);
+		while (node != null) {
+			node.setExpanded(true);
+			node = node.getParent();
+		}
+	}
 
-    public String getSelectedCont() {
-        return selectedCont;
-    }
+	public void deselectAll() {
+		for (TreeNode t : tree.values()) {
+			t.setSelected(false);
+			t.setExpanded(false);
+		}
+	}
 
-    public void setSelectedCont(String selectedCont) {
-        this.selectedCont = selectedCont;
-    }
+	public void setDatafromNode(String command) {
+		if (selectedNode != null) {
+			try {
+				root.setExpanded(true);
+				location = (Location) selectedNode.getData();
+				updateAvalLevels(location, command);
+				if (Constant.CREATE_COMMAND.equals(command)) {
+					parentLocation = (Location) selectedNode.getData();
+					location = new Location();
+				} else if (Constant.DETAIL_COMMAND.equals(command)) {
+					locationSpecimens = new ArrayList<>();
+					Stack<TreeHierachyModel> searchList = new Stack<>();
+					searchList.add(abstractMap.get(location.getIdLocation()));
+					TreeHierachyModel node = null;
+					while (!searchList.isEmpty() && locationSpecimens.size() <= Constant.MAX_SPECIMEN_LIST) {
+						node = searchList.pop();
+						if (specimenLocation.containsKey(node.getNode())) {
+							locationSpecimens.add(specimenLocation.get(node.getNode()));
+						}
+						searchList.addAll(node.getLeaves());
+					}
+					searchList = null;
+				}
+			} catch (Exception e) {
+				LOGGER.log(Level.SEVERE, "Error setting TaxFromNode", e);
+			}
+		}
+	}
 
-    public List<LocationLevel> getAllLevels() {
-        return allLevels;
-    }
+	public Location getNodeName() {
+		return (Location) selectedNode.getData();
+	}
 
-    public void setAllLevels(List<LocationLevel> allLevels) {
-        this.allLevels = allLevels;
-    }
+	public void onNodeSelect(NodeSelectEvent event) {
+		selectedNode = event.getTreeNode();
+	}
 
-    public String getSelectedLevel() {
-        return selectedLevel;
-    }
+	public String setMapCenter() {
+		JSONObject json = new JSONObject();
+		try {
+			location = getNodeName();
+			json.put("latitude", location.getLatitude());
+			json.put("longitude", location.getLongitude());
+			json.put("name", location.getLocationName());
+			json.put("zoom", 12);
+			List<Specimen> specimens = location.getSpecimenList();
+			if (specimens != null && !specimens.isEmpty()) {
+				JSONArray jsonSpecimensArray = new JSONArray();
+				JSONObject jsonSpecimens;
+				for (Specimen specimen : specimens) {
+					jsonSpecimens = new JSONObject();
+					jsonSpecimens.put("scientificName", specimen.getIdLocation().getLocationName()
+							+ (specimen.getSpecificEpithet() == null ? "" : " " + specimen.getSpecificEpithet()));
+					jsonSpecimens.put("commonName", specimen.getCommonName());
+					jsonSpecimensArray.put(jsonSpecimens);
+				}
+				json.put("tooltip", jsonSpecimensArray);
+			} else {
+				json.put("tooltip", "none");
+			}
+		} catch (Exception e) {
+			json.put("latitude", 4.583333);
+			json.put("longitude", -74.066667);
+			json.put("name", "Colombia");
+			json.put("zoom", 9);
+			json.put("tooltip", "none");
+		}
+		return json.toString();
+	}
 
-    public void setSelectedLevel(String selectedLevel) {
-        this.selectedLevel = selectedLevel;
-    }
+	public Location getLocation() {
+		return location;
+	}
 
-    public TreeNode getRoot() {
-        return root;
-    }
+	public void setLocation(Location location) {
+		this.location = location;
+	}
 
-    public void setRoot(TreeNode root) {
-        this.root = root;
-    }
+	public List<Location> getAllLocations() {
+		return allLocations;
+	}
 
-    public TreeNode getSelectedNode() {
-        return selectedNode;
-    }
+	public String getSelectedLevel() {
+		return selectedLevel;
+	}
 
-    public void setSelectedNode(TreeNode selectedNode) {
-        this.selectedNode = selectedNode;
-    }
+	public void setSelectedLevel(String selectedLevel) {
+		this.selectedLevel = selectedLevel;
+	}
 
-    public List<Specimen> getLocationSpecimens() {
-        return locationSpecimens;
-    }
+	public List<LocationLevel> getAllLevels() {
+		return allLocationLevels;
+	}
 
-    public void setLocationSpecimens(List<Specimen> locationSpecimens) {
-        this.locationSpecimens = locationSpecimens;
-    }
+	public TreeNode getLocRoot() {
+		return root;
+	}
 
-    private void createLocTree() {
-        try {
-            List<Location> locList = locationService.getList("Location.findOrderedAsc");
-            tree = new HashMap<>();
-            root = null;
-            if (locList != null) {
-                for (Location l : locList) {
-                    if (root == null) {
-                        tree.put(l.getIdLocation(), (root = new DefaultTreeNode(l, null)));
-                    } else {
-                        tree.put(l.getIdLocation(), new DefaultTreeNode(l, tree.get(l.getIdContainer().getIdLocation())));
-                    }
-                }
+	public void setLocRoot(TreeNode locRoot) {
+		this.root = locRoot;
+	}
 
-                TreeNode n = null;
-                if (parentLocation != null) {
-                    n = tree.get(parentLocation.getIdLocation());
-                } else if (location != null) {
-                    n = tree.get(location.getIdLocation());
-                }
-                openBranch(n);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+	public TreeNode getSelectedNode() {
+		return selectedNode;
+	}
 
-    public Location getNodeName() {
-        return (Location) selectedNode.getData();
-    }
+	public void setSelectedNode(TreeNode selectedNode) {
+		this.selectedNode = selectedNode;
+	}
 
-    private void openBranch(TreeNode node) {
-        if (node == null) {
-            return;
-        }
-        deselectAll();
-        node.setSelected(true);
-        while (node != null) {
-            node.setExpanded(true);
-            node = node.getParent();
-        }
-    }
+	public List<Specimen> getLocationSpecimens() {
+		return locationSpecimens;
+	}
 
-    public void deselectAll() {
-        for (TreeNode t : tree.values()) {
-            t.setSelected(false);
-            t.setExpanded(false);
-        }
-    }
+	public void setLocationSpecimens(List<Specimen> locationSpecimens) {
+		this.locationSpecimens = locationSpecimens;
+	}
 
-    public void selectNodeFromId(Integer idLocation) {
-        selectedNode = tree.get(idLocation);
-        openBranch(selectedNode);
-    }
+	public List<LocationLevel> getAvalLevels() {
+		return avalLevels;
+	}
 
-    public void setTaxfromNode(String order) {
-        if (selectedNode != null) {
-            try {
-                root.setExpanded(true);
-                location = (Location) selectedNode.getData();
-                if (!order.equals("create")) {
-                    if (selectedNode.getParent() != null) {
-                        parentLocation = (Location) selectedNode.getParent().getData();
-                    }
-                }
-                if (order.equals("detail")) {
-                    locationSpecimens = location.getSpecimenList();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            RequestContext context = RequestContext.getCurrentInstance();
+	public void setAvalLevels(List<LocationLevel> avalLevels) {
+		this.avalLevels = avalLevels;
+	}
 
-            switch (order) {
-                case "detail":
-                    context.execute("PF('locationDetail').show()");
-                    break;
-                case "create":
-                    prepareCreate();
-                    context.execute("PF('locationCreate').show()");
-                    break;
-                case "edit":
-                    prepareUpdate();
-                    context.execute("PF('locationEdit').show()");
-                    break;
-                case "delete":
-                    context.execute("PF('locationDelete').show()");
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
+	public Location getParentLocation() {
+		return parentLocation;
+	}
 
-    public void onNodeSelect(NodeSelectEvent event) {
-        selectedNode = event.getTreeNode();
-    }
-
-    public String setMapCenter() {
-        JSONObject json = new JSONObject();
-        try {
-            location = getNodeName();
-            json.put("latitude", location.getLatitude());
-            json.put("longitude", location.getLongitude());
-            json.put("name", location.getLocationName());
-            json.put("zoom", 12);
-            List<Specimen> specimens = location.getSpecimenList();
-            if (specimens != null && !specimens.isEmpty()) {
-                JSONArray jsonSpecimensArray = new JSONArray();
-                JSONObject jsonSpecimens;
-                for (Specimen specimen : specimens) {
-                    jsonSpecimens = new JSONObject();
-                    jsonSpecimens.put("scientificName", specimen.getIdTaxonomy().getTaxonomyName() + (specimen.getSpecificEpithet() == null ? "" : " " + specimen.getSpecificEpithet()));
-                    jsonSpecimens.put("commonName", specimen.getCommonName());
-                    jsonSpecimensArray.put(jsonSpecimens);
-                }
-                json.put("tooltip", jsonSpecimensArray);
-            } else {
-                json.put("tooltip", "none");
-            }
-        } catch (Exception e) {
-            json.put("latitude", 4.583333);
-            json.put("longitude", -74.066667);
-            json.put("name", "Colombia");
-            json.put("zoom", 9);
-            json.put("tooltip", "none");
-        }
-        return json.toString();
-    }
+	public void setParentLocation(Location parentLocation) {
+		this.parentLocation = parentLocation;
+	}
 }

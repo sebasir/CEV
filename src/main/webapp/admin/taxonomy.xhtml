@@ -26,6 +26,7 @@
 			</div>
 		</h:form>
 		<!-- end delete Modal -->
+
 		<!-- edit Modal -->
 		<h:form id="editModalForm">
 			<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="Editar Clasificación">
@@ -183,17 +184,17 @@
 			</p:tree>
 			<p:contextMenu for="taxTree">
 				<p:menuitem value="Agregar Clasificación" update="createModalForm"
-					actionListener="#{taxonomyBean.setTaxfromNode('create')}" icon="fa fa-plus"
+					actionListener="#{taxonomyBean.setDatafromNode('create')}" icon="fa fa-plus"
 					oncomplete="$('#createModal').modal({backdrop: false})" />
 
-				<p:menuitem value="Editar" update="editModalForm" actionListener="#{taxonomyBean.setTaxfromNode('edit')}"
+				<p:menuitem value="Editar" update="editModalForm" actionListener="#{taxonomyBean.setDatafromNode('edit')}"
 					icon="fa fa-pencil" oncomplete="$('#editModal').modal({backdrop: false})" />
 
 				<p:menuitem value="Ver detalle de Especies" update="detailModalForm"
-					actionListener="#{taxonomyBean.setTaxfromNode('detail')}" icon="fa fa-folder-open"
+					actionListener="#{taxonomyBean.setDatafromNode('detail')}" icon="fa fa-folder-open"
 					oncomplete="$('#detailModal').modal({backdrop: false})" />
 
-				<p:menuitem value="Borrar" update="taxTree" actionListener="#{taxonomyBean.setTaxfromNode('delete')}"
+				<p:menuitem value="Borrar" update="taxTree" actionListener="#{taxonomyBean.setDatafromNode('delete')}"
 					icon="fa fa-trash" oncomplete="$('#deleteModal').modal({backdrop: false})" />
 			</p:contextMenu>
 			<p:growl id="messages" showDetail="true" />
