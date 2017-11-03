@@ -153,8 +153,8 @@
 										<h:outputText class="col-md-10"
 											value="#{specimen.idTaxonomy.taxonomyName} #{specimen.specificEpithet} (#{specimen.commonName})" />
 										<p:commandLink id="viewButton" class="btn btn-default btn-sm btn-action"
-											oncomplete="PF('specimenDetail').show()" 
-											title="Ficha técnica de #{specimen.commonName}" actionListener="#{specimenBean.setSpecimen(specimen)}">
+											oncomplete="PF('specimenDetail').show()" title="Ficha técnica de #{specimen.commonName}"
+											actionListener="#{specimenBean.setSpecimen(specimen)}">
 											<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
 										</p:commandLink>
 									</div>
@@ -177,7 +177,8 @@
 			<p:tree id="taxTree" value="#{taxonomyBean.taxRoot}" var="tax" orientation="horizontal" selectionMode="single"
 				selection="#{taxonomyBean.selectedNode}">
 				<p:treeNode>
-					<h:outputText value="#{tax}" />
+					#{tax}<br />
+					<p class="taxLevel">#{taxonomyBean.getLevelName(tax)}</p>
 				</p:treeNode>
 			</p:tree>
 			<p:contextMenu for="taxTree">

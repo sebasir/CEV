@@ -65,7 +65,7 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
-		createTaxTree();
+		createTree();
 	}
 
 	public void persist() {
@@ -79,7 +79,7 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 			if (taxonomy != null && taxonomy.getIdTaxonomy() != null) {
 				allTaxonomys.add(taxonomy);
 				outcomeEnum = OutcomeEnum.CREATE_SUCCESS;
-				createTaxTree();
+				createTree();
 			}
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, "Error persisting", e);
@@ -97,7 +97,7 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 			allTaxonomys.remove(taxonomy);
 			allTaxonomys.add(tempTaxonomy);
 			outcomeEnum = OutcomeEnum.UPDATE_SUCCESS;
-			createTaxTree();
+			createTree();
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, "Error editing", e);
 		}
@@ -111,7 +111,7 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 		try {
 			taxonomyService.delete(taxonomy);
 			allTaxonomys.remove(taxonomy);
-			createTaxTree();
+			createTree();
 			outcomeEnum = OutcomeEnum.DELETE_SUCCESS;
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, "Error deleting", e);
@@ -123,32 +123,29 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 		taxonomy = (Taxonomy) selectedNode.getData();
 	}
 
-	public void prepareCreate() {
-		parentTaxonomy = taxonomy;
-		taxonomy = new Taxonomy();
-		selectedLevel = null;
-		avalLevels = new ArrayList<TaxonomyLevel>();
+	private void updateAvalLevels(Taxonomy tax, String command) {
+		selectedLevel = tax.getIdTaxlevel().getIdTaxlevel().toString();
+		avalLevels = new ArrayList<>();
+		Integer highestLevel = Integer.MAX_VALUE;
+		Integer currentLevel = tax.getIdTaxlevel().getTaxlevelRank();
+		if (Constant.EDIT_COMMAND.equals(command)) {
+			for (TreeHierachyModel node : abstractMap.get(tax.getIdTaxonomy()).getLeaves()) {
+				if (highestLevel > node.getLevel())
+					highestLevel = node.getLevel();
+			}
+		}
 
 		for (TaxonomyLevel t : allTaxonomyLevels) {
-			if (t.getTaxlevelRank() > parentTaxonomy.getIdTaxlevel().getTaxlevelRank()) {
+			if (Constant.CREATE_COMMAND.equals(command)) {
+				if (t.getTaxlevelRank() > currentLevel)
+					avalLevels.add(t);
+			} else if (t.getTaxlevelRank() >= currentLevel && t.getTaxlevelRank() < highestLevel) {
 				avalLevels.add(t);
 			}
 		}
 	}
 
-	private void updateAvalLevels(Taxonomy tax, String command) {
-		selectedLevel = tax.getIdTaxlevel().getIdTaxlevel().toString();
-		avalLevels = new ArrayList<>();
-		for (TaxonomyLevel t : allTaxonomyLevels) {
-			if (Constant.CREATE_COMMAND.equals(command)) {
-				if (t.getTaxlevelRank() > tax.getIdTaxlevel().getTaxlevelRank())
-					avalLevels.add(t);
-			} else if (t.getTaxlevelRank() >= tax.getIdTaxlevel().getTaxlevelRank())
-				avalLevels.add(t);
-		}
-	}
-
-	private void createTaxTree() {
+	private void createTree() {
 		tree = new HashMap<>();
 		abstractMap = new HashMap<>();
 		TreeHierachyModel fatherNode = new TreeHierachyModel();
@@ -157,11 +154,11 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 		if (allTaxonomys != null) {
 			for (Taxonomy t : allTaxonomys) {
 				if (root == null) {
-					abstractTree = new TreeHierachyModel(t.getIdTaxonomy());
+					abstractTree = new TreeHierachyModel(t.getIdTaxonomy(), t.getIdTaxlevel().getTaxlevelRank());
 					tree.put(t.getIdTaxonomy(), (root = new DefaultTreeNode(t, null)));
 					abstractMap.put(t.getIdTaxonomy(), abstractTree);
 				} else {
-					childNode = new TreeHierachyModel(t.getIdTaxonomy());
+					childNode = new TreeHierachyModel(t.getIdTaxonomy(), t.getIdTaxlevel().getTaxlevelRank());
 					fatherNode = abstractMap.get(t.getIdContainer().getIdTaxonomy());
 					fatherNode.addNode(childNode);
 					abstractMap.put(t.getIdTaxonomy(), childNode);
@@ -228,18 +225,23 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 					Stack<TreeHierachyModel> searchList = new Stack<>();
 					searchList.add(abstractMap.get(taxonomy.getIdTaxonomy()));
 					TreeHierachyModel node = null;
-					while (!searchList.isEmpty()) {
+					while (!searchList.isEmpty() && taxonomySpecimens.size() <= Constant.MAX_SPECIMEN_LIST) {
 						node = searchList.pop();
 						if (specimenTaxonomy.containsKey(node.getNode())) {
 							taxonomySpecimens.add(specimenTaxonomy.get(node.getNode()));
 						}
 						searchList.addAll(node.getLeaves());
 					}
+					searchList = null;
 				}
 			} catch (Exception e) {
 				LOGGER.log(Level.SEVERE, "Error setting TaxFromNode", e);
 			}
 		}
+	}
+
+	public String getLevelName(Object node) {
+		return ((Taxonomy) node).getIdTaxlevel().getTaxlevelName();
 	}
 
 	public Taxonomy getTaxonomy() {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class TreeHierachyModel {
 	private Integer node;
+	private Integer level;
 	private TreeHierachyModel father;
 	private ArrayList<TreeHierachyModel> leaves;
 
@@ -11,8 +12,9 @@ public class TreeHierachyModel {
 		this.leaves = new ArrayList<>();
 	}
 
-	public TreeHierachyModel(Integer node) {
+	public TreeHierachyModel(Integer node, Integer level) {
 		this.node = node;
+		this.level = level;
 		this.leaves = new ArrayList<>();
 	}
 
@@ -22,6 +24,14 @@ public class TreeHierachyModel {
 
 	public void setNode(Integer node) {
 		this.node = node;
+	}
+	
+	public Integer getLevel() {
+		return level;
+	}
+
+	public void setLevel(Integer level) {
+		this.level = level;
 	}
 
 	public TreeHierachyModel getFather() {

@@ -20,6 +20,7 @@ public class Constant {
     public static final String DETAIL_COMMAND = "detail";
     public static final int QUERY_MAX_RESULTS = 10;
     public static final int UNLIMITED_QUERY_RESULTS = -1;
+    public static final int MAX_SPECIMEN_LIST = 6;
     public static final int MAX_PAGE_INDEX = 4;
     public static final int ACCESS_LEVEL_SELECT = 1;
     public static final int ACCESS_LEVEL_UPDATE = 2;

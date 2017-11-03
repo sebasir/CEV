@@ -353,3 +353,17 @@ div.form-group > label.control-label {
 .ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
 
 }
+
+.taxLevel {
+	color: #2234b7;
+	text-align: right;
+	padding-right: 0.5em;
+}
+
+.ui-menu.ui-menu-dynamic {
+	width: 280px;
+}
+
+.ui-menu .ui-menuitem-text {
+	padding-left: 4px;
+}
