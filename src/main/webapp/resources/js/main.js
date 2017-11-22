@@ -1,6 +1,6 @@
 $(window).ready(function () {
     var form = $("#specimenForm").show();
-    console.log('HOLA');
+
     form.steps({
         headerTag: 'h3',
         bodyTag: 'section',
@@ -25,7 +25,7 @@ $(window).ready(function () {
                 form.find(".body:eq(" + newIndex + ") .error").removeClass("error");
             }
             form.validate().settings.ignore = ":disabled,:hidden";
-            return form.valid();
+           	return true;
         },
         onStepChanged: function (event, currentIndex, priorIndex) {
             $(".actions a:eq(1)").text("Siguiente");

@@ -26,7 +26,7 @@ function loadSteps() {
                 form.find(".body:eq(" + newIndex + ") .error").removeClass("error");
             }
             form.validate().settings.ignore = ":disabled,:hidden";
-            return form.valid();
+            return true;
         },
         onStepChanged: function (event, currentIndex, priorIndex) {
             $(".actions a:eq(1)").text("Siguiente");

@@ -1,8 +1,6 @@
 package net.hpclab.cev.beans;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,25 +11,15 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
-import org.primefaces.component.panelgrid.PanelGrid;
-import org.primefaces.context.RequestContext;
-import org.primefaces.event.FlowEvent;
-import org.primefaces.json.JSONArray;
-import org.primefaces.json.JSONObject;
-import org.primefaces.model.DefaultTreeNode;
-import org.primefaces.model.TreeNode;
-
 import net.hpclab.cev.entities.Catalog;
 import net.hpclab.cev.entities.Collection;
-import net.hpclab.cev.entities.Location;
-import net.hpclab.cev.entities.RegType;
-import net.hpclab.cev.entities.SampleType;
+import net.hpclab.cev.entities.Institution;
 import net.hpclab.cev.entities.Specimen;
 import net.hpclab.cev.entities.Taxonomy;
-import net.hpclab.cev.entities.TaxonomyLevel;
 import net.hpclab.cev.enums.OutcomeEnum;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
+import net.hpclab.cev.services.Util;
 
 @ManagedBean
 @ViewScoped
@@ -40,89 +28,58 @@ public class WizardBean extends UtilsBean implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private DataBaseService<Specimen> specimenService;
 	private DataBaseService<Taxonomy> taxonomyService;
-	private HashMap<Integer, TreeNode> tree;
-	private List<Specimen> allSpecimens;
-	private List<Location> allLocations;
-	private List<Taxonomy> allTaxonomys;
-	private List<TaxonomyLevel> allTaxonomyLevels;
-	private List<TaxonomyLevel> avalLevels;
-	private List<Specimen> taxonomySpecimens;
-	private Specimen specimen;
-	private Location location;
-	private Taxonomy taxonomy;
-	private Taxonomy parentTaxonomy;
-	private RegType regType;
-	private SampleType sampleType;
-	private Catalog catalog;
-	private Collection collection;
-	private PanelGrid specimenForm;
-	private boolean create;
-	private String specimenDetail;
-	private String selectedCatalog;
+	private DataBaseService<Collection> collectionService;
+	private DataBaseService<Catalog> catalogService;
+	private List<Institution> allInstitutions;
+	private List<Collection> allCollections;
+	private List<Catalog> allCatalogs;
+	private String selectedInstitution;
 	private String selectedCollection;
-	private String selectedRegType;
-	private String selectedSampleType;
-	private String selectedLevel;
-	private TreeNode root;
-	private TreeNode selectedNode;
+	private String selectedCatalog;
+	private Specimen specimen;
+	private Catalog catalog;
 
 	private static final Logger LOGGER = Logger.getLogger(WizardBean.class.getSimpleName());
 
 	public WizardBean() {
 		try {
 			specimenService = new DataBaseService<>(Specimen.class);
+			collectionService = new DataBaseService<>(Collection.class);
+			catalogService = new DataBaseService<>(Catalog.class);
 			taxonomyService = new DataBaseService<>(Taxonomy.class, Constant.UNLIMITED_QUERY_RESULTS);
-			allTaxonomys = taxonomyService.getList();
-			specimen = new Specimen();
+			allInstitutions = Util.getInstitutions();
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 	}
 
-	private void createTaxTree() {
-		tree = new HashMap<Integer, TreeNode>();
-		root = null;
-		if (allTaxonomys != null) {
-			for (Taxonomy t : allTaxonomys) {
-				if (root == null) {
-					tree.put(t.getIdTaxonomy(), (root = new DefaultTreeNode(t, null)));
-				} else {
-					tree.put(t.getIdTaxonomy(), new DefaultTreeNode(t, tree.get(t.getIdContainer().getIdTaxonomy())));
-				}
+	public void filterCollections() {
+		if (selectedInstitution != null && !selectedInstitution.isEmpty()) {
+			try {
+				Collection filter = new Collection();
+				filter.setIdInstitution(new Institution(new Integer(selectedInstitution)));
+				allCollections = collectionService.getList(filter);
+			} catch (Exception e) {
+				showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.GENERIC_ERROR, "Error consultando!");
 			}
+		}
+	}
 
-			TreeNode n = null;
-			if (parentTaxonomy != null) {
-				n = tree.get(parentTaxonomy.getIdTaxonomy());
-			} else if (taxonomy != null) {
-				n = tree.get(taxonomy.getIdTaxonomy());
+	public void filterCatalog() {
+		if (selectedCollection != null && !selectedCollection.isEmpty()) {
+			try {
+				Catalog filter = new Catalog();
+				filter.setIdCollection(new Collection(new Integer(selectedCollection)));
+				allCatalogs = catalogService.getList(filter);
+			} catch (Exception e) {
+				showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.GENERIC_ERROR, "Error consultando!");
 			}
-			openBranch(n);
 		}
 	}
 
-	private void openBranch(TreeNode node) {
-		if (node == null) {
-			return;
-		}
-		deselectAll();
-		node.setSelected(true);
-		while (node != null) {
-			node.setExpanded(true);
-			node = node.getParent();
-		}
-	}
-
-	public void deselectAll() {
-		for (TreeNode t : tree.values()) {
-			t.setSelected(false);
-			t.setExpanded(false);
-		}
-	}
-	
 	@PostConstruct
 	public void init() {
-		createTaxTree();
+
 	}
 
 	@PreDestroy
@@ -130,162 +87,36 @@ public class WizardBean extends UtilsBean implements Serializable {
 		specimenService = null;
 	}
 
-	public void limpiarFiltros() {
-		specimen = new Specimen();
-		allSpecimens = null;
+	public List<Institution> getAllInstitutions() {
+		return allInstitutions;
 	}
 
-	public DataBaseService<Specimen>.Pager getPager() {
-		return specimenService.getPager();
+	public void setAllInstitutions(List<Institution> allInstitutions) {
+		this.allInstitutions = allInstitutions;
 	}
 
-	public void persist() {
-		try {
-			specimen.setIdTaxonomy(taxonomy);
-			specimen.setIdLocation(location);
-			specimen.setIdCatalog(catalog);
-			specimen.setIdRety(regType);
-			specimen.setIdSaty(sampleType);
-			specimen = specimenService.persist(specimen);
-			if (specimen != null && specimen.getIdSpecimen() != null) {
-				allSpecimens.add(specimen);
-			}
-			resetForm();
-		} catch (Exception e) {
-			showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.CREATE_ERROR, specimen.getCommonName());
-			LOGGER.log(Level.SEVERE, e.getMessage());
-		}
+	public List<Collection> getAllCollections() {
+		return allCollections;
 	}
 
-	public void edit() {
-		try {
-			specimen.setIdTaxonomy(taxonomy);
-			specimen.setIdLocation(location);
-			specimen.setIdCatalog(catalog);
-			specimen.setIdRety(regType);
-			specimen.setIdSaty(sampleType);
-			specimen = specimenService.merge(specimen);
-			allSpecimens.remove(specimen);
-			allSpecimens.add(specimen);
-		} catch (Exception e) {
-			showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.UPDATE_ERROR, specimen.getCommonName());
-			LOGGER.log(Level.SEVERE, e.getMessage());
-		}
-		resetForm();
+	public void setAllCollections(List<Collection> allCollections) {
+		this.allCollections = allCollections;
 	}
 
-	public void delete() {
-		try {
-			specimenService.delete(specimen);
-			allSpecimens.remove(specimen);
-		} catch (Exception e) {
-			showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.DELETE_ERROR, specimen.getCommonName());
-			LOGGER.log(Level.SEVERE, e.getMessage());
-		}
+	public List<Catalog> getAllCatalogs() {
+		return allCatalogs;
 	}
 
-	private void resetForm() {
-		specimen = new Specimen();
-		selectedCatalog = null;
-		selectedCollection = null;
-		selectedRegType = null;
-		selectedSampleType = null;
+	public void setAllCatalogs(List<Catalog> allCatalogs) {
+		this.allCatalogs = allCatalogs;
 	}
 
-	public void search() {
-		try {
-			allSpecimens = specimenService.getList(specimen);
-		} catch (Exception ex) {
-			LOGGER.log(Level.SEVERE, ex.getMessage());
-		}
+	public String getSelectedInstitution() {
+		return selectedInstitution;
 	}
 
-	public List<Taxonomy> taxonomysQuery(String query) {
-		ArrayList<Taxonomy> taxs = new ArrayList<>();
-		for (Taxonomy t : allTaxonomys) {
-			if (t.getTaxonomyName().toLowerCase().contains(query.toLowerCase())) {
-				taxs.add(t);
-			}
-		}
-		return taxs;
-	}
-
-	public void prepareCreate() {
-		resetForm();
-	}
-
-	public void prepareUpdate(Specimen onEdit) {
-		RequestContext context = RequestContext.getCurrentInstance();
-		context.reset("specimenWizardForm");
-		specimen = onEdit;
-		selectedCatalog = specimen.getIdCatalog().getIdCatalog().toString();
-		selectedCollection = specimen.getIdCatalog().getIdCollection().getIdCollection().toString();
-		selectedRegType = specimen.getIdRety().getIdRety().toString();
-		selectedSampleType = specimen.getIdSaty().getIdSaty().toString();
-	}
-
-	public Specimen getSpecimen() {
-		return specimen;
-	}
-
-	public void setSpecimen(Specimen specimen) {
-		this.specimen = specimen;
-	}
-
-	public Location getLocation() {
-		return location;
-	}
-
-	public void setLocation(Location location) {
-		this.location = location;
-	}
-
-	public Taxonomy getTaxonomy() {
-		return taxonomy;
-	}
-
-	public void setTaxonomy(Taxonomy taxonomy) {
-		this.taxonomy = taxonomy;
-	}
-
-	public RegType getRegType() {
-		return regType;
-	}
-
-	public void setRegType(RegType regType) {
-		this.regType = regType;
-	}
-
-	public SampleType getSampleType() {
-		return sampleType;
-	}
-
-	public void setSampleType(SampleType sampleType) {
-		this.sampleType = sampleType;
-	}
-
-	public PanelGrid getDetailPanel() {
-		return null;
-	}
-
-	public PanelGrid getSpecimenForm() {
-		return specimenForm;
-	}
-
-	public void setSpecimenForm(PanelGrid specimenForm) {
-		this.specimenForm = specimenForm;
-	}
-
-	public List<Specimen> getAllSpecimens() {
-		return allSpecimens;
-	}
-
-	public List<Taxonomy> getAllTaxonomys() {
-		return allTaxonomys;
-	}
-
-	public List<Location> getAllLocations() {
-		return allLocations;
+	public void setSelectedInstitution(String selectedInstitution) {
+		this.selectedInstitution = selectedInstitution;
 	}
 
 	public String getSelectedCollection() {
@@ -296,22 +127,6 @@ public class WizardBean extends UtilsBean implements Serializable {
 		this.selectedCollection = selectedCollection;
 	}
 
-	public String getSelectedRegType() {
-		return selectedRegType;
-	}
-
-	public void setSelectedRegType(String selectedRegType) {
-		this.selectedRegType = selectedRegType;
-	}
-
-	public String getSelectedSampleType() {
-		return selectedSampleType;
-	}
-
-	public void setSelectedSampleType(String selectedSampleType) {
-		this.selectedSampleType = selectedSampleType;
-	}
-
 	public String getSelectedCatalog() {
 		return selectedCatalog;
 	}
@@ -320,170 +135,11 @@ public class WizardBean extends UtilsBean implements Serializable {
 		this.selectedCatalog = selectedCatalog;
 	}
 
-	public Catalog getCatalog() {
-		return catalog;
+	public Specimen getSpecimen() {
+		return specimen;
 	}
 
-	public void setCatalog(Catalog catalog) {
-		this.catalog = catalog;
+	public void setSpecimen(Specimen specimen) {
+		this.specimen = specimen;
 	}
-
-	public Collection getCollection() {
-		return collection;
-	}
-
-	public void setCollection(Collection collection) {
-		this.collection = collection;
-	}
-
-	public String onFlowProcess(FlowEvent event) {
-		return event.getNewStep();
-	}
-
-	public String getHeader() {
-		return specimen != null && specimen.getIdSpecimen() != null ? "Editar a " + specimen.getCommonName()
-				: "Registrar nuevo espécimen";
-	}
-
-	public boolean isCreate() {
-		return create;
-	}
-
-	public void setCreate(boolean create) {
-		this.create = create;
-	}
-
-	private void setSpecimenfromId() {
-		this.specimen = getSpecimen(specimenDetail);
-	}
-
-	private Specimen getSpecimen(String id) {
-		Integer idSpecimen;
-		try {
-			idSpecimen = new Integer(id);
-			for (Specimen s : allSpecimens) {
-				if (s.getIdSpecimen().equals(idSpecimen)) {
-					return s;
-				}
-			}
-		} catch (NumberFormatException e) {
-			LOGGER.log(Level.SEVERE, e.getMessage());
-		}
-		return null;
-	}
-
-	public String getSpecimenDetail() {
-		return specimenDetail;
-	}
-
-	public void setSpecimenDetail(String specimenDetail) {
-		this.specimenDetail = specimenDetail;
-		setSpecimenfromId();
-	}
-
-	public String printJSON() {
-		JSONObject specimenInfo = new JSONObject();
-		if (specimen == null || specimen.getIdSpecimen() == null) {
-			specimenInfo.put("error", "No hay espécimen seleccionado");
-		} else {
-			JSONArray taxArray = new JSONArray();
-			JSONArray locArray = new JSONArray();
-			JSONObject taxData = new JSONObject();
-			JSONObject locData = new JSONObject();
-			JSONObject colData = new JSONObject();
-			Taxonomy tax = specimen.getIdTaxonomy();
-			ArrayList<Taxonomy> taxList = new ArrayList<>();
-			while (tax != null) {
-				taxList.add(0, tax);
-				tax = tax.getIdContainer();
-			}
-
-			Location loc = specimen.getIdLocation();
-			ArrayList<Location> locList = new ArrayList<>();
-			while (loc != null) {
-				locList.add(0, loc);
-				loc = loc.getIdContainer();
-			}
-			JSONObject data;
-			for (Taxonomy t : taxList) {
-				data = new JSONObject();
-				data.put("label", t.getIdTaxlevel().getTaxlevelName());
-				data.put("value", t.getTaxonomyName());
-				taxArray.put(data);
-			}
-
-			for (Location l : locList) {
-				data = new JSONObject();
-				data.put("label", l.getIdLoclevel().getLoclevelName());
-				data.put("value", l.getLocationName());
-				locArray.put(data);
-			}
-
-			taxData.put("specificEpithet", specimen.getSpecificEpithet() == null ? "" : specimen.getSpecificEpithet());
-			taxData.put("commonName", specimen.getCommonName());
-			taxData.put("idenComment", specimen.getIdenComment() == null ? "" : specimen.getIdenComment());
-			taxData.put("idenDate", formatDate(specimen.getIdenDate()));
-			locData.put("lat", specimen.getIdLocation().getLatitude());
-			locData.put("lon", specimen.getIdLocation().getLongitude());
-			locData.put("alt", specimen.getIdLocation().getAltitude());
-			locData.put("collectDate", formatDate(specimen.getCollectDate()));
-			locData.put("collectComment", specimen.getCollectComment() == null ? "" : specimen.getCollectComment());
-			colData.put("regType", specimen.getIdRety().getRetyName());
-			colData.put("samType", specimen.getIdSaty().getSatyName());
-			colData.put("collectionName", specimen.getIdCatalog().getIdCollection().getCollectionName());
-			colData.put("idBioreg", specimen.getIdBioreg());
-			colData.put("catalogName", specimen.getIdCatalog().getCatalogName());
-			specimenInfo.put("taxArray", taxArray);
-			specimenInfo.put("locArray", locArray);
-			specimenInfo.put("taxData", taxData);
-			specimenInfo.put("locData", locData);
-			specimenInfo.put("colData", colData);
-		}
-		return specimenInfo.toString();
-	}
-
-	public List<TaxonomyLevel> getAvalLevels() {
-		return avalLevels;
-	}
-
-	public void setAvalLevels(List<TaxonomyLevel> avalLevels) {
-		this.avalLevels = avalLevels;
-	}
-
-	public String getSelectedLevel() {
-		return selectedLevel;
-	}
-
-	public void setSelectedLevel(String selectedLevel) {
-		this.selectedLevel = selectedLevel;
-	}
-
-	public List<TaxonomyLevel> getAllLevels() {
-		return allTaxonomyLevels;
-	}
-
-	public TreeNode getTaxRoot() {
-		return root;
-	}
-
-	public void setTaxRoot(TreeNode taxRoot) {
-		this.root = taxRoot;
-	}
-
-	public TreeNode getSelectedNode() {
-		return selectedNode;
-	}
-
-	public void setSelectedNode(TreeNode selectedNode) {
-		this.selectedNode = selectedNode;
-	}
-
-	public List<Specimen> getTaxonomySpecimens() {
-		return taxonomySpecimens;
-	}
-
-	public void setTaxonomySpecimens(List<Specimen> taxonomySpecimens) {
-		this.taxonomySpecimens = taxonomySpecimens;
-	}
-
 }

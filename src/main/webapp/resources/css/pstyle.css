@@ -1,78 +1,87 @@
 .cursive {
-    font-style: italic;
+	font-style: italic;
 }
 
 .bolded {
-    font-weight: bold;
+	font-weight: bold;
 }
 
 .disable-scroll .ui-dialog-content {
-    overflow: hidden !important;
+	overflow: hidden !important;
 }
 
 .ui-widget, .ui-widget .ui-widget, .ui-button-text ui-c {
-    font-family: Raleway;
+	font-family: Raleway;
 }
 
-.ui-widget .title{
-    font-size: 1.2em !important;
-    font-weight: bold;
-    text-align: center;
-    display: block
+.ui-widget .title {
+	font-size: 1.2em !important;
+	font-weight: bold;
+	text-align: center;
+	display: block
 }
 
 .tree {
-    width: 100%;
-    height: 150px;
-    overflow-y: scroll;
-    display: block;
-    padding-top: 10px;
+	width: 100%;
+	height: 150px;
+	overflow-y: scroll;
+	display: block;
+	padding-top: 10px;
 }
 
 .panelRes {
-    width: 100%;
-    overflow-y: scroll;
-    max-height: 100px;
+	width: 100%;
+	overflow-y: scroll;
+	max-height: 100px;
 }
 
 @font-face {
-    font-family: 'Raleway';
-    font-style: normal;
-    font-weight: 400;
-    src: local('Raleway'), url(/Bichos/css/font/0dTEPzkLWceF7z0koJaX1A.woff2) format('woff2');
+	font-family: 'Raleway';
+	font-style: normal;
+	font-weight: 400;
+	src: local('Raleway'),
+		url(/Bichos/css/font/0dTEPzkLWceF7z0koJaX1A.woff2) format('woff2');
 }
 
 .ui-tree.ui-tree-horizontal .ui-treenode {
-    padding: 5px 10px !important;
+	padding: 5px 10px !important;
 }
 
-.ui-tree.ui-tree-horizontal .ui-treenode.ui-treenode-leaf, .ui-tree.ui-tree-horizontal .ui-treenode.ui-treenode-collapsed {
-    padding-right: 0px !important;
-    min-width: 12em;
+.ui-tree.ui-tree-horizontal .ui-treenode.ui-treenode-leaf, .ui-tree.ui-tree-horizontal .ui-treenode.ui-treenode-collapsed
+	{
+	padding-right: 0px !important;
+	min-width: 12em;
 }
 
-.ui-tree.ui-tree-horizontal .ui-treenode, .ui-treenode ui-treenode-parent ui-treenode-selected {
-    min-width: 12em;
-    text-align: center;
+.ui-tree.ui-tree-horizontal .ui-treenode, .ui-treenode ui-treenode-parent ui-treenode-selected
+	{
+	min-width: 12em;
+	text-align: center;
 }
 
-.ui-tree-horizontal .ui-treenode-parent .ui-treenode-content, .ui-tree-horizontal .ui-treenode-leaf .ui-treenode-content {
-    font-weight: bolder;
+.ui-tree-horizontal .ui-treenode-parent .ui-treenode-content,
+	.ui-tree-horizontal .ui-treenode-leaf .ui-treenode-content {
+	font-weight: bolder;
 }
 
 .ui-tree.ui-tree-horizontal .ui-tree-toggler {
-    vertical-align: text-top;
+	vertical-align: text-top;
 }
 
-.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
-    border: 1px solid #72ab19;
-    background: #d9efb5;
-    font-weight: bold;
-    color: #557b18;
+.ui-state-default, .ui-widget-content .ui-state-default,
+	.ui-widget-header .ui-state-default {
+	border: 1px solid #72ab19;
+	background: #d9efb5;
+	font-weight: bold;
+	color: #557b18;
 }
 
 .ui-widget-content {
-    border: 1px solid #72ab19;
-    background: rgba(238, 238, 238, 0.8);
-    /* color: #222222; */
+	border: 1px solid #72ab19;
+	background: rgba(238, 238, 238, 0.8);
+	/* color: #222222; */
+}
+
+.wizard, .tabcontrol {
+	height: 80% !important;
 }

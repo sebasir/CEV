@@ -13,6 +13,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
+import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
@@ -40,6 +41,7 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 	private HashMap<Integer, TreeNode> tree;
 	private HashMap<Integer, TreeHierachyModel> abstractMap;
 	private HashMap<Integer, Specimen> specimenTaxonomy;
+	private HashMap<Integer, TaxonomyLevel> levelMap;
 	private TreeHierachyModel abstractTree;
 	private List<Taxonomy> allTaxonomys;
 	private List<Specimen> allSpecimens;
@@ -71,9 +73,11 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		OutcomeEnum outcomeEnum = OutcomeEnum.CREATE_ERROR;
 		String transactionMessage = taxonomy.getTaxonomyName();
+		TaxonomyLevel idTaxonomyLevel;
 		try {
+			idTaxonomyLevel = levelMap.get(new Integer(selectedLevel));
 			taxonomy.setIdContainer(new Taxonomy(parentTaxonomy.getIdTaxonomy()));
-			taxonomy.setIdTaxlevel(new TaxonomyLevel(new Integer(selectedLevel)));
+			taxonomy.setIdTaxlevel(idTaxonomyLevel);
 			taxonomy = taxonomyService.persist(taxonomy);
 			if (taxonomy != null && taxonomy.getIdTaxonomy() != null) {
 				allTaxonomys.add(taxonomy);
@@ -169,6 +173,10 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 			}
 			openBranch(n);
 		}
+		levelMap = new HashMap<>();
+		for (TaxonomyLevel t : allTaxonomyLevels) {
+			levelMap.put(t.getIdTaxlevel(), t);
+		}
 
 		if (allSpecimens != null) {
 			specimenTaxonomy = new HashMap<>();
@@ -195,6 +203,12 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 			t.setSelected(false);
 			t.setExpanded(false);
 		}
+	}
+
+	public void onNodeSelect(NodeSelectEvent event) {
+		selectedNode = event.getTreeNode();
+		showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.GENERIC_INFO,
+				selectedNode.toString() + " seleccionado");
 	}
 
 	public void setDatafromNode(String command) {

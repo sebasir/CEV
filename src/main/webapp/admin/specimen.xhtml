@@ -148,15 +148,6 @@
 		<p:growl id="messages" showDetail="true" />
 	</h:form>
 
-
-	<p:dialog id="detailDialog" widgetVar="specimenDetail" modal="true" dynamic="true" resizable="false" appendTo="@(body)"
-		header="#{specimenBean.taxonomy.taxonomyName} #{specimenBean.specimen.specificEpithet}" closeOnEscape="true">
-		<h:form id="specimenDetailForm">
-			<p:panelGrid id="taxPanelGrid" binding="#{specimenBean.specimenForm}" />
-			<p:commandButton id="detailClose" value="Cerrar" onclick="PF('specimenDetail').close()" />
-		</h:form>
-	</p:dialog>
-
 	<p:dialog id="formDialog" widgetVar="specimenWizard" modal="true" resizable="false" appendTo="@(body)"
 		header="#{specimenBean.header}" closeOnEscape="true" width="500px" styleClass="disable-scroll">
 		<h:form id="specimenWizardForm" prependId="false">

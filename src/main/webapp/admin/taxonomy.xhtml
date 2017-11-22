@@ -3,8 +3,8 @@
 	<h:outputStylesheet library="css" name="pstyle.css" />
 	<h:body>
 		<!-- delete Modal -->
-		<h:form id="deleteModalForm">
-			<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="Eliminar registro">
+		<h:form id="deleteTaxModalForm">
+			<div class="modal fade" id="deleteTaxModal" tabindex="-1" role="dialog" aria-labelledby="Eliminar registro">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
@@ -17,8 +17,8 @@
 						<div class="modal-footer">
 							<div class="input-group">
 								<p:commandButton id="deleteYesButton" value="Eliminar" action="#{taxonomyBean.delete}" update=":formTaxonomy"
-									oncomplete="$('#deleteModal').modal('hide')" />
-								<p:commandButton id="deleteNoButton" value="Cancelar" type="button" onclick="$('#deleteModal').modal('hide')" />
+									oncomplete="$('#deleteTaxModal').modal('hide')" />
+								<p:commandButton id="deleteNoButton" value="Cancelar" type="button" onclick="$('#deleteTaxModal').modal('hide')" />
 							</div>
 						</div>
 					</div>
@@ -28,8 +28,8 @@
 		<!-- end delete Modal -->
 
 		<!-- edit Modal -->
-		<h:form id="editModalForm">
-			<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="Editar Clasificación">
+		<h:form id="editTaxModalForm">
+			<div class="modal fade" id="editTaxModal" tabindex="-1" role="dialog" aria-labelledby="Editar Clasificación">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
@@ -69,8 +69,8 @@
 						<div class="modal-footer">
 							<div class="input-group">
 								<p:commandButton id="editYesButton" value="Guardar" action="#{taxonomyBean.edit()}" update=":formTaxonomy"
-									oncomplete="$('#editModal').modal('hide')" />
-								<p:commandButton id="editNoButton" value="Cancelar" type="button" onclick="$('#editModal').modal('hide')" />
+									oncomplete="$('#editTaxModal').modal('hide')" />
+								<p:commandButton id="editNoButton" value="Cancelar" type="button" onclick="$('#editTaxModal').modal('hide')" />
 							</div>
 						</div>
 					</div>
@@ -80,8 +80,8 @@
 		<!-- end edit Modal -->
 
 		<!-- create Modal -->
-		<h:form id="createModalForm">
-			<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="Crear Clasificación">
+		<h:form id="createTaxModalForm">
+			<div class="modal fade" id="createTaxModal" tabindex="-1" role="dialog" aria-labelledby="Crear Clasificación">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
@@ -126,8 +126,8 @@
 						<div class="modal-footer">
 							<div class="input-group">
 								<p:commandButton id="createYesButton" value="Guardar" action="#{taxonomyBean.persist()}" update=":formTaxonomy"
-									oncomplete="$('#createModal').modal('hide')" />
-								<p:commandButton id="createNoButton" value="Cancelar" type="button" onclick="$('#createModal').modal('hide')" />
+									oncomplete="$('#createTaxModal').modal('hide')" />
+								<p:commandButton id="createNoButton" value="Cancelar" type="button" onclick="$('#createTaxModal').modal('hide')" />
 							</div>
 						</div>
 					</div>
@@ -137,8 +137,8 @@
 		<!-- end create Modal -->
 
 		<!-- detail Modal -->
-		<h:form id="detailModalForm">
-			<div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="Detalle de Especímenes">
+		<h:form id="detailTaxModalForm">
+			<div class="modal fade" id="detailTaxModal" tabindex="-1" role="dialog" aria-labelledby="Detalle de Especímenes">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
@@ -165,7 +165,7 @@
 						</div>
 						<div class="modal-footer">
 							<div class="input-group">
-								<p:commandButton id="detailNoButton" value="Cerrar" type="button" onclick="$('#detailModal').modal('hide')" />
+								<p:commandButton id="detailNoButton" value="Cerrar" type="button" onclick="$('#detailTaxModal').modal('hide')" />
 							</div>
 						</div>
 					</div>
@@ -175,27 +175,29 @@
 		<!-- end detail Modal -->
 
 		<h:form id="formTaxonomy">
+			<p:growl id="growl" showDetail="true" />
 			<p:tree id="taxTree" value="#{taxonomyBean.taxRoot}" var="tax" orientation="horizontal" selectionMode="single"
 				selection="#{taxonomyBean.selectedNode}">
+				<p:ajax event="select" listener="#{taxonomyBean.onNodeSelect}" update="growl" />
 				<p:treeNode>
 					#{tax}<br />
 					<p class="taxLevel">#{taxonomyBean.getLevelName(tax)}</p>
 				</p:treeNode>
 			</p:tree>
 			<p:contextMenu for="taxTree">
-				<p:menuitem value="Agregar Clasificación" update="createModalForm"
+				<p:menuitem value="Agregar Clasificación" update="createTaxModalForm"
 					actionListener="#{taxonomyBean.setDatafromNode('create')}" icon="fa fa-plus"
-					oncomplete="$('#createModal').modal({backdrop: false})" />
+					oncomplete="$('#createTaxModal').modal({backdrop: false})" />
 
-				<p:menuitem value="Editar" update="editModalForm" actionListener="#{taxonomyBean.setDatafromNode('edit')}"
-					icon="fa fa-pencil" oncomplete="$('#editModal').modal({backdrop: false})" />
+				<p:menuitem value="Editar" update="editTaxModalForm" actionListener="#{taxonomyBean.setDatafromNode('edit')}"
+					icon="fa fa-pencil" oncomplete="$('#editTaxModal').modal({backdrop: false})" />
 
-				<p:menuitem value="Ver detalle de Especies" update="detailModalForm"
+				<p:menuitem value="Ver detalle de Especies" update="detailTaxModalForm"
 					actionListener="#{taxonomyBean.setDatafromNode('detail')}" icon="fa fa-folder-open"
-					oncomplete="$('#detailModal').modal({backdrop: false})" />
+					oncomplete="$('#detailTaxModal').modal({backdrop: false})" />
 
 				<p:menuitem value="Borrar" update="taxTree" actionListener="#{taxonomyBean.setDatafromNode('delete')}"
-					icon="fa fa-trash" oncomplete="$('#deleteModal').modal({backdrop: false})" />
+					icon="fa fa-trash" oncomplete="$('#deleteTaxModal').modal({backdrop: false})" />
 			</p:contextMenu>
 			<p:growl id="messages" showDetail="true" />
 		</h:form>

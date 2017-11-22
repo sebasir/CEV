@@ -894,10 +894,6 @@ body > .navbar-collapse[data-color="purple"]:after {
     padding: 9px 16px;
 }
 
-.input-group-btn .btn-default:not(.btn-fill) {
-    border-color: #DDDDDD;
-}
-
 .input-group-btn:last-child > .btn {
     margin-left: 0;
 }

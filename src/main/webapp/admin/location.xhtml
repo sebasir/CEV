@@ -181,13 +181,14 @@
 		<!-- end detail Modal -->
 
 		<h:form id="formLocation">
+			<p:growl id="growl" showDetail="true" />
 			<p:panel id="data">
 				<f:facet name="header">
 					<h:outputText value="Ubicaciones" />
 				</f:facet>
 				<p:tree id="locTree" value="#{locationBean.locRoot}" var="loc" orientation="vertical" selectionMode="single"
 					selection="#{locationBean.selectedNode}">
-					<p:ajax event="select" listener="#{locationBean.onNodeSelect}" update="mapCenter" />
+					<p:ajax event="select" listener="#{locationBean.onNodeSelect}" update="mapCenter, growl" />
 					<p:treeNode expandedIcon="fa fa-folder-open" collapsedIcon="fa fa-folder">
 						<h:outputText value="#{loc}" />
 					</p:treeNode>
@@ -208,7 +209,6 @@
 						icon="fa fa-trash" oncomplete="$('#deleteModal').modal({backdrop: false})" />
 				</p:contextMenu>
 			</p:panel>
-			<p:growl id="messages" showDetail="true" />
 		</h:form>
 	</h:body>
 </ui:composition>
