@@ -78,11 +78,10 @@ public class LocationBean extends UtilsBean implements Serializable {
 			location.setIdContainer(new Location(parentLocation.getIdLocation()));
 			location.setIdLoclevel(new LocationLevel(new Integer(selectedLevel)));
 			location = locationService.persist(location);
-			if (location != null && location.getIdLocation() != null) {
-				allLocations.add(location);
-				outcomeEnum = OutcomeEnum.CREATE_SUCCESS;
-				createTree();
-			}
+			allLocations.add(location);
+			outcomeEnum = OutcomeEnum.CREATE_SUCCESS;
+			createTree();
+			openBranch(tree.get(location.getIdLocation()));
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, "Error persisting", e);
 		}
@@ -100,6 +99,7 @@ public class LocationBean extends UtilsBean implements Serializable {
 			allLocations.add(tempLocation);
 			outcomeEnum = OutcomeEnum.UPDATE_SUCCESS;
 			createTree();
+			openBranch(tree.get(tempLocation.getIdLocation()));
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, "Error editing", e);
 		}
@@ -114,6 +114,7 @@ public class LocationBean extends UtilsBean implements Serializable {
 			locationService.delete(location);
 			allLocations.remove(location);
 			createTree();
+			openBranch(tree.get(location.getIdContainer().getIdLocation()));
 			outcomeEnum = OutcomeEnum.DELETE_SUCCESS;
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, "Error deleting", e);
@@ -205,6 +206,7 @@ public class LocationBean extends UtilsBean implements Serializable {
 			try {
 				root.setExpanded(true);
 				location = (Location) selectedNode.getData();
+				openBranch(selectedNode);
 				updateAvalLevels(location, command);
 				if (Constant.CREATE_COMMAND.equals(command)) {
 					parentLocation = (Location) selectedNode.getData();
@@ -235,7 +237,8 @@ public class LocationBean extends UtilsBean implements Serializable {
 
 	public void onNodeSelect(NodeSelectEvent event) {
 		selectedNode = event.getTreeNode();
-		showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.GENERIC_INFO, selectedNode.toString() + " seleccionado");
+		showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.GENERIC_INFO,
+				selectedNode.toString() + " seleccionado");
 	}
 
 	public String setMapCenter() {

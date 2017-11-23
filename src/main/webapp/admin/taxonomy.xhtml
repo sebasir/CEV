@@ -196,10 +196,9 @@
 					actionListener="#{taxonomyBean.setDatafromNode('detail')}" icon="fa fa-folder-open"
 					oncomplete="$('#detailTaxModal').modal({backdrop: false})" />
 
-				<p:menuitem value="Borrar" update="taxTree" actionListener="#{taxonomyBean.setDatafromNode('delete')}"
+				<p:menuitem value="Borrar" actionListener="#{taxonomyBean.setDatafromNode('delete')}"
 					icon="fa fa-trash" oncomplete="$('#deleteTaxModal').modal({backdrop: false})" />
 			</p:contextMenu>
-			<p:growl id="messages" showDetail="true" />
 		</h:form>
 	</h:body>
 </ui:composition>

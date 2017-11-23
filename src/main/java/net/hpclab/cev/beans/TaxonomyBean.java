@@ -79,11 +79,10 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 			taxonomy.setIdContainer(new Taxonomy(parentTaxonomy.getIdTaxonomy()));
 			taxonomy.setIdTaxlevel(idTaxonomyLevel);
 			taxonomy = taxonomyService.persist(taxonomy);
-			if (taxonomy != null && taxonomy.getIdTaxonomy() != null) {
-				allTaxonomys.add(taxonomy);
-				outcomeEnum = OutcomeEnum.CREATE_SUCCESS;
-				createTree();
-			}
+			allTaxonomys.add(taxonomy);
+			createTree();
+			openBranch(tree.get(taxonomy.getIdTaxonomy()));
+			outcomeEnum = OutcomeEnum.CREATE_SUCCESS;
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, "Error persisting", e);
 		}
@@ -99,8 +98,9 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 			Taxonomy tempTaxonomy = taxonomyService.merge(taxonomy);
 			allTaxonomys.remove(taxonomy);
 			allTaxonomys.add(tempTaxonomy);
-			outcomeEnum = OutcomeEnum.UPDATE_SUCCESS;
 			createTree();
+			openBranch(tree.get(tempTaxonomy.getIdTaxonomy()));
+			outcomeEnum = OutcomeEnum.UPDATE_SUCCESS;
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, "Error editing", e);
 		}
@@ -115,6 +115,7 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 			taxonomyService.delete(taxonomy);
 			allTaxonomys.remove(taxonomy);
 			createTree();
+			openBranch(tree.get(taxonomy.getIdContainer().getIdTaxonomy()));
 			outcomeEnum = OutcomeEnum.DELETE_SUCCESS;
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, "Error deleting", e);

@@ -20,104 +20,104 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "collection")
-@NamedQueries({
-    @NamedQuery(name = "Collection.findAll", query = "SELECT c FROM Collection c")})
+@NamedQueries({ @NamedQuery(name = "Collection.findAll", query = "SELECT c FROM Collection c") })
 public class Collection implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @SequenceGenerator(name = "CollectionSeq", sequenceName = "collection_id_collection_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CollectionSeq")
+	private static final long serialVersionUID = 1L;
+	@Id
+	@SequenceGenerator(name = "CollectionSeq", sequenceName = "collection_id_collection_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CollectionSeq")
 
-    @Basic(optional = false)
-    @Column(name = "id_collection")
-    private Integer idCollection;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 64)
-    @Column(name = "collection_name")
-    private String collectionName;
+	@Basic(optional = false)
+	@Column(name = "id_collection")
+	private Integer idCollection;
+	@Basic(optional = false)
+	@NotNull
+	@Size(min = 1, max = 64)
+	@Column(name = "collection_name")
+	private String collectionName;
 
-    @Size(max = 32)
-    @Column(name = "status")
-    private String status;
+	@Size(max = 32)
+	@Column(name = "status")
+	private String status;
 
-    @OneToMany(mappedBy = "idCollection")
-    private List<Catalog> catalogList;
-    @JoinColumn(name = "id_institution", referencedColumnName = "id_institution")
-    @ManyToOne
-    private Institution idInstitution;
+	@OneToMany(mappedBy = "idCollection")
+	private List<Catalog> catalogList;
+	@JoinColumn(name = "id_institution", referencedColumnName = "id_institution")
+	@ManyToOne
+	private Institution idInstitution;
 
-    public Collection() {
-    }
+	public Collection() {
+	}
 
-    public Collection(Integer idCollection) {
-        this.idCollection = idCollection;
-    }
+	public Collection(Integer idCollection) {
+		this.idCollection = idCollection;
+	}
 
-    public Collection(Integer idCollection, String collectionName) {
-        this.idCollection = idCollection;
-        this.collectionName = collectionName;
-    }
+	public Collection(Integer idCollection, String collectionName) {
+		this.idCollection = idCollection;
+		this.collectionName = collectionName;
+	}
 
-    public Integer getIdCollection() {
-        return idCollection;
-    }
+	public Integer getIdCollection() {
+		return idCollection;
+	}
 
-    public void setIdCollection(Integer idCollection) {
-        this.idCollection = idCollection;
-    }
+	public void setIdCollection(Integer idCollection) {
+		this.idCollection = idCollection;
+	}
 
-    public String getCollectionName() {
-        return collectionName;
-    }
+	public String getCollectionName() {
+		return collectionName;
+	}
 
-    public void setCollectionName(String collectionName) {
-        this.collectionName = collectionName;
-    }
+	public void setCollectionName(String collectionName) {
+		this.collectionName = collectionName;
+	}
 
-    public String getStatus() {
-        return status;
-    }
+	public String getStatus() {
+		return status;
+	}
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
-    public List<Catalog> getCatalogList() {
-        return catalogList;
-    }
+	public List<Catalog> getCatalogList() {
+		return catalogList;
+	}
 
-    public void setCatalogList(List<Catalog> catalogList) {
-        this.catalogList = catalogList;
-    }
+	public void setCatalogList(List<Catalog> catalogList) {
+		this.catalogList = catalogList;
+	}
 
-    public Institution getIdInstitution() {
-        return idInstitution;
-    }
+	public Institution getIdInstitution() {
+		return idInstitution;
+	}
 
-    public void setIdInstitution(Institution idInstitution) {
-        this.idInstitution = idInstitution;
-    }
+	public void setIdInstitution(Institution idInstitution) {
+		this.idInstitution = idInstitution;
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (idCollection != null ? idCollection.hashCode() : 0);
-        return hash;
-    }
+	@Override
+	public int hashCode() {
+		int hash = 0;
+		hash += (idCollection != null ? idCollection.hashCode() : 0);
+		return hash;
+	}
 
-    @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof Collection)) {
-            return false;
-        }
-        Collection other = (Collection) object;
-        return !((this.idCollection == null && other.idCollection != null) || (this.idCollection != null && !this.idCollection.equals(other.idCollection)));
-    }
+	@Override
+	public boolean equals(Object object) {
+		if (!(object instanceof Collection)) {
+			return false;
+		}
+		Collection other = (Collection) object;
+		return !((this.idCollection == null && other.idCollection != null)
+				|| (this.idCollection != null && !this.idCollection.equals(other.idCollection)));
+	}
 
-    @Override
-    public String toString() {
-        return "net.hpclab.entities.Collection[ idCollection=" + idCollection + " ]";
-    }
+	@Override
+	public String toString() {
+		return this.collectionName;
+	}
 }

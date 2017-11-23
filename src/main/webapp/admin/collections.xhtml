@@ -1,0 +1,169 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
+	<h:outputStylesheet library="css" name="pstyle.css" />
+	<h:body>
+		<!-- delete Modal -->
+		<h:form id="deleteColModalForm">
+			<div class="modal fade" id="deleteColModal" tabindex="-1" role="dialog" aria-labelledby="Eliminar registro">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+							</button>
+							<h4 class="modal-title">Confirmar eliminación</h4>
+						</div>
+						<div class="modal-body">¿Está seguro que desea eliminar este registro?</div>
+						<div class="modal-footer">
+							<div class="input-group">
+								<p:commandButton id="deleteYesButton" value="Eliminar" action="#{collectionBean.delete}" update=":catalogForm"
+									oncomplete="$('#deleteColModal').modal('hide')" />
+								<p:commandButton id="deleteNoButton" value="Cancelar" type="button" onclick="$('#deleteColModal').modal('hide')" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</h:form>
+		<!-- end delete Modal -->
+
+		<!-- edit Modal -->
+		<h:form id="editColModalForm">
+			<div class="modal fade" id="editColModal" tabindex="-1" role="dialog" aria-labelledby="Editar">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+							</button>
+							<h4 class="modal-title">Editar clasificación</h4>
+						</div>
+						<div class="modal-body">
+							<div class="form-group">
+								<div class="row">
+									<label class="col-md-4 control-label" for="objectName">Nombre de #{collectionBean.objectType}:</label>
+									<div class="col-md-8">
+										<h:inputText id="objectName" styleClass="ui-state-default form-control input-sm input-block-level required"
+											value="#{collectionBean.objectName}" required="true" requiredMessage="Debes definir el nombre de #{collectionBean.objectType}!">
+											<p:ajax process="@this" />
+											<f:validateBean disabled="true" />
+										</h:inputText>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<div class="input-group">
+								<p:commandButton id="editYesButton" value="Guardar" action="#{collectionBean.edit()}" update=":catalogForm"
+									oncomplete="$('#editColModal').modal('hide')" />
+								<p:commandButton id="editNoButton" value="Cancelar" type="button" onclick="$('#editColModal').modal('hide')" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</h:form>
+		<!-- end edit Modal -->
+
+		<!-- create Modal -->
+		<h:form id="createColModalForm">
+			<div class="modal fade" id="createColModal" tabindex="-1" role="dialog" aria-labelledby="Crear #{collectionBean.objectType}">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+							</button>
+							<h4 class="modal-title">Crear #{collectionBean.objectType}</h4>
+						</div>
+						<div class="modal-body">
+							<div class="form-group">
+								<div class="row">
+									<label class="col-md-4 control-label">#{collectionBean.objectFatherType} Origen:</label>
+									<h:outputText class="col-md-4" value="#{collectionBean.objectFatherName}" />
+								</div>
+								<div class="row">
+									<label class="col-md-4 control-label">Nombre de #{collectionBean.objectType}:</label>
+									<div class="col-md-8">
+										<h:inputText id="objectName" styleClass="ui-state-default form-control input-sm input-block-level required"
+											value="#{collectionBean.objectName}" required="true" requiredMessage="Debes definir el nombre de #{collectionBean.objectType}!">
+											<p:ajax process="@this" />
+											<f:validateBean disabled="true" />
+										</h:inputText>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<div class="input-group">
+								<p:commandButton id="createYesButton" value="Guardar" action="#{collectionBean.persist()}" update=":catalogForm"
+									oncomplete="$('#createColModal').modal('hide')" />
+								<p:commandButton id="createNoButton" value="Cancelar" type="button" onclick="$('#createColModal').modal('hide')" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</h:form>
+		<!-- end create Modal -->
+
+		<!-- detail Modal -->
+		<h:form id="detailColModalForm">
+			<div class="modal fade" id="detailTaxModal" tabindex="-1" role="dialog" aria-labelledby="Detalle de Especímenes">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+							</button>
+							<h4 class="modal-title">Detalle de Especímenes</h4>
+						</div>
+						<div class="modal-body">
+							<div class="form-group">
+								<ui:repeat var="specimen" value="#{collectionBean.collectionSpecimens}">
+									<div class="row">
+										<h:outputText class="col-md-10" value="#{specimen.idTaxonomy.taxonomyName} #{specimen.specificEpithet} (#{specimen.commonName})" />
+										<p:commandLink id="viewButton" class="btn btn-default btn-sm btn-action" oncomplete="PF('specimenDetail').show()"
+											title="Ficha técnica de #{specimen.commonName}" actionListener="#{specimenBean.setSpecimen(specimen)}">
+											<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
+										</p:commandLink>
+									</div>
+									<hr />
+								</ui:repeat>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<div class="input-group">
+								<p:commandButton id="detailNoButton" value="Cerrar" type="button" onclick="$('#detailTaxModal').modal('hide')" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</h:form>
+		<!-- end detail Modal -->
+		<h:form id="catalogForm">
+			<p:growl id="growl" showDetail="true" />
+			<p:tree id="colTree" value="#{collectionBean.collectionRoot}" var="col" orientation="horizontal" selectionMode="single"
+				selection="#{collectionBean.selectedNode}">
+				<p:ajax event="select" listener="#{collectionBean.onNodeSelect}" update="growl" />
+				<p:treeNode>
+					#{col}
+				</p:treeNode>
+			</p:tree>
+			<p:contextMenu for="colTree">
+				<p:menuitem value="Agregar" update="createColModalForm" actionListener="#{collectionBean.setDatafromNode('create')}" icon="fa fa-plus"
+					oncomplete="$('#createColModal').modal({backdrop: false})" />
+
+				<p:menuitem value="Editar" update="editColModalForm" actionListener="#{collectionBean.setDatafromNode('edit')}" icon="fa fa-pencil"
+					oncomplete="$('#editColModal').modal({backdrop: false})" />
+
+				<p:menuitem value="Ver detalle de Especies" update="detailColModalForm" actionListener="#{collectionBean.setDatafromNode('detail')}"
+					icon="fa fa-folder-open" oncomplete="$('#detailTaxModal').modal({backdrop: false})" />
+
+				<p:menuitem value="Borrar" update="catalogForm" actionListener="#{collectionBean.setDatafromNode('delete')}" icon="fa fa-trash"
+					oncomplete="$('#deleteColModal').modal({backdrop: false})" />
+			</p:contextMenu>
+		</h:form>
+	</h:body>
+</ui:composition>

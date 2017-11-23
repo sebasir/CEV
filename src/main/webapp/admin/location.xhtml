@@ -1,5 +1,5 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
 	<h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
 	<h:outputScript library="js" name="locationMap.js" target="head" />
 	<h:panelGroup id="mapCenter">
@@ -50,8 +50,7 @@
 									<label class="col-md-4 control-label" for="locName">Nombre Clasificación:</label>
 									<div class="col-md-8">
 										<h:inputText id="locName" styleClass="ui-state-default form-control input-sm input-block-level required"
-											value="#{locationBean.location.locationName}" required="true"
-											requiredMessage="Debes definir el nombre de la clasificación!">
+											value="#{locationBean.location.locationName}" required="true" requiredMessage="Debes definir el nombre de la clasificación!">
 											<p:ajax process="@this" />
 											<f:validateBean disabled="true" />
 										</h:inputText>
@@ -65,8 +64,7 @@
 											<p:ajax process="@this" />
 											<f:validateBean disabled="true" />
 											<f:selectItem itemLabel="Selecciona una jerarquía" itemValue="" />
-											<f:selectItems value="#{locationBean.avalLevels}" var="lev" itemLabel="#{lev.loclevelName}"
-												itemValue="#{lev.idLoclevel}" />
+											<f:selectItems value="#{locationBean.avalLevels}" var="lev" itemLabel="#{lev.loclevelName}" itemValue="#{lev.idLoclevel}" />
 										</h:selectOneMenu>
 									</div>
 								</div>
@@ -100,15 +98,13 @@
 							<div class="form-group">
 								<div class="row">
 									<label class="col-md-4 control-label" for="locName">Clasificación Origen:</label>
-									<h:outputText class="col-md-4"
-										value="#{locationBean.parentLocation.idLoclevel.loclevelName} #{locationBean.parentLocation.locationName}" />
+									<h:outputText class="col-md-4" value="#{locationBean.parentLocation.idLoclevel.loclevelName} #{locationBean.parentLocation.locationName}" />
 								</div>
 								<div class="row">
 									<label class="col-md-4 control-label" for="locName">Nombre:</label>
 									<div class="col-md-8">
 										<h:inputText id="locName" styleClass="ui-state-default form-control input-sm input-block-level required"
-											value="#{locationBean.location.locationName}" required="true"
-											requiredMessage="Debes definir el nombre de la clasificación!">
+											value="#{locationBean.location.locationName}" required="true" requiredMessage="Debes definir el nombre de la clasificación!">
 											<p:ajax process="@this" />
 											<f:validateBean disabled="true" />
 										</h:inputText>
@@ -122,8 +118,7 @@
 											<p:ajax process="@this" />
 											<f:validateBean disabled="true" />
 											<f:selectItem itemLabel="Selecciona una jerarquía" itemValue="" />
-											<f:selectItems value="#{locationBean.avalLevels}" var="lev" itemLabel="#{lev.loclevelName}"
-												itemValue="#{lev.idLoclevel}" />
+											<f:selectItems value="#{locationBean.avalLevels}" var="lev" itemLabel="#{lev.loclevelName}" itemValue="#{lev.idLoclevel}" />
 										</h:selectOneMenu>
 									</div>
 								</div>
@@ -157,11 +152,9 @@
 							<div class="form-group">
 								<ui:repeat var="specimen" value="#{locationBean.locationSpecimens}">
 									<div class="row">
-										<h:outputText class="col-md-10"
-											value="#{specimen.idTaxonomy.taxonomyName} #{specimen.specificEpithet} (#{specimen.commonName})" />
-										<p:commandLink id="viewButton" class="btn btn-default btn-sm btn-action"
-											oncomplete="PF('specimenDetail').show()" title="Ficha técnica de #{specimen.commonName}"
-											actionListener="#{specimenBean.setSpecimen(specimen)}">
+										<h:outputText class="col-md-10" value="#{specimen.idTaxonomy.taxonomyName} #{specimen.specificEpithet} (#{specimen.commonName})" />
+										<p:commandLink id="viewButton" class="btn btn-default btn-sm btn-action" oncomplete="PF('specimenDetail').show()"
+											title="Ficha técnica de #{specimen.commonName}" actionListener="#{specimenBean.setSpecimen(specimen)}">
 											<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
 										</p:commandLink>
 									</div>
@@ -194,19 +187,17 @@
 					</p:treeNode>
 				</p:tree>
 				<p:contextMenu for="locTree">
-					<p:menuitem value="Agregar Clasificación" update="createModalForm"
-						actionListener="#{locationBean.setDatafromNode('create')}" icon="fa fa-plus"
+					<p:menuitem value="Agregar Clasificación" update="createModalForm" actionListener="#{locationBean.setDatafromNode('create')}" icon="fa fa-plus"
 						oncomplete="$('#createModal').modal({backdrop: false})" />
 
-					<p:menuitem value="Editar" update="editModalForm" actionListener="#{locationBean.setDatafromNode('edit')}"
-						icon="fa fa-pencil" oncomplete="$('#editModal').modal({backdrop: false})" />
+					<p:menuitem value="Editar" update="editModalForm" actionListener="#{locationBean.setDatafromNode('edit')}" icon="fa fa-pencil"
+						oncomplete="$('#editModal').modal({backdrop: false})" />
 
-					<p:menuitem value="Ver detalle de Especies" update="detailModalForm"
-						actionListener="#{locationBean.setDatafromNode('detail')}" icon="fa fa-folder-open"
-						oncomplete="$('#detailModal').modal({backdrop: false})" />
+					<p:menuitem value="Ver detalle de Especies" update="detailModalForm" actionListener="#{locationBean.setDatafromNode('detail')}"
+						icon="fa fa-folder-open" oncomplete="$('#detailModal').modal({backdrop: false})" />
 
-					<p:menuitem value="Borrar" update="locTree" actionListener="#{locationBean.setDatafromNode('delete')}"
-						icon="fa fa-trash" oncomplete="$('#deleteModal').modal({backdrop: false})" />
+					<p:menuitem value="Borrar" actionListener="#{locationBean.setDatafromNode('delete')}" icon="fa fa-trash"
+						oncomplete="$('#deleteModal').modal({backdrop: false})" />
 				</p:contextMenu>
 			</p:panel>
 		</h:form>
