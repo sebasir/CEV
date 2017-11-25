@@ -182,7 +182,7 @@
 				<p:tree id="locTree" value="#{locationBean.locRoot}" var="loc" orientation="vertical" selectionMode="single"
 					selection="#{locationBean.selectedNode}">
 					<p:ajax event="select" listener="#{locationBean.onNodeSelect}" update="mapCenter, growl" />
-					<p:treeNode expandedIcon="fa fa-folder-open" collapsedIcon="fa fa-folder">
+					<p:treeNode>
 						<h:outputText value="#{loc}" />
 					</p:treeNode>
 				</p:tree>

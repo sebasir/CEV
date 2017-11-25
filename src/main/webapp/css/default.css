@@ -124,6 +124,7 @@ select[multiple], select[size] {
 }
 
 .glyphicon-refresh-animate {
+	-webkit-animation: spin2 .7s infinite linear;
 	animation: spin .7s infinite linear;
 }
 
@@ -132,6 +133,11 @@ select[multiple], select[size] {
 	
 }
 
+to {
+	-webkit-transform: rotate(360deg);
+}
+
+}
 to {
 	-webkit-transform: rotate(360deg);
 }
@@ -390,4 +396,41 @@ div.form-group>label.control-label {
 	background-color: rgba(113, 189, 11, 0.45);
 	color: #42610f;
 	border-color: #8ab546;
+}
+
+.ui-chkbox .ui-chkbox-box {
+	width: 32px;
+	height: 32px;
+}
+
+.ui-state-default .ui-icon {
+	background-image: url(/CEV/images/cev-icons.png);
+	height: 32px;
+	width: 32px;
+	transition: all 0.5s;
+}
+
+.ui-state-default .ui-icon:hover {
+	transform: scale(1.3);
+}
+
+.ui-icon-check {
+	background-position: 0px 0px;
+	transform: scale(0.7);
+}
+
+.ui-icon-plus {
+	background-position: -32px 0px;
+}
+
+.ui-icon-minus {
+	background-position: -64px 0px;
+}
+
+.ui-icon-minus {
+	background-position: -64px 0px;
+}
+
+.ui-icon-blank {
+	background-position: 32px 32px;
 }
