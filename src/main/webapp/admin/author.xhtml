@@ -21,7 +21,12 @@
 					<p:ajax process="@this" />
 				</p:selectBooleanCheckbox>
 			</h:column>
-			
+			<h:column>
+				<f:facet name="header">Es usuario</f:facet>
+				<p:selectBooleanCheckbox value="#{authorBean.authorTypes[author.idAuthor].collector}">
+					<p:ajax process="@this" />
+				</p:selectBooleanCheckbox>
+			</h:column>
 		</h:dataTable>
 	</h:form>
 </ui:composition>

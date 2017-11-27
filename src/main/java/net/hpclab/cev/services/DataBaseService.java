@@ -60,6 +60,13 @@ public class DataBaseService<T> implements Serializable {
 		getEntityManager();
 	}
 
+	public DataBaseService() throws PersistenceException, Exception {
+		this.queryMaxResults = Constant.UNLIMITED_QUERY_RESULTS;
+		numberOfResults = 0;
+		this.pager = new Pager();
+		getEntityManager();
+	}
+
 	public DataBaseService(Class<T> entityClass) throws PersistenceException, Exception {
 		this(entityClass, Constant.QUERY_MAX_RESULTS);
 	}
@@ -146,6 +153,16 @@ public class DataBaseService<T> implements Serializable {
 			}
 		}
 		List<T> result = getListOfResults(finalQuery);
+		LOGGER.log(Level.INFO, "Listing {0}, OK", entityClass.getSimpleName());
+		return result;
+	}
+
+	public List<T> getList(Class<T> entityClass) throws NoResultException, Exception {
+		LOGGER.log(Level.INFO, "Listing (Class<T>) {0}", new Object[] { entityClass.getSimpleName() });
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entityClass);
+		criteriaQuery.from(entityClass);
+		List<T> result = entityManager.createQuery(criteriaQuery).getResultList();
 		LOGGER.log(Level.INFO, "Listing {0}, OK", entityClass.getSimpleName());
 		return result;
 	}

@@ -167,6 +167,6 @@ public class UtilsBean implements Serializable {
     }
 
     public InputStream getInputStream(byte[] byteContent) throws IOException {
-        return new ByteArrayInputStream(byteContent);
-    }
+		return new ByteArrayInputStream(byteContent);
+	}
 }

@@ -4,10 +4,10 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.util.HashMap;
-import java.util.List;
 import java.util.regex.Pattern;
+
 import javax.xml.bind.DatatypeConverter;
-import net.hpclab.cev.entities.Institution;
+
 import net.hpclab.cev.entities.Modules;
 import net.hpclab.cev.enums.ModulesEnum;
 
@@ -16,7 +16,6 @@ public class Util implements Serializable {
     private static final long serialVersionUID = 1L;
     private static HashMap<String, String> entityNames;
     private static HashMap<ModulesEnum, Modules> modules;
-    private static List<Institution> institutions;
     private static final Pattern EMAIL_PATTERN = Pattern.compile(Constant.EMAIL_REGEX);
 
     public static boolean isEmpty(String string) {
@@ -69,13 +68,5 @@ public class Util implements Serializable {
 
     public static void setModules(HashMap<ModulesEnum, Modules> aModules) {
         modules = aModules;
-    }
-
-    public static List<Institution> getInstitutions() {
-        return institutions;
-    }
-
-    public static void setInstitutions(List<Institution> aInstitutions) {
-        institutions = aInstitutions;
     }
 }

@@ -28,7 +28,7 @@ import net.hpclab.cev.enums.StatusEnum;
 import net.hpclab.cev.model.TreeHierachyModel;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
-import net.hpclab.cev.services.Util;
+import net.hpclab.cev.services.DataWarehouse;
 
 @ManagedBean
 @ViewScoped
@@ -80,7 +80,7 @@ public class CollectionBean extends UtilsBean implements Serializable {
 	@PostConstruct
 	public void init() {
 		try {
-			allInstitutions = Util.getInstitutions();
+			allInstitutions = DataWarehouse.allInstitutions;
 			allCollections = collectionService.getList();
 			allCatalogs = catalogService.getList();
 			allSpecimens = specimenService.getList();
