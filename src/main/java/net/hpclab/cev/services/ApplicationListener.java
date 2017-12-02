@@ -5,12 +5,13 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
-import net.hpclab.cev.entities.Institution;
+
 import net.hpclab.cev.entities.Modules;
 import net.hpclab.cev.enums.ModulesEnum;
 
@@ -23,7 +24,7 @@ public class ApplicationListener implements ServletContextListener, HttpSessionL
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 		try {
-			DataWarehouse.initLists();
+			DataWarehouse.getInstance().initLists();
 			AccessService.getInstance().loadAccesses();
 			LOGGER.info("Inicializando nombres de entidades...");
 			HashMap<String, String> entityNames = new HashMap<>();
@@ -75,11 +76,11 @@ public class ApplicationListener implements ServletContextListener, HttpSessionL
 	@Override
 	public void sessionDestroyed(HttpSessionEvent se) {
 		try {
-			DataBaseService<Institution> dbs = new DataBaseService<>(Institution.class);
-			dbs.disconnect();
+			// EntityResourcer.getInstance().disconnect();
+			AuditService.clearInstance();
 		} catch (Exception e) {
 
 		}
-		SessionService.removeUser(se.getSession().getId());
+		SessionService.getInstance().removeUser(se.getSession().getId());
 	}
 }

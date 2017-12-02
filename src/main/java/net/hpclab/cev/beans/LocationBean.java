@@ -26,15 +26,14 @@ import net.hpclab.cev.enums.OutcomeEnum;
 import net.hpclab.cev.model.TreeHierachyModel;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
+import net.hpclab.cev.services.DataWarehouse;
 
 @ManagedBean
 @SessionScoped
 public class LocationBean extends UtilsBean implements Serializable {
 
 	private static final long serialVersionUID = 6170712285673190627L;
-	private DataBaseService<Specimen> specimenService;
 	private DataBaseService<Location> locationService;
-	private DataBaseService<LocationLevel> locationLevelService;
 	private String selectedLevel;
 	private Location location;
 	private Location parentLocation;
@@ -44,26 +43,19 @@ public class LocationBean extends UtilsBean implements Serializable {
 	private HashMap<Integer, TreeHierachyModel> abstractMap;
 	private HashMap<Integer, Specimen> specimenLocation;
 	private TreeHierachyModel abstractTree;
-	private List<Location> allLocations;
-	private List<Specimen> allSpecimens;
-	private List<LocationLevel> allLocationLevels;
 	private List<LocationLevel> avalLevels;
 	private List<Specimen> locationSpecimens;
 
 	private static final Logger LOGGER = Logger.getLogger(LocationBean.class.getSimpleName());
 
 	public LocationBean() throws Exception {
-		specimenService = new DataBaseService<>(Specimen.class, Constant.UNLIMITED_QUERY_RESULTS);
 		locationService = new DataBaseService<>(Location.class, Constant.UNLIMITED_QUERY_RESULTS);
-		locationLevelService = new DataBaseService<>(LocationLevel.class, Constant.UNLIMITED_QUERY_RESULTS);
 	}
 
 	@PostConstruct
 	public void init() {
 		try {
-			allLocations = locationService.getList("Location.findOrderedAsc");
-			allLocationLevels = locationLevelService.getList();
-			allSpecimens = specimenService.getList();
+			// allLocations = locationService.getList("Location.findOrderedAsc");
 			createTree();
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
@@ -78,7 +70,7 @@ public class LocationBean extends UtilsBean implements Serializable {
 			location.setIdContainer(new Location(parentLocation.getIdLocation()));
 			location.setIdLoclevel(new LocationLevel(new Integer(selectedLevel)));
 			location = locationService.persist(location);
-			allLocations.add(location);
+			DataWarehouse.getInstance().allLocations.add(location);
 			outcomeEnum = OutcomeEnum.CREATE_SUCCESS;
 			createTree();
 			openBranch(tree.get(location.getIdLocation()));
@@ -95,8 +87,8 @@ public class LocationBean extends UtilsBean implements Serializable {
 		String transactionMessage = location.getLocationName();
 		try {
 			Location tempLocation = locationService.merge(location);
-			allLocations.remove(location);
-			allLocations.add(tempLocation);
+			DataWarehouse.getInstance().allLocations.remove(location);
+			DataWarehouse.getInstance().allLocations.add(tempLocation);
 			outcomeEnum = OutcomeEnum.UPDATE_SUCCESS;
 			createTree();
 			openBranch(tree.get(tempLocation.getIdLocation()));
@@ -112,7 +104,7 @@ public class LocationBean extends UtilsBean implements Serializable {
 		String transactionMessage = location.getLocationName();
 		try {
 			locationService.delete(location);
-			allLocations.remove(location);
+			DataWarehouse.getInstance().allLocations.remove(location);
 			createTree();
 			openBranch(tree.get(location.getIdContainer().getIdLocation()));
 			outcomeEnum = OutcomeEnum.DELETE_SUCCESS;
@@ -134,7 +126,7 @@ public class LocationBean extends UtilsBean implements Serializable {
 			}
 		}
 
-		for (LocationLevel l : allLocationLevels) {
+		for (LocationLevel l : DataWarehouse.getInstance().allLocationLevels) {
 			if (Constant.CREATE_COMMAND.equals(command)) {
 				if (l.getLoclevelRank() > currentLevel)
 					avalLevels.add(l);
@@ -150,35 +142,31 @@ public class LocationBean extends UtilsBean implements Serializable {
 		TreeHierachyModel fatherNode = new TreeHierachyModel();
 		TreeHierachyModel childNode = new TreeHierachyModel();
 		root = null;
-		if (allLocations != null) {
-			for (Location t : allLocations) {
-				if (root == null) {
-					abstractTree = new TreeHierachyModel(t.getIdLocation(), t.getIdLoclevel().getLoclevelRank());
-					tree.put(t.getIdLocation(), (root = new DefaultTreeNode(t, null)));
-					abstractMap.put(t.getIdLocation(), abstractTree);
-				} else {
-					childNode = new TreeHierachyModel(t.getIdLocation(), t.getIdLoclevel().getLoclevelRank());
-					fatherNode = abstractMap.get(t.getIdContainer().getIdLocation());
-					fatherNode.addNode(childNode);
-					abstractMap.put(t.getIdLocation(), childNode);
-					tree.put(t.getIdLocation(), new DefaultTreeNode(t, tree.get(t.getIdContainer().getIdLocation())));
-				}
+		for (Location t : DataWarehouse.getInstance().allLocations) {
+			if (root == null) {
+				abstractTree = new TreeHierachyModel(t.getIdLocation(), t.getIdLoclevel().getLoclevelRank());
+				tree.put(t.getIdLocation(), (root = new DefaultTreeNode(t, null)));
+				abstractMap.put(t.getIdLocation(), abstractTree);
+			} else {
+				childNode = new TreeHierachyModel(t.getIdLocation(), t.getIdLoclevel().getLoclevelRank());
+				fatherNode = abstractMap.get(t.getIdContainer().getIdLocation());
+				fatherNode.addNode(childNode);
+				abstractMap.put(t.getIdLocation(), childNode);
+				tree.put(t.getIdLocation(), new DefaultTreeNode(t, tree.get(t.getIdContainer().getIdLocation())));
 			}
-
-			TreeNode n = null;
-			if (parentLocation != null) {
-				n = tree.get(parentLocation.getIdLocation());
-			} else if (location != null) {
-				n = tree.get(location.getIdLocation());
-			}
-			openBranch(n);
 		}
 
-		if (allSpecimens != null) {
-			specimenLocation = new HashMap<>();
-			for (Specimen s : allSpecimens) {
-				specimenLocation.put(s.getIdLocation().getIdLocation(), s);
-			}
+		TreeNode n = null;
+		if (parentLocation != null) {
+			n = tree.get(parentLocation.getIdLocation());
+		} else if (location != null) {
+			n = tree.get(location.getIdLocation());
+		}
+		openBranch(n);
+
+		specimenLocation = new HashMap<>();
+		for (Specimen s : DataWarehouse.getInstance().allSpecimens) {
+			specimenLocation.put(s.getIdLocation().getIdLocation(), s);
 		}
 	}
 
@@ -283,7 +271,7 @@ public class LocationBean extends UtilsBean implements Serializable {
 	}
 
 	public List<Location> getAllLocations() {
-		return allLocations;
+		return DataWarehouse.getInstance().allLocations;
 	}
 
 	public String getSelectedLevel() {
@@ -295,7 +283,7 @@ public class LocationBean extends UtilsBean implements Serializable {
 	}
 
 	public List<LocationLevel> getAllLevels() {
-		return allLocationLevels;
+		return DataWarehouse.getInstance().allLocationLevels;
 	}
 
 	public TreeNode getLocRoot() {

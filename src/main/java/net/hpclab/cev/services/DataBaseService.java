@@ -10,11 +10,8 @@ import java.util.logging.Logger;
 
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
-import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
-import javax.persistence.PersistenceUnit;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -28,6 +25,8 @@ import javax.transaction.UserTransaction;
 
 public class DataBaseService<T> implements Serializable {
 
+	private EntityManager entityManager;
+
 	private static enum QueryMethod {
 		MAP, ENTITY, NAMED_QUERY, QUERY_MAP
 	};
@@ -37,11 +36,6 @@ public class DataBaseService<T> implements Serializable {
 	private static final Logger LOGGER = Logger.getLogger(DataBaseService.class.getSimpleName());
 	private Pager pager;
 	private QueryMethod queryMethod;
-
-	@PersistenceUnit(unitName = Constant.PERSISTENCE_UNIT)
-	private EntityManagerFactory entityManagerFactory;
-
-	private EntityManager entityManager;
 
 	private UserTransaction usrTx;
 	private int currentPage;
@@ -308,7 +302,13 @@ public class DataBaseService<T> implements Serializable {
 		}
 	}
 
+	private void ensureConnection() throws Exception {
+		if (!EntityResourcer.getInstance().isConnected())
+			EntityResourcer.getInstance().initService();
+	}
+
 	public T merge(T entity) throws Exception {
+		ensureConnection();
 		startUserTransaction();
 		LOGGER.log(Level.INFO, "Merging {0}", entityClass.getSimpleName());
 		entity = entityManager.merge(entity);
@@ -318,19 +318,20 @@ public class DataBaseService<T> implements Serializable {
 	}
 
 	public T persist(T entity) throws Exception {
+		ensureConnection();
 		startUserTransaction();
 		LOGGER.log(Level.INFO, "Persiting {0}", entityClass.getSimpleName());
 		entityManager.persist(entity);
-		entity = entityManager.merge(entity);
 		LOGGER.log(Level.INFO, "Persist {0}, OK", entityClass.getSimpleName());
 		commitTransaction();
 		return entity;
 	}
 
 	public void delete(T entity) throws Exception {
+		ensureConnection();
 		startUserTransaction();
 		LOGGER.log(Level.INFO, "Removing {0}", entityClass.getSimpleName());
-		entityManager.remove(entity);
+		entityManager.remove(entityManager.contains(entity) ? entity : entityManager.merge(entity));
 		LOGGER.log(Level.INFO, "Removed {0}, OK", entityClass.getSimpleName());
 		commitTransaction();
 	}
@@ -346,35 +347,12 @@ public class DataBaseService<T> implements Serializable {
 		LOGGER.log(Level.INFO, "Commited...");
 	}
 
-	public void disconnect() {
-		if (entityManager != null) {
-			LOGGER.log(Level.INFO, "Desconectando EntityManager...");
-			entityManager.close();
-			entityManager = null;
-		}
-		if (entityManagerFactory != null) {
-			LOGGER.log(Level.INFO, "Desconectando EntityManagerFactory...");
-			entityManagerFactory.close();
-			entityManagerFactory = null;
-		}
-	}
-
 	private void getEntityManager() throws PersistenceException, Exception {
-		LOGGER.log(Level.INFO, "Obteniendo EntityManager");
-		if (entityManagerFactory == null) {
-			LOGGER.log(Level.INFO, "entityManagerFactory is null");
-			entityManagerFactory = Persistence.createEntityManagerFactory(Constant.PERSISTENCE_UNIT);
-		} else {
-			LOGGER.log(Level.INFO, "entityManagerFactory is injected!");
-		}
-		if (entityManager == null) {
-			LOGGER.log(Level.INFO, "entityManager is null");
-			entityManager = entityManagerFactory.createEntityManager();
-		}
+		entityManager = EntityResourcer.getInstance().getEntityManager();
 	}
 
-	public boolean isConnected() {
-		return entityManagerFactory != null && entityManager != null && entityManager.isOpen();
+	public boolean isConnected() throws Exception {
+		return EntityResourcer.getInstance().isConnected();
 	}
 
 	private void restartFilters(QueryMethod queryMethod) {

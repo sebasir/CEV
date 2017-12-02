@@ -57,9 +57,9 @@ public class AccessService implements Serializable {
 		userAccess.clear();
 		roleUserAccess.clear();
 		roleModuleAccess.clear();
-		modulesUsers = DataWarehouse.allModulesUsers;
-		rolesUsers = DataWarehouse.allRolesUsers;
-		rolesModules = DataWarehouse.allRolesModules;
+		modulesUsers = DataWarehouse.getInstance().allModulesUsers;
+		rolesUsers = DataWarehouse.getInstance().allRolesUsers;
+		rolesModules = DataWarehouse.getInstance().allRolesModules;
 
 		for (RolesModules r : rolesModules) {
 			addRoleModuleAccess(r.getIdRole(), r.getIdModule());

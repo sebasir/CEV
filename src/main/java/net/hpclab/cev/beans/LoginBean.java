@@ -6,11 +6,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
+
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.inject.Named;
 import javax.persistence.NoResultException;
+
 import net.hpclab.cev.entities.Institution;
 import net.hpclab.cev.entities.Modules;
 import net.hpclab.cev.entities.Users;
@@ -24,11 +25,11 @@ import net.hpclab.cev.services.MessagesService;
 import net.hpclab.cev.services.SessionService;
 import net.hpclab.cev.services.Util;
 
-@Named
+@ManagedBean
 @SessionScoped
 public class LoginBean extends UtilsBean implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1046360575084820953L;
 	private static final Logger LOGGER = Logger.getLogger(LoginBean.class.getSimpleName());
 	private String domain;
 	private String user;
@@ -36,16 +37,14 @@ public class LoginBean extends UtilsBean implements Serializable {
 	private String revUser;
 	private String password;
 	private Users users;
-	private List<Institution> institutions;
 	private List<Modules> userModules;
 
-	@PostConstruct
-	public void init() {
+	public void onLoad() {
 		try {
-			institutions = DataWarehouse.allInstitutions;
+			if (SessionService.getInstance().getUserSession(getSessionId(FacesContext.getCurrentInstance())) != null)
+				redirect(Constant.MAIN_ADMIN_PAGE);
 		} catch (Exception e) {
-			showAuthenticationMessage(FacesContext.getCurrentInstance(), AuthenticateEnum.DB_INIT_ERROR,
-					e.getMessage());
+			LOGGER.log(Level.SEVERE, "Error getting UserSession", e);
 		}
 	}
 
@@ -56,7 +55,7 @@ public class LoginBean extends UtilsBean implements Serializable {
 			AuthenticateEnum authenticateEnum = LoginService.getInstance().login(facesContext, user, password, domain);
 			switch (authenticateEnum) {
 			case LOGIN_SUCCESS:
-				users = SessionService.getUserSession(getSessionId(facesContext)).getUser();
+				users = SessionService.getInstance().getUserSession(getSessionId(facesContext)).getUser();
 				message = MessagesService.getInstance().getMessage(authenticateEnum, users.getUserNames(),
 						users.getUserLastnames());
 				logMessage = MessagesService.getInstance().getMessage(authenticateEnum.name() + Constant.LOG,
@@ -65,7 +64,7 @@ public class LoginBean extends UtilsBean implements Serializable {
 				redirect(Constant.MAIN_ADMIN_PAGE);
 				break;
 			case LOGIN_USER_NOT_ACTIVE_ERROR:
-				users = SessionService.getUserSession(getSessionId(facesContext)).getUser();
+				users = SessionService.getInstance().getUserSession(getSessionId(facesContext)).getUser();
 				message = MessagesService.getInstance().getMessage(authenticateEnum, users.getStatus());
 				logMessage = MessagesService.getInstance().getMessage(authenticateEnum.name() + Constant.LOG,
 						users.getStatus());
@@ -156,11 +155,7 @@ public class LoginBean extends UtilsBean implements Serializable {
 	}
 
 	public List<Institution> getInstitutions() {
-		return institutions;
-	}
-
-	public void setInstitutions(List<Institution> institutions) {
-		this.institutions = institutions;
+		return DataWarehouse.getInstance().allInstitutions;
 	}
 
 	public List<Modules> getUserModules() {

@@ -65,16 +65,16 @@
 					</div>
 				</div>
 				<hr />
-				<h:panelGroup layout="block" rendered="#{specimenBean.allSpecimens != null and !specimenBean.allSpecimens.isEmpty()}" styleClass="pull-right">
+				<h:panelGroup layout="block" rendered="#{specimenBean.searchSpecimen != null and !specimenBean.searchSpecimen.isEmpty()}" styleClass="pull-right">
 					<p>
-						Mostrando <b>#{specimenBean.allSpecimens.size()}</b> de <b>#{specimenBean.pager.numberOfResults}</b> registros
+						Mostrando <b>#{specimenBean.searchSpecimen.size()}</b> de <b>#{specimenBean.pager.numberOfResults}</b> registros
 					</p>
 				</h:panelGroup>
 				<p:commandButton id="search" actionListener="#{specimenBean.search()}" update="formSpecimen" value="Consultar" />
 				<p:commandButton id="clear" actionListener="#{specimenBean.limpiarFiltros()}" update="formSpecimen" value="Limpiar" />
 			</div>
-			<h:dataTable id="dataTableSpecimen" rendered="#{specimenBean.allSpecimens != null and !specimenBean.allSpecimens.isEmpty()}"
-				value="#{specimenBean.allSpecimens}" var="specimen" styleClass="table table-hover table-condensed">
+			<h:dataTable id="dataTableSpecimen" rendered="#{specimenBean.searchSpecimen  != null and !specimenBean.searchSpecimen.isEmpty()}"
+				value="#{specimenBean.searchSpecimen}" var="specimen" styleClass="table table-hover table-condensed">
 				<h:column>
 					<f:facet name="header">Nombre Científico</f:facet>
 					<h:outputText value="#{specimen.idTaxonomy.taxonomyName} #{specimen.specificEpithet}" />
@@ -111,7 +111,7 @@
 					</p:commandLink>
 				</h:column>
 			</h:dataTable>
-			<h:panelGroup id="paginator" rendered="#{specimenBean.allSpecimens != null and !specimenBean.allSpecimens.isEmpty()}">
+			<h:panelGroup id="paginator" rendered="#{specimenBean.searchSpecimen != null and !specimenBean.searchSpecimen.isEmpty()}">
 				<nav aria-label="Page navigation" class="paginador">
 					<ul class="pagination pagination-lg">
 						<li><p:commandLink id="first" title="Primera página" actionListener="#{specimenBean.pager.firstPage()}"

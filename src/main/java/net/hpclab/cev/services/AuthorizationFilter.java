@@ -17,49 +17,51 @@ import net.hpclab.cev.enums.StatusEnum;
 @WebFilter("/admin/*")
 public class AuthorizationFilter implements Filter {
 
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+	@Override
+	public void init(FilterConfig filterConfig) throws ServletException {
 
-    }
+	}
 
-    @Override
-    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) req;
-        HttpServletResponse response = (HttpServletResponse) res;
-        HttpSession session = request.getSession(false);
-        String loginURL = request.getContextPath() + Constant.LOGIN_PAGE;
-        boolean loggedIn = false;
-        boolean userActive = false;
-        try {
-            UserSession userSession = (UserSession) session.getAttribute(Constant.USER_DATA);
-            loggedIn = true;
-            if (userSession.getUser().getStatus().equals(StatusEnum.Activo.get())) {
-                userActive = true;
-            }
-        } catch (Exception e) {
-        }
-        boolean loginRequest = request.getRequestURI().equals(loginURL);
-        boolean resourceRequest = request.getRequestURI().startsWith(request.getContextPath() + ResourceHandler.RESOURCE_IDENTIFIER + "/");
-        boolean ajaxRequest = "partial/ajax".equals(request.getHeader("Faces-Request"));
+	@Override
+	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+			throws IOException, ServletException {
+		HttpServletRequest request = (HttpServletRequest) req;
+		HttpServletResponse response = (HttpServletResponse) res;
+		HttpSession session = request.getSession(false);
+		String loginURL = request.getContextPath() + Constant.LOGIN_PAGE;
+		boolean loggedIn = false;
+		boolean userActive = false;
+		try {
+			UserSession userSession = (UserSession) session.getAttribute(Constant.USER_DATA);
+			loggedIn = true;
+			if (userSession.getUser().getStatus().equals(StatusEnum.Activo.get())) {
+				userActive = true;
+			}
+		} catch (Exception e) {
+		}
+		boolean loginRequest = request.getRequestURI().equals(loginURL);
+		boolean resourceRequest = request.getRequestURI()
+				.startsWith(request.getContextPath() + ResourceHandler.RESOURCE_IDENTIFIER + "/");
+		boolean ajaxRequest = "partial/ajax".equals(request.getHeader("Faces-Request"));
 
-        if ((loggedIn && userActive) || loginRequest || resourceRequest) {
-            if (!resourceRequest) {
-                response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-                response.setHeader("Pragma", "no-cache");
-                response.setDateHeader("Expires", 0);
-            }
-            chain.doFilter(request, response);
-        } else if (ajaxRequest) {
-            response.setContentType("text/xml");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().printf(Constant.AJAX_REDIRECT_XML, loginURL);
-        } else {
-            response.sendRedirect(loginURL);
-        }
-    }
+		if ((loggedIn && userActive) || loginRequest || resourceRequest) {
+			if (!resourceRequest) {
+				response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+				response.setHeader("Pragma", "no-cache");
+				response.setDateHeader("Expires", 0);
+			}
+			chain.doFilter(request, response);
+		} else if (ajaxRequest) {
+			response.setContentType("text/xml");
+			response.setCharacterEncoding("UTF-8");
+			response.getWriter().printf(Constant.AJAX_REDIRECT_XML, loginURL);
+		} else {
+			response.sendRedirect(loginURL);
+		}
+	}
 
-    @Override
-    public void destroy() {
+	@Override
+	public void destroy() {
 
-    }
+	}
 }

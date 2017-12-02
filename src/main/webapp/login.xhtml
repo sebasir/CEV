@@ -10,6 +10,9 @@
 	<link href="css/default.css" rel="stylesheet" />
 </h:head>
 <h:body>
+	<f:metadata>
+		<f:viewAction action="#{loginBean.onLoad()}" />
+	</f:metadata>
 	<div id="loading" class="oculto topcorner">
 		<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
 		<p>Procesando...</p>
@@ -36,14 +39,13 @@
 								<span class="input-group-addon">|</span>
 								<h:selectOneMenu id="recDomain" class="form-control" value="#{loginBean.revDomain}">
 									<f:selectItem itemLabel="Selecciona" />
-									<f:selectItems value="#{loginBean.institutions}" var="inst" itemLabel="#{inst.domainUrl}"
-										itemValue="#{inst.domainUrl}" />
+									<f:selectItems value="#{loginBean.institutions}" var="inst" itemLabel="#{inst.domainUrl}" itemValue="#{inst.domainUrl}" />
 								</h:selectOneMenu>
 							</div>
 						</div>
 						<div class="modal-footer">
-							<p:commandButton id="buttonRecover" onclick="$('#myModal').modal('hide');" class="btn btn-default" ajax="true"
-								update="growl" actionListener="#{loginBean.recoverPassword()}" value="Enviar" />
+							<p:commandButton id="buttonRecover" onclick="$('#myModal').modal('hide');" class="btn btn-default" ajax="true" update="growl"
+								actionListener="#{loginBean.recoverPassword()}" value="Enviar" />
 						</div>
 					</div>
 				</div>
@@ -56,21 +58,18 @@
 			<div class="form-group">
 				<label for="inputEmail">Usuario</label>
 				<div class="input-group">
-					<p:inputText id="inputEmail" class="form-control" required="true"
-						requiredMessage="Se necesita un nombre de usuario" value="#{loginBean.user}" />
+					<p:inputText id="inputEmail" class="form-control" required="true" requiredMessage="Se necesita un nombre de usuario" value="#{loginBean.user}" />
 					<span class="input-group-addon">|</span>
-					<h:selectOneMenu id="domain" class="form-control ui-state-default" required="true"
-						requiredMessage="Se necesita un dominio registrado" value="#{loginBean.domain}">
+					<h:selectOneMenu id="domain" class="form-control ui-state-default" required="true" requiredMessage="Se necesita un dominio registrado"
+						value="#{loginBean.domain}">
 						<f:selectItem itemLabel="Selecciona" />
-						<f:selectItems value="#{loginBean.institutions}" var="inst" itemLabel="#{inst.domainUrl}"
-							itemValue="#{inst.domainUrl}" />
+						<f:selectItems value="#{loginBean.institutions}" var="inst" itemLabel="#{inst.domainUrl}" itemValue="#{inst.domainUrl}" />
 					</h:selectOneMenu>
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="inputPassword">Contraseña</label>
-				<p:password id="inputPassword" class="form-control" required="true" requiredMessage="Se necesita una contraseña"
-					value="#{loginBean.password}" />
+				<p:password id="inputPassword" class="form-control" required="true" requiredMessage="Se necesita una contraseña" value="#{loginBean.password}" />
 			</div>
 			<div class="row">
 				<a data-toggle="modal" data-target="#myModal" class="pull-right">Olvidaste tu contraseña?</a>
@@ -78,13 +77,11 @@
 			<hr />
 			<div class="row">
 				<div class="col-md-6">
-					<p:commandButton id="buttonLogin"
-						class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only btn btn-default btn-block"
+					<p:commandButton id="buttonLogin" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only btn btn-default btn-block"
 						ajax="true" update="growl" action="#{loginBean.authenticate}" value="Ingresar" />
 				</div>
 				<div class="col-md-6">
-					<h:outputLink value="/CEV"
-						class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only btn btn-default btn-block">
+					<h:outputLink value="/CEV" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only btn btn-default btn-block">
 						<span class="ui-button-text ui-c">Salir</span>
 					</h:outputLink>
 				</div>
@@ -96,9 +93,8 @@
 			<div class="row">
 				<div class="col-md-12">
 					<p style="text-align: center;">
-						Proyecto Colección Entomológica Virtual. Todos los derechos reservados. | Fotos de <a
-							href="http://www.google.com/images">GOOGLE</a> | Diseño por <a href="#" rel="nofollow">smotavitam</a>.<br /> <span
-							class="glyphicon glyphicon-copyright-mark" aria-hidden="true"></span>
+						Proyecto Colección Entomológica Virtual. Todos los derechos reservados. | Fotos de <a href="http://www.google.com/images">GOOGLE</a> | Diseño
+						por <a href="#" rel="nofollow">smotavitam</a>.<br /> <span class="glyphicon glyphicon-copyright-mark" aria-hidden="true"></span>
 					</p>
 				</div>
 			</div>

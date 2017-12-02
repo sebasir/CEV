@@ -8,22 +8,22 @@ import javax.enterprise.context.SessionScoped;
 @SessionScoped
 public class NavigationBean extends UtilsBean implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    private String navigablePage;
+	private static final long serialVersionUID = 1L;
+	private String navigablePage;
 
-    public NavigationBean() {
-    }
+	public NavigationBean() {
+	}
 
-    public boolean isPageReady() {
-        return navigablePage != null && !navigablePage.isEmpty();
-    }
+	public boolean isPageReady() {
+		return navigablePage != null && !navigablePage.isEmpty();
+	}
 
-    public String getNavigablePage() {
-        return navigablePage;
-    }
+	public String getNavigablePage() {
+		return navigablePage;
+	}
 
-    public void setNavigablePage(String navigablePage) {
-        this.navigablePage = navigablePage;
-    }
+	public void setNavigablePage(String navigablePage) {
+		this.navigablePage = navigablePage;
+	}
 
 }

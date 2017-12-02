@@ -24,15 +24,14 @@ import net.hpclab.cev.enums.OutcomeEnum;
 import net.hpclab.cev.model.TreeHierachyModel;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
+import net.hpclab.cev.services.DataWarehouse;
 
 @ManagedBean
 @ViewScoped
 public class TaxonomyBean extends UtilsBean implements Serializable {
 
 	private static final long serialVersionUID = -2452341929369884578L;
-	private DataBaseService<Specimen> specimenService;
 	private DataBaseService<Taxonomy> taxonomyService;
-	private DataBaseService<TaxonomyLevel> taxonomyLevelService;
 	private String selectedLevel;
 	private Taxonomy taxonomy;
 	private Taxonomy parentTaxonomy;
@@ -43,26 +42,18 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 	private HashMap<Integer, Specimen> specimenTaxonomy;
 	private HashMap<Integer, TaxonomyLevel> levelMap;
 	private TreeHierachyModel abstractTree;
-	private List<Taxonomy> allTaxonomys;
-	private List<Specimen> allSpecimens;
-	private List<TaxonomyLevel> allTaxonomyLevels;
 	private List<TaxonomyLevel> avalLevels;
 	private List<Specimen> taxonomySpecimens;
 
 	private static final Logger LOGGER = Logger.getLogger(TaxonomyBean.class.getSimpleName());
 
 	public TaxonomyBean() throws Exception {
-		specimenService = new DataBaseService<>(Specimen.class, Constant.UNLIMITED_QUERY_RESULTS);
 		taxonomyService = new DataBaseService<>(Taxonomy.class, Constant.UNLIMITED_QUERY_RESULTS);
-		taxonomyLevelService = new DataBaseService<>(TaxonomyLevel.class, Constant.UNLIMITED_QUERY_RESULTS);
 	}
 
 	@PostConstruct
 	public void init() {
 		try {
-			allTaxonomys = taxonomyService.getList("Taxonomy.findOrderedAsc");
-			allTaxonomyLevels = taxonomyLevelService.getList();
-			allSpecimens = specimenService.getList();
 			createTree();
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
@@ -79,7 +70,7 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 			taxonomy.setIdContainer(new Taxonomy(parentTaxonomy.getIdTaxonomy()));
 			taxonomy.setIdTaxlevel(idTaxonomyLevel);
 			taxonomy = taxonomyService.persist(taxonomy);
-			allTaxonomys.add(taxonomy);
+			DataWarehouse.getInstance().allTaxonomys.add(taxonomy);
 			createTree();
 			openBranch(tree.get(taxonomy.getIdTaxonomy()));
 			outcomeEnum = OutcomeEnum.CREATE_SUCCESS;
@@ -96,8 +87,8 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 		String transactionMessage = taxonomy.getTaxonomyName();
 		try {
 			Taxonomy tempTaxonomy = taxonomyService.merge(taxonomy);
-			allTaxonomys.remove(taxonomy);
-			allTaxonomys.add(tempTaxonomy);
+			DataWarehouse.getInstance().allTaxonomys.remove(taxonomy);
+			DataWarehouse.getInstance().allTaxonomys.add(tempTaxonomy);
 			createTree();
 			openBranch(tree.get(tempTaxonomy.getIdTaxonomy()));
 			outcomeEnum = OutcomeEnum.UPDATE_SUCCESS;
@@ -113,7 +104,7 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 		String transactionMessage = taxonomy.getTaxonomyName();
 		try {
 			taxonomyService.delete(taxonomy);
-			allTaxonomys.remove(taxonomy);
+			DataWarehouse.getInstance().allTaxonomys.remove(taxonomy);
 			createTree();
 			openBranch(tree.get(taxonomy.getIdContainer().getIdTaxonomy()));
 			outcomeEnum = OutcomeEnum.DELETE_SUCCESS;
@@ -135,7 +126,7 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 			}
 		}
 
-		for (TaxonomyLevel t : allTaxonomyLevels) {
+		for (TaxonomyLevel t : DataWarehouse.getInstance().allTaxonomyLevels) {
 			if (Constant.CREATE_COMMAND.equals(command)) {
 				if (t.getTaxlevelRank() > currentLevel)
 					avalLevels.add(t);
@@ -151,39 +142,36 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 		TreeHierachyModel fatherNode = new TreeHierachyModel();
 		TreeHierachyModel childNode = new TreeHierachyModel();
 		root = null;
-		if (allTaxonomys != null) {
-			for (Taxonomy t : allTaxonomys) {
-				if (root == null) {
-					abstractTree = new TreeHierachyModel(t.getIdTaxonomy(), t.getIdTaxlevel().getTaxlevelRank());
-					tree.put(t.getIdTaxonomy(), (root = new DefaultTreeNode(t, null)));
-					abstractMap.put(t.getIdTaxonomy(), abstractTree);
-				} else {
-					childNode = new TreeHierachyModel(t.getIdTaxonomy(), t.getIdTaxlevel().getTaxlevelRank());
-					fatherNode = abstractMap.get(t.getIdContainer().getIdTaxonomy());
-					fatherNode.addNode(childNode);
-					abstractMap.put(t.getIdTaxonomy(), childNode);
-					tree.put(t.getIdTaxonomy(), new DefaultTreeNode(t, tree.get(t.getIdContainer().getIdTaxonomy())));
-				}
+		for (Taxonomy t : DataWarehouse.getInstance().allTaxonomys) {
+			if (root == null) {
+				abstractTree = new TreeHierachyModel(t.getIdTaxonomy(), t.getIdTaxlevel().getTaxlevelRank());
+				tree.put(t.getIdTaxonomy(), (root = new DefaultTreeNode(t, null)));
+				abstractMap.put(t.getIdTaxonomy(), abstractTree);
+			} else {
+				childNode = new TreeHierachyModel(t.getIdTaxonomy(), t.getIdTaxlevel().getTaxlevelRank());
+				fatherNode = abstractMap.get(t.getIdContainer().getIdTaxonomy());
+				fatherNode.addNode(childNode);
+				abstractMap.put(t.getIdTaxonomy(), childNode);
+				tree.put(t.getIdTaxonomy(), new DefaultTreeNode(t, tree.get(t.getIdContainer().getIdTaxonomy())));
 			}
-
-			TreeNode n = null;
-			if (parentTaxonomy != null) {
-				n = tree.get(parentTaxonomy.getIdTaxonomy());
-			} else if (taxonomy != null) {
-				n = tree.get(taxonomy.getIdTaxonomy());
-			}
-			openBranch(n);
 		}
+
+		TreeNode n = null;
+		if (parentTaxonomy != null) {
+			n = tree.get(parentTaxonomy.getIdTaxonomy());
+		} else if (taxonomy != null) {
+			n = tree.get(taxonomy.getIdTaxonomy());
+		}
+		openBranch(n);
+
 		levelMap = new HashMap<>();
-		for (TaxonomyLevel t : allTaxonomyLevels) {
+		for (TaxonomyLevel t : DataWarehouse.getInstance().allTaxonomyLevels) {
 			levelMap.put(t.getIdTaxlevel(), t);
 		}
 
-		if (allSpecimens != null) {
-			specimenTaxonomy = new HashMap<>();
-			for (Specimen s : allSpecimens) {
-				specimenTaxonomy.put(s.getIdTaxonomy().getIdTaxonomy(), s);
-			}
+		specimenTaxonomy = new HashMap<>();
+		for (Specimen s : DataWarehouse.getInstance().allSpecimens) {
+			specimenTaxonomy.put(s.getIdTaxonomy().getIdTaxonomy(), s);
 		}
 	}
 
@@ -258,7 +246,7 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 	}
 
 	public List<Taxonomy> getAllTaxonomys() {
-		return allTaxonomys;
+		return DataWarehouse.getInstance().allTaxonomys;
 	}
 
 	public String getSelectedLevel() {
@@ -270,7 +258,7 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 	}
 
 	public List<TaxonomyLevel> getAllLevels() {
-		return allTaxonomyLevels;
+		return DataWarehouse.getInstance().allTaxonomyLevels;
 	}
 
 	public TreeNode getTaxRoot() {

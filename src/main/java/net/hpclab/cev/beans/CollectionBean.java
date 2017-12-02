@@ -35,7 +35,6 @@ import net.hpclab.cev.services.DataWarehouse;
 public class CollectionBean extends UtilsBean implements Serializable {
 
 	private static final long serialVersionUID = -7407272469474484227L;
-	private DataBaseService<Specimen> specimenService;
 	private DataBaseService<Collection> collectionService;
 	private DataBaseService<Catalog> catalogService;
 	private Constant.CollectionClassType classType;
@@ -58,21 +57,14 @@ public class CollectionBean extends UtilsBean implements Serializable {
 	private HashMap<Integer, TreeHierachyModel> abstractMap;
 	private HashMap<Integer, Specimen> specimenCollection;
 	private TreeHierachyModel abstractTree;
-	private List<Institution> allInstitutions;
-	private List<Collection> allCollections;
 	private List<Collection> avalCollections;
-	private List<Catalog> allCatalogs;
 	private List<Catalog> avalCatalogs;
-	private List<Taxonomy> allTaxonomys;
-	private List<Specimen> allSpecimens;
-	private List<TaxonomyLevel> allTaxonomyLevels;
 	private List<TaxonomyLevel> avalLevels;
 	private List<Specimen> collectionSpecimens;
 
 	private static final Logger LOGGER = Logger.getLogger(CollectionBean.class.getSimpleName());
 
 	public CollectionBean() throws Exception {
-		specimenService = new DataBaseService<>(Specimen.class, Constant.UNLIMITED_QUERY_RESULTS);
 		collectionService = new DataBaseService<>(Collection.class);
 		catalogService = new DataBaseService<>(Catalog.class);
 	}
@@ -80,10 +72,6 @@ public class CollectionBean extends UtilsBean implements Serializable {
 	@PostConstruct
 	public void init() {
 		try {
-			allInstitutions = DataWarehouse.allInstitutions;
-			allCollections = collectionService.getList();
-			allCatalogs = catalogService.getList();
-			allSpecimens = specimenService.getList();
 			createTree();
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
@@ -102,7 +90,7 @@ public class CollectionBean extends UtilsBean implements Serializable {
 				collection.setStatus(StatusEnum.Activo.get());
 				collection.setIdInstitution((Institution) tree.get(objectId).getData());
 				collection = collectionService.persist(collection);
-				allCollections.add(collection);
+				DataWarehouse.getInstance().allCollections.add(collection);
 				objectId = Constant.COLLECTION_HINT + collection.getIdCollection();
 				break;
 			case COLLECTION:
@@ -111,7 +99,7 @@ public class CollectionBean extends UtilsBean implements Serializable {
 				catalog.setStatus(StatusEnum.Activo.get());
 				catalog.setIdCollection((Collection) tree.get(objectId).getData());
 				catalog = catalogService.persist(catalog);
-				allCatalogs.add(catalog);
+				DataWarehouse.getInstance().allCatalogs.add(catalog);
 				objectId = Constant.CATALOG_HINT + catalog.getIdCatalog();
 				break;
 			case CATALOG:
@@ -142,16 +130,16 @@ public class CollectionBean extends UtilsBean implements Serializable {
 				collection.setCollectionName(objectName);
 				Collection tempCollection = collectionService.merge(collection);
 				objectId = Constant.COLLECTION_HINT + tempCollection.getIdCollection();
-				allCollections.remove(collection);
-				allCollections.add(tempCollection);
+				DataWarehouse.getInstance().allCollections.remove(collection);
+				DataWarehouse.getInstance().allCollections.add(tempCollection);
 				break;
 			case CATALOG:
 				transactionMessage = catalog.getCatalogName();
 				catalog.setCatalogName(objectName);
 				Catalog tempCatalog = catalogService.merge(catalog);
 				objectId = Constant.CATALOG_HINT + tempCatalog.getIdCatalog();
-				allCatalogs.remove(catalog);
-				allCatalogs.add(tempCatalog);
+				DataWarehouse.getInstance().allCatalogs.remove(catalog);
+				DataWarehouse.getInstance().allCatalogs.add(tempCatalog);
 				break;
 			}
 			outcomeEnum = OutcomeEnum.UPDATE_SUCCESS;
@@ -175,13 +163,13 @@ public class CollectionBean extends UtilsBean implements Serializable {
 				transactionMessage = collection.getCollectionName();
 				objectId = Constant.INSTITUTION_HINT + collection.getIdInstitution().getIdInstitution();
 				collectionService.delete(collection);
-				allCollections.remove(collection);
+				DataWarehouse.getInstance().allCollections.remove(collection);
 				break;
 			case CATALOG:
 				transactionMessage = catalog.getCatalogName();
 				objectId = Constant.COLLECTION_HINT + catalog.getIdCollection().getIdCollection();
 				catalogService.delete(catalog);
-				allCatalogs.remove(catalog);
+				DataWarehouse.getInstance().allCatalogs.remove(catalog);
 				break;
 			}
 			createTree();
@@ -202,48 +190,44 @@ public class CollectionBean extends UtilsBean implements Serializable {
 		tree.put(0, root);
 		abstractTree = new TreeHierachyModel(0, Constant.ROOT_LEVEL);
 		abstractMap.put(0, abstractTree);
-		if (allInstitutions != null && allCollections != null && allCatalogs != null) {
-			for (Institution i : allInstitutions) {
-				childNode = new TreeHierachyModel(Constant.INSTITUTION_HINT + i.getIdInstitution(),
-						Constant.INSTITUTION_LEVEL);
-				fatherNode = abstractMap.get(0);
-				fatherNode.addNode(childNode);
-				abstractMap.put(Constant.INSTITUTION_HINT + i.getIdInstitution(), childNode);
-				tree.put(Constant.INSTITUTION_HINT + i.getIdInstitution(), new DefaultTreeNode(i, tree.get(0)));
-			}
-
-			for (Collection c : allCollections) {
-				childNode = new TreeHierachyModel(Constant.COLLECTION_HINT + c.getIdCollection(),
-						Constant.COLLECTION_LEVEL);
-				fatherNode = abstractMap.get(Constant.INSTITUTION_HINT + c.getIdInstitution().getIdInstitution());
-				fatherNode.addNode(childNode);
-				abstractMap.put(Constant.COLLECTION_HINT + c.getIdCollection(), childNode);
-				tree.put(Constant.COLLECTION_HINT + c.getIdCollection(), new DefaultTreeNode(c,
-						tree.get(Constant.INSTITUTION_HINT + c.getIdInstitution().getIdInstitution())));
-			}
-
-			for (Catalog c : allCatalogs) {
-				childNode = new TreeHierachyModel(Constant.CATALOG_HINT + c.getIdCatalog(), Constant.CATALOG_LEVEL);
-				fatherNode = abstractMap.get(Constant.COLLECTION_HINT + c.getIdCollection().getIdCollection());
-				fatherNode.addNode(childNode);
-				abstractMap.put(Constant.CATALOG_HINT + c.getIdCatalog(), childNode);
-				tree.put(Constant.CATALOG_HINT + c.getIdCatalog(), new DefaultTreeNode(c,
-						tree.get(Constant.COLLECTION_HINT + c.getIdCollection().getIdCollection())));
-			}
-
-			TreeNode n = null;
-			if (parentTaxonomy != null) {
-				n = tree.get(parentTaxonomy.getIdTaxonomy());
-			} else if (taxonomy != null) {
-				n = tree.get(taxonomy.getIdTaxonomy());
-			}
-			openBranch(n);
+		for (Institution i : DataWarehouse.getInstance().allInstitutions) {
+			childNode = new TreeHierachyModel(Constant.INSTITUTION_HINT + i.getIdInstitution(),
+					Constant.INSTITUTION_LEVEL);
+			fatherNode = abstractMap.get(0);
+			fatherNode.addNode(childNode);
+			abstractMap.put(Constant.INSTITUTION_HINT + i.getIdInstitution(), childNode);
+			tree.put(Constant.INSTITUTION_HINT + i.getIdInstitution(), new DefaultTreeNode(i, tree.get(0)));
 		}
-		if (allSpecimens != null) {
-			specimenCollection = new HashMap<>();
-			for (Specimen s : allSpecimens) {
-				specimenCollection.put(Constant.CATALOG_HINT + s.getIdCatalog().getIdCatalog(), s);
-			}
+
+		for (Collection c : DataWarehouse.getInstance().allCollections) {
+			childNode = new TreeHierachyModel(Constant.COLLECTION_HINT + c.getIdCollection(),
+					Constant.COLLECTION_LEVEL);
+			fatherNode = abstractMap.get(Constant.INSTITUTION_HINT + c.getIdInstitution().getIdInstitution());
+			fatherNode.addNode(childNode);
+			abstractMap.put(Constant.COLLECTION_HINT + c.getIdCollection(), childNode);
+			tree.put(Constant.COLLECTION_HINT + c.getIdCollection(), new DefaultTreeNode(c,
+					tree.get(Constant.INSTITUTION_HINT + c.getIdInstitution().getIdInstitution())));
+		}
+
+		for (Catalog c : DataWarehouse.getInstance().allCatalogs) {
+			childNode = new TreeHierachyModel(Constant.CATALOG_HINT + c.getIdCatalog(), Constant.CATALOG_LEVEL);
+			fatherNode = abstractMap.get(Constant.COLLECTION_HINT + c.getIdCollection().getIdCollection());
+			fatherNode.addNode(childNode);
+			abstractMap.put(Constant.CATALOG_HINT + c.getIdCatalog(), childNode);
+			tree.put(Constant.CATALOG_HINT + c.getIdCatalog(),
+					new DefaultTreeNode(c, tree.get(Constant.COLLECTION_HINT + c.getIdCollection().getIdCollection())));
+		}
+
+		TreeNode n = null;
+		if (parentTaxonomy != null) {
+			n = tree.get(parentTaxonomy.getIdTaxonomy());
+		} else if (taxonomy != null) {
+			n = tree.get(taxonomy.getIdTaxonomy());
+		}
+		openBranch(n);
+		specimenCollection = new HashMap<>();
+		for (Specimen s : DataWarehouse.getInstance().allSpecimens) {
+			specimenCollection.put(Constant.CATALOG_HINT + s.getIdCatalog().getIdCatalog(), s);
 		}
 	}
 
@@ -351,7 +335,7 @@ public class CollectionBean extends UtilsBean implements Serializable {
 	}
 
 	public List<Taxonomy> getAllTaxonomys() {
-		return allTaxonomys;
+		return DataWarehouse.getInstance().allTaxonomys;
 	}
 
 	public String getSelectedLevel() {
@@ -363,7 +347,7 @@ public class CollectionBean extends UtilsBean implements Serializable {
 	}
 
 	public List<TaxonomyLevel> getAllLevels() {
-		return allTaxonomyLevels;
+		return DataWarehouse.getInstance().allTaxonomyLevels;
 	}
 
 	public TreeNode getCollectionRoot() {
@@ -423,27 +407,15 @@ public class CollectionBean extends UtilsBean implements Serializable {
 	}
 
 	public List<Institution> getAllInstitutions() {
-		return allInstitutions;
-	}
-
-	public void setAllInstitutions(List<Institution> allInstitutions) {
-		this.allInstitutions = allInstitutions;
+		return DataWarehouse.getInstance().allInstitutions;
 	}
 
 	public List<Collection> getAllCollections() {
-		return allCollections;
-	}
-
-	public void setAllCollections(List<Collection> allCollections) {
-		this.allCollections = allCollections;
+		return DataWarehouse.getInstance().allCollections;
 	}
 
 	public List<Catalog> getAllCatalogs() {
-		return allCatalogs;
-	}
-
-	public void setAllCatalogs(List<Catalog> allCatalogs) {
-		this.allCatalogs = allCatalogs;
+		return DataWarehouse.getInstance().allCatalogs;
 	}
 
 	public String getSelectedInstitution() {
