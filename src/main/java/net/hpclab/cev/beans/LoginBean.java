@@ -2,13 +2,12 @@ package net.hpclab.cev.beans;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.persistence.NoResultException;
 
@@ -26,7 +25,7 @@ import net.hpclab.cev.services.SessionService;
 import net.hpclab.cev.services.Util;
 
 @ManagedBean
-@SessionScoped
+@ViewScoped
 public class LoginBean extends UtilsBean implements Serializable {
 
 	private static final long serialVersionUID = 1046360575084820953L;
@@ -37,7 +36,6 @@ public class LoginBean extends UtilsBean implements Serializable {
 	private String revUser;
 	private String password;
 	private Users users;
-	private List<Modules> userModules;
 
 	public void onLoad() {
 		try {
@@ -60,7 +58,7 @@ public class LoginBean extends UtilsBean implements Serializable {
 						users.getUserLastnames());
 				logMessage = MessagesService.getInstance().getMessage(authenticateEnum.name() + Constant.LOG,
 						users.getIdUser());
-				userModules = AccessService.getInstance().getUserMenu(users);
+				super.setUserModules(facesContext, AccessService.getInstance().getUserMenu(users));
 				redirect(Constant.MAIN_ADMIN_PAGE);
 				break;
 			case LOGIN_USER_NOT_ACTIVE_ERROR:
@@ -90,7 +88,7 @@ public class LoginBean extends UtilsBean implements Serializable {
 
 	public void logOut() throws IOException {
 		invalidateSession(FacesContext.getCurrentInstance());
-		redirect(Constant.LOGIN_PAGE + Constant.FACES_REDIRECT);
+		redirect(Constant.MAIN_PAGE + Constant.FACES_REDIRECT);
 	}
 
 	public void recoverPassword() {
@@ -146,10 +144,6 @@ public class LoginBean extends UtilsBean implements Serializable {
 		this.user = user;
 	}
 
-	public Users getUsers() {
-		return users;
-	}
-
 	public void setUsers(Users users) {
 		this.users = users;
 	}
@@ -158,11 +152,11 @@ public class LoginBean extends UtilsBean implements Serializable {
 		return DataWarehouse.getInstance().allInstitutions;
 	}
 
-	public List<Modules> getUserModules() {
-		return userModules;
+	public Users getUsers() {
+		return super.getUsers(FacesContext.getCurrentInstance());
 	}
 
-	public void setUserModules(LinkedList<Modules> userModules) {
-		this.userModules = userModules;
+	public List<Modules> getUserModules() {
+		return super.getUserModules(FacesContext.getCurrentInstance());
 	}
 }

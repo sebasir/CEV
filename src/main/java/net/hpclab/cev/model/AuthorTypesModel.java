@@ -46,6 +46,18 @@ public class AuthorTypesModel {
 		this.collector = collector;
 	}
 
+	public int getAuthorAut() {
+		return isAuthorEpithet() ? 1 : 0;
+	}
+
+	public int getAuthorCol() {
+		return isCollector() ? 1 : 0;
+	}
+
+	public int getAuthorDet() {
+		return isDeterminer() ? 1 : 0;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

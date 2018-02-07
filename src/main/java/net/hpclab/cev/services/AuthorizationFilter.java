@@ -34,10 +34,11 @@ public class AuthorizationFilter implements Filter {
 		try {
 			UserSession userSession = (UserSession) session.getAttribute(Constant.USER_DATA);
 			loggedIn = true;
-			if (userSession.getUser().getStatus().equals(StatusEnum.Activo.get())) {
-				userActive = true;
-			}
+			userActive = userSession.getUser().getStatus().equals(StatusEnum.Activo.get());
+			if (userActive)
+				session.setMaxInactiveInterval(Constant.MAX_IDLE_SESSION_LOGGED_IN);
 		} catch (Exception e) {
+			loggedIn = false;
 		}
 		boolean loginRequest = request.getRequestURI().equals(loginURL);
 		boolean resourceRequest = request.getRequestURI()
@@ -50,7 +51,7 @@ public class AuthorizationFilter implements Filter {
 				response.setHeader("Pragma", "no-cache");
 				response.setDateHeader("Expires", 0);
 			}
-			chain.doFilter(request, response);
+			chain.doFilter(req, res);
 		} else if (ajaxRequest) {
 			response.setContentType("text/xml");
 			response.setCharacterEncoding("UTF-8");

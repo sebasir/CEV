@@ -6,14 +6,17 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 
+import net.hpclab.cev.entities.Modules;
 import net.hpclab.cev.entities.Users;
 import net.hpclab.cev.enums.AuthenticateEnum;
 import net.hpclab.cev.enums.OutcomeEnum;
@@ -59,6 +62,23 @@ public class UtilsBean implements Serializable {
 			return forwardedFor.split("\\s*,\\s*", 2)[0];
 		}
 		return request.getRemoteAddr();
+	}
+
+	public Users getUsers(FacesContext facesContext) {
+		return getUserSession(facesContext).getUser();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Modules> getUserModules(FacesContext facesContext) {
+		List<Modules> modules = null;
+		HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(false);
+		if (null != session)
+			modules = (List<Modules>) facesContext.getExternalContext().getSessionMap().get(Constant.USER_MODULES);
+		return modules;
+	}
+
+	public void setUserModules(FacesContext facesContext, List<Modules> userMenu) {
+		facesContext.getExternalContext().getSessionMap().put(Constant.USER_MODULES, userMenu);
 	}
 
 	public String formatDate(Date date) {

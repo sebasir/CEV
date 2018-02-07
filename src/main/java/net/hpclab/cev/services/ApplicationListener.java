@@ -70,17 +70,18 @@ public class ApplicationListener implements ServletContextListener, HttpSessionL
 
 	@Override
 	public void sessionCreated(HttpSessionEvent se) {
-
+		System.out.println("session " + se.getSession().getId() + " created!");
+		se.getSession().setMaxInactiveInterval(Constant.MAX_IDLE_SESSION_NO_LOGGED);
 	}
 
 	@Override
 	public void sessionDestroyed(HttpSessionEvent se) {
 		try {
-			// EntityResourcer.getInstance().disconnect();
 			AuditService.clearInstance();
 		} catch (Exception e) {
 
 		}
 		SessionService.getInstance().removeUser(se.getSession().getId());
+		System.out.println("session " + se.getSession().getId() + " destroyed!");
 	}
 }
