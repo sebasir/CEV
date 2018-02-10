@@ -27,11 +27,19 @@ public class AuthorBean extends UtilsBean implements Serializable {
 
 	private static final long serialVersionUID = 4430802162921501326L;
 	private static final Logger LOGGER = Logger.getLogger(AuthorBean.class.getSimpleName());
+
 	private DataBaseService<Author> authorService;
 	private HashMap<Integer, AuthorTypesModel> authorTypes;
+	private HashMap<Integer, Author> authorMap;
 	private List<Specimen> authorSpecimens;
 	private List<Users> systemUsers;
+	private ArrayList<Author> determiners;
+	private ArrayList<Author> collectors;
+	private ArrayList<Author> specificAuthors;
 	private Author author;
+	private Integer determiner;
+	private Integer collector;
+	private Integer specificEpiteth;
 	private Integer users;
 
 	public AuthorBean() {
@@ -51,8 +59,23 @@ public class AuthorBean extends UtilsBean implements Serializable {
 	public void restartAuthorTypes() {
 		try {
 			users = null;
+			author = null;
 			authorTypes = new HashMap<>();
+			authorMap = new HashMap<>();
+			determiners = new ArrayList<>();
+			collectors = new ArrayList<>();
+			specificAuthors = new ArrayList<>();
+					
 			for (Author a : DataWarehouse.getInstance().allAuthors) {
+				if (a.getAuthorDet() == 1)
+					determiners.add(a);
+
+				if (a.getAuthorCol() == 1)
+					collectors.add(a);
+
+				if (a.getAuthorAut() == 1)
+					specificAuthors.add(a);
+				authorMap.put(a.getIdAuthor(), a);
 				authorTypes.put(a.getIdAuthor(), new AuthorTypesModel(a.getIdAuthor(), a.getAuthorDet() != 0,
 						a.getAuthorAut() != 0, a.getAuthorCol() != 0));
 			}
@@ -130,8 +153,26 @@ public class AuthorBean extends UtilsBean implements Serializable {
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
 
+	public void onAuthorAssign(Integer idAuthor, String origin) {
+		if (idAuthor != null)
+			showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.GENERIC_INFO,
+					origin + ": " + authorMap.get(idAuthor).getAuthorName());
+	}
+
 	public List<Author> getAllAuthors() {
 		return DataWarehouse.getInstance().allAuthors;
+	}
+
+	public List<Author> getDeterminers() {
+		return determiners;
+	}
+
+	public List<Author> getCollectors() {
+		return collectors;
+	}
+
+	public List<Author> getSpecificAuthors() {
+		return specificAuthors;
 	}
 
 	public HashMap<Integer, AuthorTypesModel> getAuthorTypes() {
@@ -169,5 +210,29 @@ public class AuthorBean extends UtilsBean implements Serializable {
 
 	public void setUsers(Integer users) {
 		this.users = users;
+	}
+
+	public Integer getDeterminer() {
+		return determiner;
+	}
+
+	public void setDeterminer(Integer determiner) {
+		this.determiner = determiner;
+	}
+
+	public Integer getCollector() {
+		return collector;
+	}
+
+	public void setCollector(Integer collector) {
+		this.collector = collector;
+	}
+
+	public Integer getSpecificEpiteth() {
+		return specificEpiteth;
+	}
+
+	public void setSpecificEpiteth(Integer specificEpiteth) {
+		this.specificEpiteth = specificEpiteth;
 	}
 }

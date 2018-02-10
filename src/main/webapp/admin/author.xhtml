@@ -42,7 +42,7 @@
 								<label class="col-md-4 control-label" for="taxName">Nombre Autor:</label>
 								<div class="col-md-8">
 									<h:inputText id="authorName" styleClass="ui-state-default form-control input-sm input-block-level required"
-										value="#{authorBean.author.authorName}" required="true" requiredMessage="Debes definir el nombre del autor!">
+										value="#{authorBean.author.authorName}">
 										<p:ajax process="@this" />
 										<f:validateBean disabled="true" />
 									</h:inputText>
@@ -124,7 +124,7 @@
 								<label class="col-md-4 control-label" for="taxName">Nombre Autor:</label>
 								<div class="col-md-8">
 									<h:inputText id="authorName" styleClass="ui-state-default form-control input-sm input-block-level required"
-										value="#{authorBean.author.authorName}" required="true" requiredMessage="Debes definir el nombre del autor!">
+										value="#{authorBean.author.authorName}">
 										<p:ajax process="@this" />
 										<f:validateBean disabled="true" />
 									</h:inputText>
@@ -230,6 +230,7 @@
 		<p:commandButton id="createButton" value="Crear nuevo autor" actionListener="#{authorBean.prepareCreate()}"
 			oncomplete="$('#createAuthorModal').modal({backdrop: false})"
 			update="formAuthor, deleteAuthorModalForm, editAuthorModalForm, createAuthorModalForm" />
+		<hr />
 		<h:dataTable id="dataTableAuthor" rendered="#{authorBean.allAuthors != null and !authorBean.allAuthors.isEmpty()}"
 			value="#{authorBean.allAuthors}" var="author" styleClass="table table-hover table-condensed">
 			<h:column>

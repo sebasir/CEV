@@ -20,9 +20,50 @@
 			<section style="width: 100%">
 				<ui:include src="collections.xhtml"></ui:include>
 			</section>
-			<h3>ASGASDF</h3>
+			<h3>Datos de Autoría</h3>
 			<section style="width: 100%">
-				<p>HOLA_4</p>
+				<h:form id="authorForm">
+					<p:growl id="growl" showDetail="true" />
+					<div class="form-group">
+						<div class="row">
+							<label class="col-md-4 control-label" for="determiner">Determinador:</label>
+							<div class="col-md-8">
+								<h:selectOneMenu id="determiner" class="form-control ui-state-default" value="#{authorBean.determiner}">
+									<p:ajax event="change" listener="#{authorBean.onAuthorAssign(authorBean.determiner, 'Determinador')}"
+										update="authorForm" />
+									<f:selectItem itemValue="#{null}" itemLabel="Selecciona" />
+									<f:selectItems value="#{authorBean.determiners}" var="author" itemLabel="#{author.authorName}"
+										itemValue="#{author.idAuthor}" />
+								</h:selectOneMenu>
+							</div>
+						</div>
+						<div class="row">
+							<label class="col-md-4 control-label" for="colector">Colector:</label>
+							<div class="col-md-8">
+								<h:selectOneMenu id="colector" class="form-control ui-state-default" value="#{authorBean.collector}">
+									<p:ajax event="change" listener="#{authorBean.onAuthorAssign(authorBean.collector, 'Colector')}"
+										update="authorForm" />
+									<f:selectItem itemValue="#{null}" itemLabel="Selecciona" />
+									<f:selectItems value="#{authorBean.collectors}" var="author" itemLabel="#{author.authorName}"
+										itemValue="#{author.idAuthor}" />
+								</h:selectOneMenu>
+							</div>
+						</div>
+						<div class="row">
+							<label class="col-md-4 control-label" for="specificEpiteth">Autor Epiteto Específico:</label>
+							<div class="col-md-8">
+								<h:selectOneMenu id="specificEpiteth" class="form-control ui-state-default"
+									value="#{authorBean.specificEpiteth}">
+									<p:ajax event="change" listener="#{authorBean.onAuthorAssign(authorBean.specificEpiteth, 'Autor Epiteto')}"
+										update="authorForm" />
+									<f:selectItem itemValue="#{null}" itemLabel="Selecciona" />
+									<f:selectItems value="#{authorBean.specificAuthors}" var="author" itemLabel="#{author.authorName}"
+										itemValue="#{author.idAuthor}" />
+								</h:selectOneMenu>
+							</div>
+						</div>
+					</div>
+				</h:form>
 			</section>
 		</div>
 	</h:body>
