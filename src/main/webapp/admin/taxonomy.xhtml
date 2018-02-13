@@ -1,24 +1,33 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
 	<h:outputStylesheet library="css" name="pstyle.css" />
 	<h:body>
 		<!-- delete Modal -->
 		<h:form id="deleteTaxModalForm">
-			<div class="modal fade" id="deleteTaxModal" tabindex="-1" role="dialog" aria-labelledby="Eliminar registro">
+			<div class="modal fade" id="deleteTaxModal" tabindex="-1"
+				role="dialog" aria-labelledby="Eliminar registro">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close">
 								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 							</button>
-							<h4 class="modal-title" id="myModalLabel">Confirmar eliminación</h4>
+							<h4 class="modal-title" id="myModalLabel">Confirmar
+								eliminación</h4>
 						</div>
-						<div class="modal-body">¿Está seguro que desea eliminar este registro?</div>
+						<div class="modal-body">¿Está seguro que desea eliminar este
+							registro?</div>
 						<div class="modal-footer">
 							<div class="input-group">
-								<p:commandButton id="deleteYesButton" value="Eliminar" action="#{taxonomyBean.delete}" update=":formTaxonomy"
+								<p:commandButton id="deleteYesButton" value="Eliminar"
+									action="#{taxonomyBean.delete}" update=":formTaxonomy"
 									oncomplete="$('#deleteTaxModal').modal('hide')" />
-								<p:commandButton id="deleteNoButton" value="Cancelar" type="button" onclick="$('#deleteTaxModal').modal('hide')" />
+								<p:commandButton id="deleteNoButton" value="Cancelar"
+									type="button" onclick="$('#deleteTaxModal').modal('hide')" />
 							</div>
 						</div>
 					</div>
@@ -29,21 +38,26 @@
 
 		<!-- edit Modal -->
 		<h:form id="editTaxModalForm">
-			<div class="modal fade" id="editTaxModal" tabindex="-1" role="dialog" aria-labelledby="Editar Clasificación">
+			<div class="modal fade" id="editTaxModal" tabindex="-1" role="dialog"
+				aria-labelledby="Editar Clasificación">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close">
 								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 							</button>
-							<h4 class="modal-title" id="myModalLabel">Editar clasificación</h4>
+							<h4 class="modal-title" id="myModalLabel">Editar
+								clasificación</h4>
 						</div>
 						<div class="modal-body">
 							<div class="form-group">
 								<div class="row">
-									<label class="col-md-4 control-label" for="taxName">Nombre Clasificación:</label>
+									<label class="col-md-4 control-label" for="taxName">Nombre
+										Clasificación:</label>
 									<div class="col-md-8">
-										<h:inputText id="taxName" styleClass="ui-state-default form-control input-sm input-block-level required"
+										<h:inputText id="taxName"
+											styleClass="ui-state-default form-control input-sm input-block-level required"
 											value="#{taxonomyBean.taxonomy.taxonomyName}" required="true"
 											requiredMessage="Debes definir el nombre de la clasificación!">
 											<p:ajax process="@this" />
@@ -52,14 +66,18 @@
 									</div>
 								</div>
 								<div class="row">
-									<label class="col-md-4 control-label" for="level">Nivel Clasificación:</label>
+									<label class="col-md-4 control-label" for="level">Nivel
+										Clasificación:</label>
 									<div class="col-md-8">
-										<h:selectOneMenu id="level" styleClass="ui-state-default form-control input-sm input-block-level required"
+										<h:selectOneMenu id="level"
+											styleClass="ui-state-default form-control input-sm input-block-level required"
 											value="#{taxonomyBean.selectedLevel}">
 											<p:ajax process="@this" />
 											<f:validateBean disabled="true" />
-											<f:selectItem itemLabel="Selecciona una jerarquía" itemValue="" />
-											<f:selectItems value="#{taxonomyBean.avalLevels}" var="lev" itemLabel="#{lev.taxlevelName}"
+											<f:selectItem itemLabel="Selecciona una jerarquía"
+												itemValue="" />
+											<f:selectItems value="#{taxonomyBean.avalLevels}" var="lev"
+												itemLabel="#{lev.taxlevelName}"
 												itemValue="#{lev.idTaxlevel}" />
 										</h:selectOneMenu>
 									</div>
@@ -68,9 +86,11 @@
 						</div>
 						<div class="modal-footer">
 							<div class="input-group">
-								<p:commandButton id="editYesButton" value="Guardar" action="#{taxonomyBean.edit()}" update=":formTaxonomy"
+								<p:commandButton id="editYesButton" value="Guardar"
+									action="#{taxonomyBean.edit()}" update=":formTaxonomy"
 									oncomplete="$('#editTaxModal').modal('hide')" />
-								<p:commandButton id="editNoButton" value="Cancelar" type="button" onclick="$('#editTaxModal').modal('hide')" />
+								<p:commandButton id="editNoButton" value="Cancelar"
+									type="button" onclick="$('#editTaxModal').modal('hide')" />
 							</div>
 						</div>
 					</div>
@@ -81,26 +101,31 @@
 
 		<!-- create Modal -->
 		<h:form id="createTaxModalForm">
-			<div class="modal fade" id="createTaxModal" tabindex="-1" role="dialog" aria-labelledby="Crear Clasificación">
+			<div class="modal fade" id="createTaxModal" tabindex="-1"
+				role="dialog" aria-labelledby="Crear Clasificación">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close">
 								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 							</button>
-							<h4 class="modal-title" id="myModalLabel">Crear clasificación</h4>
+							<h4 class="modal-title" id="myModalLabel">Crear
+								clasificación</h4>
 						</div>
 						<div class="modal-body">
 							<div class="form-group">
 								<div class="row">
-									<label class="col-md-4 control-label" for="taxName">Clasificación Origen:</label>
+									<label class="col-md-4 control-label" for="taxName">Clasificación
+										Origen:</label>
 									<h:outputText class="col-md-4"
 										value="#{taxonomyBean.parentTaxonomy.idTaxlevel.taxlevelName} #{taxonomyBean.parentTaxonomy.taxonomyName}" />
 								</div>
 								<div class="row">
 									<label class="col-md-4 control-label" for="taxName">Nombre:</label>
 									<div class="col-md-8">
-										<h:inputText id="taxName" styleClass="ui-state-default form-control input-sm input-block-level required"
+										<h:inputText id="taxName"
+											styleClass="ui-state-default form-control input-sm input-block-level required"
 											value="#{taxonomyBean.taxonomy.taxonomyName}" required="true"
 											requiredMessage="Debes definir el nombre de la clasificación!">
 											<p:ajax process="@this" />
@@ -111,12 +136,15 @@
 								<div class="row">
 									<label class="col-md-4 control-label" for="level">Nivel:</label>
 									<div class="col-md-8">
-										<h:selectOneMenu id="level" styleClass="ui-state-default form-control input-sm input-block-level required"
+										<h:selectOneMenu id="level"
+											styleClass="ui-state-default form-control input-sm input-block-level required"
 											value="#{taxonomyBean.selectedLevel}">
 											<p:ajax process="@this" />
 											<f:validateBean disabled="true" />
-											<f:selectItem itemLabel="Selecciona una jerarquía" itemValue="" />
-											<f:selectItems value="#{taxonomyBean.avalLevels}" var="lev" itemLabel="#{lev.taxlevelName}"
+											<f:selectItem itemLabel="Selecciona una jerarquía"
+												itemValue="" />
+											<f:selectItems value="#{taxonomyBean.avalLevels}" var="lev"
+												itemLabel="#{lev.taxlevelName}"
 												itemValue="#{lev.idTaxlevel}" />
 										</h:selectOneMenu>
 									</div>
@@ -125,9 +153,11 @@
 						</div>
 						<div class="modal-footer">
 							<div class="input-group">
-								<p:commandButton id="createYesButton" value="Guardar" action="#{taxonomyBean.persist()}" update=":formTaxonomy"
+								<p:commandButton id="createYesButton" value="Guardar"
+									action="#{taxonomyBean.persist()}" update=":formTaxonomy"
 									oncomplete="$('#createTaxModal').modal('hide')" />
-								<p:commandButton id="createNoButton" value="Cancelar" type="button" onclick="$('#createTaxModal').modal('hide')" />
+								<p:commandButton id="createNoButton" value="Cancelar"
+									type="button" onclick="$('#createTaxModal').modal('hide')" />
 							</div>
 						</div>
 					</div>
@@ -138,23 +168,29 @@
 
 		<!-- detail Modal -->
 		<h:form id="detailTaxModalForm">
-			<div class="modal fade" id="detailTaxModal" tabindex="-1" role="dialog" aria-labelledby="Detalle de Especímenes">
+			<div class="modal fade" id="detailTaxModal" tabindex="-1"
+				role="dialog" aria-labelledby="Detalle de Especímenes">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close">
 								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 							</button>
-							<h4 class="modal-title" id="myModalLabel">Detalle de Especímenes</h4>
+							<h4 class="modal-title" id="myModalLabel">Detalle de
+								Especímenes</h4>
 						</div>
 						<div class="modal-body">
 							<div class="form-group">
-								<ui:repeat var="specimen" value="#{taxonomyBean.taxonomySpecimens}">
+								<ui:repeat var="specimen"
+									value="#{taxonomyBean.taxonomySpecimens}">
 									<div class="row">
 										<h:outputText class="col-md-10"
 											value="#{specimen.idTaxonomy.taxonomyName} #{specimen.specificEpithet} (#{specimen.commonName})" />
-										<p:commandLink id="viewButton" class="btn btn-default btn-sm btn-action"
-											oncomplete="PF('specimenDetail').show()" title="Ficha técnica de #{specimen.commonName}"
+										<p:commandLink id="viewButton"
+											class="btn btn-default btn-sm btn-action"
+											oncomplete="PF('specimenDetail').show()"
+											title="Ficha técnica de #{specimen.commonName}"
 											actionListener="#{specimenBean.setSpecimen(specimen)}">
 											<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
 										</p:commandLink>
@@ -165,7 +201,8 @@
 						</div>
 						<div class="modal-footer">
 							<div class="input-group">
-								<p:commandButton id="detailNoButton" value="Cerrar" type="button" onclick="$('#detailTaxModal').modal('hide')" />
+								<p:commandButton id="detailNoButton" value="Cerrar"
+									type="button" onclick="$('#detailTaxModal').modal('hide')" />
 							</div>
 						</div>
 					</div>
@@ -176,27 +213,37 @@
 
 		<h:form id="formTaxonomy">
 			<p:growl id="growl" showDetail="true" />
-			<p:tree id="taxTree" value="#{taxonomyBean.taxRoot}" var="tax" orientation="horizontal" selectionMode="single"
+			<p:tree id="taxTree" value="#{taxonomyBean.taxRoot}" var="tax"
+				orientation="horizontal" selectionMode="single"
 				selection="#{taxonomyBean.selectedNode}">
-				<p:ajax event="select" listener="#{taxonomyBean.onNodeSelect}" update="growl" />
+				<p:ajax event="select" listener="#{taxonomyBean.onNodeSelect}"
+					update="growl" />
 				<p:treeNode>
 					#{tax}<br />
 					<p class="taxLevel">#{taxonomyBean.getLevelName(tax)}</p>
 				</p:treeNode>
 			</p:tree>
 			<p:contextMenu for="taxTree">
-				<p:menuitem value="Agregar Clasificación" update="createTaxModalForm"
-					actionListener="#{taxonomyBean.setDatafromNode('create')}" icon="fa fa-plus"
+				<p:menuitem value="Agregar Clasificación"
+					update="createTaxModalForm"
+					actionListener="#{taxonomyBean.setDatafromNode('create')}"
+					icon="fa fa-plus"
 					oncomplete="$('#createTaxModal').modal({backdrop: false})" />
 
-				<p:menuitem value="Editar" update="editTaxModalForm" actionListener="#{taxonomyBean.setDatafromNode('edit')}"
-					icon="fa fa-pencil" oncomplete="$('#editTaxModal').modal({backdrop: false})" />
+				<p:menuitem value="Editar" update="editTaxModalForm"
+					actionListener="#{taxonomyBean.setDatafromNode('edit')}"
+					icon="fa fa-pencil"
+					oncomplete="$('#editTaxModal').modal({backdrop: false})" />
 
-				<p:menuitem value="Ver detalle de Especies" update="detailTaxModalForm"
-					actionListener="#{taxonomyBean.setDatafromNode('detail')}" icon="fa fa-folder-open"
+				<p:menuitem value="Ver detalle de Especies"
+					update="detailTaxModalForm"
+					actionListener="#{taxonomyBean.setDatafromNode('detail')}"
+					icon="fa fa-folder-open"
 					oncomplete="$('#detailTaxModal').modal({backdrop: false})" />
 
-				<p:menuitem value="Borrar" actionListener="#{taxonomyBean.setDatafromNode('delete')}" icon="fa fa-trash"
+				<p:menuitem value="Borrar"
+					actionListener="#{taxonomyBean.setDatafromNode('delete')}"
+					icon="fa fa-trash"
 					oncomplete="$('#deleteTaxModal').modal({backdrop: false})" />
 			</p:contextMenu>
 		</h:form>

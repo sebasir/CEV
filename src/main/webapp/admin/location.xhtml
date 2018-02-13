@@ -1,6 +1,10 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
-	<h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+	<h:outputScript library="primefaces" name="jquery/jquery.js"
+		target="head" />
 	<h:outputScript library="js" name="locationMap.js" target="head" />
 	<h:panelGroup id="mapCenter">
 		<h:outputScript>
@@ -10,21 +14,27 @@
 	<h:body>
 		<!-- delete Modal -->
 		<h:form id="deleteModalForm">
-			<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="Eliminar registro">
+			<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
+				aria-labelledby="Eliminar registro">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close">
 								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 							</button>
-							<h4 class="modal-title" id="myModalLabel">Confirmar eliminación</h4>
+							<h4 class="modal-title" id="myModalLabel">Confirmar
+								eliminación</h4>
 						</div>
-						<div class="modal-body">¿Está seguro que desea eliminar este registro?</div>
+						<div class="modal-body">¿Está seguro que desea eliminar este
+							registro?</div>
 						<div class="modal-footer">
 							<div class="input-group">
-								<p:commandButton id="deleteYesButton" value="Eliminar" action="#{locationBean.delete}" update=":formLocation"
+								<p:commandButton id="deleteYesButton" value="Eliminar"
+									action="#{locationBean.delete}" update=":formLocation"
 									oncomplete="$('#deleteModal').modal('hide')" />
-								<p:commandButton id="deleteNoButton" value="Cancelar" type="button" onclick="$('#deleteModal').modal('hide')" />
+								<p:commandButton id="deleteNoButton" value="Cancelar"
+									type="button" onclick="$('#deleteModal').modal('hide')" />
 							</div>
 						</div>
 					</div>
@@ -35,36 +45,47 @@
 
 		<!-- edit Modal -->
 		<h:form id="editModalForm">
-			<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="Editar Clasificación">
+			<div class="modal fade" id="editModal" tabindex="-1" role="dialog"
+				aria-labelledby="Editar Clasificación">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close">
 								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 							</button>
-							<h4 class="modal-title" id="myModalLabel">Editar clasificación</h4>
+							<h4 class="modal-title" id="myModalLabel">Editar
+								clasificación</h4>
 						</div>
 						<div class="modal-body">
 							<div class="form-group">
 								<div class="row">
-									<label class="col-md-4 control-label" for="locName">Nombre Clasificación:</label>
+									<label class="col-md-4 control-label" for="locName">Nombre
+										Clasificación:</label>
 									<div class="col-md-8">
-										<h:inputText id="locName" styleClass="ui-state-default form-control input-sm input-block-level required"
-											value="#{locationBean.location.locationName}" required="true" requiredMessage="Debes definir el nombre de la clasificación!">
+										<h:inputText id="locName"
+											styleClass="ui-state-default form-control input-sm input-block-level required"
+											value="#{locationBean.location.locationName}" required="true"
+											requiredMessage="Debes definir el nombre de la clasificación!">
 											<p:ajax process="@this" />
 											<f:validateBean disabled="true" />
 										</h:inputText>
 									</div>
 								</div>
 								<div class="row">
-									<label class="col-md-4 control-label" for="level">Nivel Clasificación:</label>
+									<label class="col-md-4 control-label" for="level">Nivel
+										Clasificación:</label>
 									<div class="col-md-8">
-										<h:selectOneMenu id="level" styleClass="ui-state-default form-control input-sm input-block-level required"
+										<h:selectOneMenu id="level"
+											styleClass="ui-state-default form-control input-sm input-block-level required"
 											value="#{locationBean.selectedLevel}">
 											<p:ajax process="@this" />
 											<f:validateBean disabled="true" />
-											<f:selectItem itemLabel="Selecciona una jerarquía" itemValue="" />
-											<f:selectItems value="#{locationBean.avalLevels}" var="lev" itemLabel="#{lev.loclevelName}" itemValue="#{lev.idLoclevel}" />
+											<f:selectItem itemLabel="Selecciona una jerarquía"
+												itemValue="" />
+											<f:selectItems value="#{locationBean.avalLevels}" var="lev"
+												itemLabel="#{lev.loclevelName}"
+												itemValue="#{lev.idLoclevel}" />
 										</h:selectOneMenu>
 									</div>
 								</div>
@@ -72,9 +93,11 @@
 						</div>
 						<div class="modal-footer">
 							<div class="input-group">
-								<p:commandButton id="editYesButton" value="Guardar" action="#{locationBean.edit()}" update=":formLocation"
+								<p:commandButton id="editYesButton" value="Guardar"
+									action="#{locationBean.edit()}" update=":formLocation"
 									oncomplete="$('#editModal').modal('hide')" />
-								<p:commandButton id="editNoButton" value="Cancelar" type="button" onclick="$('#editModal').modal('hide')" />
+								<p:commandButton id="editNoButton" value="Cancelar"
+									type="button" onclick="$('#editModal').modal('hide')" />
 							</div>
 						</div>
 					</div>
@@ -85,26 +108,33 @@
 
 		<!-- create Modal -->
 		<h:form id="createModalForm">
-			<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="Crear Clasificación">
+			<div class="modal fade" id="createModal" tabindex="-1" role="dialog"
+				aria-labelledby="Crear Clasificación">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close">
 								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 							</button>
-							<h4 class="modal-title" id="myModalLabel">Crear clasificación</h4>
+							<h4 class="modal-title" id="myModalLabel">Crear
+								clasificación</h4>
 						</div>
 						<div class="modal-body">
 							<div class="form-group">
 								<div class="row">
-									<label class="col-md-4 control-label" for="locName">Clasificación Origen:</label>
-									<h:outputText class="col-md-4" value="#{locationBean.parentLocation.idLoclevel.loclevelName} #{locationBean.parentLocation.locationName}" />
+									<label class="col-md-4 control-label" for="locName">Clasificación
+										Origen:</label>
+									<h:outputText class="col-md-4"
+										value="#{locationBean.parentLocation.idLoclevel.loclevelName} #{locationBean.parentLocation.locationName}" />
 								</div>
 								<div class="row">
 									<label class="col-md-4 control-label" for="locName">Nombre:</label>
 									<div class="col-md-8">
-										<h:inputText id="locName" styleClass="ui-state-default form-control input-sm input-block-level required"
-											value="#{locationBean.location.locationName}" required="true" requiredMessage="Debes definir el nombre de la clasificación!">
+										<h:inputText id="locName"
+											styleClass="ui-state-default form-control input-sm input-block-level required"
+											value="#{locationBean.location.locationName}" required="true"
+											requiredMessage="Debes definir el nombre de la clasificación!">
 											<p:ajax process="@this" />
 											<f:validateBean disabled="true" />
 										</h:inputText>
@@ -113,12 +143,16 @@
 								<div class="row">
 									<label class="col-md-4 control-label" for="level">Nivel:</label>
 									<div class="col-md-8">
-										<h:selectOneMenu id="level" styleClass="ui-state-default form-control input-sm input-block-level required"
+										<h:selectOneMenu id="level"
+											styleClass="ui-state-default form-control input-sm input-block-level required"
 											value="#{locationBean.selectedLevel}">
 											<p:ajax process="@this" />
 											<f:validateBean disabled="true" />
-											<f:selectItem itemLabel="Selecciona una jerarquía" itemValue="" />
-											<f:selectItems value="#{locationBean.avalLevels}" var="lev" itemLabel="#{lev.loclevelName}" itemValue="#{lev.idLoclevel}" />
+											<f:selectItem itemLabel="Selecciona una jerarquía"
+												itemValue="" />
+											<f:selectItems value="#{locationBean.avalLevels}" var="lev"
+												itemLabel="#{lev.loclevelName}"
+												itemValue="#{lev.idLoclevel}" />
 										</h:selectOneMenu>
 									</div>
 								</div>
@@ -126,9 +160,11 @@
 						</div>
 						<div class="modal-footer">
 							<div class="input-group">
-								<p:commandButton id="createYesButton" value="Guardar" action="#{locationBean.persist()}" update=":formLocation"
+								<p:commandButton id="createYesButton" value="Guardar"
+									action="#{locationBean.persist()}" update=":formLocation"
 									oncomplete="$('#createModal').modal('hide')" />
-								<p:commandButton id="createNoButton" value="Cancelar" type="button" onclick="$('#createModal').modal('hide')" />
+								<p:commandButton id="createNoButton" value="Cancelar"
+									type="button" onclick="$('#createModal').modal('hide')" />
 							</div>
 						</div>
 					</div>
@@ -139,22 +175,30 @@
 
 		<!-- detail Modal -->
 		<h:form id="detailModalForm">
-			<div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="Detalle de Especímenes">
+			<div class="modal fade" id="detailModal" tabindex="-1" role="dialog"
+				aria-labelledby="Detalle de Especímenes">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close">
 								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 							</button>
-							<h4 class="modal-title" id="myModalLabel">Detalle de Especímenes</h4>
+							<h4 class="modal-title" id="myModalLabel">Detalle de
+								Especímenes</h4>
 						</div>
 						<div class="modal-body">
 							<div class="form-group">
-								<ui:repeat var="specimen" value="#{locationBean.locationSpecimens}">
+								<ui:repeat var="specimen"
+									value="#{locationBean.locationSpecimens}">
 									<div class="row">
-										<h:outputText class="col-md-10" value="#{specimen.idTaxonomy.taxonomyName} #{specimen.specificEpithet} (#{specimen.commonName})" />
-										<p:commandLink id="viewButton" class="btn btn-default btn-sm btn-action" oncomplete="PF('specimenDetail').show()"
-											title="Ficha técnica de #{specimen.commonName}" actionListener="#{specimenBean.setSpecimen(specimen)}">
+										<h:outputText class="col-md-10"
+											value="#{specimen.idTaxonomy.taxonomyName} #{specimen.specificEpithet} (#{specimen.commonName})" />
+										<p:commandLink id="viewButton"
+											class="btn btn-default btn-sm btn-action"
+											oncomplete="PF('specimenDetail').show()"
+											title="Ficha técnica de #{specimen.commonName}"
+											actionListener="#{specimenBean.setSpecimen(specimen)}">
 											<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
 										</p:commandLink>
 									</div>
@@ -164,7 +208,8 @@
 						</div>
 						<div class="modal-footer">
 							<div class="input-group">
-								<p:commandButton id="detailNoButton" value="Cerrar" type="button" onclick="$('#detailModal').modal('hide')" />
+								<p:commandButton id="detailNoButton" value="Cerrar"
+									type="button" onclick="$('#detailModal').modal('hide')" />
 							</div>
 						</div>
 					</div>
@@ -179,24 +224,35 @@
 				<f:facet name="header">
 					<h:outputText value="Ubicaciones" />
 				</f:facet>
-				<p:tree id="locTree" value="#{locationBean.locRoot}" var="loc" orientation="vertical" selectionMode="single"
+				<p:tree id="locTree" value="#{locationBean.locRoot}" var="loc"
+					orientation="vertical" selectionMode="single"
 					selection="#{locationBean.selectedNode}">
-					<p:ajax event="select" listener="#{locationBean.onNodeSelect}" update="mapCenter, growl" />
+					<p:ajax event="select" listener="#{locationBean.onNodeSelect}"
+						update="mapCenter, growl" />
 					<p:treeNode>
 						<h:outputText value="#{loc}" />
 					</p:treeNode>
 				</p:tree>
 				<p:contextMenu for="locTree">
-					<p:menuitem value="Agregar Clasificación" update="createModalForm" actionListener="#{locationBean.setDatafromNode('create')}" icon="fa fa-plus"
+					<p:menuitem value="Agregar Clasificación" update="createModalForm"
+						actionListener="#{locationBean.setDatafromNode('create')}"
+						icon="fa fa-plus"
 						oncomplete="$('#createModal').modal({backdrop: false})" />
 
-					<p:menuitem value="Editar" update="editModalForm" actionListener="#{locationBean.setDatafromNode('edit')}" icon="fa fa-pencil"
+					<p:menuitem value="Editar" update="editModalForm"
+						actionListener="#{locationBean.setDatafromNode('edit')}"
+						icon="fa fa-pencil"
 						oncomplete="$('#editModal').modal({backdrop: false})" />
 
-					<p:menuitem value="Ver detalle de Especies" update="detailModalForm" actionListener="#{locationBean.setDatafromNode('detail')}"
-						icon="fa fa-folder-open" oncomplete="$('#detailModal').modal({backdrop: false})" />
+					<p:menuitem value="Ver detalle de Especies"
+						update="detailModalForm"
+						actionListener="#{locationBean.setDatafromNode('detail')}"
+						icon="fa fa-folder-open"
+						oncomplete="$('#detailModal').modal({backdrop: false})" />
 
-					<p:menuitem value="Borrar" actionListener="#{locationBean.setDatafromNode('delete')}" icon="fa fa-trash"
+					<p:menuitem value="Borrar"
+						actionListener="#{locationBean.setDatafromNode('delete')}"
+						icon="fa fa-trash"
 						oncomplete="$('#deleteModal').modal({backdrop: false})" />
 				</p:contextMenu>
 			</p:panel>

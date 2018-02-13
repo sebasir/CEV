@@ -45,7 +45,7 @@
 								<f:validateBean disabled="true" />
 							</h:inputText>
 						</div>
-						<label class="col-md-1 control-label" for="epiteto">ID Registro Biológico:</label>
+						<label class="col-md-1 control-label" for="bioreg">ID Registro Biológico:</label>
 						<div class="col-md-2">
 							<h:inputText id="bioreg" styleClass="ui-state-default form-control input-sm input-block-level required"
 								value="#{specimenBean.specimen.idBioreg}">
@@ -55,9 +55,9 @@
 						</div>
 					</div>
 					<div class="row">
-						<label class="col-md-2 control-label" for="epiteto">Nombre Taxonómico:</label>
+						<label class="col-md-2 control-label" for="taxonomyName">Nombre Taxonómico:</label>
 						<div class="col-md-2">
-							<p:autoComplete id="dd" dropdown="true" value="#{specimenBean.specimen.idTaxonomy}"
+							<p:autoComplete id="taxonomyName" dropdown="true" value="#{specimenBean.specimen.idTaxonomy}"
 								completeMethod="#{specimenBean.taxonomysQuery}" var="tax" itemLabel="#{tax.taxonomyName}" itemValue="#{tax}"
 								forceSelection="true" converter="TaxonomyConverter">
 								<p:ajax process="@this" />

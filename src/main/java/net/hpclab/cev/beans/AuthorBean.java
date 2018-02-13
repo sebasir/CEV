@@ -18,6 +18,7 @@ import net.hpclab.cev.entities.Users;
 import net.hpclab.cev.enums.OutcomeEnum;
 import net.hpclab.cev.enums.StatusEnum;
 import net.hpclab.cev.model.AuthorTypesModel;
+import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
 import net.hpclab.cev.services.DataWarehouse;
 
@@ -65,7 +66,7 @@ public class AuthorBean extends UtilsBean implements Serializable {
 			determiners = new ArrayList<>();
 			collectors = new ArrayList<>();
 			specificAuthors = new ArrayList<>();
-					
+
 			for (Author a : DataWarehouse.getInstance().allAuthors) {
 				if (a.getAuthorDet() == 1)
 					determiners.add(a);
@@ -153,10 +154,15 @@ public class AuthorBean extends UtilsBean implements Serializable {
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
 
-	public void onAuthorAssign(Integer idAuthor, String origin) {
-		if (idAuthor != null)
-			showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.GENERIC_INFO,
-					origin + ": " + authorMap.get(idAuthor).getAuthorName());
+	public void specimenDetail(Author author) {
+		authorSpecimens = new ArrayList<Specimen>();
+		if (author != null)
+			for (Specimen s : DataWarehouse.getInstance().allSpecimens) {
+				if (authorSpecimens.size() > Constant.MAX_SPECIMEN_LIST)
+					return;
+				if (s.getIdCollector().equals(author) || s.getIdDeterminer().equals(author))
+					authorSpecimens.add(s);
+			}
 	}
 
 	public List<Author> getAllAuthors() {

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
 	<h:outputScript library="js" name="main.js" />
 	<h:outputStylesheet library="css" name="pstyle.css" />
 	<h:body>
@@ -28,11 +31,15 @@
 						<div class="row">
 							<label class="col-md-4 control-label" for="determiner">Determinador:</label>
 							<div class="col-md-8">
-								<h:selectOneMenu id="determiner" class="form-control ui-state-default" value="#{authorBean.determiner}">
-									<p:ajax event="change" listener="#{authorBean.onAuthorAssign(authorBean.determiner, 'Determinador')}"
+								<h:selectOneMenu id="determiner"
+									class="form-control ui-state-default"
+									value="#{authorBean.determiner}">
+									<p:ajax event="change"
+										listener="#{authorBean.onAuthorAssign(authorBean.determiner, 'Determinador')}"
 										update="authorForm" />
 									<f:selectItem itemValue="#{null}" itemLabel="Selecciona" />
-									<f:selectItems value="#{authorBean.determiners}" var="author" itemLabel="#{author.authorName}"
+									<f:selectItems value="#{authorBean.determiners}" var="author"
+										itemLabel="#{author.authorName}"
 										itemValue="#{author.idAuthor}" />
 								</h:selectOneMenu>
 							</div>
@@ -40,24 +47,32 @@
 						<div class="row">
 							<label class="col-md-4 control-label" for="colector">Colector:</label>
 							<div class="col-md-8">
-								<h:selectOneMenu id="colector" class="form-control ui-state-default" value="#{authorBean.collector}">
-									<p:ajax event="change" listener="#{authorBean.onAuthorAssign(authorBean.collector, 'Colector')}"
+								<h:selectOneMenu id="colector"
+									class="form-control ui-state-default"
+									value="#{authorBean.collector}">
+									<p:ajax event="change"
+										listener="#{authorBean.onAuthorAssign(authorBean.collector, 'Colector')}"
 										update="authorForm" />
 									<f:selectItem itemValue="#{null}" itemLabel="Selecciona" />
-									<f:selectItems value="#{authorBean.collectors}" var="author" itemLabel="#{author.authorName}"
+									<f:selectItems value="#{authorBean.collectors}" var="author"
+										itemLabel="#{author.authorName}"
 										itemValue="#{author.idAuthor}" />
 								</h:selectOneMenu>
 							</div>
 						</div>
 						<div class="row">
-							<label class="col-md-4 control-label" for="specificEpiteth">Autor Epiteto Específico:</label>
+							<label class="col-md-4 control-label" for="specificEpiteth">Autor
+								Epiteto Específico:</label>
 							<div class="col-md-8">
-								<h:selectOneMenu id="specificEpiteth" class="form-control ui-state-default"
+								<h:selectOneMenu id="specificEpiteth"
+									class="form-control ui-state-default"
 									value="#{authorBean.specificEpiteth}">
-									<p:ajax event="change" listener="#{authorBean.onAuthorAssign(authorBean.specificEpiteth, 'Autor Epiteto')}"
+									<p:ajax event="change"
+										listener="#{authorBean.onAuthorAssign(authorBean.specificEpiteth, 'Autor Epiteto')}"
 										update="authorForm" />
 									<f:selectItem itemValue="#{null}" itemLabel="Selecciona" />
-									<f:selectItems value="#{authorBean.specificAuthors}" var="author" itemLabel="#{author.authorName}"
+									<f:selectItems value="#{authorBean.specificAuthors}"
+										var="author" itemLabel="#{author.authorName}"
 										itemValue="#{author.idAuthor}" />
 								</h:selectOneMenu>
 							</div>
@@ -67,5 +82,6 @@
 			</section>
 		</div>
 	</h:body>
-	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBR3PcM4cz5r0TULxJuDBgF2xvLqLE73c"></script>
+	<script
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBR3PcM4cz5r0TULxJuDBgF2xvLqLE73c"></script>
 </ui:composition>

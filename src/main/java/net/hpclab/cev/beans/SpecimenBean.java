@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -26,6 +25,7 @@ import net.hpclab.cev.entities.SampleType;
 import net.hpclab.cev.entities.Specimen;
 import net.hpclab.cev.entities.Taxonomy;
 import net.hpclab.cev.enums.OutcomeEnum;
+import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
 import net.hpclab.cev.services.DataWarehouse;
 
@@ -33,7 +33,7 @@ import net.hpclab.cev.services.DataWarehouse;
 @ViewScoped
 public class SpecimenBean extends UtilsBean implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -4282355371253031023L;
 	private DataBaseService<Specimen> specimenService;
 	private List<Specimen> searchSpecimen;
 	private Specimen specimen;
@@ -62,10 +62,6 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 		}
 	}
 
-	@PostConstruct
-	public void init() {
-	}
-
 	@PreDestroy
 	public void destroy() {
 		specimenService = null;
@@ -73,6 +69,7 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 
 	public void limpiarFiltros() {
 		specimen = new Specimen();
+		searchSpecimen = null;
 	}
 
 	public DataBaseService<Specimen>.Pager getPager() {
@@ -135,6 +132,8 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 	public void search() {
 		try {
 			searchSpecimen = specimenService.getList(specimen);
+			if (specimenService.getPager().getNumberOfResults() == 0)
+				showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.GENERIC_ERROR, "No se encontraron datos");
 		} catch (Exception ex) {
 			LOGGER.log(Level.SEVERE, ex.getMessage());
 		}
@@ -143,7 +142,8 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 	public List<Taxonomy> taxonomysQuery(String query) {
 		ArrayList<Taxonomy> taxs = new ArrayList<>();
 		for (Taxonomy t : DataWarehouse.getInstance().allTaxonomys) {
-			if (t.getTaxonomyName().toLowerCase().contains(query.toLowerCase())) {
+			if (t.getTaxonomyName().toLowerCase().contains(query.toLowerCase())
+					&& taxs.size() < Constant.QUERY_MAX_RESULTS) {
 				taxs.add(t);
 			}
 		}
