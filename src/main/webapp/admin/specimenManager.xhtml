@@ -55,7 +55,7 @@
 									actual:</label>
 								<div class="col-md-8">
 									<h:inputText id="fileName"
-										styleClass="ui-state-default form-control input-sm input-block-level required"
+										styleClass="ui-state-default form-control input-sm input-block-level "
 										value="#{specimenContentBean.specimenContent.fileName}">
 										<p:ajax process="@this" />
 										<f:validateBean disabled="true" />
@@ -67,8 +67,8 @@
 								<label class="col-md-4 control-label" for="loadDate">Actualizar
 									Archivo:</label>
 								<div class="col-md-8">
-									<p:fileUpload value="#{specimenContentBean.contentFile}"
-										mode="simple" fileLimit="1" label="Adjuntar" required="true"
+									<p:fileUpload mode="single" fileLimit="1" label="Adjuntar"
+										fileUploadListener="#{specimenContentBean.handleFileUpload()}"
 										invalidFileMessage="Debe ser un archivo de imagen!!"
 										skinSimple="true" />
 								</div>
@@ -78,7 +78,7 @@
 							<div class="row">
 								<label class="col-md-4 control-label" for="specimen">Espécimen:</label>
 								<div class="col-md-8">
-									<p:autoComplete id="specimen" dropdown="true"
+									<p:autoComplete id="specimen" dropdown="true" required="true"
 										value="#{specimenContentBean.specimenContent.idSpecimen}"
 										completeMethod="#{specimenContentBean.specimenQuery}"
 										var="spc"
@@ -91,11 +91,12 @@
 							</div>
 							<div class="row">
 								<label class="col-md-4 control-label" for="desc">Descripción:</label>
-								<div class="col-md-8">
-									<p:inputTextarea id="desc"
-										value="#{specimenContentBean.specimenContent.shortDescription}"
-										rows="3" title="Descripción del pie de la imagen" />
-								</div>
+								<p:inputTextarea id="desc"
+									value="#{specimenContentBean.specimenContent.shortDescription}"
+									rows="3" title="Descripción del pie de la imagen">
+									<p:ajax process="@this" />
+									<f:validateBean disabled="true" />
+								</p:inputTextarea>
 							</div>
 							<div class="row">
 								<label class="col-md-4 control-label" for="level">Publicar:</label>
@@ -112,7 +113,6 @@
 								oncomplete="$('#editModal').modal('hide')"
 								update="formSpecimen, deleteSCModalForm, createSCModalForm"
 								actionListener="#{specimenContentBean.edit()}" />
-
 							<p:commandButton id="editNoButton" value="Cancelar"
 								oncomplete="$('#editModal').modal('hide')"
 								update="formSpecimen, deleteSCModalForm, createSCModalForm" />
@@ -128,6 +128,7 @@
 	<h:form id="createSCModalForm">
 		<div class="modal fade" id="createModal" tabindex="-1" role="dialog"
 			aria-labelledby="Crear Clasificación">
+
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -143,9 +144,7 @@
 								actual:</label>
 							<div class="col-md-8">
 								<h:inputText id="fileName" disabled="true"
-									styleClass="
-									ui-state-default form-control input-sm input-block-level
-									required"
+									styleClass="ui-state-default form-control input-sm input-block-level"
 									value="#{specimenContentBean.specimenContent.fileName}" />
 							</div>
 						</div>
@@ -153,11 +152,16 @@
 						<div class="row">
 							<label class="col-md-4 control-label" for="loadDate">Actualizar
 								Archivo:</label>
-							<div class="col-md-8">
-								<p:fileUpload value="#{specimenContentBean.contentFile}"
-									mode="simple" fileLimit="1" label="Adjuntar"
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<p:fileUpload mode="advanced" label="Adjuntar"
+									uploadLabel="Subir" cancelLabel="Cancelar" auto="true"
+									fileUploadListener="#{specimenContentBean.handleFileUpload}"
 									invalidFileMessage="Debe ser un archivo de imagen!!"
-									skinSimple="true" />
+									skinSimple="true" update="createSCModalForm:fileName">
+									<f:validateBean disabled="true" />
+								</p:fileUpload>
 							</div>
 						</div>
 
@@ -165,7 +169,8 @@
 						<div class="row">
 							<label class="col-md-4 control-label" for="specimen">Espécimen:</label>
 							<div class="col-md-8">
-								<p:autoComplete id="specimen" dropdown="true"
+								<p:autoComplete id="specimen" dropdown="true" required="true"
+									requiredMessage="El ejemplar es obligatorio"
 									value="#{specimenContentBean.specimenContent.idSpecimen}"
 									completeMethod="#{specimenContentBean.specimenQuery}" var="spc"
 									itemLabel="#{spc.idTaxonomy.taxonomyName} #{spc.specificEpithet}"
@@ -180,7 +185,10 @@
 							<div class="col-md-8">
 								<p:inputTextarea id="desc"
 									value="#{specimenContentBean.specimenContent.shortDescription}"
-									rows="3" title="Descripción del pie de la imagen" />
+									rows="3" title="Descripción del pie de la imagen">
+									<p:ajax process="@this" />
+									<f:validateBean disabled="true" />
+								</p:inputTextarea>
 							</div>
 						</div>
 						<div class="row">
@@ -194,11 +202,13 @@
 					<div class="modal-footer">
 						<div class="input-group">
 							<p:commandButton id="createYesButton" value="Guardar"
-								action="#{specimenContentBean.persist()}" update=":formSpecimen"
-								ajax="false" oncomplete="$('#createModal').modal('hide')" />
+								action="#{specimenContentBean.persist()}"
+								update="formSpecimen, deleteSCModalForm, editSCModalForm"
+								oncomplete="$('#createModal').modal('hide')" />
 							<p:commandButton id="createNoButton" value="Cancelar"
-								onclick="$('#createModal').modal('hide')"
-								update="formSpecimen, deleteSCModalForm, editSCModalForm" />
+								oncomplete="$('#createModal').modal('hide')"
+								update="formSpecimen, deleteSCModalForm, editSCModalForm"
+								action="#{specimenContentBean.limpiarFiltros()}" />
 						</div>
 					</div>
 				</div>
@@ -221,14 +231,14 @@
 								itemLabel="#{spc.idTaxonomy.taxonomyName} #{spc.specificEpithet}"
 								itemValue="#{spc}" forceSelection="true"
 								converter="SpecimenConverter">
-								<p:ajax process="@this" />
+								<p:ajax process="@this" immediate="true" />
 							</p:autoComplete>
 						</div>
 						<label class="col-md-1 control-label" for="epiteto">Nombre
 							del Archivo:</label>
 						<div class="col-md-2">
 							<h:inputText id="nombreArchivo"
-								styleClass="ui-state-default form-control input-sm input-block-level required"
+								styleClass="ui-state-default form-control input-sm input-block-level "
 								value="#{specimenContentBean.specimenContent.fileName}">
 								<p:ajax process="@this" />
 								<f:validateBean disabled="true" />

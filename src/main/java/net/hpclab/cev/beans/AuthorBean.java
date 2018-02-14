@@ -165,6 +165,12 @@ public class AuthorBean extends UtilsBean implements Serializable {
 			}
 	}
 
+	public void onAuthorAssign(Integer idAuthor, String origin) {
+		if (idAuthor != null)
+			showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.GENERIC_INFO,
+					origin + ": " + authorMap.get(idAuthor).getAuthorName());
+	}
+
 	public List<Author> getAllAuthors() {
 		return DataWarehouse.getInstance().allAuthors;
 	}

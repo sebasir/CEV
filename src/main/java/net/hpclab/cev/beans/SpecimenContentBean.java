@@ -13,6 +13,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
@@ -34,7 +35,6 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 	private List<SpecimenContent> searchSpecimenContent;
 	private List<Specimen> contentSpecimen;
 	private boolean publish;
-	private Integer idSpecimen;
 	private Specimen specimen;
 	private SpecimenContent specimenContent;
 	private UploadedFile contentFile;
@@ -51,10 +51,12 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 	}
 
 	public void limpiarFiltros() {
+		System.out.println("Limpiando");
 		publish = false;
 		specimen = new Specimen();
 		specimenContent = new SpecimenContent();
 		specimenContent.setIdSpecimen(specimen);
+		contentFile = null;
 	}
 
 	public DataBaseService<SpecimenContent>.Pager getPager() {
@@ -87,7 +89,11 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 	public void persist() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		OutcomeEnum outcomeEnum = OutcomeEnum.CREATE_ERROR;
-		String transactionMessage = specimenContent.getIdSpecimen().getCommonName();
+		specimenContent.setIdSpecimen(getSpecimenFromId(specimenContent.getIdSpecimen().getIdSpecimen()));
+		String transactionMessage = specimenContent.getIdSpecimen().getIdTaxonomy().getTaxonomyName()
+				+ (specimenContent.getIdSpecimen().getCommonName() != null
+						? ", " + specimenContent.getIdSpecimen().getCommonName()
+						: "");
 		try {
 			if (contentFile != null) {
 				specimenContent.setPublish('N');
@@ -97,8 +103,6 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 				}
 				specimenContent.setFileName(contentFile.getFileName());
 				specimenContent.setFileUploadDate(Calendar.getInstance().getTime());
-				specimenContent.setIdSpecimen(new Specimen(idSpecimen));
-				specimenContent.setFileContent(getByteArray(contentFile.getInputstream()));
 				specimenContentService.persist(specimenContent);
 				DataWarehouse.getInstance().allSpecimenContents.add(specimenContent);
 
@@ -118,7 +122,10 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 	public void delete() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		OutcomeEnum outcomeEnum = OutcomeEnum.DELETE_ERROR;
-		String transactionMessage = specimenContent.getIdSpecimen().getCommonName();
+		String transactionMessage = specimenContent.getIdSpecimen().getIdTaxonomy().getTaxonomyName()
+				+ (specimenContent.getIdSpecimen().getCommonName() != null
+						? specimenContent.getIdSpecimen().getCommonName()
+						: "");
 		try {
 			specimenContentService.delete(specimenContent);
 			DataWarehouse.getInstance().allSpecimenContents.remove(specimenContent);
@@ -132,11 +139,13 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 	public void edit() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		OutcomeEnum outcomeEnum = OutcomeEnum.UPDATE_ERROR;
-		String transactionMessage = specimenContent.getIdSpecimen().getCommonName();
+		String transactionMessage = specimenContent.getIdSpecimen().getIdTaxonomy().getTaxonomyName()
+				+ (specimenContent.getIdSpecimen().getCommonName() != null
+						? specimenContent.getIdSpecimen().getCommonName()
+						: "");
 		try {
 			if (contentFile != null) {
 				specimenContent.setFileName(contentFile.getFileName());
-				specimenContent.setFileContent(getByteArray(contentFile.getInputstream()));
 				specimenContent.setFileUploadDate(Calendar.getInstance().getTime());
 			}
 			specimenContent.setPublish('N');
@@ -144,8 +153,6 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 				specimenContent.setPublishDate(Calendar.getInstance().getTime());
 				specimenContent.setPublish('S');
 			}
-			specimenContent.setIdSpecimen(new Specimen(idSpecimen));
-
 			SpecimenContent tempSpecimen = specimenContentService.merge(specimenContent);
 			DataWarehouse.getInstance().allSpecimenContents.remove(specimenContent);
 			DataWarehouse.getInstance().allSpecimenContents.add(tempSpecimen);
@@ -154,6 +161,14 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 			LOGGER.log(Level.SEVERE, "Error updating", e);
 		}
 		showMessage(facesContext, outcomeEnum, transactionMessage);
+	}
+
+	public Specimen getSpecimenFromId(Integer idSpecimen) {
+		for (Specimen s : DataWarehouse.getInstance().allSpecimens) {
+			if (idSpecimen.equals(s.getIdSpecimen()))
+				return s;
+		}
+		return null;
 	}
 
 	public StreamedContent getSpecimenThumb() throws IOException {
@@ -188,6 +203,12 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 		}
 	}
 
+	public void handleFileUpload(FileUploadEvent event) {
+		contentFile = event.getFile();
+		specimenContent.setFileContent(contentFile.getContents());
+		specimenContent.setFileName(contentFile.getFileName());
+	}
+
 	private boolean isFather(Integer f, Specimen s) {
 		Taxonomy t = s.getIdTaxonomy();
 		while (t != null) {
@@ -213,14 +234,6 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 
 	public List<Specimen> getAllSpecimens() {
 		return DataWarehouse.getInstance().allSpecimens;
-	}
-
-	public Integer getIdSpecimen() {
-		return idSpecimen;
-	}
-
-	public void setIDSpecimen(Integer idSpecimen) {
-		this.idSpecimen = idSpecimen;
 	}
 
 	public boolean isPublish() {
@@ -260,10 +273,6 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 
 	public void setSearchSpecimenContent(List<SpecimenContent> searchSpecimenContent) {
 		this.searchSpecimenContent = searchSpecimenContent;
-	}
-
-	public void setIdSpecimen(Integer idSpecimen) {
-		this.idSpecimen = idSpecimen;
 	}
 
 	public List<Specimen> getContentSpecimen() {

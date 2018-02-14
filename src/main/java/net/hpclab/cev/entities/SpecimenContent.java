@@ -2,14 +2,15 @@ package net.hpclab.cev.entities;
 
 import java.io.Serializable;
 import java.util.Date;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
@@ -38,9 +39,8 @@ public class SpecimenContent implements Serializable {
     @Size(min = 1, max = 128)
     @Column(name = "file_name")
     private String fileName;
-    @Basic(optional = false)
     @NotNull
-    @Lob
+    @Basic(optional = false, fetch = FetchType.LAZY)
     @Column(name = "file_content")
     private byte[] fileContent;
     @Basic(optional = false)
