@@ -25,6 +25,7 @@ import net.hpclab.cev.enums.OutcomeEnum;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
 import net.hpclab.cev.services.DataWarehouse;
+import net.hpclab.cev.services.ObjectRetriever;
 
 @ManagedBean
 @ViewScoped
@@ -34,9 +35,9 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 	private DataBaseService<SpecimenContent> specimenContentService;
 	private List<SpecimenContent> searchSpecimenContent;
 	private List<Specimen> contentSpecimen;
-	private boolean publish;
 	private Specimen specimen;
 	private SpecimenContent specimenContent;
+	private SpecimenContent specimenContentSearch;
 	private UploadedFile contentFile;
 
 	private static final Logger LOGGER = Logger.getLogger(SpecimenContentBean.class.getName());
@@ -51,11 +52,12 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 	}
 
 	public void limpiarFiltros() {
-		System.out.println("Limpiando");
-		publish = false;
 		specimen = new Specimen();
 		specimenContent = new SpecimenContent();
-		specimenContent.setIdSpecimen(specimen);
+		specimenContentSearch = new SpecimenContent();
+		specimenContentSearch.setPublish(true);
+		specimenContentSearch.setIdSpecimen(specimen);
+		searchSpecimenContent = null;
 		contentFile = null;
 	}
 
@@ -65,10 +67,12 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 
 	public void search() {
 		try {
-			specimenContent.setPublish(publish ? 'S' : 'N');
-			searchSpecimenContent = specimenContentService.getList(specimenContent);
+			searchSpecimenContent = specimenContentService.getList(specimenContentSearch);
 			if (specimenContentService.getPager().getNumberOfResults() == 0)
 				showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.GENERIC_ERROR, "No se encontraron datos");
+			if (searchSpecimenContent != null)
+				for (SpecimenContent s : searchSpecimenContent)
+					s.setIdSpecimen(ObjectRetriever.getObjectFromId(Specimen.class, s.getIdSpecimen().getIdSpecimen()));
 		} catch (Exception ex) {
 			LOGGER.log(Level.SEVERE, ex.getMessage());
 		}
@@ -89,6 +93,11 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 	public void persist() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		OutcomeEnum outcomeEnum = OutcomeEnum.CREATE_ERROR;
+
+		if (specimenContent.getIdSpecimen() == null) {
+			showMessage(facesContext, outcomeEnum, "El espécimen es obligatorio");
+			return;
+		}
 		specimenContent.setIdSpecimen(getSpecimenFromId(specimenContent.getIdSpecimen().getIdSpecimen()));
 		String transactionMessage = specimenContent.getIdSpecimen().getIdTaxonomy().getTaxonomyName()
 				+ (specimenContent.getIdSpecimen().getCommonName() != null
@@ -96,11 +105,8 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 						: "");
 		try {
 			if (contentFile != null) {
-				specimenContent.setPublish('N');
-				if (publish) {
+				if (specimenContent.getPublish())
 					specimenContent.setPublishDate(Calendar.getInstance().getTime());
-					specimenContent.setPublish('S');
-				}
 				specimenContent.setFileName(contentFile.getFileName());
 				specimenContent.setFileUploadDate(Calendar.getInstance().getTime());
 				specimenContentService.persist(specimenContent);
@@ -116,6 +122,7 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 			LOGGER.log(Level.SEVERE, "Error persisting", e);
 		}
 		limpiarFiltros();
+		search();
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
 
@@ -133,6 +140,8 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, "Error deleting", e);
 		}
+		limpiarFiltros();
+		search();
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
 
@@ -148,11 +157,8 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 				specimenContent.setFileName(contentFile.getFileName());
 				specimenContent.setFileUploadDate(Calendar.getInstance().getTime());
 			}
-			specimenContent.setPublish('N');
-			if (publish) {
+			if (specimenContent.getPublish())
 				specimenContent.setPublishDate(Calendar.getInstance().getTime());
-				specimenContent.setPublish('S');
-			}
 			SpecimenContent tempSpecimen = specimenContentService.merge(specimenContent);
 			DataWarehouse.getInstance().allSpecimenContents.remove(specimenContent);
 			DataWarehouse.getInstance().allSpecimenContents.add(tempSpecimen);
@@ -160,6 +166,8 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, "Error updating", e);
 		}
+		limpiarFiltros();
+		search();
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
 
@@ -228,20 +236,20 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 		this.specimenContent = specimenContent;
 	}
 
+	public SpecimenContent getSpecimenContentSearch() {
+		return specimenContentSearch;
+	}
+
+	public void setSpecimenContentSearch(SpecimenContent specimenContentSearch) {
+		this.specimenContentSearch = specimenContentSearch;
+	}
+
 	public List<SpecimenContent> getAllSpecimenContents() {
 		return DataWarehouse.getInstance().allSpecimenContents;
 	}
 
 	public List<Specimen> getAllSpecimens() {
 		return DataWarehouse.getInstance().allSpecimens;
-	}
-
-	public boolean isPublish() {
-		return publish;
-	}
-
-	public void setPublish(boolean publish) {
-		this.publish = publish;
 	}
 
 	public UploadedFile getContentFile() {

@@ -34,7 +34,7 @@ public class LoginService extends UtilsBean implements Serializable {
 				if (!SessionService.getInstance().isUserOnline(users)) {
 					UserSession userSession = loadUserSession(facesContext, users);
 					SessionService.getInstance().addUser(getSessionId(facesContext), userSession);
-					if (users.getStatus().equals(StatusEnum.Activo.get())) {
+					if (users.getStatus().equals(StatusEnum.ACTIVO.get())) {
 						AuditService.getInstance().log(userSession.getUser(), Util.getModule(ModulesEnum.LOGIN),
 								userSession.getIpAddress(), AuditEnum.LOGIN,
 								"Users " + users.getIdUser() + " autenticado.");

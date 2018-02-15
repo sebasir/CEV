@@ -104,7 +104,7 @@ public class AuthorBean extends UtilsBean implements Serializable {
 			author.setAuthorAut(model.getAuthorAut());
 			author.setAuthorCol(model.getAuthorCol());
 			author.setAuthorDet(model.getAuthorDet());
-			author.setStatus(StatusEnum.Activo.get());
+			author.setStatus(StatusEnum.ACTIVO.get());
 			author = authorService.persist(author);
 			DataWarehouse.getInstance().allAuthors.add(author);
 			restartAuthorTypes();

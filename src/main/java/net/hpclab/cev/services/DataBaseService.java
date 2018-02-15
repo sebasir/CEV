@@ -107,7 +107,7 @@ public class DataBaseService<T> implements Serializable {
 				}
 			}
 		}
-		LOGGER.log(Level.SEVERE, "Filters: {0}", filters);
+		LOGGER.log(Level.INFO, "Filters: {0}", filters);
 		return getList(filters);
 	}
 

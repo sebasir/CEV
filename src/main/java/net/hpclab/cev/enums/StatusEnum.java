@@ -1,15 +1,16 @@
 package net.hpclab.cev.enums;
 
 public enum StatusEnum {
-    Activo("Activo"), Deshabilitado("Deshabilitado"), Bloqueado("Bloqueado"), Incompleto("Incompleto"), Completo("Completo");
+	ACTIVO("Activo"), DESHABILITADO("Deshabilitado"), BLOQUEADO("Bloqueado"), INCOMPLETO("Incompleto"), COMPLETO(
+			"Completo");
 
-    private final String status;
+	private final String status;
 
-    private StatusEnum(String status) {
-        this.status = status;
-    }
+	private StatusEnum(String status) {
+		this.status = status;
+	}
 
-    public String get() {
-        return status;
-    }
+	public String get() {
+		return status;
+	}
 }

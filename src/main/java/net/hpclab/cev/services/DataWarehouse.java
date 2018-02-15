@@ -45,10 +45,6 @@ public class DataWarehouse implements Serializable {
 	public List<TaxonomyLevel> allTaxonomyLevels;
 	public List<Users> allUsers;
 
-	private DataWarehouse() {
-
-	}
-
 	public void initLists() throws Exception {
 		allAuthors = new DataBaseService<Author>().getList(Author.class);
 		allCatalogs = new DataBaseService<Catalog>().getList(Catalog.class);

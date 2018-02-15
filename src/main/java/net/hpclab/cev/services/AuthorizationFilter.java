@@ -34,7 +34,7 @@ public class AuthorizationFilter implements Filter {
 		try {
 			UserSession userSession = (UserSession) session.getAttribute(Constant.USER_DATA);
 			loggedIn = true;
-			userActive = userSession.getUser().getStatus().equals(StatusEnum.Activo.get());
+			userActive = userSession.getUser().getStatus().equals(StatusEnum.ACTIVO.get());
 			if (userActive)
 				session.setMaxInactiveInterval(Constant.MAX_IDLE_SESSION_LOGGED_IN);
 		} catch (Exception e) {

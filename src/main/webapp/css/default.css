@@ -475,3 +475,22 @@ div.form-group>label.control-label {
 .ui-icon-blank {
 	background-position: 32px 32px;
 }
+
+.ui-state-default, .ui-widget-content .ui-state-default,
+	.ui-widget-header .ui-state-default {
+	border: 1px solid #9dd43f;
+	background: rgb(237, 246, 224);
+	color: #395605;
+	font-family: 'Raleway', sans-serif;
+}
+
+.ui-state-default:hover {
+	color: #42610f;
+	background-color: rgba(113, 189, 11, 0.45);
+	border-color: #8ab546;
+}
+
+.ui-state-highlight {
+	color: #2234b7 !important;
+	background-color: rgb(186, 206, 79) !important;
+}

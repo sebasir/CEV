@@ -87,7 +87,7 @@ public class CollectionBean extends UtilsBean implements Serializable {
 			case INSTITUTION:
 				collection = new Collection();
 				collection.setCollectionName(objectName);
-				collection.setStatus(StatusEnum.Activo.get());
+				collection.setStatus(StatusEnum.ACTIVO.get());
 				collection.setIdInstitution((Institution) tree.get(objectId).getData());
 				collection = collectionService.persist(collection);
 				DataWarehouse.getInstance().allCollections.add(collection);
@@ -96,7 +96,7 @@ public class CollectionBean extends UtilsBean implements Serializable {
 			case COLLECTION:
 				catalog = new Catalog();
 				catalog.setCatalogName(objectName);
-				catalog.setStatus(StatusEnum.Activo.get());
+				catalog.setStatus(StatusEnum.ACTIVO.get());
 				catalog.setIdCollection((Collection) tree.get(objectId).getData());
 				catalog = catalogService.persist(catalog);
 				DataWarehouse.getInstance().allCatalogs.add(catalog);
