@@ -21,6 +21,7 @@ import net.hpclab.cev.model.AuthorTypesModel;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
 import net.hpclab.cev.services.DataWarehouse;
+import net.hpclab.cev.services.ObjectRetriever;
 
 @ManagedBean
 @ViewScoped
@@ -230,6 +231,24 @@ public class AuthorBean extends UtilsBean implements Serializable {
 
 	public void setDeterminer(Integer determiner) {
 		this.determiner = determiner;
+	}
+
+	public Author getAuthorCollector() {
+		if (collector != null)
+			return ObjectRetriever.getObjectFromId(Author.class, collector);
+		return null;
+	}
+
+	public Author getAuthorDeterminer() {
+		if (determiner != null)
+			return ObjectRetriever.getObjectFromId(Author.class, determiner);
+		return null;
+	}
+
+	public Author getAuthorSpecificEpithet() {
+		if (specificEpiteth != null)
+			return ObjectRetriever.getObjectFromId(Author.class, specificEpiteth);
+		return null;
 	}
 
 	public Integer getCollector() {

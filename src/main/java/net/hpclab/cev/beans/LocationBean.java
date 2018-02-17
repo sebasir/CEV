@@ -227,6 +227,7 @@ public class LocationBean extends UtilsBean implements Serializable {
 		selectedNode = event.getTreeNode();
 		showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.GENERIC_INFO,
 				selectedNode.toString() + " seleccionado");
+		location = (Location) selectedNode.getData();
 	}
 
 	public String setMapCenter() {

@@ -1,3 +1,5 @@
+var SUMMARY_INDEX = 3; 
+
 $(window).ready(function () {
     var form = $("#specimenForm").show();
 
@@ -25,6 +27,8 @@ $(window).ready(function () {
                 form.find(".body:eq(" + newIndex + ") .error").removeClass("error");
             }
             form.validate().settings.ignore = ":disabled,:hidden";
+            if (newIndex == SUMMARY_INDEX)
+            	updateSummary();
            	return true;
         },
         onStepChanged: function (event, currentIndex, priorIndex) {

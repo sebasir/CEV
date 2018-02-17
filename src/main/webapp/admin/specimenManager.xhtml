@@ -224,18 +224,7 @@
 			<div class="panel-body">
 				<div class="form-group">
 					<div class="row">
-						<label class="col-md-1 control-label" for="specimen">Especimen:</label>
-						<div class="col-md-2">
-							<p:autoComplete id="specimen" dropdown="true"
-								value="#{specimenContentBean.specimenContentSearch.idSpecimen}"
-								completeMethod="#{specimenContentBean.specimenQuery}" var="spc"
-								itemLabel="#{spc.idTaxonomy.taxonomyName} #{spc.specificEpithet}"
-								itemValue="#{spc}" forceSelection="true"
-								converter="SpecimenConverter">
-								<p:ajax process="@this" immediate="true" />
-							</p:autoComplete>
-						</div>
-						<label class="col-md-1 control-label" for="epiteto">Nombre
+						<label class="col-md-2 control-label" for="epiteto">Nombre
 							del Archivo:</label>
 						<div class="col-md-2">
 							<h:inputText id="nombreArchivo"
@@ -246,9 +235,22 @@
 							</h:inputText>
 						</div>
 						<label class="col-md-1 control-label" for="published">Publicado:</label>
-						<div class="col-md-2">
+						<div class="col-md-1">
 							<p:selectBooleanCheckbox id="published"
 								value="#{specimenContentBean.specimenContentSearch.publish}" />
+						</div>
+					</div>
+					<div class="row">
+						<label class="col-md-2 control-label" for="specimen">Especimen:</label>
+						<div class="col-md-4">
+							<p:autoComplete id="specimen" dropdown="true"
+								value="#{specimenContentBean.specimenContentSearch.idSpecimen}"
+								completeMethod="#{specimenContentBean.specimenQuery}" var="spc"
+								itemLabel="#{spc.idTaxonomy.taxonomyName} #{spc.specificEpithet}"
+								itemValue="#{spc}" forceSelection="true"
+								converter="SpecimenConverter">
+								<p:ajax process="@this" immediate="true" />
+							</p:autoComplete>
 						</div>
 					</div>
 				</div>

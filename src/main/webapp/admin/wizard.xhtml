@@ -6,70 +6,64 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:f="http://java.sun.com/jsf/core">
 	<h:outputScript library="js" name="main.js" />
+	<h:outputScript library="js" name="localizedCalendar.js" />
 	<h:outputStylesheet library="css" name="pstyle.css" />
 	<h:body>
 		<h3>Creación de Especímenes</h3>
 		<div id="specimenForm">
-			<h3>Datos de Clasificación</h3>
+			<h3>Clasificación</h3>
 			<section style="width: 100%">
 				<p:outputLabel value="Selecciona una clasificación del arbol:" />
 				<ui:include src="taxonomy.xhtml"></ui:include>
-			</section>
-			<h3>Datos de Localización</h3>
-			<section style="width: 100%">
-				<ui:include src="location.xhtml"></ui:include>
-			</section>
-			<h3>Datos de Colección</h3>
-			<section style="width: 100%">
-				<ui:include src="collections.xhtml"></ui:include>
-			</section>
-			<h3>Datos de Autoría</h3>
-			<section style="width: 100%">
-				<h:form id="authorForm">
+				<hr />
+				<h:form id="authorFormTaxonomy">
 					<p:growl id="growl" showDetail="true" />
 					<div class="form-group">
 						<div class="row">
-							<label class="col-md-4 control-label" for="determiner">Determinador:</label>
-							<div class="col-md-8">
+							<label class="col-md-2 control-label" for="specEpithet">Epiteto
+								Específico:</label>
+							<div class="col-md-4">
+								<h:inputText id="specEpithet"
+									styleClass="ui-state-default form-control input-sm input-block-level"
+									value="#{specimenBean.specimen.specificEpithet}">
+									<p:ajax process="@this" />
+								</h:inputText>
+							</div>
+							<label class="col-md-2 control-label" for="commonName">Nombre
+								Común:</label>
+							<div class="col-md-4">
+								<h:inputText id="commonName"
+									styleClass="ui-state-default form-control input-sm input-block-level"
+									value="#{specimenBean.specimen.commonName}">
+									<p:ajax process="@this" />
+								</h:inputText>
+							</div>
+						</div>
+						<hr />
+						<div class="row">
+							<label class="col-md-2 control-label" for="determiner">Determinador:</label>
+							<div class="col-md-4">
 								<h:selectOneMenu id="determiner"
 									class="form-control ui-state-default"
 									value="#{authorBean.determiner}">
 									<p:ajax event="change"
 										listener="#{authorBean.onAuthorAssign(authorBean.determiner, 'Determinador')}"
-										update="authorForm" />
+										update="authorFormTaxonomy" />
 									<f:selectItem itemValue="#{null}" itemLabel="Selecciona" />
 									<f:selectItems value="#{authorBean.determiners}" var="author"
 										itemLabel="#{author.authorName}"
 										itemValue="#{author.idAuthor}" />
 								</h:selectOneMenu>
 							</div>
-						</div>
-						<div class="row">
-							<label class="col-md-4 control-label" for="colector">Colector:</label>
-							<div class="col-md-8">
-								<h:selectOneMenu id="colector"
-									class="form-control ui-state-default"
-									value="#{authorBean.collector}">
-									<p:ajax event="change"
-										listener="#{authorBean.onAuthorAssign(authorBean.collector, 'Colector')}"
-										update="authorForm" />
-									<f:selectItem itemValue="#{null}" itemLabel="Selecciona" />
-									<f:selectItems value="#{authorBean.collectors}" var="author"
-										itemLabel="#{author.authorName}"
-										itemValue="#{author.idAuthor}" />
-								</h:selectOneMenu>
-							</div>
-						</div>
-						<div class="row">
-							<label class="col-md-4 control-label" for="specificEpiteth">Autor
+							<label class="col-md-2 control-label" for="specificEpiteth">Autor
 								Epiteto Específico:</label>
-							<div class="col-md-8">
+							<div class="col-md-4">
 								<h:selectOneMenu id="specificEpiteth"
 									class="form-control ui-state-default"
 									value="#{authorBean.specificEpiteth}">
 									<p:ajax event="change"
 										listener="#{authorBean.onAuthorAssign(authorBean.specificEpiteth, 'Autor Epiteto')}"
-										update="authorForm" />
+										update="authorFormTaxonomy" />
 									<f:selectItem itemValue="#{null}" itemLabel="Selecciona" />
 									<f:selectItems value="#{authorBean.specificAuthors}"
 										var="author" itemLabel="#{author.authorName}"
@@ -77,11 +71,237 @@
 								</h:selectOneMenu>
 							</div>
 						</div>
+						<hr />
+						<div class="row">
+							<label class="col-md-2 control-label" for="idenComen">Comentario
+								de Identificación:</label>
+							<div class="col-md-4">
+								<p:inputTextarea id="idenComen"
+									value="#{specimenBean.specimen.idenComment}" rows="2" cols="25"
+									title="Comentario de identificación del ejemplar">
+									<p:ajax process="@this" />
+								</p:inputTextarea>
+							</div>
+							<label class="col-md-2 control-label" for="idenDate">Fecha
+								de Identificación:</label>
+							<div class="col-md-4">
+								<p:calendar id="idenDate" locale="es" width="100%"
+									value="#{specimenBean.specimen.idenDate}">
+									<p:ajax process="@this" />
+								</p:calendar>
+							</div>
+						</div>
+					</div>
+				</h:form>
+			</section>
+			<h3>Localización</h3>
+			<section style="width: 100%">
+				<ui:include src="location.xhtml"></ui:include>
+				<hr />
+				<h:form id="authorFormLocation">
+					<p:growl id="growl" showDetail="true" />
+					<div class="form-group">
+						<div class="row">
+							<label class="col-md-2 control-label" for="colector">Colector:</label>
+							<div class="col-md-4">
+								<h:selectOneMenu id="colector"
+									class="form-control ui-state-default"
+									value="#{authorBean.collector}">
+									<p:ajax event="change"
+										listener="#{authorBean.onAuthorAssign(authorBean.collector, 'Colector')}"
+										update="authorFormLocation" />
+									<f:selectItem itemValue="#{null}" itemLabel="Selecciona" />
+									<f:selectItems value="#{authorBean.collectors}" var="author"
+										itemLabel="#{author.authorName}"
+										itemValue="#{author.idAuthor}" />
+								</h:selectOneMenu>
+							</div>
+							<label class="col-md-2 control-label" for="idenDate">Fecha
+								de Colecta:</label>
+							<div class="col-md-4">
+								<p:calendar id="idenDate" locale="es"
+									value="#{specimenBean.specimen.idenDate}">
+									<p:ajax process="@this" />
+								</p:calendar>
+							</div>
+						</div>
+						<div class="row">
+							<label class="col-md-2 control-label" for="idenComen">Comentario
+								de Colecta:</label>
+							<div class="col-md-4">
+								<p:inputTextarea id="idenComen"
+									value="#{specimenBean.specimen.collectComment}" rows="2"
+									cols="25" title="Comentario de identificación del ejemplar">
+									<p:ajax process="@this" />
+								</p:inputTextarea>
+							</div>
+						</div>
+					</div>
+				</h:form>
+			</section>
+			<h3>Colección</h3>
+			<section style="width: 100%">
+				<p:outputLabel value="Selecciona una colección" />
+				<ui:include src="collections.xhtml"></ui:include>
+				<hr />
+				<h:form id="formIdBioreg">
+					<div class="form-group">
+						<div class="row">
+							<label class="col-md-2 control-label" for="sampleType">Tipo
+								de Ejemplar:</label>
+							<div class="col-md-4">
+								<h:selectOneMenu id="sampleType"
+									class="form-control ui-state-default"
+									value="#{collectionBean.sampleTypeId}">
+									<p:ajax process="@this" />
+									<f:selectItem itemValue="#{null}" itemLabel="Selecciona" />
+									<f:selectItems value="#{collectionBean.allSampleTypes}"
+										var="saty" itemLabel="#{saty.satyName}"
+										itemValue="#{saty.idSaty}" />
+								</h:selectOneMenu>
+							</div>
+							<label class="col-md-2 control-label" for="regType">Tipo
+								de Registro:</label>
+							<div class="col-md-4">
+								<h:selectOneMenu id="regType"
+									class="form-control ui-state-default"
+									value="#{collectionBean.regTypeId}">
+									<p:ajax process="@this" />
+									<f:selectItem itemValue="#{null}" itemLabel="Selecciona" />
+									<f:selectItems value="#{collectionBean.allRegTypes}" var="rety"
+										itemLabel="#{rety.retyName}" itemValue="#{rety.idRety}" />
+								</h:selectOneMenu>
+							</div>
+						</div>
+						<div class="row">
+							<label class="col-md-2 control-label" for="fileName">ID
+								Registro Biológico:</label>
+							<div class="col-md-4">
+								<h:inputText id="fileName"
+									styleClass="ui-state-default form-control input-sm input-block-level"
+									value="#{specimenBean.specimen.idBioreg}">
+									<p:ajax process="@this" />
+								</h:inputText>
+							</div>
+						</div>
+					</div>
+				</h:form>
+			</section>
+			<h3>Resumen</h3>
+			<section style="width: 100%">
+				<p:outputLabel value="Resumen de Creación" />
+				<hr />
+				<h:form id="formResumen">
+					<p:remoteCommand name="updateSummary" update="formResumen" />
+					<div class="form-group">
+						<div class="row">
+							<label class="col-md-2 control-label" for="sciName">Nombre
+								Científico:</label>
+							<div class="col-md-4">
+								<h:inputText id="sciName" readonly="true"
+									style="font-style: italic;"
+									styleClass="ui-state-default form-control input-sm input-block-level"
+									value="#{taxonomyBean.taxonomy.taxonomyName} #{specimenBean.specimen.specificEpithet}" />
+							</div>
+							<label class="col-md-2 control-label" for="commonName">Nombre
+								Comun:</label>
+							<div class="col-md-4">
+								<h:inputText id="commonName" readonly="true"
+									styleClass="ui-state-default form-control input-sm input-block-level"
+									value="#{specimenBean.specimen.commonName}" />
+							</div>
+						</div>
+						<div class="row">
+							<label class="col-md-2 control-label" for="determiner">Determinador:</label>
+							<div class="col-md-4">
+								<h:inputText id="determiner" readonly="true"
+									styleClass="ui-state-default form-control input-sm input-block-level"
+									value="#{authorBean.authorDeterminer.authorName}" />
+							</div>
+							<label class="col-md-2 control-label" for="authorEpiteth">Autor
+								Epiteto Específico:</label>
+							<div class="col-md-4">
+								<h:inputText id="authorEpiteth" readonly="true"
+									styleClass="ui-state-default form-control input-sm input-block-level"
+									value="#{authorBean.authorSpecificEpithet.authorName}" />
+							</div>
+						</div>
+						<div class="row">
+							<label class="col-md-2 control-label" for="idenComment">Comentario
+								de Identificación:</label>
+							<div class="col-md-4">
+								<h:inputText id="idenComment" readonly="true"
+									styleClass="ui-state-default form-control input-sm input-block-level"
+									value="#{specimenBean.specimen.idenComment}" />
+							</div>
+							<label class="col-md-2 control-label" for="idenDate">Fecha
+								de Identificación:</label>
+							<div class="col-md-4">
+								<h:inputText id="idenDate" readonly="true"
+									styleClass="ui-state-default form-control input-sm input-block-level"
+									value="#{specimenBean.specimen.idenDate}" />
+							</div>
+						</div>
+						<hr />
+						<div class="row">
+							<label class="col-md-2 control-label" for="local">Localización:</label>
+							<div class="col-md-4">
+								<h:inputText id="local" readonly="true"
+									styleClass="ui-state-default form-control input-sm input-block-level"
+									value="#{locationBean.location.locationName}" />
+							</div>
+							<label class="col-md-2 control-label" for="colector">Colector:</label>
+							<div class="col-md-4">
+								<h:inputText id="colector" readonly="true"
+									styleClass="ui-state-default form-control input-sm input-block-level"
+									value="#{authorBean.authorCollector.authorName}" />
+							</div>
+						</div>
+						<div class="row">
+							<label class="col-md-2 control-label" for="collectDate">Fecha
+								de Colecta:</label>
+							<div class="col-md-4">
+								<h:inputText id="collectDate" readonly="true"
+									styleClass="ui-state-default form-control input-sm input-block-level"
+									value="#{specimenBean.specimen.collectDate}" />
+							</div>
+						</div>
+						<hr />
+						<div class="row">
+							<label class="col-md-2 control-label" for="sampleType">Tipo
+								de Ejemplar:</label>
+							<div class="col-md-4">
+								<h:inputText id="sampleType" readonly="true"
+									styleClass="ui-state-default form-control input-sm input-block-level"
+									value="#{collectionBean.sampleType.satyName}" />
+							</div>
+							<label class="col-md-2 control-label" for="regType">Tipo
+								de Registro:</label>
+							<div class="col-md-4">
+								<h:inputText id="regType" readonly="true"
+									styleClass="ui-state-default form-control input-sm input-block-level"
+									value="#{collectionBean.regType.retyName}" />
+							</div>
+						</div>
+						<div class="row">
+							<label class="col-md-2 control-label" for="collectCatalog">Colección
+								y Catálogo:</label>
+							<div class="col-md-4">
+								<h:inputText id="collectCatalog" readonly="true"
+									styleClass="ui-state-default form-control input-sm input-block-level"
+									value="#{collectionBean.collection.collectionName} - #{collectionBean.catalog.catalogName}" />
+							</div>
+							<label class="col-md-2 control-label" for="idBioReg">ID
+								Registro Biológico:</label>
+							<div class="col-md-4">
+								<h:inputText id="idBioReg" readonly="true"
+									styleClass="ui-state-default form-control input-sm input-block-level"
+									value="#{specimenBean.specimen.idBioreg}" />
+							</div>
+						</div>
 					</div>
 				</h:form>
 			</section>
 		</div>
 	</h:body>
-	<script
-		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBR3PcM4cz5r0TULxJuDBgF2xvLqLE73c"></script>
 </ui:composition>

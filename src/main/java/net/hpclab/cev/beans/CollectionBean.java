@@ -20,15 +20,16 @@ import org.primefaces.model.TreeNode;
 import net.hpclab.cev.entities.Catalog;
 import net.hpclab.cev.entities.Collection;
 import net.hpclab.cev.entities.Institution;
+import net.hpclab.cev.entities.RegType;
+import net.hpclab.cev.entities.SampleType;
 import net.hpclab.cev.entities.Specimen;
-import net.hpclab.cev.entities.Taxonomy;
-import net.hpclab.cev.entities.TaxonomyLevel;
 import net.hpclab.cev.enums.OutcomeEnum;
 import net.hpclab.cev.enums.StatusEnum;
 import net.hpclab.cev.model.TreeHierachyModel;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
 import net.hpclab.cev.services.DataWarehouse;
+import net.hpclab.cev.services.ObjectRetriever;
 
 @ManagedBean
 @ViewScoped
@@ -37,20 +38,21 @@ public class CollectionBean extends UtilsBean implements Serializable {
 	private static final long serialVersionUID = -7407272469474484227L;
 	private DataBaseService<Collection> collectionService;
 	private DataBaseService<Catalog> catalogService;
+	// private DataBaseService<SampleType> sampleTypeService;
+	// private DataBaseService<RegType> regTypeService;
 	private Constant.CollectionClassType classType;
 	private Integer objectId;
 	private String selectedInstitution;
 	private String selectedCollection;
 	private String selectedCatalog;
-	private String selectedLevel;
 	private String objectType;
 	private String objectName;
 	private String objectFatherType;
 	private String objectFatherName;
 	private Catalog catalog;
 	private Collection collection;
-	private Taxonomy taxonomy;
-	private Taxonomy parentTaxonomy;
+	private Integer sampleTypeId;
+	private Integer regTypeId;
 	private TreeNode root;
 	private TreeNode selectedNode;
 	private HashMap<Integer, TreeNode> tree;
@@ -59,7 +61,6 @@ public class CollectionBean extends UtilsBean implements Serializable {
 	private TreeHierachyModel abstractTree;
 	private List<Collection> avalCollections;
 	private List<Catalog> avalCatalogs;
-	private List<TaxonomyLevel> avalLevels;
 	private List<Specimen> collectionSpecimens;
 
 	private static final Logger LOGGER = Logger.getLogger(CollectionBean.class.getSimpleName());
@@ -67,6 +68,8 @@ public class CollectionBean extends UtilsBean implements Serializable {
 	public CollectionBean() throws Exception {
 		collectionService = new DataBaseService<>(Collection.class);
 		catalogService = new DataBaseService<>(Catalog.class);
+		// sampleTypeService = new DataBaseService<>(SampleType.class);
+		// regTypeService = new DataBaseService<>(RegType.class);
 	}
 
 	@PostConstruct
@@ -113,7 +116,6 @@ public class CollectionBean extends UtilsBean implements Serializable {
 			LOGGER.log(Level.SEVERE, "Error persisting", e);
 		}
 		showMessage(facesContext, outcomeEnum, transactionMessage);
-		selectedLevel = null;
 	}
 
 	public void edit() {
@@ -218,13 +220,6 @@ public class CollectionBean extends UtilsBean implements Serializable {
 					new DefaultTreeNode(c, tree.get(Constant.COLLECTION_HINT + c.getIdCollection().getIdCollection())));
 		}
 
-		TreeNode n = null;
-		if (parentTaxonomy != null) {
-			n = tree.get(parentTaxonomy.getIdTaxonomy());
-		} else if (taxonomy != null) {
-			n = tree.get(taxonomy.getIdTaxonomy());
-		}
-		openBranch(n);
 		specimenCollection = new HashMap<>();
 		for (Specimen s : DataWarehouse.getInstance().allSpecimens) {
 			specimenCollection.put(Constant.CATALOG_HINT + s.getIdCatalog().getIdCatalog(), s);
@@ -254,6 +249,13 @@ public class CollectionBean extends UtilsBean implements Serializable {
 		selectedNode = event.getTreeNode();
 		showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.GENERIC_INFO,
 				selectedNode.toString() + " seleccionado");
+		if (selectedNode.getData() instanceof Catalog) {
+			catalog = (Catalog) selectedNode.getData();
+			collection = (Collection) selectedNode.getParent().getData();
+		} else {
+			catalog = null;
+			collection = null;
+		}
 	}
 
 	public void setDatafromNode(String command) {
@@ -318,38 +320,6 @@ public class CollectionBean extends UtilsBean implements Serializable {
 		}
 	}
 
-	public Taxonomy getNodeName() {
-		return (Taxonomy) selectedNode.getData();
-	}
-
-	public String getLevelName(Object node) {
-		return ((Taxonomy) node).getIdTaxlevel().getTaxlevelName();
-	}
-
-	public Taxonomy getTaxonomy() {
-		return taxonomy;
-	}
-
-	public void setTaxonomy(Taxonomy taxonomy) {
-		this.taxonomy = taxonomy;
-	}
-
-	public List<Taxonomy> getAllTaxonomys() {
-		return DataWarehouse.getInstance().allTaxonomys;
-	}
-
-	public String getSelectedLevel() {
-		return selectedLevel;
-	}
-
-	public void setSelectedLevel(String selectedLevel) {
-		this.selectedLevel = selectedLevel;
-	}
-
-	public List<TaxonomyLevel> getAllLevels() {
-		return DataWarehouse.getInstance().allTaxonomyLevels;
-	}
-
 	public TreeNode getCollectionRoot() {
 		return root;
 	}
@@ -390,20 +360,32 @@ public class CollectionBean extends UtilsBean implements Serializable {
 		this.collectionSpecimens = collectionSpecimens;
 	}
 
-	public List<TaxonomyLevel> getAvalLevels() {
-		return avalLevels;
+	public SampleType getSampleType() {
+		if (sampleTypeId != null)
+			return ObjectRetriever.getObjectFromId(SampleType.class, sampleTypeId);
+		return null;
 	}
 
-	public void setAvalLevels(List<TaxonomyLevel> avalLevels) {
-		this.avalLevels = avalLevels;
+	public RegType getRegType() {
+		if (regTypeId != null)
+			return ObjectRetriever.getObjectFromId(RegType.class, regTypeId);
+		return null;
 	}
 
-	public Taxonomy getParentTaxonomy() {
-		return parentTaxonomy;
+	public Integer getSampleTypeId() {
+		return sampleTypeId;
 	}
 
-	public void setParentTaxonomy(Taxonomy parentTaxonomy) {
-		this.parentTaxonomy = parentTaxonomy;
+	public void setSampleTypeId(Integer sampleTypeId) {
+		this.sampleTypeId = sampleTypeId;
+	}
+
+	public Integer getRegTypeId() {
+		return regTypeId;
+	}
+
+	public void setRegTypeId(Integer regTypeId) {
+		this.regTypeId = regTypeId;
 	}
 
 	public List<Institution> getAllInstitutions() {
@@ -416,6 +398,14 @@ public class CollectionBean extends UtilsBean implements Serializable {
 
 	public List<Catalog> getAllCatalogs() {
 		return DataWarehouse.getInstance().allCatalogs;
+	}
+
+	public List<SampleType> getAllSampleTypes() {
+		return DataWarehouse.getInstance().allSampleTypes;
+	}
+
+	public List<RegType> getAllRegTypes() {
+		return DataWarehouse.getInstance().allRegTypes;
 	}
 
 	public String getSelectedInstitution() {
