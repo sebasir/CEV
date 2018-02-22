@@ -26,7 +26,6 @@ $(window).ready(function () {
                 form.find(".body:eq(" + newIndex + ") label.error").remove();
                 form.find(".body:eq(" + newIndex + ") .error").removeClass("error");
             }
-            form.validate().settings.ignore = ":disabled,:hidden";
             if (newIndex == SUMMARY_INDEX)
             	updateSummary();
            	return true;
@@ -41,16 +40,13 @@ $(window).ready(function () {
             }
         },
         onFinishing: function (event, currentIndex) {
-            form.validate().settings.ignore = ":disabled";
-            return form.valid();
+            return true;
         },
         onFinished: function (event, currentIndex) {
-            restart();
-            location.reload();
+            saveSpecimen();
         },
         onCanceled: function (event) {
             restart();
-            location.reload();
         }
     });
 });

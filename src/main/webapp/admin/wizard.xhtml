@@ -87,7 +87,7 @@
 							<div class="col-md-4">
 								<p:calendar id="idenDate" locale="es" width="100%"
 									value="#{specimenBean.specimen.idenDate}">
-									<p:ajax process="@this" />
+									<p:ajax event="dateSelect" />
 								</p:calendar>
 							</div>
 						</div>
@@ -119,9 +119,9 @@
 							<label class="col-md-2 control-label" for="idenDate">Fecha
 								de Colecta:</label>
 							<div class="col-md-4">
-								<p:calendar id="idenDate" locale="es"
-									value="#{specimenBean.specimen.idenDate}">
-									<p:ajax process="@this" />
+								<p:calendar id="collectDate" locale="es"
+									value="#{specimenBean.specimen.collectDate}">
+									<p:ajax event="dateSelect" />
 								</p:calendar>
 							</div>
 						</div>
@@ -193,6 +193,9 @@
 				<hr />
 				<h:form id="formResumen">
 					<p:remoteCommand name="updateSummary" update="formResumen" />
+					<p:remoteCommand name="saveSpecimen" update="formResumen"
+						actionListener="#{specimenBean.persist()}" />
+					<p:remoteCommand name="restart" update="formResumen" />
 					<div class="form-group">
 						<div class="row">
 							<label class="col-md-2 control-label" for="sciName">Nombre
@@ -239,7 +242,7 @@
 							<div class="col-md-4">
 								<h:inputText id="idenDate" readonly="true"
 									styleClass="ui-state-default form-control input-sm input-block-level"
-									value="#{specimenBean.specimen.idenDate}" />
+									value="#{specimenBean.formatDate(specimenBean.specimen.idenDate)}" />
 							</div>
 						</div>
 						<hr />
@@ -263,7 +266,7 @@
 							<div class="col-md-4">
 								<h:inputText id="collectDate" readonly="true"
 									styleClass="ui-state-default form-control input-sm input-block-level"
-									value="#{specimenBean.specimen.collectDate}" />
+									value="#{specimenBean.formatDate(specimenBean.specimen.collectDate)}" />
 							</div>
 						</div>
 						<hr />
@@ -300,6 +303,7 @@
 							</div>
 						</div>
 					</div>
+					<p:growl id="growl" showDetail="true" />
 				</h:form>
 			</section>
 		</div>

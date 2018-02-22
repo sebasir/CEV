@@ -55,11 +55,18 @@ public class LocationBean extends UtilsBean implements Serializable {
 	@PostConstruct
 	public void init() {
 		try {
-			// allLocations = locationService.getList("Location.findOrderedAsc");
-			createTree();
+			limpiarFiltros();
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
+	}
+	
+	public void limpiarFiltros() {
+		selectedLevel = null;
+		location = null;
+		selectedNode = null;
+		root = null;
+		createTree();
 	}
 
 	public void persist() {
@@ -73,7 +80,8 @@ public class LocationBean extends UtilsBean implements Serializable {
 			DataWarehouse.getInstance().allLocations.add(location);
 			outcomeEnum = OutcomeEnum.CREATE_SUCCESS;
 			createTree();
-			openBranch(tree.get(location.getIdLocation()));
+			selectedNode = tree.get(location.getIdLocation());
+			openBranch(selectedNode);
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, "Error persisting", e);
 		}
@@ -91,7 +99,8 @@ public class LocationBean extends UtilsBean implements Serializable {
 			DataWarehouse.getInstance().allLocations.add(tempLocation);
 			outcomeEnum = OutcomeEnum.UPDATE_SUCCESS;
 			createTree();
-			openBranch(tree.get(tempLocation.getIdLocation()));
+			selectedNode = tree.get(location.getIdLocation());
+			openBranch(selectedNode);
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, "Error editing", e);
 		}
@@ -106,7 +115,8 @@ public class LocationBean extends UtilsBean implements Serializable {
 			locationService.delete(location);
 			DataWarehouse.getInstance().allLocations.remove(location);
 			createTree();
-			openBranch(tree.get(location.getIdContainer().getIdLocation()));
+			selectedNode = tree.get(location.getIdContainer().getIdLocation());
+			openBranch(selectedNode);
 			outcomeEnum = OutcomeEnum.DELETE_SUCCESS;
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, "Error deleting", e);

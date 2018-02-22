@@ -75,10 +75,31 @@ public class CollectionBean extends UtilsBean implements Serializable {
 	@PostConstruct
 	public void init() {
 		try {
-			createTree();
+			limpiarFiltros();
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
+	}
+
+	public void limpiarFiltros() {
+		classType = null;
+		objectId = null;
+		selectedInstitution = null;
+		selectedCollection = null;
+		selectedCatalog = null;
+		objectType = null;
+		objectName = null;
+		objectFatherType = null;
+		objectFatherName = null;
+		catalog = null;
+		collection = null;
+		sampleTypeId = null;
+		regTypeId = null;
+		root = null;
+		selectedNode = null;
+		selectedNode = null;
+		root = null;
+		createTree();
 	}
 
 	public void persist() {
@@ -321,6 +342,8 @@ public class CollectionBean extends UtilsBean implements Serializable {
 	}
 
 	public TreeNode getCollectionRoot() {
+		if (selectedNode != null)
+			openBranch(selectedNode);
 		return root;
 	}
 

@@ -54,10 +54,18 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 	@PostConstruct
 	public void init() {
 		try {
-			createTree();
+			limpiarFiltros();
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
+	}
+
+	public void limpiarFiltros() {
+		selectedLevel = null;
+		taxonomy = null;
+		selectedNode = null;
+		root = null;
+		createTree();
 	}
 
 	public void persist() {
@@ -72,7 +80,8 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 			taxonomy = taxonomyService.persist(taxonomy);
 			DataWarehouse.getInstance().allTaxonomys.add(taxonomy);
 			createTree();
-			openBranch(tree.get(taxonomy.getIdTaxonomy()));
+			selectedNode = tree.get(taxonomy.getIdTaxonomy());
+			openBranch(selectedNode);
 			outcomeEnum = OutcomeEnum.CREATE_SUCCESS;
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, "Error persisting", e);
@@ -90,7 +99,8 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 			DataWarehouse.getInstance().allTaxonomys.remove(taxonomy);
 			DataWarehouse.getInstance().allTaxonomys.add(tempTaxonomy);
 			createTree();
-			openBranch(tree.get(tempTaxonomy.getIdTaxonomy()));
+			selectedNode = tree.get(taxonomy.getIdTaxonomy());
+			openBranch(selectedNode);
 			outcomeEnum = OutcomeEnum.UPDATE_SUCCESS;
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, "Error editing", e);
@@ -106,7 +116,8 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 			taxonomyService.delete(taxonomy);
 			DataWarehouse.getInstance().allTaxonomys.remove(taxonomy);
 			createTree();
-			openBranch(tree.get(taxonomy.getIdContainer().getIdTaxonomy()));
+			selectedNode = tree.get(taxonomy.getIdContainer().getIdTaxonomy());
+			openBranch(selectedNode);
 			outcomeEnum = OutcomeEnum.DELETE_SUCCESS;
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, "Error deleting", e);
@@ -263,6 +274,8 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 	}
 
 	public TreeNode getTaxRoot() {
+		if (selectedNode != null)
+			openBranch(selectedNode);
 		return root;
 	}
 

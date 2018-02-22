@@ -1269,11 +1269,11 @@ insert into taxonomy values (default, 'Anthomyiidae', 13, 25);
 /*1*/INSERT INTO USERS VALUES (DEFAULT, '2', 'Operador', '1', 'oper.cev@ucentral.edu.co', now(), now(), null, 'tBuvcpCBCU8feB6wPDZRpw==', 1);
 -----> specimen
 
-insert into specimen values(default, 'espelentesis', 'Polílla de Páramo', 11, 1, null , to_date('01/01/2013','dd/mm/yyyy'), 1, 1, 1157, 1,'C-bios 1009', 5, to_date('10/12/2012','dd/mm/yyyy'), 'Colecta Directa', 1);
-insert into specimen values(default, 'mellifera', 'Abeja de la Miel', 18, 5, null , to_date('01/01/2015','dd/mm/yyyy'), 1, 1, 1158, 3,'C-bios 419', 2, to_date('12/02/1998','dd/mm/yyyy'), 'Colecta directa', 1);
-insert into specimen values(default, null, 'Avispa Cintura de Oro', 21, 2, 'Sp5' , to_date('01/01/2015','dd/mm/yyyy'), 1, 1, 1159, 3,'C-bios 403', 1, to_date('07/12/2004','dd/mm/yyyy'), 'En trampa Malaisse', 1);
-insert into specimen values(default, null, 'Hormiga', 22, 4, null , to_date('01/01/2015','dd/mm/yyyy'), 1, 1, 1160, 2,'C-bios 729', 3, to_date('12/08/2004','dd/mm/yyyy'), 'Trampa Pitfall', 1);
-insert into specimen values(default, null, 'Mosco', 26, 2, null , to_date('01/01/2015','dd/mm/yyyy'), 1, 1, 1161, 2,'C-bios 1008', 6, to_date('03/02/2005','dd/mm/yyyy'), 'Trampa Malaisse', 1);
+insert into specimen values(default, 'espelentesis', 'Polílla de Páramo', 11, 1, null , to_date('01/01/2013','dd/mm/yyyy'), 1, 1, 1157, 1, null, 'C-bios 1009', 5, to_date('10/12/2012','dd/mm/yyyy'), 'Colecta Directa', 1);
+insert into specimen values(default, 'mellifera', 'Abeja de la Miel', 18, 5, null , to_date('01/01/2015','dd/mm/yyyy'), 1, 1, 1158, 3, null, 'C-bios 419', 2, to_date('12/02/1998','dd/mm/yyyy'), 'Colecta directa', 1);
+insert into specimen values(default, null, 'Avispa Cintura de Oro', 21, 2, 'Sp5' , to_date('01/01/2015','dd/mm/yyyy'), 1, 1, 1159, 3, null, 'C-bios 403', 1, to_date('07/12/2004','dd/mm/yyyy'), 'En trampa Malaisse', 1);
+insert into specimen values(default, null, 'Hormiga', 22, 4, null , to_date('01/01/2015','dd/mm/yyyy'), 1, 1, 1160, 2, null, 'C-bios 729', 3, to_date('12/08/2004','dd/mm/yyyy'), 'Trampa Pitfall', 1);
+insert into specimen values(default, null, 'Mosco', 26, 2, null , to_date('01/01/2015','dd/mm/yyyy'), 1, 1, 1161, 2, null, 'C-bios 1008', 6, to_date('03/02/2005','dd/mm/yyyy'), 'Trampa Malaisse', 1);
 
 -----> module
 
@@ -1285,8 +1285,8 @@ insert into specimen values(default, null, 'Mosco', 26, 2, null , to_date('01/01
 /*5*/insert into modules values (default, 'Asistente de Creación', 'Permite crear ejemplares en la colección.', 2, 'wizard.xhtml', 'pe-7s-plus', 1);
 /*6*/insert into modules values (default, 'Clasificaciones', 'Permite realizar cambios en la lista de dominio de la clasificación taxonómica de manera jerárquica.', 3, 'taxonomy.xhtml', 'pe-7s-ticket', 1);
 /*7*/insert into modules values (default, 'Ubicaciones', 'Permite realizar cambios en la lista de dominio de la ubicación de manera jerárquica.', 4, 'location.xhtml', 'pe-7s-map-marker', 1);
-/*8*/insert into modules values (default, 'Autores', 'Permite definir los autores que recolectan y clasifican a los especímenes.', 5, 'dummy.xhtml', 'pe-7s-add-user', 1);
-/*9*/insert into modules values (default, 'Catálogos y Colecciones', 'Permite estructurar los catálogos y las colecciones donde yacen los especímenes.', 6, 'dummy.xhtml', 'pe-7s-albums', 1);
+/*8*/insert into modules values (default, 'Autores', 'Permite definir los autores que recolectan y clasifican a los especímenes.', 5, 'author.xhtml', 'pe-7s-add-user', 1);
+/*9*/insert into modules values (default, 'Catálogos y Colecciones', 'Permite estructurar los catálogos y las colecciones donde yacen los especímenes.', 6, 'collections.xhtml', 'pe-7s-albums', 1);
 /*10*/insert into modules values (default, 'Especímenes', 'Permite incluir en la colección virtual los especímenes utilizando las listas de dominio definidas en los otros módulos.', 7, 'specimen.xhtml', 'pe-7s-magic-wand', 1);
 
 /*11*/insert into modules values (default, 'Editar Perfil', 'Permite a los usuarios administrar el perfil.', 10, 'dummy.xhtml', 'pe-7s-id', 2);

@@ -25,6 +25,7 @@ import net.hpclab.cev.entities.SampleType;
 import net.hpclab.cev.entities.Specimen;
 import net.hpclab.cev.entities.Taxonomy;
 import net.hpclab.cev.enums.OutcomeEnum;
+import net.hpclab.cev.enums.StatusEnum;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
 import net.hpclab.cev.services.DataWarehouse;
@@ -56,7 +57,7 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 	public SpecimenBean() {
 		try {
 			specimenService = new DataBaseService<>(Specimen.class);
-			specimen = new Specimen();
+			limpiarFiltros();
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
@@ -77,21 +78,43 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 	}
 
 	public void persist() {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		OutcomeEnum outcomeEnum = OutcomeEnum.CREATE_ERROR;
+		String transactionMessage = specimen.getCommonName();
 		try {
-			specimen.setIdTaxonomy(taxonomy);
-			specimen.setIdLocation(location);
-			specimen.setIdCatalog(catalog);
-			specimen.setIdRety(regType);
-			specimen.setIdSaty(sampleType);
-			specimen = specimenService.persist(specimen);
-			if (specimen != null && specimen.getIdSpecimen() != null) {
-				DataWarehouse.getInstance().allSpecimens.add(specimen);
+			TaxonomyBean taxonomyBean = getExternalBean(facesContext, TaxonomyBean.class);
+			LocationBean locationBean = getExternalBean(facesContext, LocationBean.class);
+			AuthorBean authorBean = getExternalBean(facesContext, AuthorBean.class);
+			CollectionBean collectionBean = getExternalBean(facesContext, CollectionBean.class);
+
+			if (taxonomyBean == null || locationBean == null || authorBean == null || collectionBean == null) {
+				transactionMessage = "Error obteniendo valores del formulario";
+				throw new Exception(transactionMessage);
 			}
-			resetForm();
+
+			specimen.setIdTaxonomy(taxonomyBean.getTaxonomy());
+			specimen.setIdLocation(locationBean.getLocation());
+			specimen.setIdCatalog(collectionBean.getCatalog());
+			specimen.setIdRety(collectionBean.getRegType());
+			specimen.setIdSaty(collectionBean.getSampleType());
+			specimen.setIdCollector(authorBean.getAuthorCollector());
+			specimen.setIdDeterminer(authorBean.getAuthorDeterminer());
+			specimen.setIdEpithetAuthor(authorBean.getAuthorSpecificEpithet());
+			specimen.setIdUser(getUsers(facesContext));
+			specimen.setStatus(StatusEnum.ACTIVO.get());
+			specimen = specimenService.persist(specimen);
+			DataWarehouse.getInstance().allSpecimens.add(specimen);
+			outcomeEnum = OutcomeEnum.CREATE_SUCCESS;
+			
+			limpiarFiltros();
+			taxonomyBean.limpiarFiltros();
+			locationBean.limpiarFiltros();
+			authorBean.restartAuthorTypes();
+			collectionBean.limpiarFiltros();
 		} catch (Exception e) {
-			showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.CREATE_ERROR, specimen.getCommonName());
-			LOGGER.log(Level.SEVERE, e.getMessage());
+			LOGGER.log(Level.SEVERE, "Error persisting", e);
 		}
+		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
 
 	public void edit() {

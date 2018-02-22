@@ -67,6 +67,9 @@ public class Specimen implements Serializable {
 
 	@OneToOne(mappedBy = "idSpecimen")
 	private SpecimenContent specimenContent;
+	@JoinColumn(name = "id_epithet_author", referencedColumnName = "id_author")
+	@ManyToOne
+	private Author idEpithetAuthor;
 	@JoinColumn(name = "id_collector", referencedColumnName = "id_author")
 	@ManyToOne
 	private Author idCollector;
@@ -184,6 +187,14 @@ public class Specimen implements Serializable {
 
 	public void setSpecimenContent(SpecimenContent specimenContent) {
 		this.specimenContent = specimenContent;
+	}
+
+	public Author getIdEpithetAuthor() {
+		return idEpithetAuthor;
+	}
+
+	public void setIdEpithetAuthor(Author idEpithetAuthor) {
+		this.idEpithetAuthor = idEpithetAuthor;
 	}
 
 	public Author getIdCollector() {

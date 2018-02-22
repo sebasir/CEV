@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.el.ELContext;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -75,6 +76,16 @@ public class UtilsBean implements Serializable {
 		if (null != session)
 			modules = (List<Modules>) facesContext.getExternalContext().getSessionMap().get(Constant.USER_MODULES);
 		return modules;
+	}
+
+	public <T> T getExternalBean(FacesContext facesContext, Class<T> beanClass) {
+		ELContext elContext = facesContext.getELContext();
+		String beanName = beanClass.getSimpleName();
+		beanName = beanName.substring(0, 1).toLowerCase() + beanName.substring(1);
+		@SuppressWarnings("unchecked")
+		T resultBean = (T) FacesContext.getCurrentInstance().getApplication().getELResolver().getValue(elContext, null,
+				beanName);
+		return resultBean;
 	}
 
 	public void setUserModules(FacesContext facesContext, List<Modules> userMenu) {
