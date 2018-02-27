@@ -17,87 +17,87 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "roles_modules")
-@NamedQueries({
-    @NamedQuery(name = "RolesModules.findAll", query = "SELECT r FROM RolesModules r"),
-    @NamedQuery(name = "RolesModules.findByKey", query = "SELECT r FROM RolesModules r WHERE r.idModule.idModule = :idModule AND r.idRole.idRole = :idRole")})
+@NamedQueries({ @NamedQuery(name = "RolesModules.findAll", query = "SELECT r FROM RolesModules r"),
+		@NamedQuery(name = "RolesModules.findByKey", query = "SELECT r FROM RolesModules r WHERE r.idModule.idModule = :idModule AND r.idRole.idRole = :idRole") })
 public class RolesModules implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @SequenceGenerator(name = "RolesModulesSeq", sequenceName = "roles_modules_id_romo_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RolesModulesSeq")
-    @Basic(optional = false)
-    @Column(name = "id_romo")
-    private Integer idRomo;
+	private static final long serialVersionUID = 3622251626675534915L;
+	@Id
+	@SequenceGenerator(name = "RolesModulesSeq", sequenceName = "roles_modules_id_romo_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RolesModulesSeq")
+	@Basic(optional = false)
+	@Column(name = "id_romo")
+	private Integer idRomo;
 
-    @Size(max = 32)
-    @Column(name = "status")
-    private String status;
+	@Size(max = 32)
+	@Column(name = "status")
+	private String status;
 
-    @JoinColumn(name = "id_module", referencedColumnName = "id_module")
-    @ManyToOne
-    private Modules idModule;
-    @JoinColumn(name = "id_role", referencedColumnName = "id_role")
-    @ManyToOne
-    private Roles idRole;
+	@JoinColumn(name = "id_module", referencedColumnName = "id_module")
+	@ManyToOne
+	private Modules idModule;
+	@JoinColumn(name = "id_role", referencedColumnName = "id_role")
+	@ManyToOne
+	private Roles idRole;
 
-    public RolesModules() {
-    }
+	public RolesModules() {
+	}
 
-    public RolesModules(Integer idRomo) {
-        this.idRomo = idRomo;
-    }
+	public RolesModules(Integer idRomo) {
+		this.idRomo = idRomo;
+	}
 
-    public Integer getIdRomo() {
-        return idRomo;
-    }
+	public Integer getIdRomo() {
+		return idRomo;
+	}
 
-    public void setIdRomo(Integer idRomo) {
-        this.idRomo = idRomo;
-    }
+	public void setIdRomo(Integer idRomo) {
+		this.idRomo = idRomo;
+	}
 
-    public String getStatus() {
-        return status;
-    }
+	public String getStatus() {
+		return status;
+	}
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
-    public Modules getIdModule() {
-        return idModule;
-    }
+	public Modules getIdModule() {
+		return idModule;
+	}
 
-    public void setIdModule(Modules idModule) {
-        this.idModule = idModule;
-    }
+	public void setIdModule(Modules idModule) {
+		this.idModule = idModule;
+	}
 
-    public Roles getIdRole() {
-        return idRole;
-    }
+	public Roles getIdRole() {
+		return idRole;
+	}
 
-    public void setIdRole(Roles idRole) {
-        this.idRole = idRole;
-    }
+	public void setIdRole(Roles idRole) {
+		this.idRole = idRole;
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (idRomo != null ? idRomo.hashCode() : 0);
-        return hash;
-    }
+	@Override
+	public int hashCode() {
+		int hash = 0;
+		hash += (idRomo != null ? idRomo.hashCode() : 0);
+		return hash;
+	}
 
-    @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof RolesModules)) {
-            return false;
-        }
-        RolesModules other = (RolesModules) object;
-        return !((this.idRomo == null && other.idRomo != null) || (this.idRomo != null && !this.idRomo.equals(other.idRomo)));
-    }
+	@Override
+	public boolean equals(Object object) {
+		if (!(object instanceof RolesModules)) {
+			return false;
+		}
+		RolesModules other = (RolesModules) object;
+		return !((this.idRomo == null && other.idRomo != null)
+				|| (this.idRomo != null && !this.idRomo.equals(other.idRomo)));
+	}
 
-    @Override
-    public String toString() {
-        return "net.hpclab.entities.RolesModules[ idRomo=" + idRomo + " ]";
-    }
+	@Override
+	public String toString() {
+		return "net.hpclab.entities.RolesModules[ idRomo=" + idRomo + " ]";
+	}
 }

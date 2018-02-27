@@ -21,139 +21,139 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "roles")
-@NamedQueries({
-    @NamedQuery(name = "Roles.findAll", query = "SELECT r FROM Roles r")})
+@NamedQueries({ @NamedQuery(name = "Roles.findAll", query = "SELECT r FROM Roles r") })
 public class Roles implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @SequenceGenerator(name = "RolesSeq", sequenceName = "roles_id_role_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RolesSeq")
-    @Basic(optional = false)
-    @Column(name = "id_role")
-    private Integer idRole;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 32)
-    @Column(name = "role_name")
-    private String roleName;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 256)
-    @Column(name = "role_descr")
-    private String roleDescr;
-    @Column(name = "role_created")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date roleCreated;
-    @Column(name = "role_modified")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date roleModified;
+	private static final long serialVersionUID = -8690418191923777256L;
+	@Id
+	@SequenceGenerator(name = "RolesSeq", sequenceName = "roles_id_role_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RolesSeq")
+	@Basic(optional = false)
+	@Column(name = "id_role")
+	private Integer idRole;
+	@Basic(optional = false)
+	@NotNull
+	@Size(min = 1, max = 32)
+	@Column(name = "role_name")
+	private String roleName;
+	@Basic(optional = false)
+	@NotNull
+	@Size(min = 1, max = 256)
+	@Column(name = "role_descr")
+	private String roleDescr;
+	@Column(name = "role_created")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date roleCreated;
+	@Column(name = "role_modified")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date roleModified;
 
-    @Size(max = 32)
-    @Column(name = "status")
-    private String status;
+	@Size(max = 32)
+	@Column(name = "status")
+	private String status;
 
-    @OneToMany(mappedBy = "idRole")
-    private List<RolesModules> rolesModulesList;
-    @OneToMany(mappedBy = "idRole")
-    private List<RolesUsers> rolesUsersList;
+	@OneToMany(mappedBy = "idRole")
+	private List<RolesModules> rolesModulesList;
+	@OneToMany(mappedBy = "idRole")
+	private List<RolesUsers> rolesUsersList;
 
-    public Roles() {
-    }
+	public Roles() {
+	}
 
-    public Roles(Integer idRole) {
-        this.idRole = idRole;
-    }
+	public Roles(Integer idRole) {
+		this.idRole = idRole;
+	}
 
-    public Roles(Integer idRole, String roleName, String roleDescr) {
-        this.idRole = idRole;
-        this.roleName = roleName;
-        this.roleDescr = roleDescr;
-    }
+	public Roles(Integer idRole, String roleName, String roleDescr) {
+		this.idRole = idRole;
+		this.roleName = roleName;
+		this.roleDescr = roleDescr;
+	}
 
-    public Integer getIdRole() {
-        return idRole;
-    }
+	public Integer getIdRole() {
+		return idRole;
+	}
 
-    public void setIdRole(Integer idRole) {
-        this.idRole = idRole;
-    }
+	public void setIdRole(Integer idRole) {
+		this.idRole = idRole;
+	}
 
-    public String getRoleName() {
-        return roleName;
-    }
+	public String getRoleName() {
+		return roleName;
+	}
 
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
-    }
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
+	}
 
-    public String getRoleDescr() {
-        return roleDescr;
-    }
+	public String getRoleDescr() {
+		return roleDescr;
+	}
 
-    public void setRoleDescr(String roleDescr) {
-        this.roleDescr = roleDescr;
-    }
+	public void setRoleDescr(String roleDescr) {
+		this.roleDescr = roleDescr;
+	}
 
-    public Date getRoleCreated() {
-        return roleCreated;
-    }
+	public Date getRoleCreated() {
+		return roleCreated;
+	}
 
-    public void setRoleCreated(Date roleCreated) {
-        this.roleCreated = roleCreated;
-    }
+	public void setRoleCreated(Date roleCreated) {
+		this.roleCreated = roleCreated;
+	}
 
-    public Date getRoleModified() {
-        return roleModified;
-    }
+	public Date getRoleModified() {
+		return roleModified;
+	}
 
-    public void setRoleModified(Date roleModified) {
-        this.roleModified = roleModified;
-    }
+	public void setRoleModified(Date roleModified) {
+		this.roleModified = roleModified;
+	}
 
-    public String getStatus() {
-        return status;
-    }
+	public String getStatus() {
+		return status;
+	}
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
-    public List<RolesModules> getRolesModulesList() {
-        return rolesModulesList;
-    }
+	public List<RolesModules> getRolesModulesList() {
+		return rolesModulesList;
+	}
 
-    public void setRolesModulesList(List<RolesModules> rolesModulesList) {
-        this.rolesModulesList = rolesModulesList;
-    }
+	public void setRolesModulesList(List<RolesModules> rolesModulesList) {
+		this.rolesModulesList = rolesModulesList;
+	}
 
-    public List<RolesUsers> getRolesUsersList() {
-        return rolesUsersList;
-    }
+	public List<RolesUsers> getRolesUsersList() {
+		return rolesUsersList;
+	}
 
-    public void setRolesUsersList(List<RolesUsers> rolesUsersList) {
-        this.rolesUsersList = rolesUsersList;
-    }
+	public void setRolesUsersList(List<RolesUsers> rolesUsersList) {
+		this.rolesUsersList = rolesUsersList;
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (idRole != null ? idRole.hashCode() : 0);
-        return hash;
-    }
+	@Override
+	public int hashCode() {
+		int hash = 0;
+		hash += (idRole != null ? idRole.hashCode() : 0);
+		return hash;
+	}
 
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Roles)) {
-            return false;
-        }
-        Roles other = (Roles) object;
-        return !((this.idRole == null && other.idRole != null) || (this.idRole != null && !this.idRole.equals(other.idRole)));
-    }
+	@Override
+	public boolean equals(Object object) {
+		// TODO: Warning - this method won't work in the case the id fields are not set
+		if (!(object instanceof Roles)) {
+			return false;
+		}
+		Roles other = (Roles) object;
+		return !((this.idRole == null && other.idRole != null)
+				|| (this.idRole != null && !this.idRole.equals(other.idRole)));
+	}
 
-    @Override
-    public String toString() {
-        return "net.hpclab.entities.Roles[ idRole=" + idRole + " ]";
-    }
+	@Override
+	public String toString() {
+		return "net.hpclab.entities.Roles[ idRole=" + idRole + " ]";
+	}
 }

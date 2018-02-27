@@ -7,7 +7,7 @@ import net.hpclab.cev.enums.AuthenticateEnum;
 
 public class MessagesService implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1271212272377001258L;
 	private static MessagesService messagesService;
 	private static Properties messages;
 

@@ -8,7 +8,7 @@ import javax.enterprise.context.SessionScoped;
 @SessionScoped
 public class NavigationBean extends UtilsBean implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2801082271772326617L;
 	private String navigablePage;
 
 	public NavigationBean() {

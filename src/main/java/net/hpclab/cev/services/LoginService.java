@@ -14,7 +14,7 @@ import net.hpclab.cev.enums.StatusEnum;
 
 public class LoginService extends UtilsBean implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -8531755011203694863L;
 	private static LoginService loginService;
 	private DataBaseService<Users> usersService;
 

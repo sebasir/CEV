@@ -5,7 +5,7 @@ import net.hpclab.cev.entities.Users;
 
 public class UserSession implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 6507038081295505722L;
 	private String ipAddress;
 	private Users user;
 

@@ -29,7 +29,7 @@ import net.hpclab.cev.converters.BooleanToCharConverter;
 @NamedQueries({ @NamedQuery(name = "SpecimenContent.findAll", query = "SELECT s FROM SpecimenContent s") })
 public class SpecimenContent implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 3628121389378365021L;
 	@Id
 	@SequenceGenerator(name = "SpecimenContentSeq", sequenceName = "specimen_content_id_speccont_seq", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SpecimenContentSeq")

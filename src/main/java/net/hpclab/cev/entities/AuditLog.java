@@ -19,121 +19,121 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "audit_log")
-@NamedQueries({
-    @NamedQuery(name = "AuditLog.findAll", query = "SELECT a FROM AuditLog a")})
+@NamedQueries({ @NamedQuery(name = "AuditLog.findAll", query = "SELECT a FROM AuditLog a") })
 public class AuditLog implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @SequenceGenerator(name = "AuditLogSeq", sequenceName = "audit_log_id_aulog_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "AuditLogSeq")
-    @Column(name = "id_aulog")
-    private Integer idAulog;
-    @Column(name = "aulog_time")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date aulogTime;
-    @Column(name = "aulog_ip_address")
-    private String aulogIpAddress;
+	private static final long serialVersionUID = 3929521724459965933L;
+	@Id
+	@SequenceGenerator(name = "AuditLogSeq", sequenceName = "audit_log_id_aulog_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "AuditLogSeq")
+	@Column(name = "id_aulog")
+	private Integer idAulog;
+	@Column(name = "aulog_time")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date aulogTime;
+	@Column(name = "aulog_ip_address")
+	private String aulogIpAddress;
 
-    @Size(max = 32)
-    @Column(name = "aulog_action")
-    private String aulogAction;
+	@Size(max = 32)
+	@Column(name = "aulog_action")
+	private String aulogAction;
 
-    @Column(name = "aulog_target")
-    private String aulogTarget;
-    @JoinColumn(name = "id_module", referencedColumnName = "id_module")
-    @ManyToOne
-    private Modules idModule;
-    @JoinColumn(name = "id_user", referencedColumnName = "id_user")
-    @ManyToOne(optional = false)
-    private Users idUser;
+	@Column(name = "aulog_target")
+	private String aulogTarget;
+	@JoinColumn(name = "id_module", referencedColumnName = "id_module")
+	@ManyToOne
+	private Modules idModule;
+	@JoinColumn(name = "id_user", referencedColumnName = "id_user")
+	@ManyToOne(optional = false)
+	private Users idUser;
 
-    public AuditLog() {
-    }
+	public AuditLog() {
+	}
 
-    public AuditLog(Integer idAulog) {
-        this.idAulog = idAulog;
-    }
+	public AuditLog(Integer idAulog) {
+		this.idAulog = idAulog;
+	}
 
-    public AuditLog(Integer idAulog, String aulogTarget) {
-        this.idAulog = idAulog;
-        this.aulogTarget = aulogTarget;
-    }
+	public AuditLog(Integer idAulog, String aulogTarget) {
+		this.idAulog = idAulog;
+		this.aulogTarget = aulogTarget;
+	}
 
-    public Integer getIdAulog() {
-        return idAulog;
-    }
+	public Integer getIdAulog() {
+		return idAulog;
+	}
 
-    public void setIdAulog(Integer idAulog) {
-        this.idAulog = idAulog;
-    }
+	public void setIdAulog(Integer idAulog) {
+		this.idAulog = idAulog;
+	}
 
-    public Date getAulogTime() {
-        return aulogTime;
-    }
+	public Date getAulogTime() {
+		return aulogTime;
+	}
 
-    public void setAulogTime(Date aulogTime) {
-        this.aulogTime = aulogTime;
-    }
+	public void setAulogTime(Date aulogTime) {
+		this.aulogTime = aulogTime;
+	}
 
-    public String getAulogIpAddress() {
-        return aulogIpAddress;
-    }
+	public String getAulogIpAddress() {
+		return aulogIpAddress;
+	}
 
-    public void setAulogIpAddress(String aulogIpAddress) {
-        this.aulogIpAddress = aulogIpAddress;
-    }
+	public void setAulogIpAddress(String aulogIpAddress) {
+		this.aulogIpAddress = aulogIpAddress;
+	}
 
-    public String getAulogAction() {
-        return aulogAction;
-    }
+	public String getAulogAction() {
+		return aulogAction;
+	}
 
-    public void setAulogAction(String aulogAction) {
-        this.aulogAction = aulogAction;
-    }
+	public void setAulogAction(String aulogAction) {
+		this.aulogAction = aulogAction;
+	}
 
-    public String getAulogTarget() {
-        return aulogTarget;
-    }
+	public String getAulogTarget() {
+		return aulogTarget;
+	}
 
-    public void setAulogTarget(String aulogTarget) {
-        this.aulogTarget = aulogTarget;
-    }
+	public void setAulogTarget(String aulogTarget) {
+		this.aulogTarget = aulogTarget;
+	}
 
-    public Modules getIdModule() {
-        return idModule;
-    }
+	public Modules getIdModule() {
+		return idModule;
+	}
 
-    public void setIdModule(Modules idModule) {
-        this.idModule = idModule;
-    }
+	public void setIdModule(Modules idModule) {
+		this.idModule = idModule;
+	}
 
-    public Users getIdUser() {
-        return idUser;
-    }
+	public Users getIdUser() {
+		return idUser;
+	}
 
-    public void setIdUser(Users idUser) {
-        this.idUser = idUser;
-    }
+	public void setIdUser(Users idUser) {
+		this.idUser = idUser;
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (idAulog != null ? idAulog.hashCode() : 0);
-        return hash;
-    }
+	@Override
+	public int hashCode() {
+		int hash = 0;
+		hash += (idAulog != null ? idAulog.hashCode() : 0);
+		return hash;
+	}
 
-    @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof AuditLog)) {
-            return false;
-        }
-        AuditLog other = (AuditLog) object;
-        return !((this.idAulog == null && other.idAulog != null) || (this.idAulog != null && !this.idAulog.equals(other.idAulog)));
-    }
+	@Override
+	public boolean equals(Object object) {
+		if (!(object instanceof AuditLog)) {
+			return false;
+		}
+		AuditLog other = (AuditLog) object;
+		return !((this.idAulog == null && other.idAulog != null)
+				|| (this.idAulog != null && !this.idAulog.equals(other.idAulog)));
+	}
 
-    @Override
-    public String toString() {
-        return "net.hpclab.entities.AuditLog[ idAulog=" + idAulog + " ]";
-    }
+	@Override
+	public String toString() {
+		return "net.hpclab.entities.AuditLog[ idAulog=" + idAulog + " ]";
+	}
 }

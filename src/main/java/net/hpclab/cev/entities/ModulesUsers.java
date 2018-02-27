@@ -22,7 +22,7 @@ import javax.validation.constraints.Size;
 		@NamedQuery(name = "ModulesUsers.findByKey", query = "SELECT m FROM ModulesUsers m WHERE m.idModule.idModule = :idModule AND m.idUser.idUser = :idUser") })
 public class ModulesUsers implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 7522648274857970442L;
 	@Id
 	@SequenceGenerator(name = "ModulesUsersSeq", sequenceName = "modules_users_id_mous_seq", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ModulesUsersSeq")

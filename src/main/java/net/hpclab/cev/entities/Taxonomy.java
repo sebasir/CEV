@@ -25,7 +25,7 @@ import javax.validation.constraints.Size;
 		@NamedQuery(name = "Taxonomy.findOrderedAsc", query = "SELECT t FROM Taxonomy t ORDER BY t.idTaxlevel.taxlevelRank") })
 public class Taxonomy implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -1458545746427975715L;
 	@Id
 	@SequenceGenerator(name = "TaxonomySeq", sequenceName = "taxonomy_id_taxonomy_seq", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TaxonomySeq")

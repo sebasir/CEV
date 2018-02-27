@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.hpclab.cev.enums.AuditEnum;
+import net.hpclab.cev.enums.ModulesEnum;
 import net.hpclab.cev.entities.Modules;
 import net.hpclab.cev.entities.ModulesUsers;
 import net.hpclab.cev.entities.Roles;
@@ -20,12 +21,12 @@ import net.hpclab.cev.enums.StatusEnum;
 import net.hpclab.cev.entities.Users;
 import net.hpclab.cev.exceptions.RecordAlreadyExistsException;
 import net.hpclab.cev.exceptions.RecordNotExistsException;
-import net.hpclab.cev.exceptions.RestrictedAccessException;
+import net.hpclab.cev.exceptions.UnauthorizedAccessException;
 import net.hpclab.cev.exceptions.UnexpectedOperationException;
 
 public class AccessService implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 497068865656993475L;
 	private static final Logger LOGGER = Logger.getLogger(AccessService.class.getSimpleName());
 	private static AccessService accessService;
 	private DataBaseService<ModulesUsers> mousService;
@@ -47,7 +48,6 @@ public class AccessService implements Serializable {
 			roleUserAccess = new HashMap<>();
 			roleModuleAccess = new HashMap<>();
 		} catch (Exception e) {
-			e.printStackTrace();
 			LOGGER.log(Level.SEVERE, "El servicio de acceso no ha podido iniciar correctamente: {0}.", e.getMessage());
 			throw new Exception("El servicio de acceso no ha podido iniciar correctamente: " + e.getMessage());
 		}
@@ -79,52 +79,41 @@ public class AccessService implements Serializable {
 
 	public void setModuleUserAccess(Modules idModule, Users idUser, Integer accessLevel, AuditEnum operation,
 			StatusEnum status) throws Exception {
-		ModulesUsers moduleUser;
-		HashMap<String, Object> params;
+		ModulesUsers moduleUser = new ModulesUsers();
+		moduleUser.setIdModule(idModule);
+		moduleUser.setIdUser(idUser);
 		switch (operation) {
 		case INSERT:
-			if (userAccess.get(idUser).get(idModule) != null) {
+			if (userAccess.get(idUser).get(idModule) != null)
 				throw new RecordAlreadyExistsException("Ya existe esta relación");
-			}
-			moduleUser = new ModulesUsers();
-			moduleUser.setIdModule(idModule);
-			moduleUser.setIdUser(idUser);
+
 			moduleUser.setAccessLevel(accessLevel);
 			mousService.persist(moduleUser);
 			addUserAccess(idUser, idModule, accessLevel);
 			break;
 		case DELETE:
-			if (userAccess.get(idUser).get(idModule) == null) {
+			if (userAccess.get(idUser).get(idModule) == null)
 				throw new RecordNotExistsException("No existe esta relación");
-			}
-			params = new HashMap<>(2);
-			params.put(":idModule", idModule);
-			params.put(":idUser", idUser);
-			moduleUser = mousService.getSingleRecord("ModuleUser.findByKey", params);
+
+			moduleUser = mousService.getSingleRecord(moduleUser);
 			mousService.delete(moduleUser);
 			removeUserAccess(idUser, idModule);
 			break;
 		case UPDATE:
-			if (userAccess.get(idUser).get(idModule) == null) {
+			if (userAccess.get(idUser).get(idModule) == null)
 				throw new RecordNotExistsException("No existe esta relación");
-			}
-			params = new HashMap<>(2);
-			params.put(":idModule", idModule);
-			params.put(":idUser", idUser);
-			moduleUser = mousService.getSingleRecord("ModuleUser.findByKey", params);
+
+			moduleUser = mousService.getSingleRecord(moduleUser);
 			moduleUser.setAccessLevel(accessLevel);
 			mousService.merge(moduleUser);
 			removeUserAccess(idUser, idModule);
 			addUserAccess(idUser, idModule, accessLevel);
 			break;
 		case STATUS_CHANGE:
-			if (userAccess.get(idUser).get(idModule) == null) {
+			if (userAccess.get(idUser).get(idModule) == null)
 				throw new RecordNotExistsException("No existe esta relación");
-			}
-			params = new HashMap<>(2);
-			params.put(":idModule", idModule);
-			params.put(":idUser", idUser);
-			moduleUser = mousService.getSingleRecord("ModuleUser.findByKey", params);
+
+			moduleUser = mousService.getSingleRecord(moduleUser);
 			moduleUser.setStatus(status.get());
 			mousService.merge(moduleUser);
 			if (userAccess.get(idUser) == null || userAccess.get(idUser).get(idModule) == null) {
@@ -140,52 +129,41 @@ public class AccessService implements Serializable {
 
 	public void setRoleUserAccess(Roles idRole, Users idUser, Integer accessLevel, AuditEnum operation,
 			StatusEnum status) throws Exception {
-		RolesUsers roleUser;
-		HashMap<String, Object> params;
+		RolesUsers roleUser = new RolesUsers();
+		roleUser.setIdRole(idRole);
+		roleUser.setIdUser(idUser);
 		switch (operation) {
 		case INSERT:
-			if (roleUserAccess.get(idUser).get(idRole) != null) {
+			if (roleUserAccess.get(idUser).get(idRole) != null)
 				throw new RecordAlreadyExistsException("Ya existe esta relación");
-			}
-			roleUser = new RolesUsers();
-			roleUser.setIdRole(idRole);
-			roleUser.setIdUser(idUser);
+
 			roleUser.setAccessLevel(accessLevel);
 			rousService.persist(roleUser);
 			addRoleUserAccess(idUser, idRole, accessLevel);
 			break;
 		case DELETE:
-			if (roleUserAccess.get(idUser).get(idRole) == null) {
+			if (roleUserAccess.get(idUser).get(idRole) == null)
 				throw new RecordNotExistsException("No existe esta relación");
-			}
-			params = new HashMap<>(2);
-			params.put(":idRole", idRole);
-			params.put(":idUser", idUser);
-			roleUser = rousService.getSingleRecord("RoleUser.findByKey", params);
+
+			roleUser = rousService.getSingleRecord(roleUser);
 			rousService.delete(roleUser);
 			removeRoleUserAccess(idUser, idRole);
 			break;
 		case UPDATE:
-			if (roleUserAccess.get(idUser).get(idRole) == null) {
+			if (roleUserAccess.get(idUser).get(idRole) == null)
 				throw new RecordNotExistsException("No existe esta relación");
-			}
-			params = new HashMap<>(2);
-			params.put(":idRole", idRole);
-			params.put(":idUser", idUser);
-			roleUser = rousService.getSingleRecord("RoleUser.findByKey", params);
+
+			roleUser = rousService.getSingleRecord(roleUser);
 			roleUser.setAccessLevel(accessLevel);
 			rousService.merge(roleUser);
 			removeRoleUserAccess(idUser, idRole);
 			addRoleUserAccess(idUser, idRole, accessLevel);
 			break;
 		case STATUS_CHANGE:
-			if (roleUserAccess.get(idUser).get(idRole) == null) {
+			if (roleUserAccess.get(idUser).get(idRole) == null)
 				throw new RecordNotExistsException("No existe esta relación");
-			}
-			params = new HashMap<>(2);
-			params.put(":idRole", idRole);
-			params.put(":idUser", idUser);
-			roleUser = rousService.getSingleRecord("RoleUser.findByKey", params);
+
+			roleUser = rousService.getSingleRecord(roleUser);
 			roleUser.setStatus(status.get());
 			rousService.merge(roleUser);
 
@@ -201,40 +179,32 @@ public class AccessService implements Serializable {
 	}
 
 	public void setRoleModule(Roles idRole, Modules idModule, AuditEnum operation, StatusEnum status) throws Exception {
-		RolesModules roleModule;
-		HashMap<String, Object> params;
+		RolesModules roleModule = new RolesModules();
+		roleModule.setIdRole(idRole);
+		roleModule.setIdModule(idModule);
 		switch (operation) {
 		case INSERT:
-			if (roleModuleAccess.get(idRole).contains(idModule)) {
+			if (roleModuleAccess.get(idRole).contains(idModule))
 				throw new RecordAlreadyExistsException("Ya existe esta relación");
-			}
-			roleModule = new RolesModules();
-			roleModule.setIdRole(idRole);
-			roleModule.setIdModule(idModule);
+
 			romoService.persist(roleModule);
 			addRoleModuleAccess(idRole, idModule);
 			break;
 		case DELETE:
-			if (!roleModuleAccess.get(idRole).contains(idModule)) {
+			if (!roleModuleAccess.get(idRole).contains(idModule))
 				throw new RecordNotExistsException("No existe esta relación");
-			}
-			params = new HashMap<>(2);
-			params.put(":idRole", idRole);
-			params.put(":idModule", idModule);
-			roleModule = romoService.getSingleRecord("RoleModule.findByKey", params);
+
+			roleModule = romoService.getSingleRecord(roleModule);
 			romoService.delete(roleModule);
 			removeRoleModuleAccess(idRole, idModule);
 			break;
 		case UPDATE:
 			throw new UnexpectedOperationException("Nada que actualizar.");
 		case STATUS_CHANGE:
-			if (roleModuleAccess.get(idRole).contains(idModule)) {
+			if (roleModuleAccess.get(idRole).contains(idModule))
 				throw new RecordNotExistsException("No existe esta relación");
-			}
-			params = new HashMap<>(2);
-			params.put(":idRole", idRole);
-			params.put(":idModule", idModule);
-			roleModule = romoService.getSingleRecord("RoleUser.findByKey", params);
+
+			roleModule = romoService.getSingleRecord(roleModule);
 			roleModule.setStatus(status.get());
 			romoService.merge(roleModule);
 
@@ -249,11 +219,18 @@ public class AccessService implements Serializable {
 		}
 	}
 
-	public int accessLevel(Modules idModule, Users idUser) throws Exception {
-		if (userAccess.get(idUser) == null || userAccess.get(idUser).get(idModule) == null) {
-			throw new RestrictedAccessException("El usuario no tiene permisos para el módulo.");
-		}
+	private int accessLevel(Modules idModule, Users idUser) throws Exception {
+		if (userAccess.get(idUser) == null || userAccess.get(idUser).get(idModule) == null)
+			throw new UnauthorizedAccessException("El usuario no tiene permisos para el módulo.");
 		return userAccess.get(idUser).get(idModule);
+	}
+
+	public boolean checkUserAccess(ModulesEnum idModule, Users idUser, Constant.AccessLevel accessLevel)
+			throws Exception {
+		for (Modules m : DataWarehouse.getInstance().allModules)
+			if (idModule.name().equals(m.getModuleCode()))
+				return accessLevel(m, idUser) >= accessLevel.getLevel();
+		return false;
 	}
 
 	private void addUserAccess(Users idUser, Modules idModule, Integer accessLevel) {

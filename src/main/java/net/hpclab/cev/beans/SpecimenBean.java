@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
@@ -29,6 +28,7 @@ import net.hpclab.cev.enums.StatusEnum;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
 import net.hpclab.cev.services.DataWarehouse;
+import net.hpclab.cev.services.ParseExceptionService;
 
 @ManagedBean
 @ViewScoped
@@ -61,11 +61,6 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
-	}
-
-	@PreDestroy
-	public void destroy() {
-		specimenService = null;
 	}
 
 	public void limpiarFiltros() {
@@ -105,51 +100,70 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 			specimen = specimenService.persist(specimen);
 			DataWarehouse.getInstance().allSpecimens.add(specimen);
 			outcomeEnum = OutcomeEnum.CREATE_SUCCESS;
-			
+
 			limpiarFiltros();
 			taxonomyBean.limpiarFiltros();
 			locationBean.limpiarFiltros();
 			authorBean.restartAuthorTypes();
 			collectionBean.limpiarFiltros();
 		} catch (Exception e) {
+			transactionMessage = ParseExceptionService.getInstance().parse(e);
 			LOGGER.log(Level.SEVERE, "Error persisting", e);
 		}
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
 
 	public void edit() {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		OutcomeEnum outcomeEnum = OutcomeEnum.UPDATE_ERROR;
+		String transactionMessage = specimen.getCommonName();
 		try {
+			TaxonomyBean taxonomyBean = getExternalBean(facesContext, TaxonomyBean.class);
+			LocationBean locationBean = getExternalBean(facesContext, LocationBean.class);
+			AuthorBean authorBean = getExternalBean(facesContext, AuthorBean.class);
+			CollectionBean collectionBean = getExternalBean(facesContext, CollectionBean.class);
+
+			if (taxonomyBean == null || locationBean == null || authorBean == null || collectionBean == null) {
+				transactionMessage = "Error obteniendo valores del formulario";
+				throw new Exception(transactionMessage);
+			}
+
 			specimen.setIdTaxonomy(taxonomy);
 			specimen.setIdLocation(location);
 			specimen.setIdCatalog(catalog);
 			specimen.setIdRety(regType);
 			specimen.setIdSaty(sampleType);
-			specimen = specimenService.merge(specimen);
+			Specimen tempSpecimen = specimenService.merge(specimen);
 			DataWarehouse.getInstance().allSpecimens.remove(specimen);
-			DataWarehouse.getInstance().allSpecimens.add(specimen);
+			DataWarehouse.getInstance().allSpecimens.add(tempSpecimen);
+			outcomeEnum = OutcomeEnum.UPDATE_SUCCESS;
+
+			limpiarFiltros();
+			taxonomyBean.limpiarFiltros();
+			locationBean.limpiarFiltros();
+			authorBean.restartAuthorTypes();
+			collectionBean.limpiarFiltros();
 		} catch (Exception e) {
-			showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.UPDATE_ERROR, specimen.getCommonName());
+			transactionMessage = ParseExceptionService.getInstance().parse(e);
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
-		resetForm();
+		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
 
 	public void delete() {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		OutcomeEnum outcomeEnum = OutcomeEnum.DELETE_ERROR;
+		String transactionMessage = specimen.getCommonName();
 		try {
 			specimenService.delete(specimen);
 			DataWarehouse.getInstance().allSpecimens.remove(specimen);
+			outcomeEnum = OutcomeEnum.DELETE_SUCCESS;
+			limpiarFiltros();
 		} catch (Exception e) {
-			showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.DELETE_ERROR, specimen.getCommonName());
+			transactionMessage = ParseExceptionService.getInstance().parse(e);
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
-	}
-
-	private void resetForm() {
-		specimen = new Specimen();
-		selectedCatalog = null;
-		selectedCollection = null;
-		selectedRegType = null;
-		selectedSampleType = null;
+		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
 
 	public void search() {
@@ -171,10 +185,6 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 			}
 		}
 		return taxs;
-	}
-
-	public void prepareCreate() {
-		resetForm();
 	}
 
 	public void prepareUpdate(Specimen onEdit) {

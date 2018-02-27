@@ -26,7 +26,7 @@ import javax.validation.constraints.Size;
 @NamedQueries({ @NamedQuery(name = "Specimen.findAll", query = "SELECT s FROM Specimen s") })
 public class Specimen implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -5795215857648772533L;
 	@Id
 	@SequenceGenerator(name = "SpecimenSeq", sequenceName = "specimen_id_specimen_seq", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SpecimenSeq")

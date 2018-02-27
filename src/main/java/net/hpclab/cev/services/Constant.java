@@ -6,6 +6,20 @@ public class Constant {
 		INSTITUTION, COLLECTION, CATALOG
 	}
 
+	public enum AccessLevel {
+		SELECT(1), DELETE(2), INSERT(3), UPDATE(4);
+
+		private int level;
+
+		private AccessLevel(int level) {
+			this.level = level;
+		}
+
+		public int getLevel() {
+			return level;
+		}
+	}
+
 	public static final String POINT = "\\.";
 	public static final String LOG = "_LOG";
 	public static final String PERSISTENCE_UNIT = "CEV_PU";
@@ -31,9 +45,6 @@ public class Constant {
 	public static final int UNLIMITED_QUERY_RESULTS = -1;
 	public static final int MAX_SPECIMEN_LIST = 6;
 	public static final int MAX_PAGE_INDEX = 4;
-	public static final int ACCESS_LEVEL_SELECT = 1;
-	public static final int ACCESS_LEVEL_UPDATE = 2;
-	public static final int ACCESS_LEVEL_DELETE = 3;
 	public static final int ROOT_LEVEL = 0;
 	public static final int INSTITUTION_LEVEL = 1;
 	public static final int COLLECTION_LEVEL = 2;

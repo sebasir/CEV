@@ -28,7 +28,7 @@ import javax.validation.constraints.Size;
 		@NamedQuery(name = "Users.authenticate", query = "SELECT u FROM Users u WHERE u.userEmail = :userEmail AND u.userPassword = :userPassword") })
 public class Users implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 8897715219996469489L;
 	@Id
 	@SequenceGenerator(name = "UsersSeq", sequenceName = "users_id_user_seq", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "UsersSeq")

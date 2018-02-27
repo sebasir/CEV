@@ -15,9 +15,11 @@ import javax.faces.context.FacesContext;
 import net.hpclab.cev.entities.Author;
 import net.hpclab.cev.entities.Specimen;
 import net.hpclab.cev.entities.Users;
+import net.hpclab.cev.enums.ModulesEnum;
 import net.hpclab.cev.enums.OutcomeEnum;
 import net.hpclab.cev.enums.StatusEnum;
 import net.hpclab.cev.model.AuthorTypesModel;
+import net.hpclab.cev.services.AccessService;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
 import net.hpclab.cev.services.DataWarehouse;
@@ -54,14 +56,26 @@ public class AuthorBean extends UtilsBean implements Serializable {
 
 	@PostConstruct
 	public void init() {
-		systemUsers = new ArrayList<>(DataWarehouse.getInstance().allUsers);
-		restartAuthorTypes();
+		try {
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			if (AccessService.getInstance().checkUserAccess(ModulesEnum.AUTHOR, getUsers(facesContext),
+					Constant.AccessLevel.SELECT)) {
+				systemUsers = new ArrayList<>(DataWarehouse.getInstance().allUsers);
+				restartAuthorTypes();
+			} else
+				showAccessMessage(facesContext, OutcomeEnum.SELECT_NOT_GRANTED);
+		} catch (Exception e) {
+			LOGGER.log(Level.SEVERE, "Error inicializando", e);
+		}
 	}
 
 	public void restartAuthorTypes() {
 		try {
 			users = null;
 			author = null;
+			collector = null;
+			determiner = null;
+			specificEpiteth = null;
 			authorTypes = new HashMap<>();
 			authorMap = new HashMap<>();
 			determiners = new ArrayList<>();
@@ -96,6 +110,12 @@ public class AuthorBean extends UtilsBean implements Serializable {
 		OutcomeEnum outcomeEnum = OutcomeEnum.CREATE_ERROR;
 		String transactionMessage = author.getAuthorName();
 		try {
+			if (!AccessService.getInstance().checkUserAccess(ModulesEnum.AUTHOR, getUsers(facesContext),
+					Constant.AccessLevel.INSERT)) {
+				showAccessMessage(facesContext, OutcomeEnum.INSERT_NOT_GRANTED);
+				return;
+			}
+
 			author.setIdAuthor(null);
 			AuthorTypesModel model = authorTypes.get(-1);
 			if (users != null)
@@ -121,6 +141,12 @@ public class AuthorBean extends UtilsBean implements Serializable {
 		OutcomeEnum outcomeEnum = OutcomeEnum.UPDATE_ERROR;
 		String transactionMessage = author.getAuthorName();
 		try {
+			if (!AccessService.getInstance().checkUserAccess(ModulesEnum.AUTHOR, getUsers(facesContext),
+					Constant.AccessLevel.UPDATE)) {
+				showAccessMessage(facesContext, OutcomeEnum.UPDATE_NOT_GRANTED);
+				return;
+			}
+
 			if (users != null)
 				author.setIdUser(new Users(users));
 			else
@@ -145,6 +171,12 @@ public class AuthorBean extends UtilsBean implements Serializable {
 		OutcomeEnum outcomeEnum = OutcomeEnum.DELETE_ERROR;
 		String transactionMessage = author.getAuthorName();
 		try {
+			if (!AccessService.getInstance().checkUserAccess(ModulesEnum.AUTHOR, getUsers(facesContext),
+					Constant.AccessLevel.DELETE)) {
+				showAccessMessage(facesContext, OutcomeEnum.DELETE_NOT_GRANTED);
+				return;
+			}
+
 			authorService.delete(author);
 			DataWarehouse.getInstance().allAuthors.remove(author);
 			restartAuthorTypes();

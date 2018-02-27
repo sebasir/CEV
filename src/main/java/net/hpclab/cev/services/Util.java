@@ -13,8 +13,8 @@ import net.hpclab.cev.enums.ModulesEnum;
 
 public class Util implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    private static HashMap<String, String> entityNames;
+	private static final long serialVersionUID = -3495639167934741566L;
+	private static HashMap<String, String> entityNames;
     private static HashMap<ModulesEnum, Modules> modules;
     private static final Pattern EMAIL_PATTERN = Pattern.compile(Constant.EMAIL_REGEX);
 

@@ -32,7 +32,7 @@ import javax.validation.constraints.Size;
 
 public class Location implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -2404716476915939338L;
 	@Id
 	@SequenceGenerator(name = "LocationSeq", sequenceName = "location_id_location_seq", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "LocationSeq")

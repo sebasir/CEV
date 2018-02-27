@@ -21,7 +21,7 @@ import javax.validation.constraints.Size;
 @NamedQueries({ @NamedQuery(name = "TaxonomyLevel.findAll", query = "SELECT t FROM TaxonomyLevel t") })
 public class TaxonomyLevel implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 6196505189712738658L;
 	@Id
 	@SequenceGenerator(name = "TaxonomyLevelSeq", sequenceName = "taxonomy_level_id_taxlevel_seq", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TaxonomyLevelSeq")

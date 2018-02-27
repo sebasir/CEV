@@ -25,13 +25,13 @@ import javax.transaction.UserTransaction;
 
 public class DataBaseService<T> implements Serializable {
 
+	private static final long serialVersionUID = -2261108379261211921L;
 	private EntityManager entityManager;
 
 	private static enum QueryMethod {
 		MAP, ENTITY, NAMED_QUERY, QUERY_MAP
 	};
 
-	private static final long serialVersionUID = 1L;
 	private static final String SELECT = "SELECT";
 	private static final Logger LOGGER = Logger.getLogger(DataBaseService.class.getSimpleName());
 	private Pager pager;
@@ -88,9 +88,18 @@ public class DataBaseService<T> implements Serializable {
 		return getList();
 	}
 
-	public List<T> getList(T entityFilters) throws NoResultException, Exception {
-		restartFilters(QueryMethod.ENTITY);
-		entityParam = entityFilters;
+	private Object getInnerValue(Object obj) throws Exception {
+		Field[] fields = obj.getClass().getDeclaredFields();
+		for (Field field : fields) {
+			field.setAccessible(true);
+			if (field.getType().getSimpleName().equals("Integer")) {
+				return field.get(obj);
+			}
+		}
+		return null;
+	}
+
+	private HashMap<String, Object> getFilterFromEntity(T entityFilters) throws Exception {
 		HashMap<String, Object> filters = new HashMap<>();
 		if (entityFilters != null) {
 			Class<?> cls = entityFilters.getClass();
@@ -107,19 +116,15 @@ public class DataBaseService<T> implements Serializable {
 				}
 			}
 		}
-		LOGGER.log(Level.INFO, "Filters: {0}", filters);
-		return getList(filters);
+		return filters;
 	}
 
-	public Object getInnerValue(Object obj) throws Exception {
-		Field[] fields = obj.getClass().getDeclaredFields();
-		for (Field field : fields) {
-			field.setAccessible(true);
-			if (field.getType().getSimpleName().equals("Integer")) {
-				return field.get(obj);
-			}
-		}
-		return null;
+	public List<T> getList(T entityFilters) throws NoResultException, Exception {
+		restartFilters(QueryMethod.ENTITY);
+		entityParam = entityFilters;
+		HashMap<String, Object> filters = getFilterFromEntity(entityFilters);
+		LOGGER.log(Level.INFO, "Filters: {0}", filters);
+		return getList(filters);
 	}
 
 	public List<T> getList(String query) throws NoResultException, Exception {
@@ -152,7 +157,7 @@ public class DataBaseService<T> implements Serializable {
 	}
 
 	public List<T> getList(Class<T> entityClass) throws NoResultException, Exception {
-		LOGGER.log(Level.INFO, "Listing (Class<T>) {0}", new Object[] { entityClass.getSimpleName() });
+		LOGGER.log(Level.INFO, "Listing (Class<{0}>)", new Object[] { entityClass.getSimpleName() });
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entityClass);
 		criteriaQuery.from(entityClass);
@@ -161,11 +166,7 @@ public class DataBaseService<T> implements Serializable {
 		return result;
 	}
 
-	public List<T> getList(HashMap<String, Object> params) throws NoResultException, Exception {
-		restartFilters(QueryMethod.MAP);
-		mapParam = params;
-		LOGGER.log(Level.INFO, "Listing (CriteriaQuery) {0}, params: '{'{1}'}'",
-				new Object[] { entityClass.getSimpleName(), params == null ? "N/A" : params.size() });
+	private CriteriaQuery<T> queryFromParams(HashMap<String, Object> params) {
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entityClass);
 		Root<T> root = criteriaQuery.from(entityClass);
@@ -195,6 +196,15 @@ public class DataBaseService<T> implements Serializable {
 			}
 			criteriaQuery.select(root).where(predicate);
 		}
+		return criteriaQuery;
+	}
+
+	public List<T> getList(HashMap<String, Object> params) throws NoResultException, Exception {
+		restartFilters(QueryMethod.MAP);
+		mapParam = params;
+		LOGGER.log(Level.INFO, "Listing (CriteriaQuery) {0}, params: '{'{1}'}'",
+				new Object[] { entityClass.getSimpleName(), params == null ? "N/A" : params.size() });
+		CriteriaQuery<T> criteriaQuery = queryFromParams(params);
 		List<T> result = getListOfResults(entityManager.createQuery(criteriaQuery));
 		LOGGER.log(Level.INFO, "Listing {0}, OK", entityClass.getSimpleName());
 		return result;
@@ -270,6 +280,25 @@ public class DataBaseService<T> implements Serializable {
 		return result;
 	}
 
+	public T getSingleRecord(T entityFilters) throws NoResultException, Exception {
+		restartFilters(QueryMethod.ENTITY);
+		entityParam = entityFilters;
+		HashMap<String, Object> filters = getFilterFromEntity(entityFilters);
+		LOGGER.log(Level.INFO, "Filters: {0}", filters);
+		return getSingleRecord(filters);
+	}
+
+	private T getSingleRecord(HashMap<String, Object> params) throws NoResultException, Exception {
+		restartFilters(QueryMethod.MAP);
+		mapParam = params;
+		LOGGER.log(Level.INFO, "GetSingleRecord (CriteriaQuery) {0}, params: '{'{1}'}'",
+				new Object[] { entityClass.getSimpleName(), params == null ? "N/A" : params.size() });
+		CriteriaQuery<T> criteriaQuery = queryFromParams(params);
+		T result = entityManager.createQuery(criteriaQuery).getSingleResult();
+		LOGGER.log(Level.INFO, "GetSingleRecord {0}, OK", entityClass.getSimpleName());
+		return result;
+	}
+
 	public T getSingleRecord(String query, HashMap<String, Object> params) throws NoResultException, Exception {
 		LOGGER.log(Level.INFO, "GetSingleRecord {0}, params: '{'{1}'}'",
 				new Object[] { entityClass.getSimpleName(), params == null ? "N/A" : params.size() });
@@ -312,8 +341,8 @@ public class DataBaseService<T> implements Serializable {
 		startUserTransaction();
 		LOGGER.log(Level.INFO, "Merging {0}", entityClass.getSimpleName());
 		entity = entityManager.merge(entity);
-		LOGGER.log(Level.INFO, "Merged {0}, OK", entityClass.getSimpleName());
 		commitTransaction();
+		LOGGER.log(Level.INFO, "Merged {0}, OK", entityClass.getSimpleName());
 		return entity;
 	}
 
@@ -321,9 +350,9 @@ public class DataBaseService<T> implements Serializable {
 		ensureConnection();
 		startUserTransaction();
 		LOGGER.log(Level.INFO, "Persiting {0}", entityClass.getSimpleName());
-		entityManager.persist(entity);
-		LOGGER.log(Level.INFO, "Persist {0}, OK", entityClass.getSimpleName());
+		entityManager.merge(entity);
 		commitTransaction();
+		LOGGER.log(Level.INFO, "Persist {0}, OK", entityClass.getSimpleName());
 		return entity;
 	}
 
@@ -332,8 +361,8 @@ public class DataBaseService<T> implements Serializable {
 		startUserTransaction();
 		LOGGER.log(Level.INFO, "Removing {0}", entityClass.getSimpleName());
 		entityManager.remove(entityManager.contains(entity) ? entity : entityManager.merge(entity));
-		LOGGER.log(Level.INFO, "Removed {0}, OK", entityClass.getSimpleName());
 		commitTransaction();
+		LOGGER.log(Level.INFO, "Removed {0}, OK", entityClass.getSimpleName());
 	}
 
 	private void startUserTransaction() throws NamingException, NotSupportedException, SystemException {

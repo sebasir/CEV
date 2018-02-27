@@ -23,7 +23,7 @@ import javax.validation.constraints.Size;
 @NamedQueries({ @NamedQuery(name = "Author.findAll", query = "SELECT a FROM Author a") })
 public class Author implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -176757548805059415L;
 	@Id
 	@SequenceGenerator(name = "AuthorSeq", sequenceName = "author_id_author_seq", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "AuthorSeq")

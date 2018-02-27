@@ -18,7 +18,7 @@ import net.hpclab.cev.enums.ModulesEnum;
 @WebListener
 public class ApplicationListener implements ServletContextListener, HttpSessionListener, Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 7442440188928511327L;
 	private static final Logger LOGGER = Logger.getLogger(ApplicationListener.class.getSimpleName());
 
 	@Override
@@ -59,7 +59,6 @@ public class ApplicationListener implements ServletContextListener, HttpSessionL
 			MessagesService.getInstance().loadMessages(messages);
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, "Error inicializando: {0}", e.getMessage());
-			e.printStackTrace();
 		}
 	}
 

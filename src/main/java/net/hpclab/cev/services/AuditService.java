@@ -11,7 +11,7 @@ import net.hpclab.cev.entities.Users;
 
 public class AuditService implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 4764154001268761150L;
 	private static final Logger LOGGER = Logger.getLogger(AuditService.class.getSimpleName());
 	private static AuditService auditService;
 	private DataBaseService<AuditLog> auditDBService;

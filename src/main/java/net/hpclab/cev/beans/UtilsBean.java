@@ -151,6 +151,30 @@ public class UtilsBean implements Serializable {
 		facesContext.addMessage(null, fMess);
 	}
 
+	public void showAccessMessage(FacesContext facesContext, OutcomeEnum action) {
+		FacesMessage fMess;
+		switch (action) {
+		case DELETE_NOT_GRANTED:
+			fMess = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Sin permisos",
+					"No tienes el permiso de eliminación.");
+			break;
+		case INSERT_NOT_GRANTED:
+			fMess = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Sin permisos", "No tienes el permiso de creación.");
+			break;
+		case UPDATE_NOT_GRANTED:
+			fMess = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Sin permisos",
+					"No tienes el permiso de actualización.");
+			break;
+		case SELECT_NOT_GRANTED:
+			fMess = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Sin permisos", "No tienes el permiso de consulta.");
+			break;
+		default:
+			fMess = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Sin permisos", "No tienes el permiso de nada!!");
+			break;
+		}
+		facesContext.addMessage(null, fMess);
+	}
+
 	public void showFileMessage(FacesContext facesContext, OutcomeEnum action, String fileName, String message) {
 		FacesMessage fMess;
 		switch (action) {
