@@ -33,7 +33,6 @@
 				value="org.hibernate.service.jta.platform.internal.JBossStandAloneJtaPlatform" />
 			<property name="hibernate.show_sql" value="false" />
 			<property name="hibernate.format_sql" value="false" />
-			<property name="hibernate.connection.autocommit" value="false" />
 		</properties>
 	</persistence-unit>
 </persistence>

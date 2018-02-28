@@ -141,7 +141,7 @@ public class UtilsBean implements Serializable {
 			fMess = new FacesMessage(FacesMessage.SEVERITY_INFO, "Información", message);
 			break;
 		case GENERIC_ERROR:
-			fMess = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Error general.", message);
+			fMess = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error general.", message);
 			break;
 		default:
 			fMess = new FacesMessage(FacesMessage.SEVERITY_WARN, "ET llama a casa",

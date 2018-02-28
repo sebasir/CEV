@@ -21,7 +21,10 @@ import org.primefaces.model.UploadedFile;
 import net.hpclab.cev.entities.Specimen;
 import net.hpclab.cev.entities.SpecimenContent;
 import net.hpclab.cev.entities.Taxonomy;
+import net.hpclab.cev.enums.ModulesEnum;
 import net.hpclab.cev.enums.OutcomeEnum;
+import net.hpclab.cev.enums.StatusEnum;
+import net.hpclab.cev.services.AccessService;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
 import net.hpclab.cev.services.DataWarehouse;
@@ -67,12 +70,16 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 
 	public void search() {
 		try {
-			searchSpecimenContent = specimenContentService.getList(specimenContentSearch);
+			List<SpecimenContent> tempList = specimenContentService.getList(specimenContentSearch);
 			if (specimenContentService.getPager().getNumberOfResults() == 0)
 				showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.GENERIC_ERROR, "No se encontraron datos");
-			if (searchSpecimenContent != null)
-				for (SpecimenContent s : searchSpecimenContent)
+			if (tempList != null) {
+				searchSpecimenContent = new ArrayList<>();
+				for (SpecimenContent s : tempList) {
 					s.setIdSpecimen(ObjectRetriever.getObjectFromId(Specimen.class, s.getIdSpecimen().getIdSpecimen()));
+					searchSpecimenContent.add(s);
+				}
+			}
 		} catch (Exception ex) {
 			LOGGER.log(Level.SEVERE, ex.getMessage());
 		}
@@ -98,17 +105,25 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 			showMessage(facesContext, outcomeEnum, "El espécimen es obligatorio");
 			return;
 		}
-		specimenContent.setIdSpecimen(getSpecimenFromId(specimenContent.getIdSpecimen().getIdSpecimen()));
+		specimenContent.setIdSpecimen(
+				ObjectRetriever.getObjectFromId(Specimen.class, specimenContent.getIdSpecimen().getIdSpecimen()));
 		String transactionMessage = specimenContent.getIdSpecimen().getIdTaxonomy().getTaxonomyName()
 				+ (specimenContent.getIdSpecimen().getCommonName() != null
 						? ", " + specimenContent.getIdSpecimen().getCommonName()
 						: "");
 		try {
+			if (!AccessService.getInstance().checkUserAccess(ModulesEnum.CONTENT, getUsers(facesContext),
+					Constant.AccessLevel.INSERT)) {
+				showAccessMessage(facesContext, OutcomeEnum.INSERT_NOT_GRANTED);
+				return;
+			}
+
 			if (contentFile != null) {
 				if (specimenContent.getPublish())
 					specimenContent.setPublishDate(Calendar.getInstance().getTime());
 				specimenContent.setFileName(contentFile.getFileName());
 				specimenContent.setFileUploadDate(Calendar.getInstance().getTime());
+				specimenContent.setStatus(StatusEnum.ACTIVO.get());
 				specimenContentService.persist(specimenContent);
 				DataWarehouse.getInstance().allSpecimenContents.add(specimenContent);
 
@@ -134,6 +149,12 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 						? specimenContent.getIdSpecimen().getCommonName()
 						: "");
 		try {
+			if (!AccessService.getInstance().checkUserAccess(ModulesEnum.CONTENT, getUsers(facesContext),
+					Constant.AccessLevel.DELETE)) {
+				showAccessMessage(facesContext, OutcomeEnum.DELETE_NOT_GRANTED);
+				return;
+			}
+
 			specimenContentService.delete(specimenContent);
 			DataWarehouse.getInstance().allSpecimenContents.remove(specimenContent);
 			outcomeEnum = OutcomeEnum.DELETE_SUCCESS;
@@ -148,11 +169,21 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 	public void edit() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		OutcomeEnum outcomeEnum = OutcomeEnum.UPDATE_ERROR;
+
+		specimenContent.setIdSpecimen(
+				ObjectRetriever.getObjectFromId(Specimen.class, specimenContent.getIdSpecimen().getIdSpecimen()));
 		String transactionMessage = specimenContent.getIdSpecimen().getIdTaxonomy().getTaxonomyName()
 				+ (specimenContent.getIdSpecimen().getCommonName() != null
-						? specimenContent.getIdSpecimen().getCommonName()
+						? ", " + specimenContent.getIdSpecimen().getCommonName()
 						: "");
+
 		try {
+			if (!AccessService.getInstance().checkUserAccess(ModulesEnum.CONTENT, getUsers(facesContext),
+					Constant.AccessLevel.UPDATE)) {
+				showAccessMessage(facesContext, OutcomeEnum.UPDATE_NOT_GRANTED);
+				return;
+			}
+
 			if (contentFile != null) {
 				specimenContent.setFileName(contentFile.getFileName());
 				specimenContent.setFileUploadDate(Calendar.getInstance().getTime());
@@ -169,14 +200,6 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 		limpiarFiltros();
 		search();
 		showMessage(facesContext, outcomeEnum, transactionMessage);
-	}
-
-	public Specimen getSpecimenFromId(Integer idSpecimen) {
-		for (Specimen s : DataWarehouse.getInstance().allSpecimens) {
-			if (idSpecimen.equals(s.getIdSpecimen()))
-				return s;
-		}
-		return null;
 	}
 
 	public StreamedContent getSpecimenThumb() throws IOException {

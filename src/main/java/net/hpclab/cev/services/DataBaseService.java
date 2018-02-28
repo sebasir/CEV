@@ -21,7 +21,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.NotSupportedException;
 import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
 
 public class DataBaseService<T> implements Serializable {
 
@@ -37,7 +36,7 @@ public class DataBaseService<T> implements Serializable {
 	private Pager pager;
 	private QueryMethod queryMethod;
 
-	private UserTransaction usrTx;
+	// private UserTransaction usrTx;
 	private int currentPage;
 	private int numberOfResults;
 	private int queryMaxResults;
@@ -120,6 +119,7 @@ public class DataBaseService<T> implements Serializable {
 	}
 
 	public List<T> getList(T entityFilters) throws NoResultException, Exception {
+		getEntityManager();
 		restartFilters(QueryMethod.ENTITY);
 		entityParam = entityFilters;
 		HashMap<String, Object> filters = getFilterFromEntity(entityFilters);
@@ -334,6 +334,8 @@ public class DataBaseService<T> implements Serializable {
 	private void ensureConnection() throws Exception {
 		if (!EntityResourcer.getInstance().isConnected())
 			EntityResourcer.getInstance().initService();
+		if (entityManager == null || !entityManager.isOpen())
+			getEntityManager();
 	}
 
 	public T merge(T entity) throws Exception {
@@ -361,6 +363,7 @@ public class DataBaseService<T> implements Serializable {
 			LOGGER.log(Level.INFO, "Persiting {0}", entityClass.getSimpleName());
 			entity = entityManager.merge(entity);
 			entityManager.flush();
+			commitTransaction();
 			LOGGER.log(Level.INFO, "Persist {0}, OK", entityClass.getSimpleName());
 		} catch (Exception e) {
 			LOGGER.log(Level.INFO, "Persist {0}, Failure", entityClass.getSimpleName());
@@ -390,22 +393,29 @@ public class DataBaseService<T> implements Serializable {
 
 	private void startUserTransaction() throws NamingException, NotSupportedException, SystemException {
 		LOGGER.log(Level.INFO, "Starting transaction...");
-		usrTx = com.arjuna.ats.jta.UserTransaction.userTransaction();
-		usrTx.begin();
+		com.arjuna.ats.jta.UserTransaction.userTransaction().begin();
 	}
 
 	private void commitTransaction() throws Exception {
-		usrTx.commit();
+		com.arjuna.ats.jta.UserTransaction.userTransaction().commit();
 		LOGGER.log(Level.INFO, "Commited...");
+		close();
 	}
 
 	private void rollBackTransaction() throws Exception {
-		usrTx.rollback();
+		com.arjuna.ats.jta.UserTransaction.userTransaction().rollback();
 		LOGGER.log(Level.INFO, "RolledBack...");
+		close();
 	}
 
 	private void getEntityManager() throws PersistenceException, Exception {
 		entityManager = EntityResourcer.getInstance().getEntityManager();
+	}
+
+	private void close() {
+		if (entityManager != null && entityManager.isOpen())
+			entityManager.close();
+		LOGGER.log(Level.INFO, "entityManager is closed");
 	}
 
 	public boolean isConnected() throws Exception {

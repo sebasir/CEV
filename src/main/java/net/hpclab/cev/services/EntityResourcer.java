@@ -25,7 +25,7 @@ public class EntityResourcer {
 			LOGGER.log(Level.INFO, "entityManagerFactory is injected!");
 		}
 	}
-
+	
 	private EntityResourcer() throws PersistenceException, Exception {
 		initService();
 	}

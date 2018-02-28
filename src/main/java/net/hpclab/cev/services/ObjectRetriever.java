@@ -26,7 +26,7 @@ public class ObjectRetriever implements Serializable {
 					subType = (ParameterizedType) field.getGenericType();
 					if (subType.getActualTypeArguments()[0].getTypeName().equals(entityClass.getName())) {
 						value = field.get(dwh);
-						return getValueFromList((List<T>) value);
+						return getValueFromList((List<T>) value, idObject);
 					}
 				}
 			}
@@ -36,15 +36,21 @@ public class ObjectRetriever implements Serializable {
 		return null;
 	}
 
-	private synchronized static <T> T getValueFromList(List<T> list) {
+	private synchronized static <T> T getValueFromList(List<T> list, Integer idObject)
+			throws IllegalArgumentException, IllegalAccessException {
 		Class<?> clsT = null;
+		Object value = null;
 		Field[] fields = null;
 		for (T t : list) {
 			clsT = t.getClass();
 			fields = clsT.getDeclaredFields();
 			for (Field field : fields) {
-				if ("Integer".equals(field.getType().getSimpleName()) && field.getName().startsWith("id"))
-					return t;
+				if ("Integer".equals(field.getType().getSimpleName()) && field.getName().startsWith("id")) {
+					field.setAccessible(true);
+					value = field.get(t);
+					if (idObject.equals(value))
+						return t;
+				}
 			}
 		}
 		return null;
