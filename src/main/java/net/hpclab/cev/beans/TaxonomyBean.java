@@ -21,6 +21,7 @@ import net.hpclab.cev.entities.Specimen;
 import net.hpclab.cev.entities.Taxonomy;
 import net.hpclab.cev.entities.TaxonomyLevel;
 import net.hpclab.cev.enums.OutcomeEnum;
+import net.hpclab.cev.enums.StatusEnum;
 import net.hpclab.cev.model.TreeHierachyModel;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
@@ -77,6 +78,7 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 			idTaxonomyLevel = levelMap.get(new Integer(selectedLevel));
 			taxonomy.setIdContainer(new Taxonomy(parentTaxonomy.getIdTaxonomy()));
 			taxonomy.setIdTaxlevel(idTaxonomyLevel);
+			taxonomy.setStatus(StatusEnum.ACTIVO.get());
 			taxonomy = taxonomyService.persist(taxonomy);
 			DataWarehouse.getInstance().allTaxonomys.add(taxonomy);
 			createTree();

@@ -325,7 +325,8 @@
 				<p:commandLink id="deleteButton"
 					class="btn btn-default btn-sm btn-action"
 					oncomplete="$('#deleteModal').modal({backdrop: false})"
-					title="Eliminar autor">
+					title="Eliminar autor"
+					actionListener="#{authorBean.setAuthor(author)}">
 					<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 				</p:commandLink>
 			</h:column>

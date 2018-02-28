@@ -337,32 +337,55 @@ public class DataBaseService<T> implements Serializable {
 	}
 
 	public T merge(T entity) throws Exception {
-		ensureConnection();
-		startUserTransaction();
-		LOGGER.log(Level.INFO, "Merging {0}", entityClass.getSimpleName());
-		entity = entityManager.merge(entity);
-		commitTransaction();
-		LOGGER.log(Level.INFO, "Merged {0}, OK", entityClass.getSimpleName());
+		try {
+			ensureConnection();
+			startUserTransaction();
+			LOGGER.log(Level.INFO, "Merging {0}", entityClass.getSimpleName());
+			entity = entityManager.merge(entity);
+			entityManager.flush();
+			commitTransaction();
+			LOGGER.log(Level.INFO, "Merged {0}, OK", entityClass.getSimpleName());
+		} catch (Exception e) {
+			LOGGER.log(Level.INFO, "Removing {0}, Failure", entityClass.getSimpleName());
+			LOGGER.log(Level.INFO, "Detail: ", e);
+			rollBackTransaction();
+			throw e;
+		}
 		return entity;
 	}
 
 	public T persist(T entity) throws Exception {
-		ensureConnection();
-		startUserTransaction();
-		LOGGER.log(Level.INFO, "Persiting {0}", entityClass.getSimpleName());
-		entityManager.merge(entity);
-		commitTransaction();
-		LOGGER.log(Level.INFO, "Persist {0}, OK", entityClass.getSimpleName());
+		try {
+			ensureConnection();
+			startUserTransaction();
+			LOGGER.log(Level.INFO, "Persiting {0}", entityClass.getSimpleName());
+			entity = entityManager.merge(entity);
+			entityManager.flush();
+			LOGGER.log(Level.INFO, "Persist {0}, OK", entityClass.getSimpleName());
+		} catch (Exception e) {
+			LOGGER.log(Level.INFO, "Persist {0}, Failure", entityClass.getSimpleName());
+			LOGGER.log(Level.INFO, "Detail: ", e);
+			rollBackTransaction();
+			throw e;
+		}
 		return entity;
 	}
 
 	public void delete(T entity) throws Exception {
-		ensureConnection();
-		startUserTransaction();
-		LOGGER.log(Level.INFO, "Removing {0}", entityClass.getSimpleName());
-		entityManager.remove(entityManager.contains(entity) ? entity : entityManager.merge(entity));
-		commitTransaction();
-		LOGGER.log(Level.INFO, "Removed {0}, OK", entityClass.getSimpleName());
+		try {
+			ensureConnection();
+			startUserTransaction();
+			LOGGER.log(Level.INFO, "Removing {0}", entityClass.getSimpleName());
+			entityManager.remove(entityManager.contains(entity) ? entity : entityManager.merge(entity));
+			entityManager.flush();
+			commitTransaction();
+			LOGGER.log(Level.INFO, "Removed {0}, OK", entityClass.getSimpleName());
+		} catch (Exception e) {
+			LOGGER.log(Level.INFO, "Removing {0}, Failure", entityClass.getSimpleName());
+			LOGGER.log(Level.INFO, "Detail: ", e);
+			rollBackTransaction();
+			throw e;
+		}
 	}
 
 	private void startUserTransaction() throws NamingException, NotSupportedException, SystemException {
@@ -374,6 +397,11 @@ public class DataBaseService<T> implements Serializable {
 	private void commitTransaction() throws Exception {
 		usrTx.commit();
 		LOGGER.log(Level.INFO, "Commited...");
+	}
+
+	private void rollBackTransaction() throws Exception {
+		usrTx.rollback();
+		LOGGER.log(Level.INFO, "RolledBack...");
 	}
 
 	private void getEntityManager() throws PersistenceException, Exception {

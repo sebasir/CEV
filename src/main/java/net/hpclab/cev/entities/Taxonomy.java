@@ -3,6 +3,7 @@ package net.hpclab.cev.entities;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -45,7 +46,7 @@ public class Taxonomy implements Serializable {
 	@OneToMany(mappedBy = "idContainer")
 	private List<Taxonomy> taxonomyList;
 	@JoinColumn(name = "id_container", referencedColumnName = "id_taxonomy")
-	@ManyToOne
+	@ManyToOne(cascade = {CascadeType.PERSIST})
 	private Taxonomy idContainer;
 	@JoinColumn(name = "id_taxlevel", referencedColumnName = "id_taxlevel")
 	@ManyToOne
