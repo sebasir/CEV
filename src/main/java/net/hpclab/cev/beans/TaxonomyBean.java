@@ -20,12 +20,15 @@ import org.primefaces.model.TreeNode;
 import net.hpclab.cev.entities.Specimen;
 import net.hpclab.cev.entities.Taxonomy;
 import net.hpclab.cev.entities.TaxonomyLevel;
+import net.hpclab.cev.enums.ModulesEnum;
 import net.hpclab.cev.enums.OutcomeEnum;
 import net.hpclab.cev.enums.StatusEnum;
 import net.hpclab.cev.model.TreeHierachyModel;
+import net.hpclab.cev.services.AccessService;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
 import net.hpclab.cev.services.DataWarehouse;
+import net.hpclab.cev.services.ParseExceptionService;
 
 @ManagedBean
 @ViewScoped
@@ -75,6 +78,12 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 		String transactionMessage = taxonomy.getTaxonomyName();
 		TaxonomyLevel idTaxonomyLevel;
 		try {
+			if (!AccessService.getInstance().checkUserAccess(ModulesEnum.TAXONOMY, getUsers(facesContext),
+					Constant.AccessLevel.INSERT)) {
+				showAccessMessage(facesContext, OutcomeEnum.INSERT_NOT_GRANTED);
+				return;
+			}
+
 			idTaxonomyLevel = levelMap.get(new Integer(selectedLevel));
 			taxonomy.setIdContainer(new Taxonomy(parentTaxonomy.getIdTaxonomy()));
 			taxonomy.setIdTaxlevel(idTaxonomyLevel);
@@ -86,7 +95,8 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 			openBranch(selectedNode);
 			outcomeEnum = OutcomeEnum.CREATE_SUCCESS;
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error persisting", e);
+			transactionMessage = ParseExceptionService.getInstance().parse(e);
+			LOGGER.log(Level.SEVERE, "Error persisting: " + transactionMessage);
 		}
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 		selectedLevel = null;
@@ -97,6 +107,12 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 		OutcomeEnum outcomeEnum = OutcomeEnum.UPDATE_ERROR;
 		String transactionMessage = taxonomy.getTaxonomyName();
 		try {
+			if (!AccessService.getInstance().checkUserAccess(ModulesEnum.TAXONOMY, getUsers(facesContext),
+					Constant.AccessLevel.UPDATE)) {
+				showAccessMessage(facesContext, OutcomeEnum.UPDATE_NOT_GRANTED);
+				return;
+			}
+
 			Taxonomy tempTaxonomy = taxonomyService.merge(taxonomy);
 			DataWarehouse.getInstance().allTaxonomys.remove(taxonomy);
 			DataWarehouse.getInstance().allTaxonomys.add(tempTaxonomy);
@@ -105,7 +121,8 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 			openBranch(selectedNode);
 			outcomeEnum = OutcomeEnum.UPDATE_SUCCESS;
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error editing", e);
+			transactionMessage = ParseExceptionService.getInstance().parse(e);
+			LOGGER.log(Level.SEVERE, "Error editing: " + transactionMessage);
 		}
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
@@ -115,6 +132,12 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 		OutcomeEnum outcomeEnum = OutcomeEnum.DELETE_ERROR;
 		String transactionMessage = taxonomy.getTaxonomyName();
 		try {
+			if (!AccessService.getInstance().checkUserAccess(ModulesEnum.TAXONOMY, getUsers(facesContext),
+					Constant.AccessLevel.DELETE)) {
+				showAccessMessage(facesContext, OutcomeEnum.DELETE_NOT_GRANTED);
+				return;
+			}
+
 			taxonomyService.delete(taxonomy);
 			DataWarehouse.getInstance().allTaxonomys.remove(taxonomy);
 			createTree();
@@ -122,7 +145,8 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 			openBranch(selectedNode);
 			outcomeEnum = OutcomeEnum.DELETE_SUCCESS;
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error deleting", e);
+			transactionMessage = ParseExceptionService.getInstance().parse(e);
+			LOGGER.log(Level.SEVERE, "Error deleting: " + transactionMessage);
 		}
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}

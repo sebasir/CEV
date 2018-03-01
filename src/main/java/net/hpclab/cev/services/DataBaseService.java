@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
@@ -19,8 +18,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.transaction.NotSupportedException;
-import javax.transaction.SystemException;
+
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 public class DataBaseService<T> implements Serializable {
 
@@ -44,6 +44,8 @@ public class DataBaseService<T> implements Serializable {
 	private HashMap<String, Object> mapParam;
 	private String queryParam;
 	protected Class<T> entityClass;
+	private Session session;
+	private Transaction tx;
 
 	public DataBaseService(Class<T> entityClass, int queryMaxResults) throws PersistenceException, Exception {
 		this.entityClass = entityClass;
@@ -341,7 +343,7 @@ public class DataBaseService<T> implements Serializable {
 	public T merge(T entity) throws Exception {
 		try {
 			ensureConnection();
-			startUserTransaction();
+			startTransaction();
 			LOGGER.log(Level.INFO, "Merging {0}", entityClass.getSimpleName());
 			entity = entityManager.merge(entity);
 			entityManager.flush();
@@ -359,7 +361,7 @@ public class DataBaseService<T> implements Serializable {
 	public T persist(T entity) throws Exception {
 		try {
 			ensureConnection();
-			startUserTransaction();
+			startTransaction();
 			LOGGER.log(Level.INFO, "Persiting {0}", entityClass.getSimpleName());
 			entity = entityManager.merge(entity);
 			entityManager.flush();
@@ -377,7 +379,7 @@ public class DataBaseService<T> implements Serializable {
 	public void delete(T entity) throws Exception {
 		try {
 			ensureConnection();
-			startUserTransaction();
+			startTransaction();
 			LOGGER.log(Level.INFO, "Removing {0}", entityClass.getSimpleName());
 			entityManager.remove(entityManager.contains(entity) ? entity : entityManager.merge(entity));
 			entityManager.flush();
@@ -391,19 +393,20 @@ public class DataBaseService<T> implements Serializable {
 		}
 	}
 
-	private void startUserTransaction() throws NamingException, NotSupportedException, SystemException {
+	private void startTransaction() throws Exception {
 		LOGGER.log(Level.INFO, "Starting transaction...");
-		com.arjuna.ats.jta.UserTransaction.userTransaction().begin();
+		session = entityManager.unwrap(Session.class);
+		tx = session.beginTransaction();
 	}
 
 	private void commitTransaction() throws Exception {
-		com.arjuna.ats.jta.UserTransaction.userTransaction().commit();
+		tx.commit();
 		LOGGER.log(Level.INFO, "Commited...");
 		close();
 	}
 
 	private void rollBackTransaction() throws Exception {
-		com.arjuna.ats.jta.UserTransaction.userTransaction().rollback();
+		tx.rollback();
 		LOGGER.log(Level.INFO, "RolledBack...");
 		close();
 	}
@@ -413,6 +416,7 @@ public class DataBaseService<T> implements Serializable {
 	}
 
 	private void close() {
+		session.disconnect();
 		if (entityManager != null && entityManager.isOpen())
 			entityManager.close();
 		LOGGER.log(Level.INFO, "entityManager is closed");

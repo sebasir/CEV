@@ -23,13 +23,16 @@ import net.hpclab.cev.entities.Institution;
 import net.hpclab.cev.entities.RegType;
 import net.hpclab.cev.entities.SampleType;
 import net.hpclab.cev.entities.Specimen;
+import net.hpclab.cev.enums.ModulesEnum;
 import net.hpclab.cev.enums.OutcomeEnum;
 import net.hpclab.cev.enums.StatusEnum;
 import net.hpclab.cev.model.TreeHierachyModel;
+import net.hpclab.cev.services.AccessService;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
 import net.hpclab.cev.services.DataWarehouse;
 import net.hpclab.cev.services.ObjectRetriever;
+import net.hpclab.cev.services.ParseExceptionService;
 
 @ManagedBean
 @ViewScoped
@@ -107,6 +110,12 @@ public class CollectionBean extends UtilsBean implements Serializable {
 		OutcomeEnum outcomeEnum = OutcomeEnum.CREATE_ERROR;
 		String transactionMessage = objectName;
 		try {
+			if (!AccessService.getInstance().checkUserAccess(ModulesEnum.COLLECTION, getUsers(facesContext),
+					Constant.AccessLevel.INSERT)) {
+				showAccessMessage(facesContext, OutcomeEnum.INSERT_NOT_GRANTED);
+				return;
+			}
+
 			switch (classType) {
 			case INSTITUTION:
 				collection = new Collection();
@@ -134,7 +143,8 @@ public class CollectionBean extends UtilsBean implements Serializable {
 			openBranch(tree.get(objectId));
 			outcomeEnum = OutcomeEnum.CREATE_SUCCESS;
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error persisting", e);
+			transactionMessage = ParseExceptionService.getInstance().parse(e);
+			LOGGER.log(Level.SEVERE, "Error persisting: " + transactionMessage);
 		}
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
@@ -144,6 +154,12 @@ public class CollectionBean extends UtilsBean implements Serializable {
 		OutcomeEnum outcomeEnum = OutcomeEnum.UPDATE_ERROR;
 		String transactionMessage = null;
 		try {
+			if (!AccessService.getInstance().checkUserAccess(ModulesEnum.COLLECTION, getUsers(facesContext),
+					Constant.AccessLevel.UPDATE)) {
+				showAccessMessage(facesContext, OutcomeEnum.UPDATE_NOT_GRANTED);
+				return;
+			}
+
 			switch (classType) {
 			case INSTITUTION:
 				transactionMessage = "No es posible editar las instituciones";
@@ -169,7 +185,8 @@ public class CollectionBean extends UtilsBean implements Serializable {
 			createTree();
 			openBranch(tree.get(objectId));
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error editing", e);
+			transactionMessage = ParseExceptionService.getInstance().parse(e);
+			LOGGER.log(Level.SEVERE, "Error editing: " + transactionMessage);
 		}
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
@@ -179,6 +196,12 @@ public class CollectionBean extends UtilsBean implements Serializable {
 		OutcomeEnum outcomeEnum = OutcomeEnum.DELETE_ERROR;
 		String transactionMessage = null;
 		try {
+			if (!AccessService.getInstance().checkUserAccess(ModulesEnum.COLLECTION, getUsers(facesContext),
+					Constant.AccessLevel.DELETE)) {
+				showAccessMessage(facesContext, OutcomeEnum.DELETE_NOT_GRANTED);
+				return;
+			}
+
 			switch (classType) {
 			case INSTITUTION:
 				break;
@@ -199,7 +222,8 @@ public class CollectionBean extends UtilsBean implements Serializable {
 			openBranch(tree.get(objectId));
 			outcomeEnum = OutcomeEnum.DELETE_SUCCESS;
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error deleting", e);
+			transactionMessage = ParseExceptionService.getInstance().parse(e);
+			LOGGER.log(Level.SEVERE, "Error deleting: " + transactionMessage);
 		}
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}

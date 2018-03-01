@@ -22,11 +22,14 @@ import org.primefaces.model.TreeNode;
 import net.hpclab.cev.entities.Location;
 import net.hpclab.cev.entities.LocationLevel;
 import net.hpclab.cev.entities.Specimen;
+import net.hpclab.cev.enums.ModulesEnum;
 import net.hpclab.cev.enums.OutcomeEnum;
 import net.hpclab.cev.model.TreeHierachyModel;
+import net.hpclab.cev.services.AccessService;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
 import net.hpclab.cev.services.DataWarehouse;
+import net.hpclab.cev.services.ParseExceptionService;
 
 @ManagedBean
 @SessionScoped
@@ -60,7 +63,7 @@ public class LocationBean extends UtilsBean implements Serializable {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 	}
-	
+
 	public void limpiarFiltros() {
 		selectedLevel = null;
 		location = null;
@@ -74,6 +77,12 @@ public class LocationBean extends UtilsBean implements Serializable {
 		OutcomeEnum outcomeEnum = OutcomeEnum.CREATE_ERROR;
 		String transactionMessage = location.getLocationName();
 		try {
+			if (!AccessService.getInstance().checkUserAccess(ModulesEnum.LOCATION, getUsers(facesContext),
+					Constant.AccessLevel.INSERT)) {
+				showAccessMessage(facesContext, OutcomeEnum.INSERT_NOT_GRANTED);
+				return;
+			}
+
 			location.setIdContainer(new Location(parentLocation.getIdLocation()));
 			location.setIdLoclevel(new LocationLevel(new Integer(selectedLevel)));
 			location = locationService.persist(location);
@@ -83,7 +92,8 @@ public class LocationBean extends UtilsBean implements Serializable {
 			selectedNode = tree.get(location.getIdLocation());
 			openBranch(selectedNode);
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error persisting", e);
+			transactionMessage = ParseExceptionService.getInstance().parse(e);
+			LOGGER.log(Level.SEVERE, "Error persisting: " + transactionMessage);
 		}
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 		selectedLevel = null;
@@ -94,6 +104,12 @@ public class LocationBean extends UtilsBean implements Serializable {
 		OutcomeEnum outcomeEnum = OutcomeEnum.UPDATE_ERROR;
 		String transactionMessage = location.getLocationName();
 		try {
+			if (!AccessService.getInstance().checkUserAccess(ModulesEnum.LOCATION, getUsers(facesContext),
+					Constant.AccessLevel.UPDATE)) {
+				showAccessMessage(facesContext, OutcomeEnum.UPDATE_NOT_GRANTED);
+				return;
+			}
+
 			Location tempLocation = locationService.merge(location);
 			DataWarehouse.getInstance().allLocations.remove(location);
 			DataWarehouse.getInstance().allLocations.add(tempLocation);
@@ -102,7 +118,8 @@ public class LocationBean extends UtilsBean implements Serializable {
 			selectedNode = tree.get(location.getIdLocation());
 			openBranch(selectedNode);
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error editing", e);
+			transactionMessage = ParseExceptionService.getInstance().parse(e);
+			LOGGER.log(Level.SEVERE, "Error editing: " + transactionMessage);
 		}
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
@@ -112,6 +129,12 @@ public class LocationBean extends UtilsBean implements Serializable {
 		OutcomeEnum outcomeEnum = OutcomeEnum.DELETE_ERROR;
 		String transactionMessage = location.getLocationName();
 		try {
+			if (!AccessService.getInstance().checkUserAccess(ModulesEnum.COLLECTION, getUsers(facesContext),
+					Constant.AccessLevel.DELETE)) {
+				showAccessMessage(facesContext, OutcomeEnum.DELETE_NOT_GRANTED);
+				return;
+			}
+
 			locationService.delete(location);
 			DataWarehouse.getInstance().allLocations.remove(location);
 			createTree();
@@ -119,7 +142,8 @@ public class LocationBean extends UtilsBean implements Serializable {
 			openBranch(selectedNode);
 			outcomeEnum = OutcomeEnum.DELETE_SUCCESS;
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error deleting", e);
+			transactionMessage = ParseExceptionService.getInstance().parse(e);
+			LOGGER.log(Level.SEVERE, "Error deleting: " + transactionMessage);
 		}
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}

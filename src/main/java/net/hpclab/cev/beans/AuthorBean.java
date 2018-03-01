@@ -24,6 +24,7 @@ import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
 import net.hpclab.cev.services.DataWarehouse;
 import net.hpclab.cev.services.ObjectRetriever;
+import net.hpclab.cev.services.ParseExceptionService;
 
 @ManagedBean
 @ViewScoped
@@ -131,7 +132,8 @@ public class AuthorBean extends UtilsBean implements Serializable {
 			restartAuthorTypes();
 			outcomeEnum = OutcomeEnum.CREATE_SUCCESS;
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error persisting", e);
+			transactionMessage = ParseExceptionService.getInstance().parse(e);
+			LOGGER.log(Level.SEVERE, "Error persisting: " + transactionMessage);
 		}
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
@@ -161,7 +163,8 @@ public class AuthorBean extends UtilsBean implements Serializable {
 			restartAuthorTypes();
 			outcomeEnum = OutcomeEnum.UPDATE_SUCCESS;
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error updating", e);
+			transactionMessage = ParseExceptionService.getInstance().parse(e);
+			LOGGER.log(Level.SEVERE, "Error updating: " + transactionMessage);
 		}
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
@@ -182,7 +185,8 @@ public class AuthorBean extends UtilsBean implements Serializable {
 			restartAuthorTypes();
 			outcomeEnum = OutcomeEnum.DELETE_SUCCESS;
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error deleting", e);
+			transactionMessage = ParseExceptionService.getInstance().parse(e);
+			LOGGER.log(Level.SEVERE, "Error deleting: " + transactionMessage);
 		}
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}

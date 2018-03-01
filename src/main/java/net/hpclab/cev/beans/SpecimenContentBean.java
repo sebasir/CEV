@@ -29,6 +29,7 @@ import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
 import net.hpclab.cev.services.DataWarehouse;
 import net.hpclab.cev.services.ObjectRetriever;
+import net.hpclab.cev.services.ParseExceptionService;
 
 @ManagedBean
 @ViewScoped
@@ -134,7 +135,8 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 		} catch (IOException e) {
 			showFileMessage(facesContext, OutcomeEnum.FILE_UPLOAD_ERROR, "de imagen", e.getMessage());
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error persisting", e);
+			transactionMessage = ParseExceptionService.getInstance().parse(e);
+			LOGGER.log(Level.SEVERE, "Error persisting: " + transactionMessage);
 		}
 		limpiarFiltros();
 		search();
@@ -159,7 +161,8 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 			DataWarehouse.getInstance().allSpecimenContents.remove(specimenContent);
 			outcomeEnum = OutcomeEnum.DELETE_SUCCESS;
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error deleting", e);
+			transactionMessage = ParseExceptionService.getInstance().parse(e);
+			LOGGER.log(Level.SEVERE, "Error deleting: " + transactionMessage);
 		}
 		limpiarFiltros();
 		search();
@@ -195,7 +198,8 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 			DataWarehouse.getInstance().allSpecimenContents.add(tempSpecimen);
 			outcomeEnum = OutcomeEnum.UPDATE_SUCCESS;
 		} catch (Exception e) {
-			LOGGER.log(Level.SEVERE, "Error updating", e);
+			transactionMessage = ParseExceptionService.getInstance().parse(e);
+			LOGGER.log(Level.SEVERE, "Error updating: " + transactionMessage);
 		}
 		limpiarFiltros();
 		search();

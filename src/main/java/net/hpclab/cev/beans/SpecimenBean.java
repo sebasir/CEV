@@ -23,8 +23,10 @@ import net.hpclab.cev.entities.RegType;
 import net.hpclab.cev.entities.SampleType;
 import net.hpclab.cev.entities.Specimen;
 import net.hpclab.cev.entities.Taxonomy;
+import net.hpclab.cev.enums.ModulesEnum;
 import net.hpclab.cev.enums.OutcomeEnum;
 import net.hpclab.cev.enums.StatusEnum;
+import net.hpclab.cev.services.AccessService;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
 import net.hpclab.cev.services.DataWarehouse;
@@ -77,6 +79,12 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 		OutcomeEnum outcomeEnum = OutcomeEnum.CREATE_ERROR;
 		String transactionMessage = specimen.getCommonName();
 		try {
+			if (!AccessService.getInstance().checkUserAccess(ModulesEnum.SPECIMEN, getUsers(facesContext),
+					Constant.AccessLevel.INSERT)) {
+				showAccessMessage(facesContext, OutcomeEnum.INSERT_NOT_GRANTED);
+				return;
+			}
+
 			TaxonomyBean taxonomyBean = getExternalBean(facesContext, TaxonomyBean.class);
 			LocationBean locationBean = getExternalBean(facesContext, LocationBean.class);
 			AuthorBean authorBean = getExternalBean(facesContext, AuthorBean.class);
@@ -108,7 +116,7 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 			collectionBean.limpiarFiltros();
 		} catch (Exception e) {
 			transactionMessage = ParseExceptionService.getInstance().parse(e);
-			LOGGER.log(Level.SEVERE, "Error persisting", e);
+			LOGGER.log(Level.SEVERE, "Error persisting: " + transactionMessage);
 		}
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
@@ -118,6 +126,12 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 		OutcomeEnum outcomeEnum = OutcomeEnum.UPDATE_ERROR;
 		String transactionMessage = specimen.getCommonName();
 		try {
+			if (!AccessService.getInstance().checkUserAccess(ModulesEnum.SPECIMEN, getUsers(facesContext),
+					Constant.AccessLevel.UPDATE)) {
+				showAccessMessage(facesContext, OutcomeEnum.UPDATE_NOT_GRANTED);
+				return;
+			}
+
 			TaxonomyBean taxonomyBean = getExternalBean(facesContext, TaxonomyBean.class);
 			LocationBean locationBean = getExternalBean(facesContext, LocationBean.class);
 			AuthorBean authorBean = getExternalBean(facesContext, AuthorBean.class);
@@ -145,7 +159,7 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 			collectionBean.limpiarFiltros();
 		} catch (Exception e) {
 			transactionMessage = ParseExceptionService.getInstance().parse(e);
-			LOGGER.log(Level.SEVERE, e.getMessage());
+			LOGGER.log(Level.SEVERE, "Error editing: " + transactionMessage);
 		}
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
@@ -155,13 +169,19 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 		OutcomeEnum outcomeEnum = OutcomeEnum.DELETE_ERROR;
 		String transactionMessage = specimen.getCommonName();
 		try {
+			if (!AccessService.getInstance().checkUserAccess(ModulesEnum.SPECIMEN, getUsers(facesContext),
+					Constant.AccessLevel.DELETE)) {
+				showAccessMessage(facesContext, OutcomeEnum.UPDATE_NOT_GRANTED);
+				return;
+			}
+
 			specimenService.delete(specimen);
 			DataWarehouse.getInstance().allSpecimens.remove(specimen);
 			outcomeEnum = OutcomeEnum.DELETE_SUCCESS;
 			limpiarFiltros();
 		} catch (Exception e) {
 			transactionMessage = ParseExceptionService.getInstance().parse(e);
-			LOGGER.log(Level.SEVERE, e.getMessage());
+			LOGGER.log(Level.SEVERE, "Error deleting: " + transactionMessage);
 		}
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
