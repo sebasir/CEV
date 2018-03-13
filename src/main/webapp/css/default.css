@@ -494,3 +494,16 @@ div.form-group>label.control-label {
 	color: #2234b7 !important;
 	background-color: rgb(186, 206, 79) !important;
 }
+
+.ui-button-icon-only .ui-icon, .ui-button-text-icon-left .ui-icon,
+	.ui-button-text-icon-right .ui-icon {
+	margin-top: -10px;
+}
+
+.ui-icon-triangle-1-s {
+	background-position: -95px -7px;
+}
+
+.ui-button-icon-only .ui-icon {
+	margin-left: -15px;
+}
