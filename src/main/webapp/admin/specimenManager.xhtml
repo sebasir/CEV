@@ -177,7 +177,9 @@
 									itemLabel="#{spc.idTaxonomy.taxonomyName} #{spc.specificEpithet}"
 									itemValue="#{spc}" forceSelection="true"
 									converter="SpecimenConverter">
-									<p:ajax process="@this" />
+									<p:ajax process="@this" event="itemSelect"
+									    listener="#{specimenContentBean.showSpecimenSelection}"
+									    update="formSpecimen" />
 								</p:autoComplete>
 							</div>
 						</div>

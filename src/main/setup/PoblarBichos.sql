@@ -1289,10 +1289,10 @@ insert into specimen values(default, null, 'Mosco', 26, 2, null , to_date('01/01
 /*9*/insert into modules values (default, 'Catálogos y Colecciones', 'Permite estructurar los catálogos y las colecciones donde yacen los especímenes.', 6, 'collections.xhtml', 'pe-7s-albums', 'COLLECTION', 1);
 /*10*/insert into modules values (default, 'Especímenes', 'Permite incluir en la colección virtual los especímenes utilizando las listas de dominio definidas en los otros módulos.', 7, 'specimen.xhtml', 'pe-7s-magic-wand', 'SPECIMEN', 1);
 
-/*11*/insert into modules values (default, 'Editar Perfil', 'Permite a los usuarios administrar el perfil.', 10, 'dummy.xhtml', 'pe-7s-id', 'PROFILE', 2);
+/*11*/insert into modules values (default, 'Roles y Accesos', 'Permite a los usuarios administrar los roles y accesos.', 10, 'accesses.xhtml', 'pe-7s-id', 'ACCESSES', 2);
 /*12*/insert into modules values (default, 'Credenciales', 'Permite a los usuarios cambiar las credenciales de acceso.', 11, 'dummy.xhtml', 'pe-7s-door-lock', 'CREDENTIALS', 2);
 /*13*/insert into modules values (default, 'Auditoria', 'Este módulo permite conocer la auditoría realizada a los usuarios.', 12, 'dummy.xhtml', 'pe-7s-timer', 'AUDIT', 2);
-/*14*/insert into modules values (default, 'Usuarios e Instituciones', 'Este módulo permite administrar a los usuarios.', 13, 'dummy.xhtml', 'pe-7s-users', 'USR_INS', 2);
+/*14*/insert into modules values (default, 'Usuarios e Instituciones', 'Este módulo permite administrar a los usuarios.', 13, 'users.xhtml', 'pe-7s-users', 'USR_INS', 2);
 /*15*/insert into modules values (default, 'Contenido Gráfico', 'Permite definir el contenido gráfico de los especímenes, tales como las imágenes de alta definición.', 8, 'specimenManager.xhtml', 'pe-7s-photo', 'CONTENT', 1);
 
 -----> roles
@@ -1343,5 +1343,5 @@ insert into roles_modules values (default, 3, 15);
 
 ---> roles_users
 
-insert into roles_users values (default, 1, 1, 3);
-insert into roles_users values (default, 3, 2, 3);
+insert into roles_users values (default, 1, 1, 15);
+insert into roles_users values (default, 3, 2, 15);

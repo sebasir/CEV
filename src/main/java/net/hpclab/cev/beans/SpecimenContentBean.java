@@ -69,6 +69,15 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 		return specimenContentService.getPager();
 	}
 
+	public void showSpecimenSelection() {
+		if (specimenContent != null && specimenContent.getIdSpecimen() != null) {
+			Specimen spc = ObjectRetriever.getObjectFromId(Specimen.class,
+					specimenContent.getIdSpecimen().getIdSpecimen());
+			showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.GENERIC_INFO,
+					"Ejemplar " + spc.getIdTaxonomy().getTaxonomyName() + " seleccionado!");
+		}
+	}
+
 	public void search() {
 		try {
 			List<SpecimenContent> tempList = specimenContentService.getList(specimenContentSearch);
@@ -91,7 +100,8 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 		String completeName = "";
 		for (Specimen s : DataWarehouse.getInstance().allSpecimens) {
 			completeName = s.getIdTaxonomy().getTaxonomyName() + s.getSpecificEpithet();
-			if (completeName.contains(query.toLowerCase()) && specimens.size() < Constant.QUERY_MAX_RESULTS) {
+			if (completeName.toLowerCase().contains(query.toLowerCase())
+					&& specimens.size() < Constant.QUERY_MAX_RESULTS) {
 				specimens.add(s);
 			}
 		}

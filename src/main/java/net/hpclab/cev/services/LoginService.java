@@ -1,6 +1,7 @@
 package net.hpclab.cev.services;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.HashMap;
 
 import javax.faces.context.FacesContext;
@@ -35,13 +36,17 @@ public class LoginService extends UtilsBean implements Serializable {
 					UserSession userSession = loadUserSession(facesContext, users);
 					SessionService.getInstance().addUser(getSessionId(facesContext), userSession);
 					if (users.getStatus().equals(StatusEnum.ACTIVO.get())) {
+						users.setUserLastLogin(Calendar.getInstance().getTime());
+						users = usersService.merge(users);
+						userSession.setUser(users);
 						AuditService.getInstance().log(userSession.getUser(), Util.getModule(ModulesEnum.LOGIN),
 								userSession.getIpAddress(), AuditEnum.LOGIN,
 								"Users " + users.getIdUser() + " autenticado.");
 						return AuthenticateEnum.LOGIN_SUCCESS;
-					} else {
+					} else if (Constant.RESTART_PASSWORD.equals(users.getUserPassword()))
+						return AuthenticateEnum.LOGIN_RESTART_PASSWORD;
+					else
 						return AuthenticateEnum.LOGIN_USER_NOT_ACTIVE_ERROR;
-					}
 				} else {
 					return AuthenticateEnum.LOGIN_USER_LOGGED_IN_ERROR;
 				}

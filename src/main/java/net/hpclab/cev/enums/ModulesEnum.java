@@ -2,7 +2,7 @@ package net.hpclab.cev.enums;
 
 public enum ModulesEnum {
 	LOGIN("Login"), COLLECTION("Colecciones y Catalogos"), CONTENT("Contenido Gráfico"), USR_INS(
-			"Usuarios e Instituciones"), AUDIT("Auditoria"), PROFILE("Editar Perfil"), SPECIMEN("Especímenes"), AUTHOR(
+			"Usuarios e Instituciones"), AUDIT("Auditoria"), ACCESSES("Accesos"), SPECIMEN("Especímenes"), AUTHOR(
 					"Autores"), LOCATION("Ubicaciones"), TAXONOMY("Clasificaciones"), WIZARD(
 							"Asistente de Creación"), REPORTER("Reporteador"), SETTINGS("Configuración");
 

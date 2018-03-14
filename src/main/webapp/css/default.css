@@ -507,3 +507,16 @@ div.form-group>label.control-label {
 .ui-button-icon-only .ui-icon {
 	margin-left: -15px;
 }
+
+.ui-icon-bullet {
+	background-position: -2px -5px;
+}
+
+.ui-radiobutton .ui-radiobutton-box {
+	width: 26px;
+    height: 26px;
+}
+
+.ui-selectoneradio label {
+	margin: 0 16px 0 20px;
+}

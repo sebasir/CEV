@@ -67,6 +67,12 @@ public class LoginBean extends UtilsBean implements Serializable {
 				logMessage = MessagesService.getInstance().getMessage(authenticateEnum.name() + Constant.LOG,
 						users.getStatus());
 				break;
+			case LOGIN_RESTART_PASSWORD:
+				users = SessionService.getInstance().getUserSession(getSessionId(facesContext)).getUser();
+				message = MessagesService.getInstance().getMessage(authenticateEnum, users.getStatus());
+				logMessage = MessagesService.getInstance().getMessage(authenticateEnum.name() + Constant.LOG,
+						users.getIdUser());
+				break;
 			default:
 				message = MessagesService.getInstance().getMessage(authenticateEnum);
 				logMessage = MessagesService.getInstance().getMessage(authenticateEnum.name() + Constant.LOG);

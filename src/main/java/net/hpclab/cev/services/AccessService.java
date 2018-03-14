@@ -229,7 +229,7 @@ public class AccessService implements Serializable {
 			throws Exception {
 		for (Modules m : DataWarehouse.getInstance().allModules)
 			if (idModule.name().equals(m.getModuleCode()))
-				return accessLevel(m, idUser) >= accessLevel.getLevel();
+				return existsAccess(accessLevel(m, idUser), accessLevel.getLevel());
 		return false;
 	}
 
@@ -302,6 +302,28 @@ public class AccessService implements Serializable {
 			orderedUserModules.add(userModules.poll());
 		}
 		return orderedUserModules;
+	}
+
+	public int getAccessCode(String accesses) {
+		return Integer.parseInt(accesses, 2);
+	}
+
+	public boolean[] getAccessFromCode(int code) {
+		boolean[] access = new boolean[4];
+		String binaryCode = String.format("%1$4s", String.valueOf(Integer.toString(code, 2))).replace(' ', '0');
+		if (binaryCode.length() == 4)
+			for (int i = 0; i < 4; i++)
+				access[i] = binaryCode.charAt(i) == '1';
+		return access;
+	}
+
+	public boolean existsAccess(int existingAccess, int desiredAccess) {
+		boolean[] access = getAccessFromCode(existingAccess);
+		boolean[] desiredAccesses = getAccessFromCode(desiredAccess);
+		for (int i = 0; i < 4; i++)
+			if (access[i] && desiredAccesses[i])
+				return true;
+		return false;
 	}
 
 	public HashMap<Modules, Integer> getUserModules(Users idUsers) {

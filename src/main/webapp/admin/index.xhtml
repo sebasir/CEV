@@ -46,7 +46,7 @@
                                         <p>#{module.moduleName}</p>
                                     </ui:fragment>
                                     <ui:fragment rendered="#{module.modulePage != null}">
-                                        <h:commandLink value="#{module.moduleName}">
+                                        <h:commandLink value="#{module.moduleName}" title="#{module.moduleDescr}">
                                             <f:setPropertyActionListener value="#{module.modulePage}" target="#{navigationBean.navigablePage}"/>
                                             <i class="#{module.moduleIcon}"></i>
                                         </h:commandLink>
