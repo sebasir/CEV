@@ -1303,45 +1303,45 @@ insert into specimen values(default, null, 'Mosco', 26, 2, null , to_date('01/01
 
 -----> roles_modules
 
-insert into roles_modules values (default, 1, 1);
-insert into roles_modules values (default, 1, 2);
-insert into roles_modules values (default, 1, 3);
-insert into roles_modules values (default, 1, 4);
-insert into roles_modules values (default, 1, 5);
-insert into roles_modules values (default, 1, 6);
-insert into roles_modules values (default, 1, 7);
-insert into roles_modules values (default, 1, 8);
-insert into roles_modules values (default, 1, 9);
-insert into roles_modules values (default, 1, 10);
-insert into roles_modules values (default, 1, 11);
-insert into roles_modules values (default, 1, 12);
-insert into roles_modules values (default, 1, 13);
-insert into roles_modules values (default, 1, 14);
-insert into roles_modules values (default, 1, 15);
+insert into roles_modules values (default, 1, 1, 15);
+insert into roles_modules values (default, 1, 2, 15);
+insert into roles_modules values (default, 1, 3, 15);
+insert into roles_modules values (default, 1, 4, 15);
+insert into roles_modules values (default, 1, 5, 15);
+insert into roles_modules values (default, 1, 6, 15);
+insert into roles_modules values (default, 1, 7, 15);
+insert into roles_modules values (default, 1, 8, 15);
+insert into roles_modules values (default, 1, 9, 15);
+insert into roles_modules values (default, 1, 10, 15);
+insert into roles_modules values (default, 1, 11, 15);
+insert into roles_modules values (default, 1, 12, 15);
+insert into roles_modules values (default, 1, 13, 15);
+insert into roles_modules values (default, 1, 14, 15);
+insert into roles_modules values (default, 1, 15, 15);
 
-insert into roles_modules values (default, 2, 1);
-insert into roles_modules values (default, 2, 2);
-insert into roles_modules values (default, 2, 3);
-insert into roles_modules values (default, 2, 4);
-insert into roles_modules values (default, 2, 5);
-insert into roles_modules values (default, 2, 6);
-insert into roles_modules values (default, 2, 7);
-insert into roles_modules values (default, 2, 8);
-insert into roles_modules values (default, 2, 9);
-insert into roles_modules values (default, 2, 10);
-insert into roles_modules values (default, 2, 11);
-insert into roles_modules values (default, 2, 12);
-insert into roles_modules values (default, 2, 15);
+insert into roles_modules values (default, 2, 1, 15);
+insert into roles_modules values (default, 2, 2, 15);
+insert into roles_modules values (default, 2, 3, 15);
+insert into roles_modules values (default, 2, 4, 15);
+insert into roles_modules values (default, 2, 5, 15);
+insert into roles_modules values (default, 2, 6, 15);
+insert into roles_modules values (default, 2, 7, 15);
+insert into roles_modules values (default, 2, 8, 15);
+insert into roles_modules values (default, 2, 9, 15);
+insert into roles_modules values (default, 2, 10, 15);
+insert into roles_modules values (default, 2, 11, 15);
+insert into roles_modules values (default, 2, 12, 15);
+insert into roles_modules values (default, 2, 15, 15);
 
-insert into roles_modules values (default, 3, 1);
-insert into roles_modules values (default, 3, 2);
-insert into roles_modules values (default, 3, 3);
-insert into roles_modules values (default, 3, 4);
-insert into roles_modules values (default, 3, 5);
-insert into roles_modules values (default, 3, 12);
-insert into roles_modules values (default, 3, 15);
+insert into roles_modules values (default, 3, 1, 15);
+insert into roles_modules values (default, 3, 2, 15);
+insert into roles_modules values (default, 3, 3, 15);
+insert into roles_modules values (default, 3, 4, 15);
+insert into roles_modules values (default, 3, 5, 15);
+insert into roles_modules values (default, 3, 12, 15);
+insert into roles_modules values (default, 3, 15, 15);
 
 ---> roles_users
 
-insert into roles_users values (default, 1, 1, 15);
-insert into roles_users values (default, 3, 2, 15);
+insert into roles_users values (default, 1, 1);
+insert into roles_users values (default, 3, 2);

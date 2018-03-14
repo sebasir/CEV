@@ -1,6 +1,7 @@
 package net.hpclab.cev.entities;
 
 import java.io.Serializable;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +14,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
@@ -29,10 +29,6 @@ public class RolesUsers implements Serializable {
 	@Basic(optional = false)
 	@Column(name = "id_rous")
 	private Integer idRous;
-	@Basic(optional = false)
-	@NotNull
-	@Column(name = "access_level")
-	private int accessLevel;
 
 	@Size(max = 32)
 	@Column(name = "status")
@@ -52,25 +48,12 @@ public class RolesUsers implements Serializable {
 		this.idRous = idRous;
 	}
 
-	public RolesUsers(Integer idRous, int accessLevel) {
-		this.idRous = idRous;
-		this.accessLevel = accessLevel;
-	}
-
 	public Integer getIdRous() {
 		return idRous;
 	}
 
 	public void setIdRous(Integer idRous) {
 		this.idRous = idRous;
-	}
-
-	public int getAccessLevel() {
-		return accessLevel;
-	}
-
-	public void setAccessLevel(int accessLevel) {
-		this.accessLevel = accessLevel;
 	}
 
 	public String getStatus() {
@@ -106,13 +89,14 @@ public class RolesUsers implements Serializable {
 
 	@Override
 	public boolean equals(Object object) {
-		// TODO: Warning - this method won't work in the case the id fields are not set
 		if (!(object instanceof RolesUsers)) {
 			return false;
 		}
 		RolesUsers other = (RolesUsers) object;
-		return !((this.idRous == null && other.idRous != null)
-				|| (this.idRous != null && !this.idRous.equals(other.idRous)));
+		return !((this.idRole == null && other.idRole != null)
+				|| (this.idRole != null && !this.idRole.equals(other.idRole)))
+				&& !((this.idUser == null && other.idUser != null)
+						|| (this.idUser != null && !this.idUser.equals(other.idUser)));
 	}
 
 	@Override

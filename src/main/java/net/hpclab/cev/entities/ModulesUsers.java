@@ -106,13 +106,14 @@ public class ModulesUsers implements Serializable {
 
 	@Override
 	public boolean equals(Object object) {
-		// TODO: Warning - this method won't work in the case the id fields are not set
-		if (!(object instanceof ModulesUsers)) {
+		if (!(object instanceof ModulesUsers))
 			return false;
-		}
+
 		ModulesUsers other = (ModulesUsers) object;
-		return !((this.idMous == null && other.idMous != null)
-				|| (this.idMous != null && !this.idMous.equals(other.idMous)));
+		return !((this.idModule == null && other.idModule != null)
+				|| (this.idModule != null && !this.idModule.equals(other.idModule)))
+				&& !((this.idUser == null && other.idUser != null)
+						|| (this.idUser != null && !this.idUser.equals(other.idUser)));
 	}
 
 	@Override

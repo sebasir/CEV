@@ -50,12 +50,12 @@
 					rendered="#{accessesBean.searchUsers != null and !accessesBean.searchUsers.isEmpty()}"
 					styleClass="pull-right">
 					<p>
-						Mostrando <b>#{accessesBean.searchUsers.size()}</b> de <b>#{accessesBean.pager.numberOfResults}</b>
+						Mostrando <b>#{accessesBean.searchUsers.size()}</b> de <b>#{accessesBean.usersPager.numberOfResults}</b>
 						registros
 					</p>
 				</h:panelGroup>
 				<p:commandButton id="search"
-					actionListener="#{accessesBean.search()}" update="formUsers"
+					actionListener="#{accessesBean.searchUser()}" update="formUsers"
 					value="Consultar" />
 				<p:commandButton id="clear"
 					actionListener="#{accessesBean.limpiarFiltros()}"
@@ -74,51 +74,17 @@
 					<h:outputText value="#{users.userEmail}" />
 				</h:column>
 				<h:column>
-					<f:facet name="header">Fecha creación</f:facet>
-					<h:outputText value="#{accessesBean.formatDate(users.userCreated)}" />
-				</h:column>
-				<h:column>
-					<f:facet name="header">Fecha última Modificación</f:facet>
-					<h:outputText value="#{accessesBean.formatDate(users.userModified)}" />
-				</h:column>
-				<h:column>
-					<f:facet name="header">Fecha último Ingreso</f:facet>
-					<h:outputText value="#{accessesBean.formatDate(users.userLastLogin)}" />
-				</h:column>
-				<h:column>
 					<f:facet name="header">Institución</f:facet>
 					<h:outputText value="#{users.idInstitution.institutionName}" />
 				</h:column>
 				<h:column>
 					<f:facet name="header">Acciones</f:facet>
-					<p:commandLink id="editButton"
+					<p:commandLink id="viewButton"
 						class="btn btn-default btn-sm btn-action"
-						oncomplete="$('#editModal').modal({backdrop: false})"
-						title="Editar #{users.userNames} #{users.userLastnames}"
-						update="editModalForm"
-						actionListener="#{accessesBean.setUsers(users)}">
+						title="Editar #{users.userNames} #{users.userLastnames}" ajax="false">
+						<f:actionListener binding="#{navigationBean.setNavigablePage('modules.xhtml')}"/>
+    					<f:actionListener binding="#{accessesBean.loadUsersModules(users)}"/>
 						<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-					</p:commandLink>
-					<p:commandLink id="deleteButton"
-						class="btn btn-default btn-sm btn-action"
-						oncomplete="$('#deleteModal').modal({backdrop: false})"
-						title="Eliminar #{users.userNames} #{users.userLastnames}"
-						actionListener="#{accessesBean.setUsers(users)}">
-						<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-					</p:commandLink>
-					<p:commandLink id="restartPassButton"
-						class="btn btn-default btn-sm btn-action"
-						oncomplete="$('#restartModal').modal({backdrop: false})"
-						title="Eliminar #{users.userNames} #{users.userLastnames}"
-						actionListener="#{accessesBean.setUsers(users)}">
-						<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
-					</p:commandLink>
-					<p:commandLink id="disableButton"
-						class="btn btn-default btn-sm btn-action"
-						oncomplete="$('#restartModal').modal({backdrop: false})"
-						title="Eliminar #{users.userNames} #{users.userLastnames}"
-						actionListener="#{accessesBean.setUsers(users)}">
-						<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
 					</p:commandLink>
 				</h:column>
 			</h:dataTable>
@@ -127,29 +93,29 @@
 				<nav aria-label="Page navigation" class="paginador">
 					<ul class="pagination pagination-lg">
 						<li><p:commandLink id="first" title="Primera página"
-								actionListener="#{accessesBean.pager.firstPage()}"
+								actionListener="#{accessesBean.usersPager.firstPage()}"
 								update="dataTableUsers, paginator">
 								<span class="glyphicon glyphicon-chevron-left"
 									aria-hidden="true"></span>
 							</p:commandLink></li>
 						<li><p:commandLink id="prev" title="Anterior página"
-								actionListener="#{accessesBean.pager.previousPage()}"
+								actionListener="#{accessesBean.usersPager.previousPage()}"
 								update="dataTableUsers, paginator">
 								<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>
 							</p:commandLink></li>
-						<ui:repeat id="pager" var="i" value="#{accessesBean.pager.pages}">
+						<ui:repeat id="pager" var="i" value="#{accessesBean.usersPager.pages}">
 							<li><p:commandLink id="pageNumer"
-									actionListener="#{accessesBean.pager.getPageResults(i)}"
-									class="#{accessesBean.pager.currentPage == i? 'active-page': ''}"
+									actionListener="#{accessesBean.usersPager.getPageResults(i)}"
+									class="#{accessesBean.usersPager.currentPage == i? 'active-page': ''}"
 									update="formUsers:paginator, formUsers:dataTableUsers">#{i}</p:commandLink></li>
 						</ui:repeat>
 						<li><p:commandLink id="next" title="Siguiente página"
-								actionListener="#{accessesBean.pager.nextPage()}"
+								actionListener="#{accessesBean.usersPager.nextPage()}"
 								update="dataTableUsers, paginator">
 								<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
 							</p:commandLink></li>
 						<li><p:commandLink id="last" title="Última página"
-								actionListener="#{accessesBean.pager.lastPage()}"
+								actionListener="#{accessesBean.usersPager.lastPage()}"
 								update="dataTableUsers, paginator">
 								<span class="glyphicon glyphicon-chevron-right"
 									aria-hidden="true"></span>

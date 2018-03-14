@@ -13,6 +13,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
@@ -39,6 +40,10 @@ public class RolesModules implements Serializable {
 	@JoinColumn(name = "id_role", referencedColumnName = "id_role")
 	@ManyToOne
 	private Roles idRole;
+	@Basic(optional = false)
+	@NotNull
+	@Column(name = "access_level")
+	private int accessLevel;
 
 	public RolesModules() {
 	}
@@ -79,6 +84,14 @@ public class RolesModules implements Serializable {
 		this.idRole = idRole;
 	}
 
+	public int getAccessLevel() {
+		return accessLevel;
+	}
+
+	public void setAccessLevel(int accessLevel) {
+		this.accessLevel = accessLevel;
+	}
+
 	@Override
 	public int hashCode() {
 		int hash = 0;
@@ -92,8 +105,10 @@ public class RolesModules implements Serializable {
 			return false;
 		}
 		RolesModules other = (RolesModules) object;
-		return !((this.idRomo == null && other.idRomo != null)
-				|| (this.idRomo != null && !this.idRomo.equals(other.idRomo)));
+		return !((this.idModule == null && other.idModule != null)
+				|| (this.idModule != null && !this.idModule.equals(other.idModule)))
+				&& !((this.idRole == null && other.idRole != null)
+						|| (this.idRole != null && !this.idRole.equals(other.idRole)));
 	}
 
 	@Override
