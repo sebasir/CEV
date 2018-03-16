@@ -140,6 +140,9 @@ public class UtilsBean implements Serializable {
 		case GENERIC_INFO:
 			fMess = new FacesMessage(FacesMessage.SEVERITY_INFO, "Información", message);
 			break;
+		case GENERIC_WARNING:
+			fMess = new FacesMessage(FacesMessage.SEVERITY_WARN, "Advertencia", message);
+			break;
 		case GENERIC_ERROR:
 			fMess = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error general.", message);
 			break;

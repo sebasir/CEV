@@ -85,6 +85,7 @@ public class AccessService implements Serializable {
 				throw new RecordAlreadyExistsException("Ya existe esta relación");
 
 			moduleUser.setAccessLevel(accessLevel);
+			moduleUser.setStatus(status.get());
 			moduleUser = mousService.persist(moduleUser);
 			DataWarehouse.getInstance().allModulesUsers.add(moduleUser);
 			addUserAccess(idUser, idModule, accessLevel, true);
@@ -104,6 +105,7 @@ public class AccessService implements Serializable {
 
 			moduleUser = mousService.getSingleRecord(moduleUser);
 			moduleUser.setAccessLevel(accessLevel);
+			moduleUser.setStatus(status.get());
 			DataWarehouse.getInstance().allModulesUsers.remove(moduleUser);
 			moduleUser = mousService.merge(moduleUser);
 			DataWarehouse.getInstance().allModulesUsers.add(moduleUser);
@@ -139,6 +141,7 @@ public class AccessService implements Serializable {
 			if (roleUserAccess.get(idUser).contains(idRole))
 				throw new RecordAlreadyExistsException("Ya existe esta relación");
 
+			roleUser.setStatus(status.get());
 			roleUser = rousService.persist(roleUser);
 			DataWarehouse.getInstance().allRolesUsers.add(roleUser);
 			addRoleUserAccess(idUser, idRole);
@@ -201,6 +204,7 @@ public class AccessService implements Serializable {
 			if (!roleModuleAccess.get(idRole).containsKey(idModule))
 				throw new RecordAlreadyExistsException("Ya existe esta relación");
 
+			roleModule = romoService.getSingleRecord(roleModule);
 			roleModule.setAccessLevel(accessLevel);
 			DataWarehouse.getInstance().allRolesModules.remove(roleModule);
 			roleModule = romoService.merge(roleModule);

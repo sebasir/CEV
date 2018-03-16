@@ -32,7 +32,7 @@ public class ModulesUsers implements Serializable {
 	@Basic(optional = false)
 	@NotNull
 	@Column(name = "access_level")
-	private int accessLevel;
+	private Integer accessLevel;
 
 	@Size(max = 32)
 	@Column(name = "status")
@@ -52,7 +52,7 @@ public class ModulesUsers implements Serializable {
 		this.idMous = idMous;
 	}
 
-	public ModulesUsers(Integer idMous, int accessLevel) {
+	public ModulesUsers(Integer idMous, Integer accessLevel) {
 		this.idMous = idMous;
 		this.accessLevel = accessLevel;
 	}
@@ -65,11 +65,11 @@ public class ModulesUsers implements Serializable {
 		this.idMous = idMous;
 	}
 
-	public int getAccessLevel() {
+	public Integer getAccessLevel() {
 		return accessLevel;
 	}
 
-	public void setAccessLevel(int accessLevel) {
+	public void setAccessLevel(Integer accessLevel) {
 		this.accessLevel = accessLevel;
 	}
 

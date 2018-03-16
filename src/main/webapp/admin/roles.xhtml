@@ -1,0 +1,54 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<h:form id="formRoles">
+		<div class="panel panel-default">
+			<div class="panel-heading">Roles actuales</div>
+			<div class="panel-body">
+				<div class="form-group">
+					<div class="row">
+						<label class="col-md-2 control-label" for="numeroIden">Usuario:</label>
+						<div class="col-md-6">
+							<h:outputText id="role"
+								value="#{accessesBean.users.userNames} #{accessesBean.users.userLastnames}" />
+						</div>
+					</div>
+				</div>
+			</div>
+			<h:dataTable id="dataTableRoles"
+				rendered="#{accessesBean.userRolesModel != null and !accessesBean.userRolesModel.isEmpty()}"
+				value="#{accessesBean.userRolesModel}" var="roles"
+				styleClass="table table-hover table-condensed">
+				<h:column>
+					<f:facet name="header">Nombres</f:facet>
+					<h:outputText value="#{roles.roles.roleName}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">Descripción</f:facet>
+					<h:outputText value="#{roles.roles.roleDescr}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">Fecha Última Modificación</f:facet>
+					<h:outputText
+						value="#{accessesBean.formatDate(roles.roles.roleModified)}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">Roles</f:facet>
+					<p:selectBooleanCheckbox id="setRole" value="#{roles.active}">
+						<p:ajax process="@this" />
+					</p:selectBooleanCheckbox>
+				</h:column>
+			</h:dataTable>
+		</div>
+		<hr />
+		<p:commandButton id="saveButton" value="Guardar"
+			actionListener="#{accessesBean.guardarRoles()}" update="formRoles" />
+		<p:commandButton id="returnButton" value="Regresar" ajax="false"
+			actionListener="#{navigationBean.setNavigablePage('accesses.xhtml')}" />
+		<hr />
+		<p:growl id="messages" showDetail="true" />
+	</h:form>
+</ui:composition>

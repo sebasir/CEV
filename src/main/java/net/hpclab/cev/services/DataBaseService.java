@@ -283,6 +283,7 @@ public class DataBaseService<T> implements Serializable {
 	}
 
 	public T getSingleRecord(T entityFilters) throws NoResultException, Exception {
+		ensureConnection();
 		restartFilters(QueryMethod.ENTITY);
 		entityParam = entityFilters;
 		HashMap<String, Object> filters = getFilterFromEntity(entityFilters);
@@ -291,6 +292,7 @@ public class DataBaseService<T> implements Serializable {
 	}
 
 	private T getSingleRecord(HashMap<String, Object> params) throws NoResultException, Exception {
+		ensureConnection();
 		restartFilters(QueryMethod.MAP);
 		mapParam = params;
 		LOGGER.log(Level.INFO, "GetSingleRecord (CriteriaQuery) {0}, params: '{'{1}'}'",
@@ -302,6 +304,7 @@ public class DataBaseService<T> implements Serializable {
 	}
 
 	public T getSingleRecord(String query, HashMap<String, Object> params) throws NoResultException, Exception {
+		ensureConnection();
 		LOGGER.log(Level.INFO, "GetSingleRecord {0}, params: '{'{1}'}'",
 				new Object[] { entityClass.getSimpleName(), params == null ? "N/A" : params.size() });
 		if (query.toLowerCase().contains(SELECT)) {
@@ -350,7 +353,7 @@ public class DataBaseService<T> implements Serializable {
 			commitTransaction();
 			LOGGER.log(Level.INFO, "Merged {0}, OK", entityClass.getSimpleName());
 		} catch (Exception e) {
-			LOGGER.log(Level.INFO, "Removing {0}, Failure", entityClass.getSimpleName());
+			LOGGER.log(Level.INFO, "Merging {0}, Failure", entityClass.getSimpleName());
 			LOGGER.log(Level.INFO, "Detail: ", e);
 			rollBackTransaction();
 			throw e;
@@ -368,7 +371,7 @@ public class DataBaseService<T> implements Serializable {
 			commitTransaction();
 			LOGGER.log(Level.INFO, "Persist {0}, OK", entityClass.getSimpleName());
 		} catch (Exception e) {
-			LOGGER.log(Level.INFO, "Persist {0}, Failure", entityClass.getSimpleName());
+			LOGGER.log(Level.INFO, "Persisting {0}, Failure", entityClass.getSimpleName());
 			LOGGER.log(Level.INFO, "Detail: ", e);
 			rollBackTransaction();
 			throw e;

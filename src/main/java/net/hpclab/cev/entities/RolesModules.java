@@ -43,7 +43,7 @@ public class RolesModules implements Serializable {
 	@Basic(optional = false)
 	@NotNull
 	@Column(name = "access_level")
-	private int accessLevel;
+	private Integer accessLevel;
 
 	public RolesModules() {
 	}
@@ -84,11 +84,11 @@ public class RolesModules implements Serializable {
 		this.idRole = idRole;
 	}
 
-	public int getAccessLevel() {
+	public Integer getAccessLevel() {
 		return accessLevel;
 	}
 
-	public void setAccessLevel(int accessLevel) {
+	public void setAccessLevel(Integer accessLevel) {
 		this.accessLevel = accessLevel;
 	}
 

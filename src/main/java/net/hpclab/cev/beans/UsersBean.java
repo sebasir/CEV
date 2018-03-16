@@ -93,9 +93,9 @@ public class UsersBean extends UtilsBean implements Serializable {
 
 			users.setStatus(StatusEnum.ACTIVO.get());
 			users.setUserModified(Calendar.getInstance().getTime());
-			Users tempSpecimen = usersService.merge(users);
+			Users tempUsers = usersService.merge(users);
 			DataWarehouse.getInstance().allUsers.remove(users);
-			DataWarehouse.getInstance().allUsers.add(tempSpecimen);
+			DataWarehouse.getInstance().allUsers.add(tempUsers);
 			outcomeEnum = OutcomeEnum.UPDATE_SUCCESS;
 
 			limpiarFiltros();
@@ -108,12 +108,12 @@ public class UsersBean extends UtilsBean implements Serializable {
 
 	public void delete() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
-		OutcomeEnum outcomeEnum = OutcomeEnum.UPDATE_ERROR;
+		OutcomeEnum outcomeEnum = OutcomeEnum.DELETE_ERROR;
 		String transactionMessage = users.getUserNames() + users.getUserLastnames();
 		try {
 			if (!AccessService.getInstance().checkUserAccess(ModulesEnum.USR_INS, getUsers(facesContext),
-					Constant.AccessLevel.UPDATE)) {
-				showAccessMessage(facesContext, OutcomeEnum.UPDATE_NOT_GRANTED);
+					Constant.AccessLevel.DELETE)) {
+				showAccessMessage(facesContext, OutcomeEnum.DELETE_NOT_GRANTED);
 				return;
 			}
 

@@ -2,14 +2,16 @@ package net.hpclab.cev.model;
 
 import net.hpclab.cev.entities.Modules;
 
-public class ModulesModel {
+public class ModulesModel implements Comparable<ModulesModel> {
 	private Modules modules;
 	private String inherited;
+	private int initialAccessCode;
 	private boolean[] accesses;
 
-	public ModulesModel(Modules modules, String inherited, boolean[] accesses) {
+	public ModulesModel(Modules modules, String inherited, int initialAccessCode, boolean[] accesses) {
 		this.modules = modules;
 		this.inherited = inherited;
+		this.initialAccessCode = initialAccessCode;
 		this.accesses = accesses;
 	}
 
@@ -65,9 +67,17 @@ public class ModulesModel {
 		accesses[3] = value;
 	}
 
+	public int getInitialAccessCode() {
+		return initialAccessCode;
+	}
+
+	public void setInitialAccessCode(int initialAccessCode) {
+		this.initialAccessCode = initialAccessCode;
+	}
+
 	@Override
 	public int hashCode() {
-		return 11231;
+		return 11231 * this.modules.hashCode();
 	}
 
 	@Override
@@ -80,4 +90,8 @@ public class ModulesModel {
 				&& this.modules.getIdModule() != null && this.modules.getIdModule().equals(m.modules.getIdModule());
 	}
 
+	@Override
+	public int compareTo(ModulesModel o) {
+		return this.modules.getIdModule().compareTo(o.getModules().getIdModule());
+	}
 }
