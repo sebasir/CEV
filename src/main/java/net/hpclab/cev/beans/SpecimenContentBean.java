@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 
@@ -32,13 +32,14 @@ import net.hpclab.cev.services.ObjectRetriever;
 import net.hpclab.cev.services.ParseExceptionService;
 
 @ManagedBean
-@ViewScoped
+@SessionScoped
 public class SpecimenContentBean extends UtilsBean implements Serializable {
 
 	private static final long serialVersionUID = 7216923042328535541L;
 	private DataBaseService<SpecimenContent> specimenContentService;
 	private List<SpecimenContent> searchSpecimenContent;
-	private List<Specimen> contentSpecimen;
+	private List<SpecimenContent> contentSpecimen;
+	private List<Taxonomy> families;
 	private Specimen specimen;
 	private SpecimenContent specimenContent;
 	private SpecimenContent specimenContentSearch;
@@ -49,6 +50,10 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 	public SpecimenContentBean() {
 		try {
 			specimenContentService = new DataBaseService<>(SpecimenContent.class);
+			families = new ArrayList<>();
+			for (Taxonomy t : DataWarehouse.getInstance().allTaxonomys)
+				if (t.getIdTaxlevel().getIdTaxlevel() == 13)
+					families.add(t);
 			limpiarFiltros();
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
@@ -239,11 +244,10 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 		} else {
 			String id = context.getExternalContext().getRequestParameterMap().get("idTaxonomy");
 			Integer idTaxonomy = Integer.parseInt(id);
-			for (SpecimenContent s : DataWarehouse.getInstance().allSpecimenContents) {
-				if (isFather(idTaxonomy, s.getIdSpecimen())) {
+			for (SpecimenContent s : DataWarehouse.getInstance().allSpecimenContents)
+				if (isFather(idTaxonomy, s.getIdSpecimen()) && s.getPublish())
 					return new DefaultStreamedContent(super.getInputStream(s.getFileContent()), "image/jpeg");
-				}
-			}
+
 			return null;
 		}
 	}
@@ -257,12 +261,21 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 	private boolean isFather(Integer f, Specimen s) {
 		Taxonomy t = s.getIdTaxonomy();
 		while (t != null) {
-			if (f.equals(t.getIdTaxonomy())) {
+			if (f.equals(t.getIdTaxonomy()))
 				return true;
-			}
 			t = t.getIdContainer();
 		}
 		return false;
+	}
+
+	public String loadFamilySpecimens() {
+		contentSpecimen = new ArrayList<>();
+		String id = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("idTaxonomy");
+		Integer idTaxonomy = Integer.parseInt(id);
+		for (SpecimenContent s : DataWarehouse.getInstance().allSpecimenContents)
+			if (s.getFileContent() != null && isFather(idTaxonomy, s.getIdSpecimen()) && s.getPublish())
+				contentSpecimen.add(s);
+		return "Collection.xhtml" + Constant.FACES_REDIRECT;
 	}
 
 	public SpecimenContent getSpecimenContent() {
@@ -297,13 +310,6 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 		this.contentFile = contentFile;
 	}
 
-	public String getHeader() {
-		return specimenContent != null && specimenContent.getIdSpeccont() != null
-				? "Editar el contenido de " + specimenContent.getIdSpecimen().getIdTaxonomy().getTaxonomyName() + " "
-						+ specimenContent.getIdSpecimen().getSpecificEpithet()
-				: "Nuevo contenido";
-	}
-
 	public Specimen getSpecimen() {
 		return specimen;
 	}
@@ -316,15 +322,15 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 		return searchSpecimenContent;
 	}
 
+	public List<Taxonomy> getFamilies() {
+		return families;
+	}
+
 	public void setSearchSpecimenContent(List<SpecimenContent> searchSpecimenContent) {
 		this.searchSpecimenContent = searchSpecimenContent;
 	}
 
-	public List<Specimen> getContentSpecimen() {
+	public List<SpecimenContent> getContentSpecimen() {
 		return contentSpecimen;
-	}
-
-	public void setContentSpecimen(List<Specimen> contentSpecimen) {
-		this.contentSpecimen = contentSpecimen;
 	}
 }

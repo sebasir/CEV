@@ -1,130 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html">
-    <head>
-        <title>Colección Entomológica Virtual</title>
-        <meta charset="utf-8"/>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1"/>
-        <meta name="description" content=""/>
-        <meta name="author" content=""/>
-        <link rel="icon" type="image/png" href="images/utils/bug-silhouette-dark.png" />
-        <link href="bootstrap/css/bootstrap.css" type="text/css" rel="stylesheet"/>
-        <link href="css/default.css" type="text/css" rel="stylesheet" />
-    </head>
-    <body style="padding-top: 10px;">
-        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-            <div class="container">
-                <div class="row" style="padding-top: 5px;">
-                    <div class="col-md-2">
-                        <img class="img-responsive" src="images/logo_central.gif" alt="" style="max-height: 35px;"/>
-                    </div>
-                    <div class="col-md-2 col-md-offset-8">
-                        <img class="img-responsive" src="images/logo_utadeo.gif" alt="" style="max-height: 35px;"/>
-                    </div>
-                </div>
-            </div>
-        </nav>
-        <nav class="navbar" role="navigation" style="padding-top: 50px;">
-            <div class="container" style="text-align: center;">
-                <div class="logo-dashboard">
-                    <img src="images/utils/bug-contour-dark.png" class="logo-dashboard img-responsive"/>
-                </div>
-                <h1 class="bs-docs-featurette-title">COLECCION ENTOMOLÓGICA VIRTUAL</h1>
-                <hr/>
-                <p>Colección Entomológica del Centro de Biosistemas de la Universidad Jorge Tadeo Lozano.</p>
-            </div>
-        </nav>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <img class="img-responsive" src="images/banner/abeja.jpg" alt="" style="float: left; width: 12.5%"/>
-                    <img class="img-responsive" src="images/banner/avispa.jpg" alt="" style="float: left; width: 12.5%"/>
-                    <img class="img-responsive" src="images/banner/hormiga.jpg" alt="" style="float: left; width: 12.5%"/>
-                    <img class="img-responsive" src="images/banner/insect.jpg" alt="" style="float: left; width: 12.5%"/>
-                    <img class="img-responsive" src="images/banner/mariposa.jpg" alt="" style="float: left; width: 12.5%"/>
-                    <img class="img-responsive" src="images/banner/avispa.jpg" alt="" style="float: left; width: 12.5%"/>
-                    <img class="img-responsive" src="images/banner/hormiga.jpg" alt="" style="float: left; width: 12.5%"/>
-                    <img class="img-responsive" src="images/banner/mosca.jpg" alt="" style="float: left; width: 12.5%"/>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <nav class="navbar navbar-default">
-                        <div class="container-fluid">
-                            <div class="navbar-header">
-                                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                                    <span class="sr-only">Toggle navigation</span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                </button>
-                                <a class="navbar-brand" href="#">HPCLab</a>
-                            </div>
-                            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                                <ul class="nav navbar-nav navbar-right">
-                                    <li><h:outputLink value="FamiliesCollection.xhtml">Colección Entomológica</h:outputLink></li>
-                                    <li><a href="#">Contacto</a></li>
-                                    <li><a href="#">Acerca</a></li>
-                                    <li><a href="admin/login.xhtml">Ingreso</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </nav>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Colección Entomológica Virtual</div>
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <img class="img-responsive" src="images/fondo_light.jpg" alt=""/>
-                                </div>
-                                <div class="col-md-6">
-                                    La Universidad Central, lleva a otros niveles la presentación de la colecciones biológicas. En este proyecto nos dedicamos a llevar a la colección entomológica del Centro de Biosistemas de la Universidad Jorge Tadeo Lozano, a una dimensión virtual donde es posible su visualización en 3D, conservado todas sus características.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="list-group">
-                            <h:outputLink value="FamiliesCollection.xhtml" class="list-group-item">Colección Entomológica</h:outputLink>
-                            <a href="http://www.ucentral.edu.co" class="list-group-item">Universidad Central</a>
-                            <a href="http://www.utadeo.edu.co/es/micrositio/centro-de-bio-sistemas" class="list-group-item">UJTL Centro de Biosistemas</a>
-                            <a href="http://commons.com.co/index.php/" class="list-group-item">Grupo Commons U. Central</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Noticias</div>
-                        <div class="panel-body">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                            <hr/>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Eventos</div>
-                        <div class="panel-body">
-                            <img class="img-responsive" src="images/banner/avispa.jpg" alt=""/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="container">
-            <hr/>
-            <footer>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <p style="text-align: center;">
-                            Proyecto Colección Entomológica Virtual. Todos los derechos reservados. | Fotos de <a href="http://www.google.com/images">GOOGLE</a> | Diseño por <a href="#" rel="nofollow">smotavitam</a>.<br/><span class="glyphicon glyphicon-copyright-mark" aria-hidden="true"></span>
-                        </p>
-                    </div>
-                </div>
-            </footer>
-        </div>
-        <script src="bootstrap/js/bootstrap.js" type="text/javascript"></script>
-    </body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+	<title>Colección Entomológica Virtual</title>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="description" content="" />
+	<meta name="author" content="" />
+	<link rel="icon" type="image/png"
+		href="images/utils/bug-silhouette-dark.png" />
+	<link href="bootstrap/css/bootstrap.css" type="text/css"
+		rel="stylesheet" />
+	<link href="css/default.css" type="text/css" rel="stylesheet" />
+</h:head>
+<body style="padding-top: 10px;">
+	<ui:include src="header.xhtml" />
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8">
+				<div class="panel panel-default">
+					<div class="panel-heading">Colección Entomológica Virtual</div>
+					<div class="panel-body">
+						<div class="row">
+							<div class="col-md-6">
+								<img class="img-responsive" src="images/fondo_light.jpg" alt="" />
+							</div>
+							<div class="col-md-6">La Universidad Central, lleva a otros
+								niveles la presentación de la colecciones biológicas. En este
+								proyecto nos dedicamos a llevar a la colección entomológica del
+								Centro de Biosistemas de la Universidad Jorge Tadeo Lozano, a
+								una dimensión virtual donde es posible su visualización en 3D,
+								conservado todas sus características.</div>
+						</div>
+					</div>
+					<div class="list-group">
+						<h:outputLink value="FamiliesCollection.xhtml"
+							class="list-group-item">Colección Entomológica</h:outputLink>
+						<a href="http://www.ucentral.edu.co" class="list-group-item">Universidad
+							Central</a> <a
+							href="http://www.utadeo.edu.co/es/micrositio/centro-de-bio-sistemas"
+							class="list-group-item">UJTL Centro de Biosistemas</a> <a
+							href="http://commons.com.co/index.php/" class="list-group-item">Grupo
+							Commons U. Central</a>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="panel panel-default">
+					<div class="panel-heading">Noticias</div>
+					<div class="panel-body">
+						Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+						eiusmod tempor incididunt ut labore et dolore magna aliqua.
+						<hr />
+						Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+						eiusmod tempor incididunt ut labore et dolore magna aliqua.
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading">Eventos</div>
+					<div class="panel-body">
+						<img class="img-responsive" src="images/banner/avispa.jpg" alt="" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<ui:include src="footer.xhtml"/>
+	<script src="bootstrap/js/bootstrap.js" type="text/javascript"></script>
+</body>
 </html>

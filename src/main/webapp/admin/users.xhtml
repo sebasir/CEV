@@ -376,6 +376,7 @@
 						class="btn btn-default btn-sm btn-action"
 						oncomplete="$('#deleteModal').modal({backdrop: false})"
 						title="Eliminar #{users.userNames} #{users.userLastnames}"
+						update="deleteModalForm"
 						actionListener="#{usersBean.setUsers(users)}">
 						<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 					</p:commandLink>

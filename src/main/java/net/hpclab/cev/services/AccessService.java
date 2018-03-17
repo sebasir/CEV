@@ -183,7 +183,7 @@ public class AccessService implements Serializable {
 		roleModule.setIdModule(idModule);
 		switch (operation) {
 		case INSERT:
-			if (roleModuleAccess.get(idRole).containsKey(idModule))
+			if (roleModuleAccess.containsKey(idRole) && roleModuleAccess.get(idRole).containsKey(idModule))
 				throw new RecordAlreadyExistsException("Ya existe esta relación");
 
 			roleModule.setAccessLevel(accessLevel);
