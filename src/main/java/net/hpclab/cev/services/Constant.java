@@ -39,6 +39,7 @@ public class Constant {
 	public static final String EDIT_COMMAND = "edit";
 	public static final String DETAIL_COMMAND = "detail";
 	public static final String RESTART_PASSWORD = "R3st4rt_p4ss";
+	public static final String DEFAULT_SPECIMEN_IMAGE = "/images/utils/bug-silhouette-dark.png";
 	public static final int INSTITUTION_HINT = 10000;
 	public static final int COLLECTION_HINT = 20000;
 	public static final int CATALOG_HINT = 30000;

@@ -170,7 +170,7 @@ public class LocationBean extends UtilsBean implements Serializable {
 		}
 	}
 
-	private void createTree() {
+	public void createTree() {
 		tree = new HashMap<>();
 		abstractMap = new HashMap<>();
 		TreeHierachyModel fatherNode = new TreeHierachyModel();

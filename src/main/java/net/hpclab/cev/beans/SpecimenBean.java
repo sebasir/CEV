@@ -11,11 +11,11 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import org.primefaces.component.panelgrid.PanelGrid;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.FlowEvent;
 import org.primefaces.json.JSONArray;
 import org.primefaces.json.JSONObject;
 
+import net.hpclab.cev.entities.Author;
 import net.hpclab.cev.entities.Catalog;
 import net.hpclab.cev.entities.Collection;
 import net.hpclab.cev.entities.Location;
@@ -30,6 +30,7 @@ import net.hpclab.cev.services.AccessService;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
 import net.hpclab.cev.services.DataWarehouse;
+import net.hpclab.cev.services.ObjectRetriever;
 import net.hpclab.cev.services.ParseExceptionService;
 
 @ManagedBean
@@ -38,8 +39,9 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 
 	private static final long serialVersionUID = -4282355371253031023L;
 	private DataBaseService<Specimen> specimenService;
-	private List<Specimen> searchSpecimen;
+	private List<Specimen> searchSpecimens;
 	private Specimen specimen;
+	private Specimen searchSpecimen;
 	private Location location;
 	private Taxonomy taxonomy;
 	private RegType regType;
@@ -67,7 +69,8 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 
 	public void limpiarFiltros() {
 		specimen = new Specimen();
-		searchSpecimen = null;
+		searchSpecimen = new Specimen();
+		searchSpecimens = null;
 	}
 
 	public DataBaseService<Specimen>.Pager getPager() {
@@ -188,7 +191,7 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 
 	public void search() {
 		try {
-			searchSpecimen = specimenService.getList(specimen);
+			searchSpecimens = specimenService.getList(searchSpecimen);
 			if (specimenService.getPager().getNumberOfResults() == 0)
 				showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.GENERIC_ERROR, "No se encontraron datos");
 		} catch (Exception ex) {
@@ -207,14 +210,31 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 		return taxs;
 	}
 
-	public void prepareUpdate(Specimen onEdit) {
-		RequestContext context = RequestContext.getCurrentInstance();
-		context.reset("specimenWizardForm");
-		specimen = onEdit;
-		selectedCatalog = specimen.getIdCatalog().getIdCatalog().toString();
-		selectedCollection = specimen.getIdCatalog().getIdCollection().getIdCollection().toString();
-		selectedRegType = specimen.getIdRety().getIdRety().toString();
-		selectedSampleType = specimen.getIdSaty().getIdSaty().toString();
+	public void prepareUpdate(Specimen specimen) {
+		this.specimen = specimen;
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		TaxonomyBean taxonomyBean = getExternalBean(facesContext, TaxonomyBean.class);
+		LocationBean locationBean = getExternalBean(facesContext, LocationBean.class);
+		AuthorBean authorBean = getExternalBean(facesContext, AuthorBean.class);
+		CollectionBean collectionBean = getExternalBean(facesContext, CollectionBean.class);
+
+		taxonomyBean.limpiarFiltros();
+		taxonomyBean
+				.setTaxonomy(ObjectRetriever.getObjectFromId(Taxonomy.class, specimen.getIdTaxonomy().getIdTaxonomy()));
+		taxonomyBean.createTree();
+
+		locationBean.limpiarFiltros();
+		locationBean
+				.setLocation(ObjectRetriever.getObjectFromId(Location.class, specimen.getIdLocation().getIdLocation()));
+		locationBean.createTree();
+
+		authorBean.setCollector(specimen.getIdCollector() != null ? specimen.getIdCollector().getIdAuthor() : null);
+		authorBean.setDeterminer(specimen.getIdDeterminer() != null ? specimen.getIdDeterminer().getIdAuthor() : null);
+		authorBean.setSpecificEpiteth(
+				specimen.getIdEpithetAuthor() != null ? specimen.getIdEpithetAuthor().getIdAuthor() : null);
+		authorBean.restartAuthorTypes();
+
+		collectionBean.setCatalog(specimen.getIdCatalog());
 	}
 
 	public Specimen getSpecimen() {
@@ -269,7 +289,11 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 		this.specimenForm = specimenForm;
 	}
 
-	public List<Specimen> getSearchSpecimen() {
+	public List<Specimen> getSearchSpecimens() {
+		return searchSpecimens;
+	}
+
+	public Specimen getSearchSpecimen() {
 		return searchSpecimen;
 	}
 
@@ -412,20 +436,52 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 				locArray.put(data);
 			}
 
+			Integer idAuthor = null;
+			Author author = null;
+
+			if (specimen.getIdDeterminer() != null) {
+				idAuthor = specimen.getIdDeterminer().getIdAuthor();
+				if (idAuthor != null)
+					author = ObjectRetriever.getObjectFromId(Author.class, idAuthor);
+			}
+
 			taxData.put("specificEpithet", specimen.getSpecificEpithet() == null ? "" : specimen.getSpecificEpithet());
 			taxData.put("commonName", specimen.getCommonName());
+			taxData.put("determiner", author != null ? author.getAuthorName() : "");
+
+			author = null;
+			if (specimen.getIdEpithetAuthor() != null) {
+				idAuthor = specimen.getIdEpithetAuthor().getIdAuthor();
+				if (idAuthor != null)
+					author = ObjectRetriever.getObjectFromId(Author.class, idAuthor);
+			}
+
+			taxData.put("authorEpithet", author != null ? author.getAuthorName() : "");
 			taxData.put("idenComment", specimen.getIdenComment() == null ? "" : specimen.getIdenComment());
 			taxData.put("idenDate", formatDate(specimen.getIdenDate()));
+
+			author = null;
+			if (specimen.getIdCollector() != null) {
+				idAuthor = specimen.getIdCollector().getIdAuthor();
+				if (idAuthor != null)
+					author = ObjectRetriever.getObjectFromId(Author.class, idAuthor);
+			}
+
 			locData.put("lat", specimen.getIdLocation().getLatitude());
 			locData.put("lon", specimen.getIdLocation().getLongitude());
 			locData.put("alt", specimen.getIdLocation().getAltitude());
+			locData.put("collector", author != null ? author.getAuthorName() : "");
 			locData.put("collectDate", formatDate(specimen.getCollectDate()));
 			locData.put("collectComment", specimen.getCollectComment() == null ? "" : specimen.getCollectComment());
+
 			colData.put("regType", specimen.getIdRety().getRetyName());
 			colData.put("samType", specimen.getIdSaty().getSatyName());
+			colData.put("companyName",
+					specimen.getIdCatalog().getIdCollection().getIdInstitution().getInstitutionName());
 			colData.put("collectionName", specimen.getIdCatalog().getIdCollection().getCollectionName());
 			colData.put("idBioreg", specimen.getIdBioreg());
 			colData.put("catalogName", specimen.getIdCatalog().getCatalogName());
+
 			specimenInfo.put("taxArray", taxArray);
 			specimenInfo.put("locArray", locArray);
 			specimenInfo.put("taxData", taxData);

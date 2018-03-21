@@ -58,8 +58,7 @@ public class ApplicationListener implements ServletContextListener, HttpSessionL
 			messages.load(sce.getServletContext().getResourceAsStream(Constant.MESSAGES_FILE));
 			MessagesService.getInstance().loadMessages(messages);
 		} catch (Exception e) {
-			e.printStackTrace();
-			LOGGER.log(Level.WARNING, "Error inicializando: {0}", e.getMessage());
+			LOGGER.log(Level.WARNING, "Error inicializando: {0}", e);
 		}
 	}
 

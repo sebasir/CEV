@@ -1,128 +1,148 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:h="http://java.sun.com/jsf/html">
-    <f:metadata>
-        <f:viewParam name="idSpecimen" value="#{specimenContentBean.specimenDetail}" />
-        <f:viewParam name="idSpecimen" value="#{specimenBean.specimenDetail}" />
-    </f:metadata>
-    <h:head>
-        <script src="js/jquery-1.11.3.js" type="text/javascript"></script>
-        <script src="bootstrap/js/bootstrap.js" type="text/javascript"></script>
-        <link href="bootstrap/css/bootstrap.css" rel="stylesheet" />
-        <link href="css/temporal.css" rel="stylesheet" />	   
-    </h:head>
-    <h:body style="width: 768px">
-        <div class="row">
-            <div class="col-sm-8">
-                <label class="titulo">#{specimenBean.specimen.commonName} (#{specimenBean.specimen.idTaxonomy.taxonomyName} #{specimenBean.specimen.specificEpithet})</label>
-                <p:graphicImage value="#{specimenContentBean.getSpecimenThumb()}" width="100%">
-                    <f:param name="idSpecimen" value="#{specimenContentBean.specimenDetail}" />
-                </p:graphicImage>
-                <label class="titulo">UBICACIÓN GEOGRÁFICA</label>
-                <div id="map" style="width: 100%; height: 250px;"></div>
-            </div>
-            <div class="col-sm-4" style="max-height: 500px; overflow-y: scroll; overflow-x: hidden">
-                <div class="row">
-                    <div id="taxData">
-                        <label class="titulo">DATOS DE CLASIFICACIÓN</label>				    
-                    </div>
-                </div>
-                <div class="row">
-                    <div id="locData">
-                        <label class="titulo">DATOS DE UBICACIÓN</label>
-                    </div>
-                </div>
-                <div class="row">
-                    <div id="colData">
-                        <label class="titulo">DATOS DE COLECCIÓN</label>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <script src="https://maps.googleapis.com/maps/api/js"></script>
-        <script>
-            var specimenObj = #{specimenBean.printJSON()};
-            $(window).load(function () {
-                initialize();
-            });
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html">
+<f:metadata>
+	<f:viewParam name="idSpecimen"
+		value="#{specimenContentBean.specimenDetail}" />
+	<f:viewParam name="idSpecimen" value="#{specimenBean.specimenDetail}" />
+</f:metadata>
+<h:head>
+	<h:outputScript library="primefaces" name="jquery/jquery.js" />
+	<script src="bootstrap/js/bootstrap.js" type="text/javascript"></script>
+	<link href="bootstrap/css/bootstrap.css" rel="stylesheet" />
+	<link href="css/temporal.css" rel="stylesheet" />
+</h:head>
+<h:body>
+	<div class="row">
+		<div class="col-md-4">
+			<label class="titulo">#{specimenBean.specimen.commonName}
+				(#{specimenBean.specimen.idTaxonomy.taxonomyName}
+				#{specimenBean.specimen.specificEpithet})</label>
+			<p:graphicImage value="#{specimenContentBean.getSpecimenThumb()}"
+				width="100%">
+				<f:param name="idSpecimen"
+					value="#{specimenContentBean.specimenDetail}" />
+			</p:graphicImage>
+			<label class="titulo">UBICACIÓN GEOGRÁFICA</label>
+			<div id="map" style="width: 100%; height: 250px;"></div>
+		</div>
+		<div class="col-md-4">
+			<div id="taxData">
+				<label class="titulo">DATOS DE CLASIFICACIÓN</label>
+				<table id="taxTable"
+					class="table table-sm table-hover table-condensed">
+					<tbody id="taxTableBody"></tbody>
+				</table>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div id="locData">
+				<label class="titulo">DATOS DE UBICACIÓN</label>
+				<table id="locTable"
+					class="table table-sm table-hover table-condensed">
+					<tbody id="locTableBody"></tbody>
+				</table>
+			</div>
+			<div id="colData">
+				<label class="titulo">DATOS DE COLECCIÓN</label>
+				<table id="colTable"
+					class="table table-sm table-hover table-condensed">
+					<tbody id="colTableBody"></tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<script
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBR3PcM4cz5r0TULxJuDBgF2xvLqLE73c"></script>
+	<script>
+		var specimenObj = #{specimenBean.printJSON()};
+		var lat = 0;
+	    var lon = 0;
+		$(window).ready(function () {
+		    if (specimenObj) {
+		        if (specimenObj.error) {
+		            alert(specimenObj.error);
+		        } else {
+		            var $taxData = $('#taxTableBody');
+		            for (var obj in specimenObj.taxArray) {
+		                $taxData.append('<tr><td><label>' + specimenObj.taxArray[obj].label + ':</label></td><td>' + specimenObj.taxArray[obj].value + '</td></tr>');
+		            }
+		            
+		            $taxData.append('<tr><td><label>Epiteto específico:</label></td><td>' + specimenObj.taxData.specificEpithet + '</td></tr>');
+		            $taxData.append('<tr><td><label>Nombre Común:</label></td><td>' + specimenObj.taxData.commonName + '</td></tr>');
+		            $taxData.append('<tr><td><label>Determinador:</label></td><td>' + specimenObj.taxData.determiner + '</td></tr>');
+		            $taxData.append('<tr><td><label>Autor Epiteto Específico:</label></td><td>' + specimenObj.taxData.authorEpithet + '</td></tr>');
+		            $taxData.append('<tr><td><label>Comentario de Identificación:</label></td><td>' + specimenObj.taxData.idenComment + '</td></tr>');
+		            $taxData.append('<tr><td><label>Fecha de identificación:</label></td><td>' + specimenObj.taxData.idenDate + '</td></tr>');
+		            
+		            var $locData = $('#locTableBody');
+		            for (var obj in specimenObj.locArray) {
+		                $locData.append('<tr><td><label>' + specimenObj.locArray[obj].label + '</label></td><td>' + specimenObj.locArray[obj].value + '</td></tr>');
+		            }
+		            $locData.append('<tr><td><label>Latitud:</label></td><td>' + specimenObj.locData.lat + '</td></tr>');
+		            $locData.append('<tr><td><label>Longitud:</label></td><td>' + specimenObj.locData.lon + '</td></tr>');
+		            
+		            lat = specimenObj.locData.lat;
+		            lon = specimenObj.locData.lon
+		            
+		            $locData.append('<tr><td><label>Altitud:</label></td><td>' + specimenObj.locData.alt + '</td></tr>');
+		            $locData.append('<tr><td><label>Colector:</label></td><td>' + specimenObj.locData.collector + '</td></tr>');
+		            $locData.append('<tr><td><label>Fecha:</label></td><td>' + specimenObj.locData.collectDate + '</td></tr>');
+		            $locData.append('<tr><td><label>Comentarios del colector:</label></td><td>' + specimenObj.locData.collectComment + '</td></tr>');
+		            
+		            var $colData = $('#colTableBody');
+		            $colData.append('<tr><td><label>Nombre de la Entidad:</label></td><td>' + specimenObj.colData.companyName + '</td></tr>');
+		            $colData.append('<tr><td><label>Tipo de Registro:</label></td><td>' + specimenObj.colData.regType + '</td></tr>');
+		            $colData.append('<tr><td><label>Tipo de Muestra:</label></td><td>' + specimenObj.colData.samType + '</td></tr>');
+		            $colData.append('<tr><td><label>Nombre de la colección biológica:</label></td><td>' + specimenObj.colData.collectionName + '</td></tr>');
+		            $colData.append('<tr><td><label>ID del registro biológico:</label></td><td>' + specimenObj.colData.idBioreg + '</td></tr>');
+		            $colData.append('<tr><td><label>Numero de Catalogo:</label></td><td>' + specimenObj.colData.catalogName + '</td></tr>');
+		        }
+		    } else {
+		        alert('No se ha podido cargar la información del espécimen');
+		    }
+		    initialize();
+		});
 
-            $(window).ready(function () {
-                if (specimenObj) {
-                    if (specimenObj.error) {
-                        alert(specimenObj.error);
-                    } else {
-                        var $taxData = $('#taxData');
-                        for (var obj in specimenObj.taxArray) {
-                            $taxData.append('<div class="row"><div class="col-sm-5"><label>' + specimenObj.taxArray[obj].label + ':</label></div><div class="col-sm-5">' + specimenObj.taxArray[obj].value + '</div></div>');
-                        }
-                        $taxData.append('<div class="row"><div class="col-sm-5"><label>Nombre Común:</label></div><div class="col-sm-5">' + specimenObj.taxData.commonName + '</div></div>');
-                        $taxData.append('<div class="row"><div class="col-sm-5"><label>Determinador:</label></div><div class="col-sm-5">' + specimenObj.taxData.determiner + '</div></div>');
-                        $taxData.append('<div class="row"><div class="col-sm-5"><label>Fecha de identificación:</label></div><div class="col-sm-5">' + specimenObj.taxData.idenDate + '</div></div>');
-                        $taxData.append('<div class="row"><div class="col-sm-5"><label>Epiteto específico:</label></div><div class="col-sm-5">' + specimenObj.taxData.specificEpithet + '</div></div>');
-                        var $locData = $('#locData');
-                        for (var obj in specimenObj.locArray) {
-                            $locData.append('<div class="row"><div class="col-sm-5"><label>' + specimenObj.locArray[obj].label + '</label></div><div class="col-sm-5">' + specimenObj.locArray[obj].value + '</div></div>');
-                        }
-                        $locData.append('<div class="row"><div class="col-sm-5"><label>Latitud:</label></div><div class="col-sm-5">' + specimenObj.locData.lat + '</div></div>');
-                        $locData.append('<div class="row"><div class="col-sm-5"><label>Longitud:</label></div><div class="col-sm-5">' + specimenObj.locData.lon + '</div></div>');
-                        $locData.append('<div class="row"><div class="col-sm-5"><label>Altitud:</label></div><div class="col-sm-5">' + specimenObj.locData.alt + '</div></div>');
-                        $locData.append('<div class="row"><div class="col-sm-5"><label>Colector:</label></div><div class="col-sm-5">' + specimenObj.locData.collector + '</div></div>');
-                        $locData.append('<div class="row"><div class="col-sm-5"><label>Fecha:</label></div><div class="col-sm-5">' + specimenObj.locData.collectDate + '</div></div>');
-                        $locData.append('<div class="row"><div class="col-sm-5"><label>Comentarios del colector:</label></div><div class="col-sm-5">' + specimenObj.locData.collectComment + '</div></div>');
-                        var $colData = $('#colData');
-                        $colData.append('<div class="row"><div class="col-sm-5"><label>Nombre de la Entidad:</label></div><div class="col-sm-5">' + specimenObj.colData.companyName + '</div></div>');
-                        $colData.append('<div class="row"><div class="col-sm-5"><label>Tipo de Registro:</label></div><div class="col-sm-5">' + specimenObj.colData.regType + '</div></div>');
-                        $colData.append('<div class="row"><div class="col-sm-5"><label>Tipo de Muestra:</label></div><div class="col-sm-5">' + specimenObj.colData.samType + '</div></div>');
-                        $colData.append('<div class="row"><div class="col-sm-5"><label>Nombre de la colección biológica:</label></div><div class="col-sm-5">' + specimenObj.colData.collectionName + '</div></div>');
-                        $colData.append('<div class="row"><div class="col-sm-5"><label>ID del registro biológico:</label></div><div class="col-sm-5">' + specimenObj.colData.idBioreg + '</div></div>');
-                        $colData.append('<div class="row"><div class="col-sm-5"><label>Numero de Catalogo:</label></div><div class="col-sm-5">' + specimenObj.colData.catalogName + '</div></div>');
-                    }
-                } else {
-                    alert('No se ha podido cargar la información del espécimen');
-                }
-            });
+		function initialize() {
+		    var mapCanvas = document.getElementById('map');
+		    var mapOptions = {zoom: 10};
+		    var map = new google.maps.Map(mapCanvas, mapOptions);
+		    geocodeAddress(map);
+		}
 
-            function initialize() {
-                var mapCanvas = document.getElementById('map');
-                var mapOptions = {zoom: 10};
-                var map = new google.maps.Map(mapCanvas, mapOptions);
-                geocodeAddress(map);
-            }
+		function geocodeAddress(map) {
+		    var geocoder = new google.maps.Geocoder();
+		    var pt;
+		    if (lat === 0 || lon === 0) {
+		        geocoder.geocode({
+		            'address': '#{specimenContentBean.specimen.idLocation.locationName}'
+		        }, function (results, status) {
+		            if (status === google.maps.GeocoderStatus.OK) {
+		                pt = results[0].geometry.location;
+		            } else {
+		                console.log('Ubicación desconocida!!!');
+		            }
+		            centerMap(pt, map);
+		        });
+		    } else {
+		        pt = new google.maps.LatLng(lat, lon);
+		        centerMap(pt, map);
+		    }
+		}
 
-            function geocodeAddress(map) {
-                var geocoder = new google.maps.Geocoder();
-                var pt;
-                var lat = #{specimenContentBean.specimen.idLocation.latitude};
-                var lon = #{specimenContentBean.specimen.idLocation.longitude};
-                if (lat === 0 || lon === 0) {
-                    geocoder.geocode({
-                        'address': '#{specimenContentBean.specimen.idLocation.locationName}'
-                    }, function (results, status) {
-                        if (status === google.maps.GeocoderStatus.OK) {
-                            pt = results[0].geometry.location;
-                        } else {
-                            console.log('Ubicación desconocida!!!');
-                        }
-                        centerMap(pt, map);
-                    });
-                } else {
-                    pt = new google.maps.LatLng(lat, lon);
-                    centerMap(pt, map);
-                }
-            }
-
-            function centerMap(pt, map) {
-                map.setCenter(pt);
-                var marker = new google.maps.Marker({
-                    position: pt,
-                    icon: 'images/utils/bee_marker.png',
-                    title: '#{specimenContentBean.specimen.commonName}'
-                });
-                marker.setMap(map);
-            }
-        </script>
-    </h:body>
+		function centerMap(pt, map) {
+		    map.setCenter(pt);
+		    var marker = new google.maps.Marker({
+		        position: pt,
+		        icon: 'images/utils/bee_marker.png',
+		        title: '#{specimenContentBean.specimen.commonName}'
+		    });
+		    marker.setMap(map);
+		}
+	</script>
+</h:body>
 </html>

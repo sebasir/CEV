@@ -3,6 +3,12 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:f="http://java.sun.com/jsf/core">
+
+	<script src="../js/fancybox/jquery.fancybox.js?v=2.1.5"
+		type="text/javascript"></script>
+	<link href="../js/fancybox/jquery.fancybox.css?v=2.1.5" type="text/css"
+		rel="stylesheet" media="screen" />
+
 	<h:form id="deleteModalForm">
 		<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
 			aria-labelledby="Eliminar registro">
@@ -43,7 +49,7 @@
 						<div class="col-md-2">
 							<h:inputText id="nombreComun"
 								styleClass="ui-state-default form-control input-sm input-block-level required"
-								value="#{specimenBean.specimen.commonName}">
+								value="#{specimenBean.searchSpecimen.commonName}">
 								<p:ajax process="@this" />
 								<f:validateBean disabled="true" />
 							</h:inputText>
@@ -53,7 +59,7 @@
 						<div class="col-md-2">
 							<h:inputText id="epiteto"
 								styleClass="ui-state-default form-control input-sm input-block-level required"
-								value="#{specimenBean.specimen.specificEpithet}">
+								value="#{specimenBean.searchSpecimen.specificEpithet}">
 								<p:ajax process="@this" />
 								<f:validateBean disabled="true" />
 							</h:inputText>
@@ -63,7 +69,7 @@
 						<div class="col-md-2">
 							<h:inputText id="bioreg"
 								styleClass="ui-state-default form-control input-sm input-block-level required"
-								value="#{specimenBean.specimen.idBioreg}">
+								value="#{specimenBean.searchSpecimen.idBioreg}">
 								<p:ajax process="@this" />
 								<f:validateBean disabled="true" />
 							</h:inputText>
@@ -74,7 +80,7 @@
 							Taxonómico:</label>
 						<div class="col-md-2">
 							<p:autoComplete id="taxonomyName" dropdown="true"
-								value="#{specimenBean.specimen.idTaxonomy}"
+								value="#{specimenBean.searchSpecimen.idTaxonomy}"
 								completeMethod="#{specimenBean.taxonomysQuery}" var="tax"
 								itemLabel="#{tax.taxonomyName}" itemValue="#{tax}"
 								forceSelection="true" converter="TaxonomyConverter">
@@ -85,10 +91,10 @@
 				</div>
 				<hr />
 				<h:panelGroup layout="block"
-					rendered="#{specimenBean.searchSpecimen != null and !specimenBean.searchSpecimen.isEmpty()}"
+					rendered="#{specimenBean.searchSpecimens != null and !specimenBean.searchSpecimens.isEmpty()}"
 					styleClass="pull-right">
 					<p>
-						Mostrando <b>#{specimenBean.searchSpecimen.size()}</b> de <b>#{specimenBean.pager.numberOfResults}</b>
+						Mostrando <b>#{specimenBean.searchSpecimens.size()}</b> de <b>#{specimenBean.pager.numberOfResults}</b>
 						registros
 					</p>
 				</h:panelGroup>
@@ -100,8 +106,8 @@
 					update="formSpecimen" value="Limpiar" />
 			</div>
 			<h:dataTable id="dataTableSpecimen"
-				rendered="#{specimenBean.searchSpecimen  != null and !specimenBean.searchSpecimen.isEmpty()}"
-				value="#{specimenBean.searchSpecimen}" var="specimen"
+				rendered="#{specimenBean.searchSpecimens != null and !specimenBean.searchSpecimens.isEmpty()}"
+				value="#{specimenBean.searchSpecimens}" var="specimen"
 				styleClass="table table-hover table-condensed">
 				<h:column>
 					<f:facet name="header">Nombre Científico</f:facet>
@@ -127,20 +133,20 @@
 				</h:column>
 				<h:column>
 					<f:facet name="header">Acciones</f:facet>
-					<p:commandLink id="viewButton"
-						class="btn btn-default btn-sm btn-action"
-						oncomplete="PF('specimenDetail').show()"
-						title="Ficha técnica de #{specimen.commonName}"
-						actionListener="#{specimenBean.setSpecimen(specimen)}">
+					<h:outputLink value="../specimenDetail.xhtml"
+						class="btn btn-default btn-sm btn-action fancybox fancybox.iframe"
+						title="#{specimen.commonName}">
+						<f:param name="idSpecimen" value="#{specimen.idSpecimen}" />
 						<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
-					</p:commandLink>
+					</h:outputLink>
 					<p:commandLink id="editButton"
 						class="btn btn-default btn-sm btn-action"
-						oncomplete="PF('specimenWizard').show()"
-						update=":formDialog :specimenWizardForm"
-						title="Editar #{specimen.commonName}"
-						actionListener="#{specimenBean.prepareUpdate(specimen)}">
+						title="Editar #{specimen.commonName}" ajax="false">
 						<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+						<f:actionListener
+							binding="#{navigationBean.setNavigablePage('wizard.xhtml')}" />
+						<f:actionListener
+							binding="#{specimenBean.prepareUpdate(specimen)}" />
 					</p:commandLink>
 					<p:commandLink id="deleteButton"
 						class="btn btn-default btn-sm btn-action"
@@ -152,7 +158,7 @@
 				</h:column>
 			</h:dataTable>
 			<h:panelGroup id="paginator"
-				rendered="#{specimenBean.searchSpecimen != null and !specimenBean.searchSpecimen.isEmpty()}">
+				rendered="#{specimenBean.searchSpecimens != null and !specimenBean.searchSpecimens.isEmpty()}">
 				<nav aria-label="Page navigation" class="paginador">
 					<ul class="pagination pagination-lg">
 						<li><p:commandLink id="first" title="Primera página"
@@ -190,163 +196,12 @@
 		<p:growl id="messages" showDetail="true" />
 	</h:form>
 
-	<p:dialog id="formDialog" widgetVar="specimenWizard" modal="true"
-		resizable="false" appendTo="@(body)" header="#{specimenBean.header}"
-		closeOnEscape="true" width="500px" styleClass="disable-scroll">
-		<h:form id="specimenWizardForm" prependId="false">
-			<p:wizard flowListener="#{specimenBean.onFlowProcess}"
-				nextLabel="Siguiente" backLabel="Anterior">
-				<p:tab title="1">
-					<p:separator />
-					<p:outputLabel value="Datos de Clasificación" styleClass="title" />
-					<p:separator />
-					<p:outputLabel value="Selecciona una clasificación del arbol:" />
-					<p:outputPanel styleClass="tree">
-						<p:tree id="taxTree" value="#{taxonomyBean.taxRoot}" var="tax"
-							orientation="vertical" cache="false" selectionMode="single"
-							selection="#{taxonomyBean.selectedNode}" dynamic="true"
-							animate="true" style="width: 95%">
-							<p:treeNode expandedIcon="ui-icon-folder-open"
-								collapsedIcon="ui-icon-folder-collapsed">
-								<h:outputText value="#{tax}" />
-							</p:treeNode>
-						</p:tree>
-					</p:outputPanel>
-					<p:separator />
-					<p:panelGrid layout="grid" columns="2">
-						<p:outputLabel value="Epiteto Específico:" for="specificEphitet" />
-						<p:inputText id="specificEphitet"
-							value="#{specimenBean.specimen.specificEpithet}"
-							title="Eptiteto Específico" rendered="true" />
-						<p:outputLabel value="Nombre Común:" for="commonName" />
-						<p:inputText id="commonName"
-							value="#{specimenBean.specimen.commonName}" title="Nombre Común"
-							rendered="true" required="true"
-							requiredMessage="Debes definir el nombre común!" />
-						<p:outputLabel value="Fecha:" for="idenDate" />
-						<p:calendar id="idenDate"
-							value="#{specimenBean.specimen.idenDate}" pattern="dd-MM-yyyy"
-							locale="es" navigator="true" />
-						<p:outputLabel value="Comentarios de Identificación:"
-							for="idenComment" />
-						<p:inputTextarea id="idenComment" rows="3"
-							value="#{specimenBean.specimen.idenComment}" />
-					</p:panelGrid>
-					<p:separator />
-				</p:tab>
-				<p:tab title="2">
-					<p:separator />
-					<p:outputLabel value="Datos de Ubicación" styleClass="title" />
-					<p:separator />
-					<p:outputLabel value="Selecciona una ubicación del arbol:" />
-					<p:outputPanel styleClass="tree">
-						<p:tree id="locTree" value="#{locationBean.locRoot}" var="loc"
-							orientation="vertical" cache="true" selectionMode="single"
-							selection="#{locationBean.selectedNode}" dynamic="true"
-							animate="true" style="width: 95%">
-							<p:treeNode expandedIcon="ui-icon-folder-open"
-								collapsedIcon="ui-icon-folder-collapsed">
-								<h:outputText value="#{loc}" />
-							</p:treeNode>
-						</p:tree>
-					</p:outputPanel>
-					<p:separator />
-					<p:panelGrid layout="grid" columns="2">
-						<p:outputLabel value="Fecha de Colecta:" for="collectDate" />
-						<p:calendar id="collectDate"
-							value="#{specimenBean.specimen.collectDate}" pattern="dd-MM-yyyy"
-							locale="es" navigator="true" />
-						<p:outputLabel value="Comentarios de Colecta" for="collectComment" />
-						<p:inputTextarea id="collectComment" rows="3"
-							value="#{specimenBean.specimen.collectComment}" />
-					</p:panelGrid>
-					<p:separator />
-				</p:tab>
-				<p:tab title="3">
-					<p:separator />
-					<p:outputLabel value="Datos de Colección" styleClass="title" />
-					<p:separator />
-					<p:panelGrid layout="grid" columns="2">
-						<p:outputLabel value="ID del Registro Biológico:" for="idRegBio" />
-						<p:inputText id="idRegBio"
-							value="#{specimenBean.specimen.idBioreg}"
-							title="ID del registro biiológico" rendered="true" />
-					</p:panelGrid>
-					<p:separator />
-				</p:tab>
-				<p:tab title="4">
-					<p:separator />
-					<p:outputLabel value="Resumen de Creación" styleClass="title" />
-					<p:separator />
-					<p:outputLabel value="Datos de Clasificación"
-						styleClass="bolded cursive" />
-					<p:panelGrid columns="2" layout="grid" styleClass="panelRes">
-						<p:outputLabel value="Clasificación científica:" />
-						<p:outputLabel value="#{taxonomyBean.getNodeName()}"
-							styleClass="bolded" />
-						<p:outputLabel value="Epiteto específico:" />
-						<p:outputLabel value="#{specimenBean.specimen.specificEpithet}"
-							styleClass="bolded" />
-						<p:outputLabel value="Nombre Científico:" />
-						<p:outputLabel
-							value="#{taxonomyBean.getNodeName().taxonomyName} #{specimenBean.specimen.specificEpithet}"
-							styleClass="cursive bolded" />
-						<p:outputLabel value="Nombre Común:" />
-						<p:outputLabel value="#{specimenBean.specimen.commonName}"
-							styleClass="bolded" />
-						<p:outputLabel value="Fecha de Identificación:" />
-						<p:outputLabel
-							value="#{specimenBean.formatDate(specimenBean.specimen.idenDate)}"
-							styleClass="bolded" />
-						<p:outputLabel value="Comentarios de Identificación:" />
-						<p:outputLabel value="#{specimenBean.specimen.idenComment}"
-							styleClass="bolded" />
-					</p:panelGrid>
-					<p:separator />
-					<p:outputLabel value="Datos de Clasificación"
-						styleClass="itemlabel bolded cursive" />
-					<p:panelGrid columns="2" layout="grid" styleClass="panelRes">
-						<p:outputLabel value="Clasificación científica:" />
-						<p:outputLabel value="#{locationBean.getNodeName()}"
-							styleClass="bolded" />
-						<p:outputLabel value="Fecha de Colecta:" />
-						<p:outputLabel
-							value="#{specimenBean.formatDate(specimenBean.specimen.collectDate)}"
-							styleClass="bolded" />
-						<p:outputLabel value="Comentarios de Ubicación:" />
-						<p:outputLabel value="#{specimenBean.specimen.collectComment}"
-							styleClass="bolded" />
-					</p:panelGrid>
-					<p:separator />
-					<p:outputLabel value="Datos de Clasificación"
-						styleClass="itemlabel bolded cursive" />
-					<p:panelGrid columns="2" layout="grid" styleClass="panelRes">
-						<p:outputLabel value="Colección:" />
-						<p:outputLabel value="#{specimenBean.collection.collectionName}"
-							styleClass="bolded" />
-						<p:outputLabel value="Catalago:" />
-						<p:outputLabel value="#{specimenBean.catalog.catalogName}"
-							styleClass="bolded" />
-						<p:outputLabel value="Tipo de Registro:" />
-						<p:outputLabel value="#{specimenBean.regType.retyName}"
-							styleClass="bolded" />
-						<p:outputLabel value="Tipo de Muestra:" />
-						<p:outputLabel value="#{specimenBean.sampleType.satyName}"
-							styleClass="bolded" />
-						<p:outputLabel value="ID del Registro Biológico:" />
-						<p:outputLabel value="#{specimenBean.specimen.idBioreg}"
-							styleClass="bolded" />
-					</p:panelGrid>
-					<p:separator />
-					<p:commandButton id="createSave" value="Guardar Espécimen"
-						rendered="#{specimenBean.create}"
-						action="#{specimenBean.persist()}" update=":formSpecimen"
-						oncomplete="PF('specimenWizard').hide()" />
-					<p:commandButton id="editSave" value="Guardar Cambios"
-						rendered="#{!specimenBean.create}" action="#{specimenBean.edit()}"
-						update=":formSpecimen" oncomplete="PF('specimenWizard').hide()" />
-				</p:tab>
-			</p:wizard>
-		</h:form>
-	</p:dialog>
+	<script type="text/javascript">
+		$(window).load(function() {
+			$(".fancybox").fancybox({
+				"width" : "85%",
+				"height" : "70%"
+			});
+		});
+	</script>
 </ui:composition>

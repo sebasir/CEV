@@ -1,6 +1,7 @@
 package net.hpclab.cev.beans;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -12,6 +13,7 @@ import javax.el.ELContext;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -243,5 +245,11 @@ public class UtilsBean implements Serializable {
 
 	public InputStream getInputStream(byte[] byteContent) throws IOException {
 		return new ByteArrayInputStream(byteContent);
+	}
+
+	public InputStream getInputStream(String fileName, FacesContext facesContext) throws IOException {
+		ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
+		String absoluteDiskPath = servletContext.getRealPath(fileName);
+		return new FileInputStream(absoluteDiskPath);
 	}
 }

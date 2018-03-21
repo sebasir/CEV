@@ -44,6 +44,7 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 	private SpecimenContent specimenContent;
 	private SpecimenContent specimenContentSearch;
 	private UploadedFile contentFile;
+	private String specimenDetail;
 
 	private static final Logger LOGGER = Logger.getLogger(SpecimenContentBean.class.getName());
 
@@ -233,7 +234,9 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 					return new DefaultStreamedContent(super.getInputStream(s.getFileContent()), "image/jpeg");
 				}
 			}
-			return null;
+			return new DefaultStreamedContent(
+					super.getInputStream(Constant.DEFAULT_SPECIMEN_IMAGE, FacesContext.getCurrentInstance()),
+					"image/jpeg");
 		}
 	}
 
@@ -332,5 +335,13 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 
 	public List<SpecimenContent> getContentSpecimen() {
 		return contentSpecimen;
+	}
+
+	public String getSpecimenDetail() {
+		return specimenDetail;
+	}
+
+	public void setSpecimenDetail(String specimenDetail) {
+		this.specimenDetail = specimenDetail;
 	}
 }
