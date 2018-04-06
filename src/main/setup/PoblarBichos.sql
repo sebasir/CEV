@@ -1280,7 +1280,7 @@ insert into specimen values(default, null, 'Mosco', 26, 2, null , to_date('01/01
 /*1*/insert into modules values (default, 'Gestión de Colecciones', 'Permite a los administradores estructurar los catálogos y las colecciones donde yacen los especímenes.', 1, null, null, null, null);
 /*2*/insert into modules values (default, 'Gestión de Usuarios', 'Permite controlar y realizar seguimiento a los usuarios de la colección entomológica, además de cambiar y asignar roles de usuario (compuestos por accesos a la aplicación), nivel de acceso, cambio de credenciales e información del perfil.', 9, null, null, null, null);
 /*3*/insert into modules values (default, 'Reporteador', 'Permite extraer estadísticos en listados de la información contenida en la colección así como el uso que se le da a esta, permitiendo su exportación.', 14, 'dummy.xhtml', 'pe-7s-display2', 'REPORTER', null);
-/*4*/insert into modules values (default, 'Configuración', 'Permite definir algunas configuraciones del Centro Cntomológico Virtual.', 15, 'dummy.xhtml', 'pe-7s-config', 'SETTINGS', null);
+/*4*/insert into modules values (default, 'Configuración', 'Permite definir algunas configuraciones del Centro Cntomológico Virtual.', 15, 'envConfig.xhtml', 'pe-7s-config', 'SETTINGS', null);
 
 /*5*/insert into modules values (default, 'Asistente de Creación', 'Permite crear ejemplares en la colección.', 2, 'wizard.xhtml', 'pe-7s-plus', 'WIZARD', 1);
 /*6*/insert into modules values (default, 'Clasificaciones', 'Permite realizar cambios en la lista de dominio de la clasificación taxonómica de manera jerárquica.', 3, 'taxonomy.xhtml', 'pe-7s-ticket', 'TAXONOMY', 1);
