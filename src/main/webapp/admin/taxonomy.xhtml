@@ -3,6 +3,12 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:f="http://java.sun.com/jsf/core">
+
+	<script src="../js/fancybox/jquery.fancybox.js?v=2.1.5"
+		type="text/javascript"></script>
+	<link href="../js/fancybox/jquery.fancybox.css?v=2.1.5" type="text/css"
+		rel="stylesheet" media="screen" />
+
 	<h:outputStylesheet library="css" name="pstyle.css" />
 	<h:body>
 		<!-- delete Modal -->
@@ -187,13 +193,12 @@
 									<div class="row">
 										<h:outputText class="col-md-10"
 											value="#{specimen.idTaxonomy.taxonomyName} #{specimen.specificEpithet} (#{specimen.commonName})" />
-										<p:commandLink id="viewButton"
-											class="btn btn-default btn-sm btn-action"
-											oncomplete="PF('specimenDetail').show()"
-											title="Ficha técnica de #{specimen.commonName}"
-											actionListener="#{specimenBean.setSpecimen(specimen)}">
+										<h:outputLink value="../specimenDetail.xhtml"
+											class="btn btn-default btn-sm btn-action fancybox fancybox.iframe"
+											title="#{specimen.commonName}">
+											<f:param name="idSpecimen" value="#{specimen.idSpecimen}" />
 											<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
-										</p:commandLink>
+										</h:outputLink>
 									</div>
 									<hr />
 								</ui:repeat>
@@ -214,7 +219,7 @@
 		<h:form id="formTaxonomy">
 			<p:growl id="growl" showDetail="true" />
 			<p:tree id="taxTree" value="#{taxonomyBean.taxRoot}" var="tax"
-				orientation="horizontal" selectionMode="single"
+				orientation="horizontal" selectionMode="single" ajax="true"
 				selection="#{taxonomyBean.selectedNode}">
 				<p:ajax event="select" listener="#{taxonomyBean.onNodeSelect}"
 					update="growl" />
@@ -248,4 +253,13 @@
 			</p:contextMenu>
 		</h:form>
 	</h:body>
+
+	<script type="text/javascript">
+		$(window).load(function() {
+			$(".fancybox").fancybox({
+				"width" : "85%",
+				"height" : "70%"
+			});
+		});
+	</script>
 </ui:composition>

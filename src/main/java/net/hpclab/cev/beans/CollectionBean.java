@@ -41,8 +41,6 @@ public class CollectionBean extends UtilsBean implements Serializable {
 	private static final long serialVersionUID = -7407272469474484227L;
 	private DataBaseService<Collection> collectionService;
 	private DataBaseService<Catalog> catalogService;
-	// private DataBaseService<SampleType> sampleTypeService;
-	// private DataBaseService<RegType> regTypeService;
 	private Constant.CollectionClassType classType;
 	private Integer objectId;
 	private String selectedInstitution;
@@ -71,8 +69,6 @@ public class CollectionBean extends UtilsBean implements Serializable {
 	public CollectionBean() throws Exception {
 		collectionService = new DataBaseService<>(Collection.class);
 		catalogService = new DataBaseService<>(Catalog.class);
-		// sampleTypeService = new DataBaseService<>(SampleType.class);
-		// regTypeService = new DataBaseService<>(RegType.class);
 	}
 
 	@PostConstruct
@@ -228,7 +224,7 @@ public class CollectionBean extends UtilsBean implements Serializable {
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
 
-	private void createTree() {
+	public void createTree() {
 		tree = new HashMap<>();
 		abstractMap = new HashMap<>();
 		TreeHierachyModel fatherNode = new TreeHierachyModel();
@@ -264,6 +260,14 @@ public class CollectionBean extends UtilsBean implements Serializable {
 			tree.put(Constant.CATALOG_HINT + c.getIdCatalog(),
 					new DefaultTreeNode(c, tree.get(Constant.COLLECTION_HINT + c.getIdCollection().getIdCollection())));
 		}
+		
+		TreeNode n = null;
+		if (catalog != null) {
+			n = tree.get(Constant.CATALOG_HINT + catalog.getIdCatalog());
+			collection = (Collection) n.getParent().getData();
+		}
+		
+		openBranch(n);
 
 		specimenCollection = new HashMap<>();
 		for (Specimen s : DataWarehouse.getInstance().allSpecimens) {
