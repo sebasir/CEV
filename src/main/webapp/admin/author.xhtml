@@ -249,13 +249,12 @@
 								<div class="row">
 									<h:outputText class="col-md-10"
 										value="#{specimen.idTaxonomy.taxonomyName} #{specimen.specificEpithet} (#{specimen.commonName})" />
-									<p:commandLink id="viewButton"
-										class="btn btn-default btn-sm btn-action"
-										oncomplete="PF('specimenDetail').show()"
-										title="Ficha técnica de #{specimen.commonName}"
-										actionListener="#{specimenBean.setSpecimen(specimen)}">
+									<h:outputLink value="../specimenDetail.xhtml"
+										class="btn btn-default btn-sm btn-action fancybox fancybox.iframe"
+										title="#{specimen.commonName}">
+										<f:param name="idSpecimen" value="#{specimen.idSpecimen}" />
 										<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
-									</p:commandLink>
+									</h:outputLink>
 								</div>
 								<hr />
 							</ui:repeat>
@@ -308,12 +307,13 @@
 			</h:column>
 			<h:column>
 				<f:facet name="header">Acciones</f:facet>
-				<h:outputLink value="../specimenDetail.xhtml"
-						class="btn btn-default btn-sm btn-action fancybox fancybox.iframe"
-						title="#{specimen.commonName}">
-						<f:param name="idSpecimen" value="#{specimenContent.idSpecimen.idSpecimen}" />
-						<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
-					</h:outputLink>
+				<p:commandLink id="viewButton"
+					class="btn btn-default btn-sm btn-action"
+					oncomplete="$('#detailModal').modal({backdrop: false})"
+					update="detailAuthorModalForm" title="Ver detalle"
+					actionListener="#{authorBean.specimenDetail(author)}">
+					<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
+				</p:commandLink>
 				<p:commandLink id="editButton"
 					class="btn btn-default btn-sm btn-action"
 					oncomplete="$('#editModal').modal({backdrop: false})"

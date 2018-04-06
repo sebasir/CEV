@@ -490,9 +490,11 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 			if (location != null && location.getIdLocation() != null)
 				location = ObjectRetriever.getObjectFromId(Location.class, location.getIdLocation());
 
-			locData.put("lat", location.getLatitude());
-			locData.put("lon", location.getLongitude());
-			locData.put("alt", location.getAltitude());
+			if (location != null) {
+				locData.put("lat", location.getLatitude());
+				locData.put("lon", location.getLongitude());
+				locData.put("alt", location.getAltitude());
+			}
 			locData.put("collector", author != null ? author.getAuthorName() : "");
 			locData.put("collectDate", formatDate(specimen.getCollectDate()));
 			locData.put("collectComment", specimen.getCollectComment() == null ? "" : specimen.getCollectComment());

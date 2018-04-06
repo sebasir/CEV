@@ -6,7 +6,14 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core">
 <h:head>
-	<title>Colección Entomológica 3D - Bichos</title>
+	<title>Colección Entomológica Virtual</title>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="description" content="" />
+	<meta name="author" content="" />
+	<link rel="icon" type="image/png"
+		href="images/utils/bug-silhouette-dark.png" />
 	<link href="bootstrap/css/bootstrap.css" type="text/css"
 		rel="stylesheet" />
 	<link href="css/default.css" type="text/css" rel="stylesheet" />
@@ -66,7 +73,10 @@
 				collage();
 				$('.Collage').collageCaption();
 			});
-			$(".fancybox").fancybox({"width" : "70%", "height" : "70%"});
+			$(".fancybox").fancybox({
+				"width" : "70%",
+				"height" : "70%"
+			});
 		});
 
 		function collage() {

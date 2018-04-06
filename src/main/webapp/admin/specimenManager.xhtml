@@ -303,8 +303,9 @@
 					<f:facet name="header">Acciones</f:facet>
 					<h:outputLink value="../specimenDetail.xhtml"
 						class="btn btn-default btn-sm btn-action fancybox fancybox.iframe"
-						title="#{specimen.commonName}">
-						<f:param name="idSpecimen" value="#{specimenContent.idSpecimen.idSpecimen}" />
+						title="#{specimenContent.idSpecimen.commonName}">
+						<f:param name="idSpecimen"
+							value="#{specimenContent.idSpecimen.idSpecimen}" />
 						<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
 					</h:outputLink>
 					<p:commandLink id="editButton"
