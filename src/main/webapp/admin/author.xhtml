@@ -308,13 +308,12 @@
 			</h:column>
 			<h:column>
 				<f:facet name="header">Acciones</f:facet>
-				<p:commandLink id="viewButton"
-					class="btn btn-default btn-sm btn-action"
-					oncomplete="$('#detailModal').modal({backdrop: false})"
-					update="detailAuthorModalForm" title="Ver detalle"
-					actionListener="#{authorBean.specimenDetail(author)}">
-					<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
-				</p:commandLink>
+				<h:outputLink value="../specimenDetail.xhtml"
+						class="btn btn-default btn-sm btn-action fancybox fancybox.iframe"
+						title="#{specimen.commonName}">
+						<f:param name="idSpecimen" value="#{specimenContent.idSpecimen.idSpecimen}" />
+						<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
+					</h:outputLink>
 				<p:commandLink id="editButton"
 					class="btn btn-default btn-sm btn-action"
 					oncomplete="$('#editModal').modal({backdrop: false})"
