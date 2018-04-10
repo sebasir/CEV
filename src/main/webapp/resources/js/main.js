@@ -32,12 +32,6 @@ $(window).ready(function () {
         },
         onStepChanged: function (event, currentIndex, priorIndex) {
             $(".actions a:eq(1)").text("Siguiente");
-
-            if (priorIndex < currentIndex) {
-                $('#progressbar').css('width', (priorIndex * 20 + 40) + '%');
-            } else {
-                $('#progressbar').css('width', (priorIndex * 20) + '%');
-            }
         },
         onFinishing: function (event, currentIndex) {
             return true;
@@ -47,6 +41,7 @@ $(window).ready(function () {
         },
         onCanceled: function (event) {
             restart();
+            window.location.reload();
         }
     });
 });

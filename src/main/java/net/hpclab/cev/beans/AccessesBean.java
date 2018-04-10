@@ -67,6 +67,17 @@ public class AccessesBean extends UtilsBean implements Serializable {
 		return rolesService.getPager();
 	}
 
+	public void restartDomainLists() {
+		try {
+			DataWarehouse.getInstance().initLists();
+			showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.GENERIC_INFO,
+					"Listas de datos reiniciadas correctamente");
+		} catch (Exception e) {
+			showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.GENERIC_ERROR,
+					"Error reiniciando las listas: " + e.getMessage());
+		}
+	}
+
 	public void limpiarRoleFiltros() {
 		roles = new Roles();
 		searchRole = new Roles();

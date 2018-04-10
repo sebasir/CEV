@@ -13,179 +13,186 @@
 		<div id="specimenForm">
 			<h3>Clasificación</h3>
 			<section style="width: 100%">
-				<p:outputLabel value="Selecciona una clasificación del arbol:" />
-				<ui:include src="taxonomy.xhtml"></ui:include>
-				<hr />
-				<h:form id="authorFormTaxonomy">
-					<p:growl id="growl" showDetail="true" />
-					<div class="form-group">
-						<div class="row">
-							<label class="col-md-2 control-label" for="specEpithet">Epiteto
-								Específico:</label>
-							<div class="col-md-4">
-								<h:inputText id="specEpithet"
-									styleClass="ui-state-default form-control input-sm input-block-level"
-									value="#{specimenBean.specimen.specificEpithet}">
-									<p:ajax process="@this" />
-								</h:inputText>
+				<h:panelGroup id="taxSection">
+					<p:outputLabel value="Selecciona una clasificación del arbol:" />
+					<ui:include src="taxonomy.xhtml"></ui:include>
+					<hr />
+					<h:form id="authorFormTaxonomy">
+						<p:growl id="growl" showDetail="true" />
+						<div class="form-group">
+							<div class="row">
+								<label class="col-md-2 control-label" for="specEpithet">Epiteto
+									Específico:</label>
+								<div class="col-md-4">
+									<h:inputText id="specEpithet"
+										styleClass="ui-state-default form-control input-sm input-block-level"
+										value="#{specimenBean.specimen.specificEpithet}">
+										<p:ajax process="@this" />
+									</h:inputText>
+								</div>
+								<label class="col-md-2 control-label" for="commonName">Nombre
+									Común:</label>
+								<div class="col-md-4">
+									<h:inputText id="commonName"
+										styleClass="ui-state-default form-control input-sm input-block-level"
+										value="#{specimenBean.specimen.commonName}">
+										<p:ajax process="@this" />
+									</h:inputText>
+								</div>
 							</div>
-							<label class="col-md-2 control-label" for="commonName">Nombre
-								Común:</label>
-							<div class="col-md-4">
-								<h:inputText id="commonName"
-									styleClass="ui-state-default form-control input-sm input-block-level"
-									value="#{specimenBean.specimen.commonName}">
-									<p:ajax process="@this" />
-								</h:inputText>
+							<hr />
+							<div class="row">
+								<label class="col-md-2 control-label" for="determiner">Determinador:</label>
+								<div class="col-md-4">
+									<h:selectOneMenu id="determiner"
+										class="form-control ui-state-default"
+										value="#{authorBean.determiner}">
+										<p:ajax event="change"
+											listener="#{authorBean.onAuthorAssign(authorBean.determiner, 'Determinador')}"
+											update="authorFormTaxonomy" />
+										<f:selectItem itemValue="#{null}" itemLabel="Selecciona" />
+										<f:selectItems value="#{authorBean.determiners}" var="author"
+											itemLabel="#{author.authorName}"
+											itemValue="#{author.idAuthor}" />
+									</h:selectOneMenu>
+								</div>
+								<label class="col-md-2 control-label" for="specificEpiteth">Autor
+									Epiteto Específico:</label>
+								<div class="col-md-4">
+									<h:selectOneMenu id="specificEpiteth"
+										class="form-control ui-state-default"
+										value="#{authorBean.specificEpiteth}">
+										<p:ajax event="change"
+											listener="#{authorBean.onAuthorAssign(authorBean.specificEpiteth, 'Autor Epiteto')}"
+											update="authorFormTaxonomy" />
+										<f:selectItem itemValue="#{null}" itemLabel="Selecciona" />
+										<f:selectItems value="#{authorBean.specificAuthors}"
+											var="author" itemLabel="#{author.authorName}"
+											itemValue="#{author.idAuthor}" />
+									</h:selectOneMenu>
+								</div>
+							</div>
+							<hr />
+							<div class="row">
+								<label class="col-md-2 control-label" for="idenComen">Comentario
+									de Identificación:</label>
+								<div class="col-md-4">
+									<p:inputTextarea id="idenComen"
+										value="#{specimenBean.specimen.idenComment}" rows="2"
+										cols="25" title="Comentario de identificación del ejemplar">
+										<p:ajax process="@this" />
+									</p:inputTextarea>
+								</div>
+								<label class="col-md-2 control-label" for="idenDate">Fecha
+									de Identificación:</label>
+								<div class="col-md-4">
+									<p:calendar id="idenDate" locale="es" width="100%"
+										value="#{specimenBean.specimen.idenDate}">
+										<p:ajax event="dateSelect" />
+									</p:calendar>
+								</div>
 							</div>
 						</div>
-						<hr />
-						<div class="row">
-							<label class="col-md-2 control-label" for="determiner">Determinador:</label>
-							<div class="col-md-4">
-								<h:selectOneMenu id="determiner"
-									class="form-control ui-state-default"
-									value="#{authorBean.determiner}">
-									<p:ajax event="change"
-										listener="#{authorBean.onAuthorAssign(authorBean.determiner, 'Determinador')}"
-										update="authorFormTaxonomy" />
-									<f:selectItem itemValue="#{null}" itemLabel="Selecciona" />
-									<f:selectItems value="#{authorBean.determiners}" var="author"
-										itemLabel="#{author.authorName}"
-										itemValue="#{author.idAuthor}" />
-								</h:selectOneMenu>
-							</div>
-							<label class="col-md-2 control-label" for="specificEpiteth">Autor
-								Epiteto Específico:</label>
-							<div class="col-md-4">
-								<h:selectOneMenu id="specificEpiteth"
-									class="form-control ui-state-default"
-									value="#{authorBean.specificEpiteth}">
-									<p:ajax event="change"
-										listener="#{authorBean.onAuthorAssign(authorBean.specificEpiteth, 'Autor Epiteto')}"
-										update="authorFormTaxonomy" />
-									<f:selectItem itemValue="#{null}" itemLabel="Selecciona" />
-									<f:selectItems value="#{authorBean.specificAuthors}"
-										var="author" itemLabel="#{author.authorName}"
-										itemValue="#{author.idAuthor}" />
-								</h:selectOneMenu>
-							</div>
-						</div>
-						<hr />
-						<div class="row">
-							<label class="col-md-2 control-label" for="idenComen">Comentario
-								de Identificación:</label>
-							<div class="col-md-4">
-								<p:inputTextarea id="idenComen"
-									value="#{specimenBean.specimen.idenComment}" rows="2" cols="25"
-									title="Comentario de identificación del ejemplar">
-									<p:ajax process="@this" />
-								</p:inputTextarea>
-							</div>
-							<label class="col-md-2 control-label" for="idenDate">Fecha
-								de Identificación:</label>
-							<div class="col-md-4">
-								<p:calendar id="idenDate" locale="es" width="100%"
-									value="#{specimenBean.specimen.idenDate}">
-									<p:ajax event="dateSelect" />
-								</p:calendar>
-							</div>
-						</div>
-					</div>
-				</h:form>
+					</h:form>
+				</h:panelGroup>
 			</section>
 			<h3>Localización</h3>
 			<section style="width: 100%">
-				<ui:include src="location.xhtml"></ui:include>
-				<hr />
-				<h:form id="authorFormLocation">
-					<p:growl id="growl" showDetail="true" />
-					<div class="form-group">
-						<div class="row">
-							<label class="col-md-2 control-label" for="colector">Colector:</label>
-							<div class="col-md-4">
-								<h:selectOneMenu id="colector"
-									class="form-control ui-state-default"
-									value="#{authorBean.collector}">
-									<p:ajax event="change"
-										listener="#{authorBean.onAuthorAssign(authorBean.collector, 'Colector')}"
-										update="authorFormLocation" />
-									<f:selectItem itemValue="#{null}" itemLabel="Selecciona" />
-									<f:selectItems value="#{authorBean.collectors}" var="author"
-										itemLabel="#{author.authorName}"
-										itemValue="#{author.idAuthor}" />
-								</h:selectOneMenu>
+				<h:panelGroup id="locSection">
+					<ui:include src="location.xhtml"></ui:include>
+					<hr />
+					<h:form id="authorFormLocation">
+						<p:growl id="growl" showDetail="true" />
+						<div class="form-group">
+							<div class="row">
+								<label class="col-md-2 control-label" for="colector">Colector:</label>
+								<div class="col-md-4">
+									<h:selectOneMenu id="colector"
+										class="form-control ui-state-default"
+										value="#{authorBean.collector}">
+										<p:ajax event="change"
+											listener="#{authorBean.onAuthorAssign(authorBean.collector, 'Colector')}"
+											update="authorFormLocation" />
+										<f:selectItem itemValue="#{null}" itemLabel="Selecciona" />
+										<f:selectItems value="#{authorBean.collectors}" var="author"
+											itemLabel="#{author.authorName}"
+											itemValue="#{author.idAuthor}" />
+									</h:selectOneMenu>
+								</div>
+								<label class="col-md-2 control-label" for="idenDate">Fecha
+									de Colecta:</label>
+								<div class="col-md-4">
+									<p:calendar id="collectDate" locale="es"
+										value="#{specimenBean.specimen.collectDate}">
+										<p:ajax event="dateSelect" />
+									</p:calendar>
+								</div>
 							</div>
-							<label class="col-md-2 control-label" for="idenDate">Fecha
-								de Colecta:</label>
-							<div class="col-md-4">
-								<p:calendar id="collectDate" locale="es"
-									value="#{specimenBean.specimen.collectDate}">
-									<p:ajax event="dateSelect" />
-								</p:calendar>
+							<div class="row">
+								<label class="col-md-2 control-label" for="idenComen">Comentario
+									de Colecta:</label>
+								<div class="col-md-4">
+									<p:inputTextarea id="idenComen"
+										value="#{specimenBean.specimen.collectComment}" rows="2"
+										cols="25" title="Comentario de identificación del ejemplar">
+										<p:ajax process="@this" />
+									</p:inputTextarea>
+								</div>
 							</div>
 						</div>
-						<div class="row">
-							<label class="col-md-2 control-label" for="idenComen">Comentario
-								de Colecta:</label>
-							<div class="col-md-4">
-								<p:inputTextarea id="idenComen"
-									value="#{specimenBean.specimen.collectComment}" rows="2"
-									cols="25" title="Comentario de identificación del ejemplar">
-									<p:ajax process="@this" />
-								</p:inputTextarea>
-							</div>
-						</div>
-					</div>
-				</h:form>
+					</h:form>
+				</h:panelGroup>
 			</section>
 			<h3>Colección</h3>
 			<section style="width: 100%">
-				<p:outputLabel value="Selecciona una colección" />
-				<ui:include src="collections.xhtml"></ui:include>
-				<hr />
-				<h:form id="formIdBioreg">
-					<div class="form-group">
-						<div class="row">
-							<label class="col-md-2 control-label" for="sampleType">Tipo
-								de Ejemplar:</label>
-							<div class="col-md-4">
-								<h:selectOneMenu id="sampleType"
-									class="form-control ui-state-default"
-									value="#{collectionBean.sampleTypeId}">
-									<p:ajax process="@this" />
-									<f:selectItem itemValue="#{null}" itemLabel="Selecciona" />
-									<f:selectItems value="#{collectionBean.allSampleTypes}"
-										var="saty" itemLabel="#{saty.satyName}"
-										itemValue="#{saty.idSaty}" />
-								</h:selectOneMenu>
+				<h:panelGroup id="colSection">
+					<p:outputLabel value="Selecciona una colección" />
+					<ui:include src="collections.xhtml"></ui:include>
+					<hr />
+					<h:form id="formIdBioreg">
+						<div class="form-group">
+							<div class="row">
+								<label class="col-md-2 control-label" for="sampleType">Tipo
+									de Ejemplar:</label>
+								<div class="col-md-4">
+									<h:selectOneMenu id="sampleType"
+										class="form-control ui-state-default"
+										value="#{collectionBean.sampleTypeId}">
+										<p:ajax process="@this" />
+										<f:selectItem itemValue="#{null}" itemLabel="Selecciona" />
+										<f:selectItems value="#{collectionBean.allSampleTypes}"
+											var="saty" itemLabel="#{saty.satyName}"
+											itemValue="#{saty.idSaty}" />
+									</h:selectOneMenu>
+								</div>
+								<label class="col-md-2 control-label" for="regType">Tipo
+									de Registro:</label>
+								<div class="col-md-4">
+									<h:selectOneMenu id="regType"
+										class="form-control ui-state-default"
+										value="#{collectionBean.regTypeId}">
+										<p:ajax process="@this" />
+										<f:selectItem itemValue="#{null}" itemLabel="Selecciona" />
+										<f:selectItems value="#{collectionBean.allRegTypes}"
+											var="rety" itemLabel="#{rety.retyName}"
+											itemValue="#{rety.idRety}" />
+									</h:selectOneMenu>
+								</div>
 							</div>
-							<label class="col-md-2 control-label" for="regType">Tipo
-								de Registro:</label>
-							<div class="col-md-4">
-								<h:selectOneMenu id="regType"
-									class="form-control ui-state-default"
-									value="#{collectionBean.regTypeId}">
-									<p:ajax process="@this" />
-									<f:selectItem itemValue="#{null}" itemLabel="Selecciona" />
-									<f:selectItems value="#{collectionBean.allRegTypes}" var="rety"
-										itemLabel="#{rety.retyName}" itemValue="#{rety.idRety}" />
-								</h:selectOneMenu>
+							<div class="row">
+								<label class="col-md-2 control-label" for="fileName">ID
+									Registro Biológico:</label>
+								<div class="col-md-4">
+									<h:inputText id="fileName"
+										styleClass="ui-state-default form-control input-sm input-block-level"
+										value="#{specimenBean.specimen.idBioreg}">
+										<p:ajax process="@this" />
+									</h:inputText>
+								</div>
 							</div>
 						</div>
-						<div class="row">
-							<label class="col-md-2 control-label" for="fileName">ID
-								Registro Biológico:</label>
-							<div class="col-md-4">
-								<h:inputText id="fileName"
-									styleClass="ui-state-default form-control input-sm input-block-level"
-									value="#{specimenBean.specimen.idBioreg}">
-									<p:ajax process="@this" />
-								</h:inputText>
-							</div>
-						</div>
-					</div>
-				</h:form>
+					</h:form>
+				</h:panelGroup>
 			</section>
 			<h3>Resumen</h3>
 			<section style="width: 100%">
@@ -195,7 +202,9 @@
 					<p:remoteCommand name="updateSummary" update="formResumen" />
 					<p:remoteCommand name="saveSpecimen" update="formResumen"
 						actionListener="#{specimenBean.persist()}" />
-					<p:remoteCommand name="restart" update="formResumen" />
+					<p:remoteCommand name="restart"
+						update="formResumen, taxSection, locSection, colSection"
+						actionListener="#{specimenBean.restartSpecimenForm()}" />
 					<div class="form-group">
 						<div class="row">
 							<label class="col-md-2 control-label" for="sciName">Nombre

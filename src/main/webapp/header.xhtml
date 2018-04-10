@@ -1,4 +1,89 @@
 <div class="container">
+	<div class="modal fade" id="contact" tabindex="-1" role="dialog"
+		aria-labelledby="Contacto">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">Contacto</h4>
+				</div>
+				<div class="modal-body">
+					<div style="text-align: center">
+						<img src="images/utils/bug-silhouette-dark.png"
+							class="logo-dashboard img-responsive" />
+						<hr />
+						<h3>COLECCION ENTOMOLÓGICA VIRTUAL</h3>
+					</div>
+					<br />
+					<h3>Universidad Central</h3>
+					<br /> Sede Centro: calle 21 n.º 4-40 <br /> Sede Norte: calle 75
+					n.º 16-03 <br /> Semillero de Modelado, Simulación y Desarrollo <br />
+					<h3>Universidad Jorger Tadeo Lozano</h3>
+					<br /> Cra. 4 #22-61, Bogotá, Cundinamarca <br /> 2017 Todos los
+					derechos reservados <br /> <br /> email: <a
+						href="mailto:admin.cev@ucentral.edu.co">admin.cev@ucentral.edu.co</a>,
+					<a href="mailto:smotavitam@ucentral.edu.co">smotavitam@ucentral.edu.co</a>,
+					<a href="mailto:hfrancot@ucentral.edu.co">hfrancot@ucentral.edu.co</a>
+				</div>
+				<div class="modal-footer">
+					<div class="input-group">
+						<button id="cancel"
+							class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
+							onclick="javascript:$('#contact').modal('hide');" type="button"
+							role="button" aria-disabled="false">
+							<span class="ui-button-text ui-c pull-right">Cerrar</span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="about" tabindex="-1" role="dialog"
+		aria-labelledby="Acerca de">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">Acerca de</h4>
+				</div>
+				<div class="modal-body">
+					<div style="text-align: center">
+						<img src="images/utils/bug-contour-dark.png"
+							class="logo-dashboard img-responsive" />
+						<hr />
+						<h3>COLECCION ENTOMOLÓGICA VIRTUAL</h3>
+					</div>
+					<br />
+					<p style="text-align: justify;">Lorem ipsum dolor sit amet,
+						consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+						labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+						nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+						consequat. Duis aute irure dolor in reprehenderit in voluptate
+						velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+						occaecat cupidatat non proident, sunt in culpa qui officia
+						deserunt mollit anim id est laborum.</p>
+				</div>
+				<div class="modal-footer">
+					<div class="input-group">
+						<button id="cancel"
+							class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
+							onclick="javascript:$('#about').modal('hide');" type="button"
+							role="button" aria-disabled="false">
+							<span class="ui-button-text ui-c pull-right">Cerrar</span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 		<div class="container">
 			<div class="row" style="padding-top: 5px;">
@@ -62,8 +147,8 @@
 						<ul class="nav navbar-nav navbar-right">
 							<li><a href="FamiliesCollection.xhtml">Colección
 									Entomólogica</a></li>
-							<li><a href="#">Contacto</a></li>
-							<li><a href="#">Acerca</a></li>
+							<li><a href="#contact" role="button" data-toggle="modal">Contacto</a></li>
+							<li><a href="#about" role="button" data-toggle="modal">Acerca</a></li>
 							<li><a href="admin/login.xhtml">Ingreso</a></li>
 						</ul>
 					</div>

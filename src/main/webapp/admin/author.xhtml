@@ -249,13 +249,12 @@
 								<div class="row">
 									<h:outputText class="col-md-10"
 										value="#{specimen.idTaxonomy.taxonomyName} #{specimen.specificEpithet} (#{specimen.commonName})" />
-									<p:commandLink id="viewButton"
-										class="btn btn-default btn-sm btn-action"
-										oncomplete="PF('specimenDetail').show()"
-										title="Ficha técnica de #{specimen.commonName}"
-										actionListener="#{specimenBean.setSpecimen(specimen)}">
+									<h:outputLink value="../specimenDetail.xhtml"
+										class="btn btn-default btn-sm btn-action fancybox fancybox.iframe"
+										title="#{specimen.commonName}">
+										<f:param name="idSpecimen" value="#{specimen.idSpecimen}" />
 										<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
-									</p:commandLink>
+									</h:outputLink>
 								</div>
 								<hr />
 							</ui:repeat>

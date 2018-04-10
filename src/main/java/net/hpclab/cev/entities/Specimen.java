@@ -70,27 +70,35 @@ public class Specimen implements Serializable {
 	@JoinColumn(name = "id_epithet_author", referencedColumnName = "id_author")
 	@ManyToOne
 	private Author idEpithetAuthor;
+	
 	@JoinColumn(name = "id_collector", referencedColumnName = "id_author")
 	@ManyToOne
 	private Author idCollector;
+	
 	@JoinColumn(name = "id_determiner", referencedColumnName = "id_author")
 	@ManyToOne
 	private Author idDeterminer;
+	
 	@JoinColumn(name = "id_catalog", referencedColumnName = "id_catalog")
 	@ManyToOne
 	private Catalog idCatalog;
+	
 	@JoinColumn(name = "id_location", referencedColumnName = "id_location")
-	@ManyToOne
+	@ManyToOne(optional = false)
 	private Location idLocation;
+	
 	@JoinColumn(name = "id_rety", referencedColumnName = "id_rety")
-	@ManyToOne
+	@ManyToOne(optional = false)
 	private RegType idRety;
+	
 	@JoinColumn(name = "id_saty", referencedColumnName = "id_saty")
-	@ManyToOne
+	@ManyToOne(optional = false)
 	private SampleType idSaty;
+	
 	@JoinColumn(name = "id_taxonomy", referencedColumnName = "id_taxonomy")
-	@OneToOne
+	@OneToOne(optional = false)
 	private Taxonomy idTaxonomy;
+	
 	@JoinColumn(name = "id_user", referencedColumnName = "id_user")
 	@ManyToOne
 	private Users idUser;

@@ -228,13 +228,32 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 				.setLocation(ObjectRetriever.getObjectFromId(Location.class, specimen.getIdLocation().getIdLocation()));
 		locationBean.createTree();
 
+		authorBean.restartAuthorTypes();
+
 		authorBean.setCollector(specimen.getIdCollector() != null ? specimen.getIdCollector().getIdAuthor() : null);
 		authorBean.setDeterminer(specimen.getIdDeterminer() != null ? specimen.getIdDeterminer().getIdAuthor() : null);
 		authorBean.setSpecificEpiteth(
 				specimen.getIdEpithetAuthor() != null ? specimen.getIdEpithetAuthor().getIdAuthor() : null);
-		authorBean.restartAuthorTypes();
 
+		collectionBean.limpiarFiltros();
 		collectionBean.setCatalog(specimen.getIdCatalog());
+		collectionBean.setRegTypeId(specimen.getIdRety() != null ? specimen.getIdRety().getIdRety() : null);
+		collectionBean.setSampleTypeId(specimen.getIdSaty() != null ? specimen.getIdSaty().getIdSaty() : null);
+		collectionBean.createTree();
+	}
+
+	public void restartSpecimenForm() {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		TaxonomyBean taxonomyBean = getExternalBean(facesContext, TaxonomyBean.class);
+		LocationBean locationBean = getExternalBean(facesContext, LocationBean.class);
+		AuthorBean authorBean = getExternalBean(facesContext, AuthorBean.class);
+		CollectionBean collectionBean = getExternalBean(facesContext, CollectionBean.class);
+
+		limpiarFiltros();
+		taxonomyBean.limpiarFiltros();
+		locationBean.limpiarFiltros();
+		authorBean.restartAuthorTypes();
+		collectionBean.limpiarFiltros();
 	}
 
 	public Specimen getSpecimen() {
@@ -467,9 +486,15 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 					author = ObjectRetriever.getObjectFromId(Author.class, idAuthor);
 			}
 
-			locData.put("lat", specimen.getIdLocation().getLatitude());
-			locData.put("lon", specimen.getIdLocation().getLongitude());
-			locData.put("alt", specimen.getIdLocation().getAltitude());
+			Location location = specimen.getIdLocation();
+			if (location != null && location.getIdLocation() != null)
+				location = ObjectRetriever.getObjectFromId(Location.class, location.getIdLocation());
+
+			if (location != null) {
+				locData.put("lat", location.getLatitude());
+				locData.put("lon", location.getLongitude());
+				locData.put("alt", location.getAltitude());
+			}
 			locData.put("collector", author != null ? author.getAuthorName() : "");
 			locData.put("collectDate", formatDate(specimen.getCollectDate()));
 			locData.put("collectComment", specimen.getCollectComment() == null ? "" : specimen.getCollectComment());

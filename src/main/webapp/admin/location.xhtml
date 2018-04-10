@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:f="http://java.sun.com/jsf/core">
+
 	<h:outputScript library="primefaces" name="jquery/jquery.js"
 		target="head" />
 	<h:outputScript library="js" name="locationMap.js" target="head" />
@@ -46,7 +47,7 @@
 		<!-- edit Modal -->
 		<h:form id="editModalForm">
 			<div class="modal fade" id="editModal" tabindex="-1" role="dialog"
-				aria-labelledby="Editar Clasificación">
+				aria-labelledby="Editar Localización">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
@@ -54,19 +55,18 @@
 								aria-label="Close">
 								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 							</button>
-							<h4 class="modal-title" id="myModalLabel">Editar
-								clasificación</h4>
+							<h4 class="modal-title" id="myModalLabel">Editar ubicación</h4>
 						</div>
 						<div class="modal-body">
 							<div class="form-group">
 								<div class="row">
 									<label class="col-md-4 control-label" for="locName">Nombre
-										Clasificación:</label>
+										ubicación:</label>
 									<div class="col-md-8">
 										<h:inputText id="locName"
 											styleClass="ui-state-default form-control input-sm input-block-level required"
 											value="#{locationBean.location.locationName}" required="true"
-											requiredMessage="Debes definir el nombre de la clasificación!">
+											requiredMessage="Debes definir el nombre de la ubicación">
 											<p:ajax process="@this" />
 											<f:validateBean disabled="true" />
 										</h:inputText>
@@ -74,7 +74,7 @@
 								</div>
 								<div class="row">
 									<label class="col-md-4 control-label" for="level">Nivel
-										Clasificación:</label>
+										ubicación:</label>
 									<div class="col-md-8">
 										<h:selectOneMenu id="level"
 											styleClass="ui-state-default form-control input-sm input-block-level required"
@@ -87,6 +87,54 @@
 												itemLabel="#{lev.loclevelName}"
 												itemValue="#{lev.idLoclevel}" />
 										</h:selectOneMenu>
+									</div>
+								</div>
+								<div class="row">
+									<label class="col-md-4 control-label" for="level">Latitud:</label>
+									<div class="col-md-8">
+										<h:inputText id="latitude"
+											styleClass="ui-state-default form-control input-sm input-block-level required"
+											value="#{locationBean.location.latitude}"
+											converterId="javax.faces.Double">
+											<p:ajax process="@this" />
+											<f:validateBean disabled="true" />
+										</h:inputText>
+									</div>
+								</div>
+								<div class="row">
+									<label class="col-md-4 control-label" for="level">Longitud:</label>
+									<div class="col-md-8">
+										<h:inputText id="longitude"
+											styleClass="ui-state-default form-control input-sm input-block-level required"
+											value="#{locationBean.location.longitude}"
+											converterId="javax.faces.Double">
+											<p:ajax process="@this" />
+											<f:validateBean disabled="true" />
+										</h:inputText>
+									</div>
+								</div>
+								<div class="row">
+									<label class="col-md-4 control-label" for="level">Altitud:</label>
+									<div class="col-md-8">
+										<h:inputText id="altitude"
+											styleClass="ui-state-default form-control input-sm input-block-level required"
+											value="#{locationBean.location.altitude}"
+											converterId="javax.faces.Double">
+											<p:ajax process="@this" />
+											<f:validateBean disabled="true" />
+										</h:inputText>
+									</div>
+								</div>
+								<div class="row">
+									<label class="col-md-4 control-label" for="level">Radio:</label>
+									<div class="col-md-8">
+										<h:inputText id="radio"
+											styleClass="ui-state-default form-control input-sm input-block-level required"
+											value="#{locationBean.location.radio}"
+											converterId="javax.faces.Double">
+											<p:ajax process="@this" />
+											<f:validateBean disabled="true" />
+										</h:inputText>
 									</div>
 								</div>
 							</div>
@@ -109,7 +157,7 @@
 		<!-- create Modal -->
 		<h:form id="createModalForm">
 			<div class="modal fade" id="createModal" tabindex="-1" role="dialog"
-				aria-labelledby="Crear Clasificación">
+				aria-labelledby="Crear Localización">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
@@ -117,13 +165,12 @@
 								aria-label="Close">
 								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 							</button>
-							<h4 class="modal-title" id="myModalLabel">Crear
-								clasificación</h4>
+							<h4 class="modal-title" id="myModalLabel">Crear ubicación</h4>
 						</div>
 						<div class="modal-body">
 							<div class="form-group">
 								<div class="row">
-									<label class="col-md-4 control-label" for="locName">Clasificación
+									<label class="col-md-4 control-label" for="locName">Ubicación
 										Origen:</label>
 									<h:outputText class="col-md-4"
 										value="#{locationBean.parentLocation.idLoclevel.loclevelName} #{locationBean.parentLocation.locationName}" />
@@ -134,7 +181,7 @@
 										<h:inputText id="locName"
 											styleClass="ui-state-default form-control input-sm input-block-level required"
 											value="#{locationBean.location.locationName}" required="true"
-											requiredMessage="Debes definir el nombre de la clasificación!">
+											requiredMessage="Debes definir el nombre de la ubicación">
 											<p:ajax process="@this" />
 											<f:validateBean disabled="true" />
 										</h:inputText>
@@ -154,6 +201,54 @@
 												itemLabel="#{lev.loclevelName}"
 												itemValue="#{lev.idLoclevel}" />
 										</h:selectOneMenu>
+									</div>
+								</div>
+								<div class="row">
+									<label class="col-md-4 control-label" for="level">Latitud:</label>
+									<div class="col-md-8">
+										<h:inputText id="latitude"
+											styleClass="ui-state-default form-control input-sm input-block-level required"
+											value="#{locationBean.location.latitude}"
+											converterId="javax.faces.Double">
+											<p:ajax process="@this" />
+											<f:validateBean disabled="true" />
+										</h:inputText>
+									</div>
+								</div>
+								<div class="row">
+									<label class="col-md-4 control-label" for="level">Longitud:</label>
+									<div class="col-md-8">
+										<h:inputText id="longitude"
+											styleClass="ui-state-default form-control input-sm input-block-level required"
+											value="#{locationBean.location.longitude}"
+											converterId="javax.faces.Double">
+											<p:ajax process="@this" />
+											<f:validateBean disabled="true" />
+										</h:inputText>
+									</div>
+								</div>
+								<div class="row">
+									<label class="col-md-4 control-label" for="level">Altitud:</label>
+									<div class="col-md-8">
+										<h:inputText id="altitude"
+											styleClass="ui-state-default form-control input-sm input-block-level required"
+											value="#{locationBean.location.altitude}"
+											converterId="javax.faces.Double">
+											<p:ajax process="@this" />
+											<f:validateBean disabled="true" />
+										</h:inputText>
+									</div>
+								</div>
+								<div class="row">
+									<label class="col-md-4 control-label" for="level">Radio:</label>
+									<div class="col-md-8">
+										<h:inputText id="radio"
+											styleClass="ui-state-default form-control input-sm input-block-level required"
+											value="#{locationBean.location.radio}"
+											converterId="javax.faces.Double">
+											<p:ajax process="@this" />
+											<f:validateBean disabled="true" />
+										</h:inputText>
 									</div>
 								</div>
 							</div>
@@ -194,13 +289,12 @@
 									<div class="row">
 										<h:outputText class="col-md-10"
 											value="#{specimen.idTaxonomy.taxonomyName} #{specimen.specificEpithet} (#{specimen.commonName})" />
-										<p:commandLink id="viewButton"
-											class="btn btn-default btn-sm btn-action"
-											oncomplete="PF('specimenDetail').show()"
-											title="Ficha técnica de #{specimen.commonName}"
-											actionListener="#{specimenBean.setSpecimen(specimen)}">
+										<h:outputLink value="../specimenDetail.xhtml"
+											class="btn btn-default btn-sm btn-action fancybox fancybox.iframe"
+											title="#{specimen.commonName}">
+											<f:param name="idSpecimen" value="#{specimen.idSpecimen}" />
 											<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
-										</p:commandLink>
+										</h:outputLink>
 									</div>
 									<hr />
 								</ui:repeat>
@@ -225,7 +319,7 @@
 					<h:outputText value="Ubicaciones" />
 				</f:facet>
 				<p:tree id="locTree" value="#{locationBean.locRoot}" var="loc"
-					orientation="vertical" selectionMode="single"
+					orientation="vertical" selectionMode="single" ajax="true"
 					selection="#{locationBean.selectedNode}">
 					<p:ajax event="select" listener="#{locationBean.onNodeSelect}"
 						update="mapCenter, growl" />
@@ -234,7 +328,7 @@
 					</p:treeNode>
 				</p:tree>
 				<p:contextMenu for="locTree">
-					<p:menuitem value="Agregar Clasificación" update="createModalForm"
+					<p:menuitem value="Agregar Localización" update="createModalForm"
 						actionListener="#{locationBean.setDatafromNode('create')}"
 						icon="fa fa-plus"
 						oncomplete="$('#createModal').modal({backdrop: false})" />
@@ -258,4 +352,5 @@
 			</p:panel>
 		</h:form>
 	</h:body>
+
 </ui:composition>
