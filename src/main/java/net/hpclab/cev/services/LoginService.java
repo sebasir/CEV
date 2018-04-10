@@ -33,8 +33,11 @@ public class LoginService extends UtilsBean implements Serializable {
 			Users users = usersService.getSingleRecord("Users.authenticate", params);
 			if (users != null) {
 				if (!SessionService.getInstance().isUserOnline(users)) {
-					UserSession userSession = loadUserSession(facesContext, users);
-					SessionService.getInstance().addUser(getSessionId(facesContext), userSession);
+					UserSession userSession = null;
+					if (facesContext != null) {
+						userSession = loadUserSession(facesContext, users);
+						SessionService.getInstance().addUser(getSessionId(facesContext), userSession);
+					}
 					if (users.getStatus().equals(StatusEnum.ACTIVO.get())) {
 						users.setUserLastLogin(Calendar.getInstance().getTime());
 						users = usersService.merge(users);
