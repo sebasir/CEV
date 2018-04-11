@@ -39,7 +39,7 @@
 	<h:form id="editSCModalForm">
 		<div class="modal fade" id="editModal" tabindex="-1" role="dialog"
 			aria-labelledby="Editar Autor">
-			<div class="modal-dialog" role="document">
+			<div class="modal-dialog" role="document" style="width: 50%;">
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal"
@@ -92,9 +92,9 @@
 						<div class="row">
 							<label class="col-md-4 control-label" for="desc">Descripción:</label>
 							<div class="col-md-8">
-								<p:inputTextarea id="desc"
+								<p:inputTextarea id="desc" style="font-size: 13px"
 									value="#{specimenContentBean.specimenContent.shortDescription}"
-									rows="3" title="Descripción del pie de la imagen">
+									rows="10" cols="50" title="Descripción del pie de la imagen">
 									<p:ajax process="@this" />
 									<f:validateBean disabled="true" />
 								</p:inputTextarea>
@@ -131,7 +131,7 @@
 		<div class="modal fade" id="createModal" tabindex="-1" role="dialog"
 			aria-labelledby="Crear Clasificación">
 
-			<div class="modal-dialog" role="document">
+			<div class="modal-dialog" role="document" style="width: 50%;">
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal"
@@ -186,9 +186,9 @@
 						<div class="row">
 							<label class="col-md-4 control-label" for="desc">Descripción:</label>
 							<div class="col-md-8">
-								<p:inputTextarea id="desc"
+								<p:inputTextarea id="desc" style="font-size: 13px;"
 									value="#{specimenContentBean.specimenContent.shortDescription}"
-									rows="3" title="Descripción del pie de la imagen">
+									rows="10" cols="50" title="Descripción del pie de la imagen">
 									<p:ajax process="@this" />
 									<f:validateBean disabled="true" />
 								</p:inputTextarea>

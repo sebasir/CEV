@@ -252,4 +252,8 @@ public class UtilsBean implements Serializable {
 		String absoluteDiskPath = servletContext.getRealPath(fileName);
 		return new FileInputStream(absoluteDiskPath);
 	}
+
+	public String getTimeStamp() {
+		return String.valueOf(System.currentTimeMillis());
+	}
 }

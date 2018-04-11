@@ -50,6 +50,7 @@
 					<div class="thumbnail">
 						<p:graphicImage value="#{specimenContentBean.getFamilyThumb()}">
 							<f:param name="idTaxonomy" value="#{fam.idTaxonomy}" />
+							<f:param name="t" value="#{specimenContentBean.timeStamp}"/>
 						</p:graphicImage>
 						<div class="caption">
 							<h3>#{fam.taxonomyName}</h3>

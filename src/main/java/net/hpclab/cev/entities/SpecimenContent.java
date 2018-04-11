@@ -47,7 +47,7 @@ public class SpecimenContent implements Serializable {
 	private byte[] fileContent;
 	@Basic(optional = false)
 	@NotNull
-	@Size(min = 1, max = 512)
+	@Size(min = 1, max = 2048)
 	@Column(name = "short_description")
 	private String shortDescription;
 

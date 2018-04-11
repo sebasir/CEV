@@ -54,6 +54,7 @@
 										value="#{scon.idSpecimen.idSpecimen}" />
 									<p:graphicImage
 										value="#{specimenContentBean.getSpecimenThumb()}">
+										<f:param name="t" value="#{specimenContentBean.timeStamp}" />
 										<f:param name="idSpecimen"
 											value="#{scon.idSpecimen.idSpecimen}" />
 									</p:graphicImage>
@@ -74,7 +75,7 @@
 				$('.Collage').collageCaption();
 			});
 			$(".fancybox").fancybox({
-				"width" : "70%",
+				"width" : "80%",
 				"height" : "70%"
 			});
 		});

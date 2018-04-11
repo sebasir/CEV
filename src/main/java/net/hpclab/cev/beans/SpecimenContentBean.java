@@ -52,9 +52,18 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 		try {
 			specimenContentService = new DataBaseService<>(SpecimenContent.class);
 			families = new ArrayList<>();
-			for (Taxonomy t : DataWarehouse.getInstance().allTaxonomys)
-				if (t.getIdTaxlevel().getIdTaxlevel() == 13)
-					families.add(t);
+			Taxonomy t = null;
+			for (SpecimenContent sc : DataWarehouse.getInstance().allSpecimenContents) {
+				if (!sc.getPublish())
+					continue;
+
+				t = sc.getIdSpecimen().getIdTaxonomy();
+				t = ObjectRetriever.getObjectFromId(Taxonomy.class, t.getIdTaxonomy());
+				while (t.getIdTaxlevel().getTaxlevelRank() != 13)
+					t = t.getIdContainer();
+				families.add(t);
+			}
+
 			limpiarFiltros();
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());

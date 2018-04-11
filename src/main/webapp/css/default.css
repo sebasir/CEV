@@ -518,3 +518,46 @@ div.form-group>label.control-label {
 
 .Caption {
 	font-family: 'Raleway', sans-serif !important;
+}
+
+a.list-group-item:hover {
+	color: #5a6f02;
+	font-weight: bold;
+    background-color: #9dc1425e;
+}
+
+nav.navbar.navbar-inverse.navbar-fixed-top::before {
+    width: 100%;
+    line-height: 2.63em !important;
+    font-size: 2.4em;
+    min-height: 99px;
+    max-height: 99px;
+    background-color: #e1efc7a3;
+    position: absolute;
+    z-index: 10;
+    content: "COLECCION ENTOMOLOGICA VIRTUAL";
+    text-align: center;
+    font-weight: bolder;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.main-tittle {
+	min-height: 99px;
+	line-height: 1.7em;
+	text-align: center;
+	width: 100%;
+	position: absolute;
+	background: url(../images/banner/abeja.jpg) no-repeat,
+		url(../images/banner/avispa.jpg) no-repeat,
+		url(../images/banner/hormiga.jpg) no-repeat,
+		url(../images/banner/mariposa.jpg) no-repeat,
+		url(../images/banner/mosca.jpg) no-repeat,
+		url(../images/banner/insect.jpg) no-repeat,
+		url(../images/banner/abeja-nocturna.jpg) no-repeat,
+		url(../images/banner/ladybug.jpg) no-repeat,
+		url(../images/banner/polilla.jpg) no-repeat;
+	background-position: 100% 0, 87.5% 0, 75% 0, 62.5% 0, 50% 0, 37.5% 0,
+		25% 0, 12.5% 0, 0% 0;
+	font-size: -webkit-xxx-large;
+	text-shadow: 0px 0px 5px #ffffffab;
+}
