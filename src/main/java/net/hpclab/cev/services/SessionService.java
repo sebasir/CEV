@@ -3,6 +3,7 @@ package net.hpclab.cev.services;
 import java.io.Serializable;
 import java.util.HashMap;
 import net.hpclab.cev.entities.Users;
+import net.hpclab.cev.model.UserSession;
 
 public class SessionService implements Serializable {
 

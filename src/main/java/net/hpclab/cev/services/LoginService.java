@@ -12,6 +12,7 @@ import net.hpclab.cev.enums.AuditEnum;
 import net.hpclab.cev.enums.AuthenticateEnum;
 import net.hpclab.cev.enums.ModulesEnum;
 import net.hpclab.cev.enums.StatusEnum;
+import net.hpclab.cev.model.UserSession;
 
 public class LoginService extends UtilsBean implements Serializable {
 

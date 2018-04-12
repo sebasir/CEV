@@ -19,6 +19,7 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.hibernate.CacheMode;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -36,7 +37,6 @@ public class DataBaseService<T> implements Serializable {
 	private Pager pager;
 	private QueryMethod queryMethod;
 
-	// private UserTransaction usrTx;
 	private int currentPage;
 	private int numberOfResults;
 	private int queryMaxResults;
@@ -193,7 +193,11 @@ public class DataBaseService<T> implements Serializable {
 						path = path.get(attribute);
 					}
 				}
-				auxPredicate = criteriaBuilder.equal(path, value);
+				if (value != null && !value.toString().isEmpty() && value instanceof String)
+					auxPredicate = criteriaBuilder.like(criteriaBuilder.upper(path.as(String.class)),
+							"%" + value.toString().toUpperCase() + "%");
+				else
+					auxPredicate = criteriaBuilder.equal(path, value);
 				predicate = criteriaBuilder.and(predicate, auxPredicate);
 			}
 			criteriaQuery.select(root).where(predicate);
@@ -399,6 +403,7 @@ public class DataBaseService<T> implements Serializable {
 	private void startTransaction() throws Exception {
 		LOGGER.log(Level.INFO, "Starting transaction...");
 		session = entityManager.unwrap(Session.class);
+		session.setCacheMode(CacheMode.IGNORE);
 		tx = session.beginTransaction();
 	}
 

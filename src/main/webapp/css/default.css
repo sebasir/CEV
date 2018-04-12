@@ -527,18 +527,19 @@ a.list-group-item:hover {
 }
 
 nav.navbar.navbar-inverse.navbar-fixed-top::before {
-    width: 100%;
+	width: 100%;
     line-height: 2.63em !important;
     font-size: 2.4em;
     min-height: 99px;
     max-height: 99px;
-    background-color: #e1efc7a3;
+    background-color: #4b6f24c4;
     position: absolute;
     z-index: 10;
     content: "COLECCION ENTOMOLOGICA VIRTUAL";
     text-align: center;
+    color: #e9f3da;
     font-weight: bolder;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+    text-shadow: 0 1px 0 rgb(0, 0, 0);
 }
 
 .main-tittle {
@@ -560,4 +561,31 @@ nav.navbar.navbar-inverse.navbar-fixed-top::before {
 		25% 0, 12.5% 0, 0% 0;
 	font-size: -webkit-xxx-large;
 	text-shadow: 0px 0px 5px #ffffffab;
+}
+
+.panel-default.main-panel>.panel-heading {
+	background-color: #4a6d04;
+	background-image: radial-gradient(circle at 100% 150%, #4a6d04 24%, #5b7205 25%, #5b7205
+		28%, #4a6d04 29%, #4a6d04 36%, #5b7205 36%, #5b7205 40%, transparent
+		40%, transparent),
+		radial-gradient(circle at 0 150%, #4a6d04 24%, #5b7205 25%, #5b7205 28%,
+		#4a6d04 29%, #4a6d04 36%, #5b7205 36%, #5b7205 40%, transparent 40%,
+		transparent),
+		radial-gradient(circle at 50% 100%, #5b7205 10%, #4a6d04 11%, #4a6d04
+		23%, #5b7205 24%, #5b7205 30%, #4a6d04 31%, #4a6d04 43%, #5b7205 44%,
+		#5b7205 50%, #4a6d04 51%, #4a6d04 63%, #5b7205 64%, #5b7205 71%,
+		transparent 71%, transparent),
+		radial-gradient(circle at 100% 50%, #5b7205 5%, #4a6d04 6%, #4a6d04 15%,
+		#5b7205 16%, #5b7205 20%, #4a6d04 21%, #4a6d04 30%, #5b7205 31%,
+		#5b7205 35%, #4a6d04 36%, #4a6d04 45%, #5b7205 46%, #5b7205 49%,
+		transparent 50%, transparent),
+		radial-gradient(circle at 0 50%, #5b7205 5%, #4a6d04 6%, #4a6d04 15%,
+		#5b7205 16%, #5b7205 20%, #4a6d04 21%, #4a6d04 30%, #5b7205 31%,
+		#5b7205 35%, #4a6d04 36%, #4a6d04 45%, #5b7205 46%, #5b7205 49%,
+		transparent 50%, transparent);
+	background-size: 100px 50px;
+	background-color: #4b6f24c4;
+	border-color: #4b6f24c4;
+	font-weight: bold;
+	color: #ffffff;
 }

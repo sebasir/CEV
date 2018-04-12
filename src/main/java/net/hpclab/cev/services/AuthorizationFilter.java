@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import net.hpclab.cev.enums.StatusEnum;
+import net.hpclab.cev.model.UserSession;
 
 @WebFilter("/admin/*")
 public class AuthorizationFilter implements Filter {

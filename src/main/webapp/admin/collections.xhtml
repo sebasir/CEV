@@ -181,11 +181,14 @@
 				selection="#{collectionBean.selectedNode}">
 				<p:ajax event="select" listener="#{collectionBean.onNodeSelect}"
 					update="growl" />
-				<p:treeNode>
+				<p:treeNode type="menuType">
+					#{col}
+				</p:treeNode>
+				<p:treeNode type="noMenuType">
 					#{col}
 				</p:treeNode>
 			</p:tree>
-			<p:contextMenu for="colTree">
+			<p:contextMenu for="colTree" nodeType="menuType">
 				<p:menuitem value="Agregar" update="createColModalForm"
 					actionListener="#{collectionBean.setDatafromNode('create')}"
 					icon="fa fa-plus"
@@ -206,6 +209,13 @@
 					actionListener="#{collectionBean.setDatafromNode('delete')}"
 					icon="fa fa-trash"
 					oncomplete="$('#deleteColModal').modal({backdrop: false})" />
+			</p:contextMenu>
+			<p:contextMenu for="colTree" nodeType="noMenuType">
+				<p:menuitem value="Ver detalle de Especies"
+					update="detailColModalForm"
+					actionListener="#{collectionBean.setDatafromNode('detail')}"
+					icon="fa fa-folder-open"
+					oncomplete="$('#detailColModal').modal({backdrop: false})" />
 			</p:contextMenu>
 		</h:form>
 	</h:body>

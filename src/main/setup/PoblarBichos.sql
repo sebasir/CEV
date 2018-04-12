@@ -1291,7 +1291,7 @@ insert into specimen values(default, null, 'Mosco', 26, 2, null , to_date('01/01
 
 /*11*/insert into modules values (default, 'Roles y Accesos', 'Permite a los usuarios administrar los roles y accesos.', 10, 'accesses.xhtml', 'pe-7s-id', 'ACCESSES', 2);
 /*12*/insert into modules values (default, 'Credenciales', 'Permite a los usuarios cambiar las credenciales de acceso.', 11, 'dummy.xhtml', 'pe-7s-door-lock', 'CREDENTIALS', 2);
-/*13*/insert into modules values (default, 'Auditoria', 'Este módulo permite conocer la auditoría realizada a los usuarios.', 12, 'dummy.xhtml', 'pe-7s-timer', 'AUDIT', 2);
+/*13*/insert into modules values (default, 'Auditoria', 'Este módulo permite conocer la auditoría realizada a los usuarios.', 12, 'dummy.xhtml', 'pe-7s-timer', 'AUDIT', 2, 'Deshabilitado');
 /*14*/insert into modules values (default, 'Usuarios e Instituciones', 'Este módulo permite administrar a los usuarios.', 13, 'users.xhtml', 'pe-7s-users', 'USR_INS', 2);
 /*15*/insert into modules values (default, 'Contenido Gráfico', 'Permite definir el contenido gráfico de los especímenes, tales como las imágenes de alta definición.', 8, 'specimenManager.xhtml', 'pe-7s-photo', 'CONTENT', 1);
 

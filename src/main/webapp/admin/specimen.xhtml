@@ -123,8 +123,13 @@
 						value="#{specimenBean.formatDate(specimen.collectDate)}" />
 				</h:column>
 				<h:column>
-					<f:facet name="header">Tipo de Muestra</f:facet>
-					<h:outputText value="#{specimen.idSaty.satyName}" />
+					<f:facet name="header">ID Registro Biológico</f:facet>
+					<h:outputText value="#{specimen.idBioreg}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">Colección y Catálogo</f:facet>
+					<h:outputText
+						value="#{specimen.idCatalog.idCollection.collectionName} #{specimen.idCatalog.catalogName}" />
 				</h:column>
 				<h:column>
 					<f:facet name="header">Acciones</f:facet>

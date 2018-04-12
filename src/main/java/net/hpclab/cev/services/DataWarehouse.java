@@ -64,6 +64,9 @@ public class DataWarehouse implements Serializable {
 		allTaxonomys = new DataBaseService<Taxonomy>().getList(Taxonomy.class);
 		allTaxonomyLevels = new DataBaseService<TaxonomyLevel>().getList(TaxonomyLevel.class);
 		allUsers = new DataBaseService<Users>().getList(Users.class);
+		
+		AccessService.getInstance().loadAccesses();
+		AuditService.clearInstance();
 	}
 
 	public static synchronized DataWarehouse getInstance() {

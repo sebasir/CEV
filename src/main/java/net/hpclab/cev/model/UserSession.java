@@ -1,4 +1,4 @@
-package net.hpclab.cev.services;
+package net.hpclab.cev.model;
 
 import java.io.Serializable;
 import net.hpclab.cev.entities.Users;

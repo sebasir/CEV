@@ -58,7 +58,7 @@ public class CollectionBean extends UtilsBean implements Serializable {
 	private TreeNode selectedNode;
 	private HashMap<Integer, TreeNode> tree;
 	private HashMap<Integer, TreeHierachyModel> abstractMap;
-	private HashMap<Integer, Specimen> specimenCollection;
+	private HashMap<Integer, ArrayList<Specimen>> specimenCollection;
 	private TreeHierachyModel abstractTree;
 	private List<Collection> avalCollections;
 	private List<Catalog> avalCatalogs;
@@ -229,7 +229,7 @@ public class CollectionBean extends UtilsBean implements Serializable {
 		abstractMap = new HashMap<>();
 		TreeHierachyModel fatherNode = new TreeHierachyModel();
 		TreeHierachyModel childNode = new TreeHierachyModel();
-		root = new DefaultTreeNode("Colecciones", null);
+		root = new DefaultTreeNode(Constant.NO_MENU_TYPE, "Colecciones", null);
 		tree.put(0, root);
 		abstractTree = new TreeHierachyModel(0, Constant.ROOT_LEVEL);
 		abstractMap.put(0, abstractTree);
@@ -239,7 +239,8 @@ public class CollectionBean extends UtilsBean implements Serializable {
 			fatherNode = abstractMap.get(0);
 			fatherNode.addNode(childNode);
 			abstractMap.put(Constant.INSTITUTION_HINT + i.getIdInstitution(), childNode);
-			tree.put(Constant.INSTITUTION_HINT + i.getIdInstitution(), new DefaultTreeNode(i, tree.get(0)));
+			tree.put(Constant.INSTITUTION_HINT + i.getIdInstitution(),
+					new DefaultTreeNode(Constant.MENU_TYPE, i, tree.get(0)));
 		}
 
 		for (Collection c : DataWarehouse.getInstance().allCollections) {
@@ -248,7 +249,7 @@ public class CollectionBean extends UtilsBean implements Serializable {
 			fatherNode = abstractMap.get(Constant.INSTITUTION_HINT + c.getIdInstitution().getIdInstitution());
 			fatherNode.addNode(childNode);
 			abstractMap.put(Constant.COLLECTION_HINT + c.getIdCollection(), childNode);
-			tree.put(Constant.COLLECTION_HINT + c.getIdCollection(), new DefaultTreeNode(c,
+			tree.put(Constant.COLLECTION_HINT + c.getIdCollection(), new DefaultTreeNode(Constant.MENU_TYPE, c,
 					tree.get(Constant.INSTITUTION_HINT + c.getIdInstitution().getIdInstitution())));
 		}
 
@@ -257,21 +258,23 @@ public class CollectionBean extends UtilsBean implements Serializable {
 			fatherNode = abstractMap.get(Constant.COLLECTION_HINT + c.getIdCollection().getIdCollection());
 			fatherNode.addNode(childNode);
 			abstractMap.put(Constant.CATALOG_HINT + c.getIdCatalog(), childNode);
-			tree.put(Constant.CATALOG_HINT + c.getIdCatalog(),
-					new DefaultTreeNode(c, tree.get(Constant.COLLECTION_HINT + c.getIdCollection().getIdCollection())));
+			tree.put(Constant.CATALOG_HINT + c.getIdCatalog(), new DefaultTreeNode(Constant.NO_MENU_TYPE, c,
+					tree.get(Constant.COLLECTION_HINT + c.getIdCollection().getIdCollection())));
 		}
-		
+
 		TreeNode n = null;
 		if (catalog != null) {
 			n = tree.get(Constant.CATALOG_HINT + catalog.getIdCatalog());
 			collection = (Collection) n.getParent().getData();
 		}
-		
+
 		openBranch(n);
 
 		specimenCollection = new HashMap<>();
 		for (Specimen s : DataWarehouse.getInstance().allSpecimens) {
-			specimenCollection.put(Constant.CATALOG_HINT + s.getIdCatalog().getIdCatalog(), s);
+			if (!specimenCollection.containsKey(Constant.CATALOG_HINT + s.getIdCatalog().getIdCatalog()))
+				specimenCollection.put(Constant.CATALOG_HINT + s.getIdCatalog().getIdCatalog(), new ArrayList<>());
+			specimenCollection.get(Constant.CATALOG_HINT + s.getIdCatalog().getIdCatalog()).add(s);
 		}
 	}
 
@@ -330,7 +333,12 @@ public class CollectionBean extends UtilsBean implements Serializable {
 					objectId = Constant.CATALOG_HINT + catalog.getIdCatalog();
 					objectType = "Catálogo";
 					objectName = catalog.getCatalogName();
+				} else {
+					objectId = 0;
 				}
+
+				if (classType == null && !Constant.DETAIL_COMMAND.equals(command))
+					return;
 
 				if (Constant.CREATE_COMMAND.equals(command)) {
 					objectFatherName = objectName;
@@ -356,9 +364,9 @@ public class CollectionBean extends UtilsBean implements Serializable {
 					TreeHierachyModel node = null;
 					while (!searchList.isEmpty() && collectionSpecimens.size() <= Constant.MAX_SPECIMEN_LIST) {
 						node = searchList.pop();
-						if (specimenCollection.containsKey(node.getNode())) {
-							collectionSpecimens.add(specimenCollection.get(node.getNode()));
-						}
+						if (specimenCollection.containsKey(node.getNode()))
+							collectionSpecimens.addAll(specimenCollection.get(node.getNode()));
+
 						searchList.addAll(node.getLeaves());
 					}
 					searchList = null;

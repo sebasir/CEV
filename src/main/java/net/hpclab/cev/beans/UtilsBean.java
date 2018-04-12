@@ -23,9 +23,9 @@ import net.hpclab.cev.entities.Modules;
 import net.hpclab.cev.entities.Users;
 import net.hpclab.cev.enums.AuthenticateEnum;
 import net.hpclab.cev.enums.OutcomeEnum;
+import net.hpclab.cev.model.UserSession;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.SessionService;
-import net.hpclab.cev.services.UserSession;
 import net.hpclab.cev.services.Util;
 
 public class UtilsBean implements Serializable {
