@@ -45,6 +45,7 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 	private SpecimenContent specimenContentSearch;
 	private UploadedFile contentFile;
 	private String specimenDetail;
+	private String familyName;
 
 	private static final Logger LOGGER = Logger.getLogger(SpecimenContentBean.class.getName());
 
@@ -284,6 +285,12 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 		contentSpecimen = new ArrayList<>();
 		String id = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("idTaxonomy");
 		Integer idTaxonomy = Integer.parseInt(id);
+
+		Taxonomy tax = ObjectRetriever.getObjectFromId(Taxonomy.class, idTaxonomy);
+
+		if (tax != null)
+			familyName = tax.getTaxonomyName();
+
 		for (SpecimenContent s : DataWarehouse.getInstance().allSpecimenContents)
 			if (s.getFileContent() != null && isFather(idTaxonomy, s.getIdSpecimen()) && s.getPublish())
 				contentSpecimen.add(s);
@@ -352,5 +359,13 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 
 	public void setSpecimenDetail(String specimenDetail) {
 		this.specimenDetail = specimenDetail;
+	}
+
+	public String getFamilyName() {
+		return familyName;
+	}
+
+	public void setFamilyName(String familyName) {
+		this.familyName = familyName;
 	}
 }

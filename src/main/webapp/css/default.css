@@ -128,56 +128,56 @@ select[multiple], select[size] {
 	animation: spin .7s infinite linear;
 }
 
-@keyframes spin {
-	from {
-		transform:rotate(0deg);
-	}
+@
+keyframes spin {from { transform:rotate(0deg);
 	
-	to {
-		transform: rotate(360deg);
-	}
 }
 
-@-webkit-keyframes spin {
-	from {
-		-webkit-transform:rotate(0deg);
-	}
+to {
+	transform: rotate(360deg);
+}
+
+}
+@
+-webkit-keyframes spin {from { -webkit-transform:rotate(0deg);
 	
-	to {
-		-webkit-transform: rotate(360deg);
-	}
 }
 
-@-moz-keyframes spin {
-	from {
-		-moz-transform:rotate(0deg);
-	}
-
-	to {
-		-moz-transform: rotate(360deg);
-	}
+to {
+	-webkit-transform: rotate(360deg);
 }
 
-@-ms-keyframes spin {
-	from {
-		-ms-transform:rotate(0deg);
-	}
-
-	to {
-		-ms-transform: rotate(360deg);
-	}
 }
-
-@-webkit-keyframes spin2 {
-	from {
-		-webkit-transform:rotate(0deg);
-	}
+@
+-moz-keyframes spin {from { -moz-transform:rotate(0deg);
 	
-	to {
-		-webkit-transform: rotate(360deg);
-	}
 }
 
+to {
+	-moz-transform: rotate(360deg);
+}
+
+}
+@
+-ms-keyframes spin {from { -ms-transform:rotate(0deg);
+	
+}
+
+to {
+	-ms-transform: rotate(360deg);
+}
+
+}
+@
+-webkit-keyframes spin2 {from { -webkit-transform:rotate(0deg);
+	
+}
+
+to {
+	-webkit-transform: rotate(360deg);
+}
+
+}
 div.logo-dashboard {
 	width: 50%;
 	margin: -3em auto -3em auto;
@@ -410,8 +410,9 @@ div.form-group>label.control-label {
 
 .taxLevel {
 	color: #2234b7;
-	text-align: right;
-	padding-right: 0.5em;
+    text-align: right;
+    font-weight: 900;
+    margin: -0.4em 0.4em 0px 0px;
 }
 
 .ui-menu.ui-menu-dynamic {
@@ -509,7 +510,7 @@ div.form-group>label.control-label {
 
 .ui-radiobutton .ui-radiobutton-box {
 	width: 26px;
-    height: 26px;
+	height: 26px;
 }
 
 .ui-selectoneradio label {
@@ -523,23 +524,23 @@ div.form-group>label.control-label {
 a.list-group-item:hover {
 	color: #5a6f02;
 	font-weight: bold;
-    background-color: #9dc1425e;
+	background-color: #9dc1425e;
 }
 
 nav.navbar.navbar-inverse.navbar-fixed-top::before {
 	width: 100%;
-    line-height: 2.63em !important;
-    font-size: 2.4em;
-    min-height: 99px;
-    max-height: 99px;
-    background-color: #4b6f24c4;
-    position: absolute;
-    z-index: 10;
-    content: "COLECCION ENTOMOLOGICA VIRTUAL";
-    text-align: center;
-    color: #e9f3da;
-    font-weight: bolder;
-    text-shadow: 0 1px 0 rgb(0, 0, 0);
+	line-height: 2.63em !important;
+	font-size: 2.4em;
+	min-height: 99px;
+	max-height: 99px;
+	background-color: #4b6f24c4;
+	position: absolute;
+	z-index: 10;
+	content: "COLECCION ENTOMOLOGICA VIRTUAL";
+	text-align: center;
+	color: #e9f3da;
+	font-weight: bolder;
+	text-shadow: 0 1px 0 rgb(0, 0, 0);
 }
 
 .main-tittle {
@@ -588,4 +589,38 @@ nav.navbar.navbar-inverse.navbar-fixed-top::before {
 	border-color: #4b6f24c4;
 	font-weight: bold;
 	color: #ffffff;
+}
+
+.ui-tree-horizontal .ui-treenode-parent .ui-treenode-content {
+	height: 3em;
+	padding: 0em 0em 1em 0.3em;
+    text-align: left;
+}
+
+.locateInTreeText {
+	display: none;
+	transition: all 0.5s;
+}
+
+.locateInTree:hover .locateInTreeText {
+	display: inline;
+    transition: all 0.5s;
+    position: absolute;
+    margin-top: 3em;
+    margin-left: -6em;
+}
+
+.familyTittle {
+    border: #a7ca71 1px solid;
+    border-radius: 7px;
+    line-height: 80px;
+    text-align: center;
+    margin-bottom: 15px;
+    margin-top: 5px;
+}
+
+.familyImage {
+	padding: 10px;
+    border-radius: 15px;
+    margin-bottom: -10px;
 }
