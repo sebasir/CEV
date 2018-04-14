@@ -41,6 +41,7 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 	private List<SpecimenContent> contentSpecimen;
 	private List<Taxonomy> families;
 	private Specimen specimen;
+	private Specimen specimenContentDetail;
 	private SpecimenContent specimenContent;
 	private SpecimenContent specimenContentSearch;
 	private UploadedFile contentFile;
@@ -60,9 +61,10 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 
 				t = sc.getIdSpecimen().getIdTaxonomy();
 				t = ObjectRetriever.getObjectFromId(Taxonomy.class, t.getIdTaxonomy());
-				while (t.getIdTaxlevel().getTaxlevelRank() != 13)
+				while (t.getIdTaxlevel().getTaxlevelRank() != 12)
 					t = t.getIdContainer();
-				families.add(t);
+				if (!families.contains(t))
+					families.add(t);
 			}
 
 			limpiarFiltros();
@@ -297,6 +299,13 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 		return "Collection.xhtml" + Constant.FACES_REDIRECT;
 	}
 
+	public void loadDetailContent() {
+		if (specimenDetail == null || specimenDetail.isEmpty())
+			return;
+
+		specimenContentDetail = ObjectRetriever.getObjectFromId(Specimen.class, Integer.parseInt(specimenDetail));
+	}
+
 	public SpecimenContent getSpecimenContent() {
 		return specimenContent;
 	}
@@ -359,6 +368,14 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 
 	public void setSpecimenDetail(String specimenDetail) {
 		this.specimenDetail = specimenDetail;
+	}
+
+	public Specimen getSpecimenContentDetail() {
+		return specimenContentDetail;
+	}
+
+	public void setSpecimenContentDetail(Specimen specimenContentDetail) {
+		this.specimenContentDetail = specimenContentDetail;
 	}
 
 	public String getFamilyName() {

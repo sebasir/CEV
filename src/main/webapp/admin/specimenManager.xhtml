@@ -92,9 +92,12 @@
 						<div class="row">
 							<label class="col-md-4 control-label" for="desc">Descripción:</label>
 							<div class="col-md-8">
-								<p:inputTextarea id="desc" style="font-size: 13px"
+								<p:inputTextarea id="desc"
+									style="font-size: 13px; width: 90% !important;"
+									maxlength="2047"
 									value="#{specimenContentBean.specimenContent.shortDescription}"
-									rows="10" cols="50" title="Descripción del pie de la imagen">
+									autoResize="false" rows="10" cols="50"
+									title="Descripción del pie de la imagen">
 									<p:ajax process="@this" />
 									<f:validateBean disabled="true" />
 								</p:inputTextarea>
@@ -186,9 +189,12 @@
 						<div class="row">
 							<label class="col-md-4 control-label" for="desc">Descripción:</label>
 							<div class="col-md-8">
-								<p:inputTextarea id="desc" style="font-size: 13px;"
+								<p:inputTextarea id="desc"
+									style="font-size: 13px; width: 90% !important;"
+									maxlength="2047"
 									value="#{specimenContentBean.specimenContent.shortDescription}"
-									rows="10" cols="50" title="Descripción del pie de la imagen">
+									autoResize="false" rows="10" cols="50"
+									title="Descripción del pie de la imagen">
 									<p:ajax process="@this" />
 									<f:validateBean disabled="true" />
 								</p:inputTextarea>
