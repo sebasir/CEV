@@ -164,7 +164,8 @@
 									uploadLabel="Subir" cancelLabel="Cancelar" auto="true"
 									fileUploadListener="#{specimenContentBean.handleFileUpload}"
 									invalidFileMessage="Debe ser un archivo de imagen!!"
-									skinSimple="true" update="createSCModalForm:fileName">
+									skinSimple="true"
+									update="createSCModalForm:fileName, formSpecimen:messages">
 									<f:validateBean disabled="true" />
 								</p:fileUpload>
 							</div>

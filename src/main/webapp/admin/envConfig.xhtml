@@ -5,9 +5,19 @@
 	xmlns:f="http://java.sun.com/jsf/core">
 	<h:form id="formConfig">
 		<p:growl id="growl" showDetail="true" />
-		<div class="input-group">
-			<p:commandButton id="restart" value="Reiniciar listas de Dominio"
-				update="growl" actionListener="#{accessesBean.restartDomainLists()}" />
+		<div class="row">
+			<div class="input-group">
+				<p:commandButton id="restartLists" value="Reiniciar listas de Dominio"
+					update="growl"
+					actionListener="#{accessesBean.restartDomainLists()}" />
+			</div>
+		</div>
+		<div class="row">
+			<div class="input-group">
+				<p:commandButton id="restartMessages" value="Reiniciar Mensajes"
+					update="growl"
+					actionListener="#{accessesBean.restartMessages()}" />
+			</div>
 		</div>
 	</h:form>
 </ui:composition>

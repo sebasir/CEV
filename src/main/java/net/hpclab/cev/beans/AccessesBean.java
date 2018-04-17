@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,6 +29,7 @@ import net.hpclab.cev.services.AccessService;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
 import net.hpclab.cev.services.DataWarehouse;
+import net.hpclab.cev.services.MessagesService;
 import net.hpclab.cev.services.ParseExceptionService;
 
 @ManagedBean
@@ -310,6 +312,19 @@ public class AccessesBean extends UtilsBean implements Serializable {
 			mm = new ModulesModel(m, null, 0, accessService.getAccessFromCode(0));
 			if (!modulesModel.contains(mm))
 				modulesModel.add(mm);
+		}
+	}
+
+	public void restartMessages() {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		try {
+			Properties messages = new Properties();
+			messages.load(facesContext.getExternalContext().getResourceAsStream(Constant.MESSAGES_FILE));
+			MessagesService.getInstance().loadMessages(messages);
+			showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.GENERIC_INFO,
+					"Mensajes reiniciados correctamente");
+		} catch (Exception e) {
+			showMessage(facesContext, OutcomeEnum.GENERIC_ERROR, "Error recargando mensajes");
 		}
 	}
 

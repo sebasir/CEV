@@ -187,6 +187,9 @@ public class UtilsBean implements Serializable {
 			fMess = new FacesMessage(FacesMessage.SEVERITY_INFO, "Archivo adjuntado",
 					"Se ha adjuntado el archivo " + fileName + " satisfactoriamente!");
 			break;
+		case FILE_UPLOAD_WARNING:
+			fMess = new FacesMessage(FacesMessage.SEVERITY_WARN, "Archivo " + fileName + " adjuntado", message);
+			break;
 		case FILE_UPLOAD_ERROR:
 			fMess = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Archivo no adjuntado",
 					"Se ha producido un error adjuntando el archivo " + fileName + ", (" + message + ")");

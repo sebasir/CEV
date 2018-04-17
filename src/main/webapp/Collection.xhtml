@@ -79,10 +79,14 @@
 												value="#{scon.idSpecimen.idSpecimen}" />
 											<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 										</h:outputLink>
-										<a class="btn btn-default btn-lg btn-action"
-											title="Ubicar en el arbol taxonómico"> <span
-											class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>
-										</a>
+										<h:outputLink value="taxTree.xhtml"
+											styleClass="btn btn-default btn-lg btn-action"
+											title="Ubicar en el arbol taxonómico">
+											<f:param name="idTaxonomy"
+												value="#{scon.idSpecimen.idTaxonomy.idTaxonomy}" />
+											<span class="glyphicon glyphicon-screenshot"
+												aria-hidden="true"></span>
+										</h:outputLink>
 									</div>
 									<hr />
 								</div>
@@ -177,11 +181,8 @@
 				var containerWidth = containerElement.clientWidth;
 
 				if (containerWidth) {
-
-					var expectedWidth = Math.min(MAX_WIDTH || containerWidth,
-							containerWidth);
-
-					specimenSlider.$ScaleWidth(expectedWidth);
+					specimenSlider.$ScaleWidth(Math.min(MAX_WIDTH
+							|| containerWidth, containerWidth));
 				} else {
 					window.setTimeout(ScaleSlider, 30);
 				}

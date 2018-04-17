@@ -42,6 +42,8 @@ public class Constant {
 	public static final String DEFAULT_SPECIMEN_IMAGE = "/images/utils/bug-silhouette-dark.png";
 	public static final String NO_MENU_TYPE = "noMenuType";
 	public static final String MENU_TYPE = "menuType";
+	public static final double NOMINAL_ASPECT_RATIO = 4d / 3d;
+	public static final double TOLERANCE_RANGE_VALUE = 1d / 5d;
 	public static final int INSTITUTION_HINT = 10000;
 	public static final int COLLECTION_HINT = 20000;
 	public static final int CATALOG_HINT = 30000;

@@ -1,5 +1,6 @@
 package net.hpclab.cev.beans;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
+import javax.imageio.ImageIO;
 
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -269,6 +271,30 @@ public class SpecimenContentBean extends UtilsBean implements Serializable {
 
 	public void handleFileUpload(FileUploadEvent event) {
 		contentFile = event.getFile();
+		if (!contentFile.getContentType().contains("image")) {
+			showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.GENERIC_WARNING,
+					"El archivo no corresponde a un archivo de imagen");
+			contentFile = null;
+			specimenContent.setFileContent(null);
+			specimenContent.setFileName("El archivo no corresponde a un archivo de imagen");
+			return;
+		}
+		try {
+			BufferedImage image = ImageIO.read(contentFile.getInputstream());
+			int height = image.getHeight();
+			int width = image.getWidth();
+			double imageAspectRatio = (((double) width) / ((double) height));
+			if (Math.abs(Constant.NOMINAL_ASPECT_RATIO - imageAspectRatio) > Constant.TOLERANCE_RANGE_VALUE)
+				showFileMessage(FacesContext.getCurrentInstance(), OutcomeEnum.FILE_UPLOAD_WARNING,
+						contentFile.getFileName(), "No obstante se recomienda cambiar la relación de aspecto (actual: "
+								+ imageAspectRatio + ", deseable: " + Constant.NOMINAL_ASPECT_RATIO + ")");
+			else
+				showFileMessage(FacesContext.getCurrentInstance(), OutcomeEnum.FILE_UPLOAD_SUCCESS,
+						contentFile.getFileName(), null);
+		} catch (IOException e) {
+			LOGGER.log(Level.SEVERE, "Error leyendo propiedades del archivo", e);
+		}
+
 		specimenContent.setFileContent(contentFile.getContents());
 		specimenContent.setFileName(contentFile.getFileName());
 	}

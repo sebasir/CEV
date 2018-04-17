@@ -266,7 +266,7 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 			}
 		}
 	}
-
+	
 	public Taxonomy getNodeName() {
 		return (Taxonomy) selectedNode.getData();
 	}

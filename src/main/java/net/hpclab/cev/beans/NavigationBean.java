@@ -2,6 +2,9 @@ package net.hpclab.cev.beans;
 
 import java.io.Serializable;
 import javax.inject.Named;
+
+import net.hpclab.cev.services.MessagesService;
+
 import javax.enterprise.context.SessionScoped;
 
 @Named(value = "navigationBean")
@@ -26,4 +29,7 @@ public class NavigationBean extends UtilsBean implements Serializable {
 		this.navigablePage = navigablePage;
 	}
 
+	public String getMessage(String idMessage) {
+		return MessagesService.getInstance().getMessage(idMessage);
+	}
 }

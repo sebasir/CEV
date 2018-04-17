@@ -21,8 +21,7 @@
 				#{specimenBean.specimen.specificEpithet})</label>
 			<p:graphicImage value="#{specimenContentBean.getSpecimenThumb()}"
 				width="100%">
-				<f:param name="idSpecimen"
-					value="#{specimenContentBean.specimenDetail}" />
+				<f:param name="idSpecimen" value="#{specimenBean.specimenDetail}" />
 				<f:param name="t" value="#{specimenContentBean.timeStamp}" />
 			</p:graphicImage>
 			<label class="titulo">UBICACIÓN GEOGRÁFICA</label>

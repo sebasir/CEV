@@ -74,15 +74,14 @@
 										#{fam.taxonomyName}</span>
 									<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 								</p:commandLink>
-								<p:commandLink id="locateInTree"
-									action="#{specimenContentBean.loadFamilySpecimens}"
-									class="btn btn-default btn-lg btn-action locateInTree"
-									ajax="false">
+								<h:outputLink id="locateInTree" value="taxTree.xhtml"
+									styleClass="btn btn-default btn-lg btn-action"
+									title="Ubicar en el arbol taxonómico">
 									<f:param name="idTaxonomy" value="#{fam.idTaxonomy}" />
 									<span class="locateInTreeText">Ubicar esta familia en
 										árbol</span>
 									<span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>
-								</p:commandLink>
+								</h:outputLink>
 							</div>
 						</div>
 					</div>

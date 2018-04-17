@@ -24,6 +24,7 @@ import net.hpclab.cev.enums.OutcomeEnum;
 import net.hpclab.cev.model.TreeHierachyModel;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataWarehouse;
+import net.hpclab.cev.services.ObjectRetriever;
 
 @ManagedBean
 @ViewScoped
@@ -31,6 +32,7 @@ public class TaxTreeBean extends UtilsBean implements Serializable {
 
 	private static final long serialVersionUID = -2452341929369884578L;
 	private String selectedLevel;
+	private String taxonomyTreeId;
 	private Taxonomy taxonomy;
 	private Taxonomy parentTaxonomy;
 	private TreeNode root;
@@ -160,6 +162,18 @@ public class TaxTreeBean extends UtilsBean implements Serializable {
 		return ((Taxonomy) node).getIdTaxlevel().getTaxlevelName();
 	}
 
+	public void getTaxFromParam() {
+		if (taxonomyTreeId == null || taxonomyTreeId.isEmpty())
+			return;
+
+		try {
+			taxonomy = ObjectRetriever.getObjectFromId(Taxonomy.class, Integer.parseInt(taxonomyTreeId));
+		} catch (Exception e) {
+			LOGGER.log(Level.SEVERE, "Error obteniendo elemento", e);
+		}
+		createTree();
+	}
+
 	public Taxonomy getTaxonomy() {
 		return taxonomy;
 	}
@@ -188,6 +202,14 @@ public class TaxTreeBean extends UtilsBean implements Serializable {
 		if (selectedNode != null)
 			openBranch(selectedNode);
 		return root;
+	}
+
+	public String getTaxonomyTreeId() {
+		return taxonomyTreeId;
+	}
+
+	public void setTaxonomyTreeId(String taxonomyTreeId) {
+		this.taxonomyTreeId = taxonomyTreeId;
 	}
 
 	public void setTaxRoot(TreeNode taxRoot) {

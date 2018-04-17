@@ -21,7 +21,7 @@ public class MessagesService implements Serializable {
 
 	public String getMessage(String prop, Object... params) {
 		String message = messages.getProperty(prop);
-		if (params != null) {
+		if (params != null && params.length > 0) {
 			message = MessageFormat.format(message, params);
 		}
 		return message;

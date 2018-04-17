@@ -5,6 +5,10 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core">
+<f:metadata>
+	<f:viewParam name="idTaxonomy" value="#{taxTreeBean.taxonomyTreeId}" />
+	<f:viewAction action="#{taxTreeBean.getTaxFromParam()}" />
+</f:metadata>
 <h:head>
 	<title>Colección Entomológica Virtual</title>
 	<meta charset="utf-8" />
@@ -43,13 +47,7 @@
 				<li class="active">Arbol Taxonómico</li>
 			</ol>
 		</div>
-		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-			eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-			ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-			aliquip ex ea commodo consequat. Duis aute irure dolor in
-			reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-			pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-			culpa qui officia deserunt mollit anim id est laborum.</p>
+		<p>#{navigationBean.getMessage('TAX_TREE_HEADER_TEXT')}</p>
 		<hr />
 		<h:outputStylesheet library="css" name="pstyle.css" />
 
@@ -117,9 +115,6 @@
 					actionListener="#{taxTreeBean.setDatafromNode('detail')}"
 					icon="fa fa-file-text-o"
 					oncomplete="$('#detailTaxModal').modal({backdrop: false})" />
-				<p:menuitem value="Ver contenido gráfico"
-					actionListener="#{taxTreeBean.setDatafromNode('detail')}"
-					icon="fa fa-picture-o" />
 			</p:contextMenu>
 		</h:form>
 	</div>
