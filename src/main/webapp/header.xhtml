@@ -1,3 +1,6 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
 <div class="container">
 	<div class="modal fade" id="contact" tabindex="-1" role="dialog"
 		aria-labelledby="Contacto">
@@ -19,8 +22,8 @@
 					</div>
 					<br />
 					<h3>Universidad Central</h3>
-					<br /> Sede Centro: calle 21 n.º 4-40 <br /> Sede Norte: calle 75
-					n.º 16-03 <br /> Semillero de Modelado, Simulación y Desarrollo <br />
+					<br /> Sede Centro: calle 21 n° 4-40 <br /> Sede Norte: calle 75
+					n.° 16-03 <br /> Semillero de Modelado, Simulación y Desarrollo <br />
 					<h3>Universidad Jorger Tadeo Lozano</h3>
 					<br /> Cra. 4 #22-61, Bogotá, Cundinamarca <br /> 2017 Todos los
 					derechos reservados <br /> <br /> email: <a
@@ -61,14 +64,11 @@
 						<h3>COLECCION ENTOMOLÓGICA VIRTUAL</h3>
 					</div>
 					<br />
-					<p style="text-align: justify;">Lorem ipsum dolor sit amet,
-						consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-						labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-						nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-						consequat. Duis aute irure dolor in reprehenderit in voluptate
-						velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-						occaecat cupidatat non proident, sunt in culpa qui officia
-						deserunt mollit anim id est laborum.</p>
+					<p style="text-align: justify;">
+						<h:outputText
+							value="#{navigationBean.getMessage('ABOUT_MODAL_TEXT')}"
+							escape="false" />
+					</p>
 				</div>
 				<div class="modal-footer">
 					<div class="input-group">
@@ -108,7 +108,8 @@
 								class="icon-bar"></span> <span class="icon-bar"></span> <span
 								class="icon-bar"></span>
 						</button>
-						<a class="navbar-brand" href="#">HPCLab - High Performance Computing Lab</a>
+						<a class="navbar-brand" href="#">HPCLab - High Performance
+							Computing Lab</a>
 					</div>
 					<div class="collapse navbar-collapse"
 						id="bs-example-navbar-collapse-1">
@@ -123,3 +124,4 @@
 		</div>
 	</div>
 </div>
+</html>

@@ -31,12 +31,11 @@
 								</h:outputLink>
 							</div>
 							<br />
-							<div class="col-md-6">La Universidad Central, lleva a otros
-								niveles la presentación de la colecciones biológicas. En este
-								proyecto nos dedicamos a llevar a la colección entomológica del
-								Centro de Biosistemas de la Universidad Jorge Tadeo Lozano, a
-								una dimensión virtual donde es posible su visualización
-								conociendo todas sus características.</div>
+							<div class="col-md-6">
+								<h:outputText
+									value="#{navigationBean.getMessage('COLLECTION_PANEL_TEXT')}"
+									escape="false" />
+							</div>
 						</div>
 					</div>
 					<div class="list-group">
@@ -56,11 +55,9 @@
 				<div class="panel panel-default main-panel">
 					<div class="panel-heading">Noticias y Eventos</div>
 					<div class="panel-body">
-						El Centro Entomológico Virtual está disponible
-						<hr />
-						Este al tanto de las nuevos ejemplares que son añadidos.
-						<hr />
-						<img class="img-responsive" src="images/banner/avispa.jpg" alt="" />
+						<h:outputText
+							value="#{navigationBean.getMessage('NEWS_PANEL_TEXT')}"
+							escape="false" />
 					</div>
 				</div>
 			</div>

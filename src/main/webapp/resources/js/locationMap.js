@@ -15,11 +15,12 @@ function initMap() {
 	$tree.parent().css('height', '96%');
 	$tree.parent().parent().css('height', '100%');
 	$tree.addClass('flexContainer');
-	$tree.append('<div id="map" class="locationMap treeHeight"><p>aqui va el mapa</p></div>');
+	$tree
+			.append('<div id="map" class="locationMap treeHeight"><p>aqui va el mapa</p></div>');
 	$tree.find('.ui-tree-container').each(function() {
 		$(this).addClass('treeHeight');
 	});
-	
+
 	google.maps.event.addDomListener(window, 'load', initialize);
 }
 
@@ -29,7 +30,9 @@ function initialize() {
 		center : defaultCenter,
 		zoom : defaultZoom
 	};
-	map = new google.maps.Map(mapCanvas, mapOptions);
+
+	if (mapCanvas)
+		map = new google.maps.Map(mapCanvas, mapOptions);
 }
 
 function setMapCenter(params) {
@@ -83,12 +86,14 @@ function setMapLocation(location, zoom, name, infoWindow) {
 		icon : '../images/utils/bee_marker.png',
 		title : name
 	});
-	
-	map = new google.maps.Map(mapCanvas, mapOptions);
-	marker.setMap(map);
-	marker.addListener('click', function() {
-		infoWindow.open(map, marker);
-	});
+
+	if (mapCanvas) {
+		map = new google.maps.Map(mapCanvas, mapOptions);
+		marker.setMap(map);
+		marker.addListener('click', function() {
+			infoWindow.open(map, marker);
+		});
+	}
 }
 
 function isNumeric(n) {
@@ -100,7 +105,6 @@ locateName = function(geocoder, locationName, infoWindow, f) {
 		'address' : locationName
 	}, function(results, status) {
 		if (status == google.maps.GeocoderStatus.OK) {
-			console.log(results[0].geometry.location);
 			f(results[0].geometry.location, defaultZoom, locationName,
 					infoWindow);
 		} else

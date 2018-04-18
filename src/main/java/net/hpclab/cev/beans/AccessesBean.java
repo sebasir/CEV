@@ -15,6 +15,9 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.UploadedFile;
+
 import net.hpclab.cev.entities.Institution;
 import net.hpclab.cev.entities.Modules;
 import net.hpclab.cev.entities.Roles;
@@ -39,6 +42,7 @@ public class AccessesBean extends UtilsBean implements Serializable {
 	private static final long serialVersionUID = -6526130526851965587L;
 	private DataBaseService<Users> usersService;
 	private DataBaseService<Roles> rolesService;
+	private UploadedFile contentFile;
 	private List<Users> searchUsers;
 	private List<Roles> searchRoles;
 	private List<RolesModel> userRolesModel;
@@ -315,12 +319,14 @@ public class AccessesBean extends UtilsBean implements Serializable {
 		}
 	}
 
-	public void restartMessages() {
+	public void handleFileUpload(FileUploadEvent event) {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		try {
 			Properties messages = new Properties();
-			messages.load(facesContext.getExternalContext().getResourceAsStream(Constant.MESSAGES_FILE));
+			contentFile = event.getFile();
+			messages.load(contentFile.getInputstream());
 			MessagesService.getInstance().loadMessages(messages);
+			
 			showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.GENERIC_INFO,
 					"Mensajes reiniciados correctamente");
 		} catch (Exception e) {

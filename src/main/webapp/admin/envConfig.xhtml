@@ -7,16 +7,24 @@
 		<p:growl id="growl" showDetail="true" />
 		<div class="row">
 			<div class="input-group">
-				<p:commandButton id="restartLists" value="Reiniciar listas de Dominio"
-					update="growl"
+				<p:commandButton id="restartLists"
+					value="Reiniciar listas de Dominio" update="growl"
 					actionListener="#{accessesBean.restartDomainLists()}" />
 			</div>
 		</div>
+		<hr />
 		<div class="row">
-			<div class="input-group">
-				<p:commandButton id="restartMessages" value="Reiniciar Mensajes"
-					update="growl"
-					actionListener="#{accessesBean.restartMessages()}" />
+			<label class="col-md-4 control-label" for="loadDate">Actualizar
+				Archivo de mensajes:</label>
+		</div>
+		<div class="row">
+			<div class="col-md-4">
+				<p:fileUpload mode="advanced" label="Adjuntar" uploadLabel="Subir"
+					cancelLabel="Cancelar" auto="true"
+					fileUploadListener="#{accessesBean.handleFileUpload}"
+					invalidFileMessage="Debe ser un archivo de propiedades!!"
+					skinSimple="true" update="growl">
+				</p:fileUpload>
 			</div>
 		</div>
 	</h:form>

@@ -6,6 +6,7 @@
 
 	<h:outputScript library="primefaces" name="jquery/jquery.js"
 		target="head" />
+
 	<h:panelGroup id="mapCenter">
 		<h:outputScript>
 			setMapCenter(#{locationBean.setMapCenter()});
@@ -353,9 +354,4 @@
 			</p:panel>
 		</h:form>
 	</h:body>
-
-	<script src="../js/locationMap.js" type="javascript"></script>
-	<script
-		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBR3PcM4cz5r0TULxJuDBgF2xvLqLE73c"></script>
-
 </ui:composition>

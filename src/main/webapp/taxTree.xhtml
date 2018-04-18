@@ -47,7 +47,11 @@
 				<li class="active">Arbol Taxonómico</li>
 			</ol>
 		</div>
-		<p>#{navigationBean.getMessage('TAX_TREE_HEADER_TEXT')}</p>
+		<p>
+			<h:outputText
+				value="#{navigationBean.getMessage('TAX_TREE_HEADER_TEXT')}"
+				escape="false" />
+		</p>
 		<hr />
 		<h:outputStylesheet library="css" name="pstyle.css" />
 
@@ -131,9 +135,11 @@
 		function scrollToHighLight() {
 			var container = $('#formTaxonomy\\:taxTree');
 			var selectedNode = $('.ui-state-highlight');
-			
+
 			if (selectedNode.offset().left)
-				container.animate({scrollLeft: selectedNode.offset().left})
+				container.animate({
+					scrollLeft : selectedNode.offset().left
+				})
 		}
 	</script>
 </body>
