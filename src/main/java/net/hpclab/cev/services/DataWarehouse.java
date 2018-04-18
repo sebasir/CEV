@@ -50,7 +50,7 @@ public class DataWarehouse implements Serializable {
 		allCatalogs = new DataBaseService<Catalog>().getList(Catalog.class);
 		allCollections = new DataBaseService<Collection>().getList(Collection.class);
 		allInstitutions = new DataBaseService<Institution>().getList(Institution.class);
-		allLocations = new DataBaseService<Location>().getList(Location.class);
+		allLocations = new DataBaseService<Location>(Location.class, Constant.UNLIMITED_QUERY_RESULTS).getList();
 		allLocationLevels = new DataBaseService<LocationLevel>().getList(LocationLevel.class);
 		allModules = new DataBaseService<Modules>().getList(Modules.class);
 		allModulesUsers = new DataBaseService<ModulesUsers>().getList(ModulesUsers.class);

@@ -125,7 +125,16 @@
 				"width" : "80%",
 				"height" : "70%"
 			});
+			scrollToHighLight();
 		});
+
+		function scrollToHighLight() {
+			var container = $('#formTaxonomy\\:taxTree');
+			var selectedNode = $('.ui-state-highlight');
+			
+			if (selectedNode.offset().left)
+				container.animate({scrollLeft: selectedNode.offset().left})
+		}
 	</script>
 </body>
 </html>

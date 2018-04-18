@@ -2,8 +2,10 @@ package net.hpclab.cev.beans;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -173,10 +175,27 @@ public class LocationBean extends UtilsBean implements Serializable {
 	public void createTree() {
 		tree = new HashMap<>();
 		abstractMap = new HashMap<>();
+		PriorityQueue<Location> orderedLocation = new PriorityQueue<>(DataWarehouse.getInstance().allLocations.size(),
+				new Comparator<Location>() {
+					@Override
+					public int compare(Location o1, Location o2) {
+						if (o1.getIdLoclevel().getLoclevelRank() < o2.getIdLoclevel().getLoclevelRank())
+							return -1;
+						else if (o1.getIdLoclevel().getLoclevelRank() == o2.getIdLoclevel().getLoclevelRank())
+							if (o1.getIdLocation() < o2.getIdLocation())
+								return -1;
+						return 1;
+					}
+
+				});
+
+		orderedLocation.addAll(DataWarehouse.getInstance().allLocations);
 		TreeHierachyModel fatherNode = new TreeHierachyModel();
 		TreeHierachyModel childNode = new TreeHierachyModel();
 		root = null;
-		for (Location t : DataWarehouse.getInstance().allLocations) {
+		Location t = null;
+		while (!orderedLocation.isEmpty()) {
+			t = orderedLocation.poll();
 			if (root == null) {
 				abstractTree = new TreeHierachyModel(t.getIdLocation(), t.getIdLoclevel().getLoclevelRank());
 				tree.put(t.getIdLocation(), (root = new DefaultTreeNode(t, null)));
@@ -272,7 +291,12 @@ public class LocationBean extends UtilsBean implements Serializable {
 			json.put("longitude", location.getLongitude());
 			json.put("name", location.getLocationName());
 			json.put("zoom", 12);
-			List<Specimen> specimens = location.getSpecimenList();
+
+			List<Specimen> specimens = new ArrayList<>();
+			for (Specimen s : DataWarehouse.getInstance().allSpecimens)
+				if (s.getIdLocation().equals(location))
+					specimens.add(s);
+
 			if (specimens != null && !specimens.isEmpty()) {
 				JSONArray jsonSpecimensArray = new JSONArray();
 				JSONObject jsonSpecimens;

@@ -2,8 +2,10 @@ package net.hpclab.cev.beans;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -176,10 +178,29 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 	public void createTree() {
 		tree = new HashMap<>();
 		abstractMap = new HashMap<>();
+
+		PriorityQueue<Taxonomy> orderedTaxonomy = new PriorityQueue<>(DataWarehouse.getInstance().allTaxonomys.size(),
+				new Comparator<Taxonomy>() {
+					@Override
+					public int compare(Taxonomy o1, Taxonomy o2) {
+						if (o1.getIdTaxlevel().getTaxlevelRank() < o2.getIdTaxlevel().getTaxlevelRank())
+							return -1;
+						else if (o1.getIdTaxlevel().getTaxlevelRank() == o2.getIdTaxlevel().getTaxlevelRank())
+							if (o1.getIdTaxonomy() < o2.getIdTaxonomy())
+								return -1;
+						return 1;
+					}
+
+				});
+
+		orderedTaxonomy.addAll(DataWarehouse.getInstance().allTaxonomys);
+
 		TreeHierachyModel fatherNode = new TreeHierachyModel();
 		TreeHierachyModel childNode = new TreeHierachyModel();
 		root = null;
-		for (Taxonomy t : DataWarehouse.getInstance().allTaxonomys) {
+		Taxonomy t = null;
+		while (!orderedTaxonomy.isEmpty()) {
+			t = orderedTaxonomy.poll();
 			if (root == null) {
 				abstractTree = new TreeHierachyModel(t.getIdTaxonomy(), t.getIdTaxlevel().getTaxlevelRank());
 				tree.put(t.getIdTaxonomy(), (root = new DefaultTreeNode(t, null)));
@@ -202,8 +223,8 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 		openBranch(n);
 
 		levelMap = new HashMap<>();
-		for (TaxonomyLevel t : DataWarehouse.getInstance().allTaxonomyLevels) {
-			levelMap.put(t.getIdTaxlevel(), t);
+		for (TaxonomyLevel tl : DataWarehouse.getInstance().allTaxonomyLevels) {
+			levelMap.put(tl.getIdTaxlevel(), tl);
 		}
 
 		specimenTaxonomy = new HashMap<>();
@@ -266,7 +287,7 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 			}
 		}
 	}
-	
+
 	public Taxonomy getNodeName() {
 		return (Taxonomy) selectedNode.getData();
 	}

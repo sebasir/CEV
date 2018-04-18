@@ -6,10 +6,9 @@
 
 	<h:outputScript library="primefaces" name="jquery/jquery.js"
 		target="head" />
-	<h:outputScript library="js" name="locationMap.js" target="head" />
 	<h:panelGroup id="mapCenter">
 		<h:outputScript>
-            setMapCenter(#{locationBean.setMapCenter()});
+			setMapCenter(#{locationBean.setMapCenter()});
         </h:outputScript>
 	</h:panelGroup>
 	<h:body>
@@ -143,7 +142,7 @@
 							<div class="input-group">
 								<p:commandButton id="editYesButton" value="Guardar"
 									action="#{locationBean.edit()}" update=":formLocation"
-									oncomplete="$('#editModal').modal('hide')" />
+									oncomplete="$('#editModal').modal('hide'); initMap(); initialize(); setMapCenter(#{locationBean.setMapCenter()});" />
 								<p:commandButton id="editNoButton" value="Cancelar"
 									type="button" onclick="$('#editModal').modal('hide')" />
 							</div>
@@ -257,7 +256,7 @@
 							<div class="input-group">
 								<p:commandButton id="createYesButton" value="Guardar"
 									action="#{locationBean.persist()}" update=":formLocation"
-									oncomplete="$('#createModal').modal('hide')" />
+									oncomplete="$('#createModal').modal('hide'); initMap(); initialize(); setMapCenter(#{locationBean.setMapCenter()});" />
 								<p:commandButton id="createNoButton" value="Cancelar"
 									type="button" onclick="$('#createModal').modal('hide')" />
 							</div>
@@ -323,11 +322,12 @@
 					orientation="vertical" selectionMode="single" ajax="true"
 					selection="#{locationBean.selectedNode}">
 					<p:ajax event="select" listener="#{locationBean.onNodeSelect}"
-						update="mapCenter, growl" />
+						update="growl, mapCenter" />
 					<p:treeNode>
 						<h:outputText value="#{loc}" />
 					</p:treeNode>
 				</p:tree>
+
 				<p:contextMenu for="locTree">
 					<p:menuitem value="Agregar Localización" update="createModalForm"
 						actionListener="#{locationBean.setDatafromNode('create')}"
@@ -353,5 +353,9 @@
 			</p:panel>
 		</h:form>
 	</h:body>
+
+	<script src="../js/locationMap.js" type="javascript"></script>
+	<script
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBR3PcM4cz5r0TULxJuDBgF2xvLqLE73c"></script>
 
 </ui:composition>
