@@ -525,20 +525,24 @@ a.list-group-item:hover {
 	background-color: #9dc1425e;
 }
 
-nav.navbar.navbar-inverse.navbar-fixed-top::before {
+.main-tittle-hover {
 	width: 100%;
-	line-height: 2.63em !important;
-	font-size: 2.4em;
-	min-height: 99px;
-	max-height: 99px;
-	background-color: #4b6f24c4;
-	position: absolute;
-	z-index: 10;
-	content: "COLECCION ENTOMOLOGICA VIRTUAL";
-	text-align: center;
-	color: #e9f3da;
-	font-weight: bolder;
-	text-shadow: 0 1px 0 rgb(0, 0, 0);
+    min-height: 99px;
+    height: 99px;
+    max-height: 99px;
+    background-color: #4b6f24c4;
+    position: absolute;
+    z-index: 10;
+    text-align: center;
+}
+
+.titleText {
+	display: inline-block;
+    vertical-align: middle;
+    font-size: 5.4vmin;
+    color: #e9f3da;
+    font-weight: bolder;
+    text-shadow: 0 1px 0 rgb(0, 0, 0);
 }
 
 .main-tittle {
@@ -621,4 +625,14 @@ nav.navbar.navbar-inverse.navbar-fixed-top::before {
 	padding: 10px;
     border-radius: 15px;
     margin-bottom: -10px;
+}
+
+
+.dummy-child {
+	height: 100%;
+}
+
+.dummy-child, .titleText {
+    display: inline-block;
+    vertical-align: middle;
 }
