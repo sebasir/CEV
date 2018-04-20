@@ -530,15 +530,13 @@ a.list-group-item:hover {
     min-height: 99px;
     height: 99px;
     max-height: 99px;
-    background-color: #4b6f24c4;
+    background-color: rgba(75, 111, 36, 0.75);
     position: absolute;
     z-index: 10;
     text-align: center;
 }
 
 .titleText {
-	display: inline-block;
-    vertical-align: middle;
     font-size: 5.2vmin;
     color: #e9f3da;
     font-weight: bolder;
