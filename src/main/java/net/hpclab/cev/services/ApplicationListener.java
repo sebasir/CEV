@@ -1,3 +1,14 @@
+/*
+ * Colección Entomológica Virtual
+ * Universidad Central
+ * High Performance Computing Laboratory
+ * Grupo COMMONS.
+ * 
+ * Sebastián Motavita Medellín
+ * 
+ * 2017 - 2018
+ */
+
 package net.hpclab.cev.services;
 
 import java.io.Serializable;
@@ -15,10 +26,36 @@ import javax.servlet.http.HttpSessionListener;
 import net.hpclab.cev.entities.Modules;
 import net.hpclab.cev.enums.ModulesEnum;
 
+/**
+ * Es un servicio creado para interceptar el inicio de la aplicación, y así
+ * poder inicializar los elementos que dependen todo el sistema.
+ * 
+ * <p>
+ * El servicio es invocado cuando desde la interfaz
+ * <tt>ServletContextListener</tt> el servicio inicia el despliegue de la
+ * aplicación. Los servicios a iniciar son, centralizador de listas de dominio
+ * <tt>DataWarehouse</tt>, el servicio de accesos <tt>AccessService</tt>, y el
+ * servicio de mensajes <tt>MessagesService</tt>.
+ * 
+ * @since 1.0
+ * @author Sebasir
+ * @see ServletContextListener
+ * @see AccessService
+ * @see DataWarehouse
+ * @see MessagesService
+ * @see Properties
+ */
+
 @WebListener
 public class ApplicationListener implements ServletContextListener, HttpSessionListener, Serializable {
 
 	private static final long serialVersionUID = 7442440188928511327L;
+
+	/**
+	 * Mantiene una manera de identificar los orígenes de impresiones de mensajes de
+	 * log, a través del nombre de la clase, centralizando estos mensajes en el log
+	 * del servidor de despliegue.
+	 */
 	private static final Logger LOGGER = Logger.getLogger(ApplicationListener.class.getSimpleName());
 
 	@Override
@@ -70,7 +107,7 @@ public class ApplicationListener implements ServletContextListener, HttpSessionL
 	@Override
 	public void sessionCreated(HttpSessionEvent se) {
 		System.out.println("session " + se.getSession().getId() + " created!");
-		//se.getSession().setMaxInactiveInterval(Constant.MAX_IDLE_SESSION_NO_LOGGED);
+		// se.getSession().setMaxInactiveInterval(Constant.MAX_IDLE_SESSION_NO_LOGGED);
 	}
 
 	@Override

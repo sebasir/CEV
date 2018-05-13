@@ -1,3 +1,14 @@
+/*
+ * Colección Entomológica Virtual
+ * Universidad Central
+ * High Performance Computing Laboratory
+ * Grupo COMMONS.
+ * 
+ * Sebastián Motavita Medellín
+ * 
+ * 2017 - 2018
+ */
+
 package net.hpclab.cev.services;
 
 import java.io.IOException;
@@ -14,6 +25,25 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import net.hpclab.cev.enums.StatusEnum;
 import net.hpclab.cev.model.UserSession;
+
+/**
+ * Este servicio se encarga de interceptar la petición de todos los recuros Web
+ * que sean accedidos desde una URL específica, obtenida desde el conexto que
+ * indentifique al servidor. La regla de negocio define que los usuarios no
+ * registrados y que no han ingresado, no pueden acceder a ningun recuso bajo el
+ * recurso <tt>/admin/*</tt>.
+ * 
+ * La aplicación verifica en memoria si existe tal usuario, de manera que
+ * almacena un objeto tipo <tt>Users</tt> en el servicio
+ * <tt>SessionService</tt>, el cual indicará si el usuario se encuentra activo.
+ * De no estarlo lo redirecciona a la pagina de ingreso del CEV.
+ * 
+ * @since 1.0
+ * @author Sebasir
+ * @see SessionService
+ * @see UserSession
+ *
+ */
 
 @WebFilter("/admin/*")
 public class AuthorizationFilter implements Filter {
@@ -58,6 +88,8 @@ public class AuthorizationFilter implements Filter {
 			response.setCharacterEncoding("UTF-8");
 			response.getWriter().printf(Constant.AJAX_REDIRECT_XML, loginURL);
 		} else {
+			if (session != null)
+				SessionService.getInstance().removeUser(session.getId());
 			response.sendRedirect(loginURL);
 		}
 	}

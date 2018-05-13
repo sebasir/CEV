@@ -1,3 +1,14 @@
+/*
+ * Colección Entomológica Virtual
+ * Universidad Central
+ * High Performance Computing Laboratory
+ * Grupo COMMONS.
+ * 
+ * Sebastián Motavita Medellín
+ * 
+ * 2017 - 2018
+ */
+
 package net.hpclab.cev.services;
 
 import java.io.Serializable;
@@ -23,30 +34,127 @@ import org.hibernate.CacheMode;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+/**
+ * Es un servicio creado para la encapsulación del servicio de persistencia y
+ * administración de conexiones a la base de datos, realizando operaciones de
+ * consulta, creación, modificación y eliminación, de cualquier entidad que esté
+ * atada al modelo de datos mapeados como entidades. Este servicio esta
+ * soportado por el servicio de <tt>EntityResourcer</tt> el cual administra las
+ * conexiones hacia la base de datos, y además permite centralizar las
+ * particularidades del servicio al framework de JPA, extendido por Hibernate,
+ * ambos usando las capacidades de transaccionabilidad del motro de JTA del
+ * servidor de despliegue.
+ *
+ * @param <T>
+ *            Tipo de clase la cual se extienden todas las operaciones
+ *            disponibles desde el motor de persistencia
+ * 
+ * @since 1.0
+ * @author Sebasir
+ * 
+ */
+
 public class DataBaseService<T> implements Serializable {
 
 	private static final long serialVersionUID = -2261108379261211921L;
+
+	/**
+	 * Objeto que soportará las conexiones y traducirá las peticiones en lenguaje
+	 * SQL
+	 */
 	private EntityManager entityManager;
 
+	/**
+	 * Enumeración que realiza una diferenciación en el uso de tipos de consulta.
+	 */
 	private static enum QueryMethod {
 		MAP, ENTITY, NAMED_QUERY, QUERY_MAP
 	};
 
+	/**
+	 * Constante para la palabra clave de SQL
+	 */
 	private static final String SELECT = "SELECT";
+
+	/**
+	 * Mantiene una manera de identificar los orígenes de impresiones de mensajes de
+	 * log, a través del nombre de la clase, centralizando estos mensajes en el log
+	 * del servidor de despliegue.
+	 */
 	private static final Logger LOGGER = Logger.getLogger(DataBaseService.class.getSimpleName());
+
+	/**
+	 * Objeto de la sublclase que permite paginar un resultado según un ordenamiento
+	 * básico
+	 */
 	private Pager pager;
+
+	/**
+	 * Objeto que permite diferenciar en distintas funciones la manera original de
+	 * extracción de información
+	 */
 	private QueryMethod queryMethod;
 
+	/**
+	 * Página actual del conjunto de datos obtenido para una consulta
+	 */
 	private int currentPage;
+
+	/**
+	 * Cantidad de registros obtenido para una consulta
+	 */
 	private int numberOfResults;
+
+	/**
+	 * Máxima cantidad de registros disponibles para un conjunto de resultados
+	 * paginados.
+	 */
 	private int queryMaxResults;
+
+	/**
+	 * Objeto de parámetro de tipo parametrizado para una consulta
+	 */
 	private T entityParam;
+
+	/**
+	 * Mapa de objetos indexados como filtros de una consulta
+	 */
 	private HashMap<String, Object> mapParam;
+
+	/**
+	 * Cadena de caracteres el cual contiene la consulta en lenguaje SQL
+	 */
 	private String queryParam;
+
+	/**
+	 * Clase abstracta del tipo de la parametrización
+	 */
 	protected Class<T> entityClass;
+
+	/**
+	 * Sesion de base de datos con el cual el motor de JPA conecta al DS
+	 */
 	private Session session;
+
+	/**
+	 * Transacción obtenida desde la sesión, donde se puede realizar confirmación o
+	 * retroceso
+	 */
 	private Transaction tx;
 
+	/**
+	 * Constructor que define las propiedades del número máximo de resultados a
+	 * obtener
+	 * 
+	 * @param entityClass
+	 *            Clase abstracta de los resultados a obtener.
+	 * @param queryMaxResults
+	 *            Número máximo de resultados.
+	 * @throws PersistenceException
+	 *             En caso de existir un error de tipo de conexión de base de datos.
+	 * @throws Exception
+	 *             En caso de existir otro error
+	 */
 	public DataBaseService(Class<T> entityClass, int queryMaxResults) throws PersistenceException, Exception {
 		this.entityClass = entityClass;
 		this.queryMaxResults = queryMaxResults;
@@ -55,6 +163,15 @@ public class DataBaseService<T> implements Serializable {
 		getEntityManager();
 	}
 
+	/**
+	 * Constructor que define las propiedades del básicas de una consulta de
+	 * resultados ilimitados, desde el servicio de <tt>Constant</tt>
+	 * 
+	 * @throws PersistenceException
+	 *             En caso de existir un error de tipo de conexión de base de datos.
+	 * @throws Exception
+	 *             En caso de existir otro error
+	 */
 	public DataBaseService() throws PersistenceException, Exception {
 		this.queryMaxResults = Constant.UNLIMITED_QUERY_RESULTS;
 		numberOfResults = 0;
@@ -62,10 +179,33 @@ public class DataBaseService<T> implements Serializable {
 		getEntityManager();
 	}
 
+	/**
+	 * Constructor que define las propiedades del tipo de clase que se obtiene con
+	 * una consulta
+	 * 
+	 * @param entityClass
+	 *            Clase abstracta de los resultados a obtener.
+	 * @throws PersistenceException
+	 *             En caso de existir un error de tipo de conexión de base de datos.
+	 * @throws Exception
+	 *             En caso de existir otro error
+	 */
 	public DataBaseService(Class<T> entityClass) throws PersistenceException, Exception {
 		this(entityClass, Constant.QUERY_MAX_RESULTS);
 	}
 
+	/**
+	 * Función que permite consultar un resultado de una consulta, realizandola por
+	 * defecto con parámetros de tipo mapa según se definen en la enumeración
+	 * <tt>QueryMethod</tt>. Según se defina, el motor añade filtros, o si nó,
+	 * realiza una consulta básica
+	 * 
+	 * @return Lista de resultados de tipo <tt>T</tt>.
+	 * @throws NoResultException
+	 *             Excepción específica de cuando no se encuentran resultados.
+	 * @throws Exception
+	 *             Cuando ocurre otro error
+	 */
 	public List<T> getList() throws NoResultException, Exception {
 		if (queryMethod == null) {
 			queryMethod = QueryMethod.MAP;
@@ -84,11 +224,33 @@ public class DataBaseService<T> implements Serializable {
 		}
 	}
 
+	/**
+	 * Obtiene una página determinada por índice a obtener.
+	 * 
+	 * @param page
+	 *            Índice de la página que se espera obtener.
+	 * @return Lista de resultados de tipo <tt>T</tt>.
+	 * @throws NoResultException
+	 *             Excepción específica de cuando no se encuentran resultados.
+	 * @throws Exception
+	 *             Cuando ocurre otro error
+	 */
 	public List<T> getList(int page) throws NoResultException, Exception {
 		currentPage = page;
 		return getList();
 	}
 
+	/**
+	 * Función que permite obtener valores de un objeto parametrizado através de
+	 * reflexión de clases, y estos aplicarlos a una consulta que se adjunta hacia
+	 * la base de datos, para filtrar una búsqueda.
+	 * 
+	 * @param obj
+	 *            Objeto del cual se extraen los valores de filtros.
+	 * @return Un objeto que corresponde al valor del filtro.
+	 * @throws Exception
+	 *             Cuando se viola algún acceso o tipo de parámetro no existente.
+	 */
 	private Object getInnerValue(Object obj) throws Exception {
 		Field[] fields = obj.getClass().getDeclaredFields();
 		for (Field field : fields) {
@@ -100,6 +262,18 @@ public class DataBaseService<T> implements Serializable {
 		return null;
 	}
 
+	/**
+	 * Función que extrae de una entidad <tt>T</tt> los filtros necesarios para
+	 * crear un mapa de parámetros, los cuales se adjuntan a una consulta hacia la
+	 * base de datos.
+	 * 
+	 * @param entityFilters
+	 *            Objeto de tipo <tt>T</tt> con los valores definidos para
+	 *            traducirlos a filtros.
+	 * @return Mapa de filtros y valores añadidos desde el objeto.
+	 * @throws Exception
+	 *             Cuando se viola algún acceso o tipo de parámetro no existente.
+	 */
 	private HashMap<String, Object> getFilterFromEntity(T entityFilters) throws Exception {
 		HashMap<String, Object> filters = new HashMap<>();
 		if (entityFilters != null) {
@@ -120,6 +294,20 @@ public class DataBaseService<T> implements Serializable {
 		return filters;
 	}
 
+	/**
+	 * Función que retorna una lista de resultados a partir de los filtros extraidos
+	 * de una entidad de parámetro, haciendo uso de la reflexión de clases, la cual
+	 * crea un mapa de parámetros
+	 * 
+	 * @param entityFilters
+	 *            Objeto de tipo <tt>T</tt> con los valores definidos para
+	 *            traducirlos a filtros.
+	 * @return Lista de resultados de tipo <tt>T</tt>.
+	 * @throws NoResultException
+	 *             Excepción específica de cuando no se encuentran resultados.
+	 * @throws Exception
+	 *             Cuando ocurre otro error
+	 */
 	public List<T> getList(T entityFilters) throws NoResultException, Exception {
 		getEntityManager();
 		restartFilters(QueryMethod.ENTITY);
@@ -129,6 +317,18 @@ public class DataBaseService<T> implements Serializable {
 		return getList(filters);
 	}
 
+	/**
+	 * Función que retorna una lista de resultados a partir de los filtros extraidos
+	 * de una consulta escrita como cadena de texto en lenguaje SQL
+	 * 
+	 * @param query
+	 *            Cadena con la sentencia SQL
+	 * @return Lista de resultados de tipo <tt>T</tt>.
+	 * @throws NoResultException
+	 *             Excepción específica de cuando no se encuentran resultados.
+	 * @throws Exception
+	 *             Cuando ocurre otro error
+	 */
 	public List<T> getList(String query) throws NoResultException, Exception {
 		restartFilters(QueryMethod.NAMED_QUERY);
 		queryParam = query;
@@ -136,6 +336,20 @@ public class DataBaseService<T> implements Serializable {
 		return getList(query, null);
 	}
 
+	/**
+	 * Función que retorna una lista de resultados a partir de los filtros extraidos
+	 * de una consulta escrita como cadena de texto en lenguaje SQL, y
+	 * adicionalmente un mapa de parámetros
+	 * 
+	 * @param query
+	 *            Cadena con la sentencia SQL
+	 * @param params
+	 * @return Lista de resultados de tipo <tt>T</tt>.
+	 * @throws NoResultException
+	 *             Excepción específica de cuando no se encuentran resultados.
+	 * @throws Exception
+	 *             Cuando ocurre otro error
+	 */
 	public List<T> getList(String query, HashMap<String, Object> params) throws NoResultException, Exception {
 		restartFilters(QueryMethod.QUERY_MAP);
 		queryParam = query;
@@ -158,6 +372,20 @@ public class DataBaseService<T> implements Serializable {
 		return result;
 	}
 
+	/**
+	 * Función que retorna una lista de resultados a partir de un tipo de clase la
+	 * cual se deriva como un resultado total, independientemente de cuantos
+	 * registros se declaren en el contructor.
+	 * 
+	 * @param entityClass
+	 *            Clase abtracta que acota el resultado de búsqueda al tipo de clase
+	 *            a buscar.
+	 * @return Lista de resultados de tipo <tt>T</tt>.
+	 * @throws NoResultException
+	 *             Excepción específica de cuando no se encuentran resultados.
+	 * @throws Exception
+	 *             Cuando ocurre otro error
+	 */
 	public List<T> getList(Class<T> entityClass) throws NoResultException, Exception {
 		LOGGER.log(Level.INFO, "Listing (Class<{0}>)", new Object[] { entityClass.getSimpleName() });
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -168,6 +396,15 @@ public class DataBaseService<T> implements Serializable {
 		return result;
 	}
 
+	/**
+	 * Función que permite crear un objeto tipo <tt>Query</tt> el cual se añaden
+	 * parámetros y permite filtrar una consulta, desde un mapa de filtros
+	 * 
+	 * @param params
+	 *            Mapa de filtros y valores
+	 * @return Objeto <tt>Query</tt> con los parámetros traducidos, y listo para
+	 *         ejecutar
+	 */
 	private CriteriaQuery<T> queryFromParams(HashMap<String, Object> params) {
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entityClass);
@@ -205,6 +442,17 @@ public class DataBaseService<T> implements Serializable {
 		return criteriaQuery;
 	}
 
+	/**
+	 * Función que retorna una lista de resultados a partir de los filtros extraidos
+	 * de un mapa de parámetros
+	 * 
+	 * @param params
+	 * @return Lista de resultados de tipo <tt>T</tt>.
+	 * @throws NoResultException
+	 *             Excepción específica de cuando no se encuentran resultados.
+	 * @throws Exception
+	 *             Cuando ocurre otro error
+	 */
 	public List<T> getList(HashMap<String, Object> params) throws NoResultException, Exception {
 		restartFilters(QueryMethod.MAP);
 		mapParam = params;
@@ -216,6 +464,10 @@ public class DataBaseService<T> implements Serializable {
 		return result;
 	}
 
+	/**
+	 * Función que permite contar la cantidad de coincidencias que existen para un
+	 * query obtenido, y usando el mapa de filtros definidos a nivel de clase
+	 */
 	public void getCount() {
 		LOGGER.log(Level.INFO, "Counting {0}, OK", entityClass.getSimpleName());
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -253,18 +505,35 @@ public class DataBaseService<T> implements Serializable {
 		LOGGER.log(Level.INFO, "Count {0}, OK", entityClass.getSimpleName());
 	}
 
+	/**
+	 * @return El número real de resultados de una consulta.
+	 */
 	public int getActualNumberOfResults() {
 		return numberOfResults;
 	}
 
+	/**
+	 * @return El número de páginas que se encuentran para una consulta
+	 */
 	public int getNumberOfPages() {
 		return queryMaxResults > 0 ? (int) Math.ceil((double) numberOfResults / queryMaxResults) : 1;
 	}
 
+	/**
+	 * @return El número de la página actual de la paginación
+	 */
 	public int getActualCurrentPage() {
 		return currentPage;
 	}
 
+	/**
+	 * Función que retorna una lista de resultados a partir de un <tt>Query</tt>
+	 * escrito en lenguaje SQL
+	 * 
+	 * @param query
+	 *            Tipo de objeto que simboliza un <tt>Query</tt>.
+	 * @return Lista de resultados de tipo <tt>T</tt>.
+	 */
 	private List<T> getListOfResults(TypedQuery<T> query) {
 		getCount();
 		if (currentPage > 0) {
@@ -274,6 +543,21 @@ public class DataBaseService<T> implements Serializable {
 		return queryMaxResults > 0 ? query.setMaxResults(queryMaxResults).getResultList() : query.getResultList();
 	}
 
+	/**
+	 * Función que retorna un resultado único para una consulta a partir de un
+	 * objeto tipo <tt>Query</tt>, y un mapa de parámetros que se aplican sobre el
+	 * objeto.
+	 * 
+	 * @param typedQuery
+	 *            Objeto a parametrizar con el mapa
+	 * @param params
+	 *            Parámetros con filtros.
+	 * @return Objeto de tipo <tt>T</tt> con el resultado de la búsqueda.
+	 * @throws NoResultException
+	 *             Excepción específica de cuando no se encuentran resultados.
+	 * @throws Exception
+	 *             Cuando ocurre otro error
+	 */
 	private T getSingleRecord(TypedQuery<T> typedQuery, HashMap<String, Object> params)
 			throws NoResultException, Exception {
 		if (params != null) {
@@ -286,6 +570,18 @@ public class DataBaseService<T> implements Serializable {
 		return result;
 	}
 
+	/**
+	 * Función que retorna un resultado único para una consulta a partir de un
+	 * objeto tipo <tt>T</tt> con los filtros definidos.
+	 * 
+	 * @param entityFilters
+	 *            Objeto tipo <tt>T</tt> con todos los filtros aplicados.
+	 * @return Objeto de tipo <tt>T</tt> con el resultado de la búsqueda.
+	 * @throws NoResultException
+	 *             Excepción específica de cuando no se encuentran resultados.
+	 * @throws Exception
+	 *             Cuando ocurre otro error
+	 */
 	public T getSingleRecord(T entityFilters) throws NoResultException, Exception {
 		ensureConnection();
 		restartFilters(QueryMethod.ENTITY);
@@ -295,6 +591,18 @@ public class DataBaseService<T> implements Serializable {
 		return getSingleRecord(filters);
 	}
 
+	/**
+	 * Función que retorna un resultado único para una consulta a partir de un mapa
+	 * de parámetros que se aplican sobre el objeto.
+	 * 
+	 * @param params
+	 *            Parámetros con filtros.
+	 * @return Objeto de tipo <tt>T</tt> con el resultado de la búsqueda.
+	 * @throws NoResultException
+	 *             Excepción específica de cuando no se encuentran resultados.
+	 * @throws Exception
+	 *             Cuando ocurre otro error
+	 */
 	private T getSingleRecord(HashMap<String, Object> params) throws NoResultException, Exception {
 		ensureConnection();
 		restartFilters(QueryMethod.MAP);
@@ -307,6 +615,18 @@ public class DataBaseService<T> implements Serializable {
 		return result;
 	}
 
+	/**
+	 * Función que retorna un resultado único para una consulta a partir de un query
+	 * en lenguaje SQL, y un mapa de parámetros que se aplican sobre la sentencia.
+	 * 
+	 * @param query
+	 *            Sentencia con el Query a aplicar los filtros, y a ejecutar.
+	 * @return Objeto de tipo <tt>T</tt> con el resultado de la búsqueda.
+	 * @throws NoResultException
+	 *             Excepción específica de cuando no se encuentran resultados.
+	 * @throws Exception
+	 *             Cuando ocurre otro error
+	 */
 	public T getSingleRecord(String query, HashMap<String, Object> params) throws NoResultException, Exception {
 		ensureConnection();
 		LOGGER.log(Level.INFO, "GetSingleRecord {0}, params: '{'{1}'}'",
@@ -318,6 +638,21 @@ public class DataBaseService<T> implements Serializable {
 		}
 	}
 
+	/**
+	 * Función que permite actualizar un objeto a partir de un query.
+	 * 
+	 * @param queryUpdate
+	 *            Sentencia de actualización
+	 * @param query
+	 *            Sentencia de resultado una vez la actualización sea aplicada
+	 * @param params
+	 *            Mapa de parámetros con el cual se realiza la consulta.
+	 * @return Objeto de tipo <tt>T</tt> con el resultado de la búsqueda.
+	 * @throws NoResultException
+	 *             Excepción específica de cuando no se encuentran resultados.
+	 * @throws Exception
+	 *             Cuando ocurre otro error
+	 */
 	public T mergeFromQuery(String queryUpdate, String query, HashMap<String, Object> params)
 			throws NoResultException, Exception {
 		LOGGER.log(Level.INFO, "Merging {0} from Query: {1}",
@@ -340,6 +675,13 @@ public class DataBaseService<T> implements Serializable {
 		}
 	}
 
+	/**
+	 * Función que permite asegurar la conexión al administrador de persistencia y
+	 * este a la base de datos.
+	 * 
+	 * @throws Exception
+	 *             Cuando no es posible asegurar la conexión
+	 */
 	private void ensureConnection() throws Exception {
 		if (!EntityResourcer.getInstance().isConnected())
 			EntityResourcer.getInstance().initService();
@@ -347,6 +689,15 @@ public class DataBaseService<T> implements Serializable {
 			getEntityManager();
 	}
 
+	/**
+	 * Función que permite la actualización de un objeto tipo <tt>T</tt>.
+	 * 
+	 * @param entity
+	 *            Entidad a actualizar.
+	 * @return El objeto actualizado
+	 * @throws Exception
+	 *             Cuando ocurre un error actualizando
+	 */
 	public T merge(T entity) throws Exception {
 		try {
 			ensureConnection();
@@ -365,6 +716,15 @@ public class DataBaseService<T> implements Serializable {
 		return entity;
 	}
 
+	/**
+	 * Función que permite la inserción de un objeto tipo <tt>T</tt>.
+	 * 
+	 * @param entity
+	 *            Entidad a insertar.
+	 * @return El objeto insertado con la llave primaria actualizada
+	 * @throws Exception
+	 *             Cuando ocurre un error insertando
+	 */
 	public T persist(T entity) throws Exception {
 		try {
 			ensureConnection();
@@ -383,6 +743,14 @@ public class DataBaseService<T> implements Serializable {
 		return entity;
 	}
 
+	/**
+	 * Función que permite eliminar una entidad de la base de datos
+	 * 
+	 * @param entity
+	 *            Enitdad a eliminar
+	 * @throws Exception
+	 *             Cuando no es posible la eliminación
+	 */
 	public void delete(T entity) throws Exception {
 		try {
 			ensureConnection();
@@ -400,6 +768,14 @@ public class DataBaseService<T> implements Serializable {
 		}
 	}
 
+	/**
+	 * Función que permite obtener una sesión de base de datos y de esta, generar
+	 * una transacción
+	 * 
+	 * @throws Exception
+	 *             Cuando no es posible obtener una sesión o abrir una transacción
+	 *             nueva
+	 */
 	private void startTransaction() throws Exception {
 		LOGGER.log(Level.INFO, "Starting transaction...");
 		session = entityManager.unwrap(Session.class);
@@ -407,22 +783,47 @@ public class DataBaseService<T> implements Serializable {
 		tx = session.beginTransaction();
 	}
 
+	/**
+	 * Función que permite realizar confimación de los datos que han sido alterados
+	 * 
+	 * @throws Exception
+	 *             Cuando no es posible confirmar la transacción o bien cerrarla
+	 */
 	private void commitTransaction() throws Exception {
 		tx.commit();
 		LOGGER.log(Level.INFO, "Commited...");
 		close();
 	}
 
+	/**
+	 * Función que permite realizar retroceder los datos que han sido alterados
+	 * 
+	 * @throws Exception
+	 *             Cuando no es posible retroceder la transacción o bien cerrarla
+	 */
 	private void rollBackTransaction() throws Exception {
 		tx.rollback();
 		LOGGER.log(Level.INFO, "RolledBack...");
 		close();
 	}
 
+	/**
+	 * Función que a través del servicio <tt>EntityResourcer</tt> permite obtener
+	 * una conexión a la base de datos.
+	 * 
+	 * @throws PersistenceException
+	 *             Cuando existe un error de conexión a base de datos.
+	 * @throws Exception
+	 *             Cuando se presenta otro error.
+	 */
 	private void getEntityManager() throws PersistenceException, Exception {
 		entityManager = EntityResourcer.getInstance().getEntityManager();
 	}
 
+	/**
+	 * Función que permite desconectar una sesión y además permite desconectar un
+	 * administrador de entidades.
+	 */
 	private void close() {
 		session.disconnect();
 		if (entityManager != null && entityManager.isOpen())
@@ -430,10 +831,23 @@ public class DataBaseService<T> implements Serializable {
 		LOGGER.log(Level.INFO, "entityManager is closed");
 	}
 
+	/**
+	 * @return Verifiación del estado de una conexión con el administrador de
+	 *         entidades. <tt>true</tt> Si esta activa, <tt>false</tt> si no lo
+	 *         está'.
+	 * @throws Exception
+	 */
 	public boolean isConnected() throws Exception {
 		return EntityResourcer.getInstance().isConnected();
 	}
 
+	/**
+	 * Función que reinicia los tipos de filtros de la sesión de base de datos.
+	 * 
+	 * @param queryMethod
+	 *            Identificador del tipo de consulta según la enumeración
+	 *            <tt>QueryMethod</tt>.
+	 */
 	private void restartFilters(QueryMethod queryMethod) {
 		if (this.queryMethod != queryMethod) {
 			this.queryMethod = queryMethod;
