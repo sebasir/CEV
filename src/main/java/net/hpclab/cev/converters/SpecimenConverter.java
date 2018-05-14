@@ -1,3 +1,14 @@
+/*
+ * Colección Entomológica Virtual
+ * Universidad Central
+ * High Performance Computing Laboratory
+ * Grupo COMMONS.
+ * 
+ * Sebastián Motavita Medellín
+ * 
+ * 2017 - 2018
+ */
+
 package net.hpclab.cev.converters;
 
 import javax.faces.component.UIComponent;
@@ -7,6 +18,14 @@ import javax.faces.convert.FacesConverter;
 
 import net.hpclab.cev.entities.Specimen;
 
+/**
+ * Conversor que permite determinar un valor de tipo <tt>Specimen</tt> desde un
+ * valor de <tt>String</tt> que se selecciona desde una lista en la pantalla
+ * 
+ * @author Sebasir
+ * @since 1.0
+ * @see Specimen
+ */
 @FacesConverter("SpecimenConverter")
 public class SpecimenConverter implements Converter {
 

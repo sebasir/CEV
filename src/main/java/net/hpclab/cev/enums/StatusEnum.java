@@ -16,6 +16,7 @@ package net.hpclab.cev.enums;
  * registros sobre la base de datos, y que permiten obtener su nombre narrativo
  * 
  * @author Sebasir
+ * @since 1.0
  *
  */
 public enum StatusEnum {

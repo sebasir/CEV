@@ -17,6 +17,7 @@ package net.hpclab.cev.enums;
  * usuario
  * 
  * @author Sebasir
+ * @since 1.0
  *
  */
 public enum OutcomeEnum {

@@ -17,6 +17,7 @@ package net.hpclab.cev.enums;
  * narrativo
  * 
  * @author Sebasir
+ * @since 1.0
  *
  */
 public enum ModulesEnum {

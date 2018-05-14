@@ -16,6 +16,7 @@ package net.hpclab.cev.enums;
  * se complementa con el archivo de propiedades
  * 
  * @author Sebasir
+ * @since 1.0
  *
  */
 public enum AuthenticateEnum {
