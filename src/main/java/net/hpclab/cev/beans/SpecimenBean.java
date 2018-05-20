@@ -1,3 +1,14 @@
+/*
+ * Colección Entomológica Virtual
+ * Universidad Central
+ * High Performance Computing Laboratory
+ * Grupo COMMONS.
+ * 
+ * Sebastián Motavita Medellín
+ * 
+ * 2017 - 2018
+ */
+
 package net.hpclab.cev.beans;
 
 import java.io.Serializable;
@@ -10,8 +21,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
-import org.primefaces.component.panelgrid.PanelGrid;
-import org.primefaces.event.FlowEvent;
 import org.primefaces.json.JSONArray;
 import org.primefaces.json.JSONObject;
 
@@ -33,31 +42,113 @@ import net.hpclab.cev.services.DataWarehouse;
 import net.hpclab.cev.services.ObjectRetriever;
 import net.hpclab.cev.services.ParseExceptionService;
 
+/**
+ * Este servicio permite la interacción con el servicio de
+ * <tt>DataBaseService</tt> para la gestión de especímenes registrador en el
+ * sistema. Principalmente expone métodos de creación, edición, consulta y
+ * eliminación, validando la posibilidad de estas operaciones contra el servicio
+ * de <tt>AccessesService</tt>, el cual valida el usuario que realiza la
+ * operación.
+ * 
+ * @author Sebasir
+ * @since 1.0
+ * @see DataBaseService
+ * @see Specimen
+ */
+
 @ManagedBean
 @ViewScoped
 public class SpecimenBean extends UtilsBean implements Serializable {
 
 	private static final long serialVersionUID = -4282355371253031023L;
+
+	/**
+	 * Objeto que parametriza el servicio <tt>DataBaseService</tt> con la clase
+	 * <tt>Specimen</tt>, lo cual permite extender todas las operaciones del
+	 * servicio para esta clase.
+	 */
 	private DataBaseService<Specimen> specimenService;
+
+	/**
+	 * Lista de especímenes a buscar
+	 */
 	private List<Specimen> searchSpecimens;
+
+	/**
+	 * Objeto que permite la edición de especímnenes
+	 */
 	private Specimen specimen;
+
+	/**
+	 * Objeto que permite la consulta de especímnenes
+	 */
 	private Specimen searchSpecimen;
+
+	/**
+	 * Objeto que permite la elección de una ubicación
+	 */
 	private Location location;
+
+	/**
+	 * Objeto que permite la elección de una clasificación taxonómica
+	 */
 	private Taxonomy taxonomy;
+
+	/**
+	 * Objeto que permite la elección de un tipo de registro
+	 */
 	private RegType regType;
+
+	/**
+	 * Objeto que permite la elección de un tipo de muestra
+	 */
 	private SampleType sampleType;
+
+	/**
+	 * Objeto que permite la elección de un catálogo
+	 */
 	private Catalog catalog;
+
+	/**
+	 * Objeto que permite la elección de una colección
+	 */
 	private Collection collection;
-	private PanelGrid specimenForm;
-	private boolean create;
+
+	/**
+	 * Cadena de texto que guarda la clave primaria de un espécimen
+	 */
 	private String specimenDetail;
+
+	/**
+	 * Cadena de texto que guarda la clave primaria de un catálogo
+	 */
 	private String selectedCatalog;
+
+	/**
+	 * Cadena de texto que guarda la clave primaria de una colección
+	 */
 	private String selectedCollection;
+
+	/**
+	 * Cadena de texto que guarda la clave primaria de un tipo de registro
+	 */
 	private String selectedRegType;
+
+	/**
+	 * Cadena de texto que guarda la clave primaria de un tipo de muestra
+	 */
 	private String selectedSampleType;
 
+	/**
+	 * Mantiene una manera de identificar los orígenes de impresiones de mensajes de
+	 * log, a través del nombre de la clase, centralizando estos mensajes en el log
+	 * del servidor de despliegue.
+	 */
 	private static final Logger LOGGER = Logger.getLogger(SpecimenBean.class.getSimpleName());
 
+	/**
+	 * Constructor que permite inicializar los servicios de <tt>DataBaseService</tt>
+	 */
 	public SpecimenBean() {
 		try {
 			specimenService = new DataBaseService<>(Specimen.class);
@@ -67,16 +158,26 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 		}
 	}
 
+	/**
+	 * Permite limpiar los filtros
+	 */
 	public void limpiarFiltros() {
 		specimen = new Specimen();
 		searchSpecimen = new Specimen();
 		searchSpecimens = null;
 	}
 
+	/**
+	 * @return El paginador de la consulta de especímenes
+	 */
 	public DataBaseService<Specimen>.Pager getPager() {
 		return specimenService.getPager();
 	}
 
+	/**
+	 * Permite guardar un objeto de tipo espécimen que se haya definido en la
+	 * interfáz validando el permiso de escritura
+	 */
 	public void persist() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		OutcomeEnum outcomeEnum = OutcomeEnum.CREATE_ERROR;
@@ -124,6 +225,10 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
 
+	/**
+	 * Permite editar un objeto de tipo espécimen que se haya definido en la
+	 * interfáz validando el permiso de modificación
+	 */
 	public void edit() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		OutcomeEnum outcomeEnum = OutcomeEnum.UPDATE_ERROR;
@@ -167,6 +272,9 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
 
+	/**
+	 * Permite eliminar un espécimen, validando el permiso de eliminación
+	 */
 	public void delete() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		OutcomeEnum outcomeEnum = OutcomeEnum.DELETE_ERROR;
@@ -189,6 +297,9 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
 
+	/**
+	 * Permite realizar la búsqueda de especímenes dados unos parámetros de búsqueda
+	 */
 	public void search() {
 		try {
 			searchSpecimens = specimenService.getList(searchSpecimen);
@@ -199,6 +310,14 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 		}
 	}
 
+	/**
+	 * Permite consultar una lista de clasificaciones taxonómicas dado un texto
+	 * 
+	 * @param query
+	 *            Cadena de texto a buscar en los nombres de las clasificaciones
+	 * @return Lista de clasificaciones que coiciden los nombres con la cadena de
+	 *         texto
+	 */
 	public List<Taxonomy> taxonomysQuery(String query) {
 		ArrayList<Taxonomy> taxs = new ArrayList<>();
 		for (Taxonomy t : DataWarehouse.getInstance().allTaxonomys) {
@@ -210,6 +329,12 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 		return taxs;
 	}
 
+	/**
+	 * Realiza la preparación de una edición de un especímen en el Wizard
+	 * 
+	 * @param specimen
+	 *            Objeto de espécimen a actualizar
+	 */
 	public void prepareUpdate(Specimen specimen) {
 		this.specimen = specimen;
 		FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -242,6 +367,10 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 		collectionBean.createTree();
 	}
 
+	/**
+	 * Permite reiniciar los pasos del wizard para la creación o modificación de
+	 * especímenes
+	 */
 	public void restartSpecimenForm() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		TaxonomyBean taxonomyBean = getExternalBean(facesContext, TaxonomyBean.class);
@@ -256,143 +385,220 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 		collectionBean.limpiarFiltros();
 	}
 
+	/**
+	 * @return Objeto que permite la edición de especímnenes
+	 */
 	public Specimen getSpecimen() {
 		return specimen;
 	}
 
+	/**
+	 * @param specimen
+	 *            Objeto que permite la edición de especímnenes a definir
+	 */
 	public void setSpecimen(Specimen specimen) {
 		this.specimen = specimen;
 	}
 
+	/**
+	 * @return Objeto que permite la elección de una ubicación
+	 */
 	public Location getLocation() {
 		return location;
 	}
 
+	/**
+	 * @param location
+	 *            Objeto que permite la elección de una ubicación a definir
+	 */
 	public void setLocation(Location location) {
 		this.location = location;
 	}
 
+	/**
+	 * @return Objeto que permite la elección de una clasificación taxonómica
+	 */
 	public Taxonomy getTaxonomy() {
 		return taxonomy;
 	}
 
+	/**
+	 * @param taxonomy
+	 *            Objeto que permite la elección de una clasificación taxonómica a
+	 *            definir
+	 */
 	public void setTaxonomy(Taxonomy taxonomy) {
 		this.taxonomy = taxonomy;
 	}
 
+	/**
+	 * @return Objeto que permite la elección de un tipo de registro
+	 */
 	public RegType getRegType() {
 		return regType;
 	}
 
+	/**
+	 * @param regType
+	 *            Objeto que permite la elección de un tipo de registro a definir
+	 */
 	public void setRegType(RegType regType) {
 		this.regType = regType;
 	}
 
+	/**
+	 * @return Objeto que permite la elección de un tipo de muestra
+	 */
 	public SampleType getSampleType() {
 		return sampleType;
 	}
 
+	/**
+	 * @param sampleType
+	 *            Objeto que permite la elección de un tipo de muestra a definir
+	 */
 	public void setSampleType(SampleType sampleType) {
 		this.sampleType = sampleType;
 	}
 
-	public PanelGrid getDetailPanel() {
-		return null;
-	}
-
-	public PanelGrid getSpecimenForm() {
-		return specimenForm;
-	}
-
-	public void setSpecimenForm(PanelGrid specimenForm) {
-		this.specimenForm = specimenForm;
-	}
-
+	/**
+	 * @return Lista de especímenes a buscar
+	 */
 	public List<Specimen> getSearchSpecimens() {
 		return searchSpecimens;
 	}
 
+	/**
+	 * @return Objeto que permite la consulta de especímnenes
+	 */
 	public Specimen getSearchSpecimen() {
 		return searchSpecimen;
 	}
 
+	/**
+	 * @return Permite el acceso a todas las clasificaciones taxonómicas
+	 */
 	public List<Taxonomy> getAllTaxonomys() {
 		return DataWarehouse.getInstance().allTaxonomys;
 	}
 
+	/**
+	 * @return Permite el acceso a todas las ubicaciones
+	 */
 	public List<Location> getAllLocations() {
 		return DataWarehouse.getInstance().allLocations;
 	}
 
+	/**
+	 * @return Cadena de texto que guarda la clave primaria de una colección
+	 */
 	public String getSelectedCollection() {
 		return selectedCollection;
 	}
 
+	/**
+	 * @param selectedCollection
+	 *            Cadena de texto que guarda la clave primaria de una colección a
+	 *            definir
+	 */
 	public void setSelectedCollection(String selectedCollection) {
 		this.selectedCollection = selectedCollection;
 	}
 
+	/**
+	 * @return Cadena de texto que guarda la clave primaria de un tipo de registro
+	 */
 	public String getSelectedRegType() {
 		return selectedRegType;
 	}
 
+	/**
+	 * @param selectedRegType
+	 *            Cadena de texto que guarda la clave primaria de un tipo de
+	 *            registro a definir
+	 */
 	public void setSelectedRegType(String selectedRegType) {
 		this.selectedRegType = selectedRegType;
 	}
 
+	/**
+	 * @return Cadena de texto que guarda la clave primaria de un tipo de muestra
+	 */
 	public String getSelectedSampleType() {
 		return selectedSampleType;
 	}
 
+	/**
+	 * @param selectedSampleType
+	 *            Cadena de texto que guarda la clave primaria de un tipo de muestra
+	 *            a definir
+	 */
 	public void setSelectedSampleType(String selectedSampleType) {
 		this.selectedSampleType = selectedSampleType;
 	}
 
+	/**
+	 * @return Cadena de texto que guarda la clave primaria de un catálogo
+	 */
 	public String getSelectedCatalog() {
 		return selectedCatalog;
 	}
 
+	/**
+	 * @param selectedCatalog
+	 *            Cadena de texto que guarda la clave primaria de un catálogo a
+	 *            definir
+	 */
 	public void setSelectedCatalog(String selectedCatalog) {
 		this.selectedCatalog = selectedCatalog;
 	}
 
+	/**
+	 * @return Objeto que permite la elección de un catálogo
+	 */
 	public Catalog getCatalog() {
 		return catalog;
 	}
 
+	/**
+	 * @param catalog
+	 *            Objeto que permite la elección de un catálogo a definir
+	 */
 	public void setCatalog(Catalog catalog) {
 		this.catalog = catalog;
 	}
 
+	/**
+	 * @return Objeto que permite la elección de una colección
+	 */
 	public Collection getCollection() {
 		return collection;
 	}
 
+	/**
+	 * @param collection
+	 *            Objeto que permite la elección de una colección a definir
+	 */
 	public void setCollection(Collection collection) {
 		this.collection = collection;
 	}
 
-	public String onFlowProcess(FlowEvent event) {
-		return event.getNewStep();
-	}
-
-	public String getHeader() {
-		return specimen != null && specimen.getIdSpecimen() != null ? "Editar a " + specimen.getCommonName()
-				: "Registrar nuevo espécimen";
-	}
-
-	public boolean isCreate() {
-		return create;
-	}
-
-	public void setCreate(boolean create) {
-		this.create = create;
-	}
-
+	/**
+	 * Permite definir el objeto de espécimen a partir de una cadena de texto que
+	 * guarda la clave primaria de un espécimen
+	 */
 	private void setSpecimenfromId() {
 		this.specimen = getSpecimen(specimenDetail);
 	}
 
+	/**
+	 * Permite buscar un espécimen desde una cadena de texto que guarda la clave
+	 * primaria de un espécimen
+	 * 
+	 * @param id
+	 *            Cadena de texto que guarda la clave primaria de un espécimen
+	 * @return Objeto del espécimen
+	 */
 	private Specimen getSpecimen(String id) {
 		Integer idSpecimen;
 		try {
@@ -408,15 +614,29 @@ public class SpecimenBean extends UtilsBean implements Serializable {
 		return null;
 	}
 
+	/**
+	 * @return Cadena de texto que guarda la clave primaria de un espécimen
+	 */
 	public String getSpecimenDetail() {
 		return specimenDetail;
 	}
 
+	/**
+	 * @param specimenDetail
+	 *            Cadena de texto que guarda la clave primaria de un espécimen a
+	 *            definir
+	 */
 	public void setSpecimenDetail(String specimenDetail) {
 		this.specimenDetail = specimenDetail;
 		setSpecimenfromId();
 	}
 
+	/**
+	 * Permite representar todos los datos de un espécimen en una cadena de texto
+	 * que representa un objeto JSON
+	 * 
+	 * @return Cadena de texto representando la información de un espécimen
+	 */
 	public String printJSON() {
 		JSONObject specimenInfo = new JSONObject();
 		if (specimen == null || specimen.getIdSpecimen() == null) {

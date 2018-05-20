@@ -1,3 +1,14 @@
+/*
+ * Colección Entomológica Virtual
+ * Universidad Central
+ * High Performance Computing Laboratory
+ * Grupo COMMONS.
+ * 
+ * Sebastián Motavita Medellín
+ * 
+ * 2017 - 2018
+ */
+
 package net.hpclab.cev.beans;
 
 import java.io.Serializable;
@@ -34,43 +45,174 @@ import net.hpclab.cev.services.DataWarehouse;
 import net.hpclab.cev.services.ObjectRetriever;
 import net.hpclab.cev.services.ParseExceptionService;
 
+/**
+ * Este servicio permite la interacción con el servicio de
+ * <tt>DataBaseService</tt> para la gestión de catálogos, colecciones e
+ * instituciones que componen el sistema. Principalmente expone métodos de
+ * creación, edición, consulta y eliminación, validando la posibilidad de estas
+ * operaciones contra el servicio de <tt>AccessesService</tt>, el cual valida el
+ * usuario que realiza la operación.
+ * 
+ * @author Sebasir
+ * @since 1.0
+ * @see DataBaseService
+ * @see Collection
+ * @see Catalog
+ * @see Specimen
+ */
+
 @ManagedBean
 @ViewScoped
 public class CollectionBean extends UtilsBean implements Serializable {
 
 	private static final long serialVersionUID = -7407272469474484227L;
+
+	/**
+	 * Objeto que parametriza el servicio <tt>DataBaseService</tt> con la clase
+	 * <tt>Collection</tt>, lo cual permite extender todas las operaciones del
+	 * servicio para esta clase.
+	 */
 	private DataBaseService<Collection> collectionService;
+
+	/**
+	 * Objeto que parametriza el servicio <tt>DataBaseService</tt> con la clase
+	 * <tt>Catalog</tt>, lo cual permite extender todas las operaciones del servicio
+	 * para esta clase.
+	 */
 	private DataBaseService<Catalog> catalogService;
+
+	/**
+	 * Permite identificar el valor de cada categoría de manera jerárquica
+	 */
 	private Constant.CollectionClassType classType;
+
+	/**
+	 * Numero que representa la clave primaria de un objeto
+	 */
 	private Integer objectId;
+
+	/**
+	 * Cadena de texto que guarda la clave primaria de una institución
+	 */
 	private String selectedInstitution;
+
+	/**
+	 * Cadena de texto que guarda la clave primaria de una colección
+	 */
 	private String selectedCollection;
+
+	/**
+	 * Cadenta de texto que guarda la clave primaria de un catálogo
+	 */
 	private String selectedCatalog;
+
+	/**
+	 * Cadena de texto que guarda el nombre del tipo del objeto
+	 */
 	private String objectType;
+
+	/**
+	 * Cadena de texto que guarda el nombre del objeto
+	 */
 	private String objectName;
+
+	/**
+	 * Objeto que guarda el nombre del tipo del objeto padre
+	 */
 	private String objectFatherType;
+
+	/**
+	 * Objeto que guarda el nombre del objeto padre
+	 */
 	private String objectFatherName;
+
+	/**
+	 * Objeto que permite editar un catálogo
+	 */
 	private Catalog catalog;
+
+	/**
+	 * Objeto que permite editar una colección
+	 */
 	private Collection collection;
+
+	/**
+	 * Clave primaria de un tipo de ejemplar
+	 */
 	private Integer sampleTypeId;
+
+	/**
+	 * Clave primaria de un tipo de registro
+	 */
 	private Integer regTypeId;
+
+	/**
+	 * Nodo principal del árbol jerárquico
+	 */
 	private TreeNode root;
+
+	/**
+	 * Nodo seleccionado desde la interfaz
+	 */
 	private TreeNode selectedNode;
+
+	/**
+	 * Mapa que permite obtener un nodo a partir de la clave primaria
+	 */
 	private HashMap<Integer, TreeNode> tree;
+
+	/**
+	 * Mapa que permite obtener un nodo abstracto a partir de la clave primaria
+	 */
 	private HashMap<Integer, TreeHierachyModel> abstractMap;
+
+	/**
+	 * Mapa que permite obtener una lista de especímenes a partir de la clave
+	 * primaria
+	 */
 	private HashMap<Integer, ArrayList<Specimen>> specimenCollection;
+
+	/**
+	 * Arbol abstracto que permite referenciar el arbol jerárquico
+	 */
 	private TreeHierachyModel abstractTree;
+
+	/**
+	 * Lista de colecciones disponibles
+	 */
 	private List<Collection> avalCollections;
+
+	/**
+	 * Lista de catálogos disponibles
+	 */
 	private List<Catalog> avalCatalogs;
+
+	/**
+	 * Lista de especímenes de una colección
+	 */
 	private List<Specimen> collectionSpecimens;
 
+	/**
+	 * Mantiene una manera de identificar los orígenes de impresiones de mensajes de
+	 * log, a través del nombre de la clase, centralizando estos mensajes en el log
+	 * del servidor de despliegue.
+	 */
 	private static final Logger LOGGER = Logger.getLogger(CollectionBean.class.getSimpleName());
 
+	/**
+	 * Constructor que permite inicializar los servicios de <tt>DataBaseService</tt>
+	 * 
+	 * @throws Exception
+	 *             Cuando existe un error en el servicio de <tt>DataBaseService</tt>
+	 */
 	public CollectionBean() throws Exception {
 		collectionService = new DataBaseService<>(Collection.class);
 		catalogService = new DataBaseService<>(Catalog.class);
 	}
 
+	/**
+	 * Permite inicializar los filtros de creación y busqueda
+	 */
 	@PostConstruct
 	public void init() {
 		try {
@@ -80,6 +222,9 @@ public class CollectionBean extends UtilsBean implements Serializable {
 		}
 	}
 
+	/**
+	 * Permite limpiar los filtros
+	 */
 	public void limpiarFiltros() {
 		classType = null;
 		objectId = null;
@@ -101,6 +246,10 @@ public class CollectionBean extends UtilsBean implements Serializable {
 		createTree();
 	}
 
+	/**
+	 * Permite guardar un objeto de tipo catálogo o colección que se haya definido
+	 * en la interfáz validando el permiso de escritura
+	 */
 	public void persist() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		OutcomeEnum outcomeEnum = OutcomeEnum.CREATE_ERROR;
@@ -145,6 +294,10 @@ public class CollectionBean extends UtilsBean implements Serializable {
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
 
+	/**
+	 * Permite editar un objeto de tipo catálogo o colección que se haya redefinido
+	 * en la interfáz validando el permiso de modificación
+	 */
 	public void edit() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		OutcomeEnum outcomeEnum = OutcomeEnum.UPDATE_ERROR;
@@ -187,6 +340,10 @@ public class CollectionBean extends UtilsBean implements Serializable {
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
 
+	/**
+	 * Permite eliminar un objeto de tipo catálogo o colección validando el permiso
+	 * de eliminación
+	 */
 	public void delete() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		OutcomeEnum outcomeEnum = OutcomeEnum.DELETE_ERROR;
@@ -224,6 +381,10 @@ public class CollectionBean extends UtilsBean implements Serializable {
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
 
+	/**
+	 * Permite crear los árboles y mapas de la jerarquía de catálogo, colección e
+	 * institución
+	 */
 	public void createTree() {
 		tree = new HashMap<>();
 		abstractMap = new HashMap<>();
@@ -278,6 +439,12 @@ public class CollectionBean extends UtilsBean implements Serializable {
 		}
 	}
 
+	/**
+	 * Permite abrir una rama del arbol
+	 * 
+	 * @param node
+	 *            Nodo final de la rama a abrir
+	 */
 	private void openBranch(TreeNode node) {
 		if (node == null) {
 			return;
@@ -290,6 +457,9 @@ public class CollectionBean extends UtilsBean implements Serializable {
 		}
 	}
 
+	/**
+	 * Permite deseleccionar todos los nodos del arbol
+	 */
 	public void deselectAll() {
 		for (TreeNode t : tree.values()) {
 			t.setSelected(false);
@@ -297,6 +467,12 @@ public class CollectionBean extends UtilsBean implements Serializable {
 		}
 	}
 
+	/**
+	 * Permite obtener un nodo de una seleccion
+	 * 
+	 * @param event
+	 *            Evento del cual se obtiene el nodo
+	 */
 	public void onNodeSelect(NodeSelectEvent event) {
 		selectedNode = event.getTreeNode();
 		showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.GENERIC_INFO,
@@ -310,6 +486,14 @@ public class CollectionBean extends UtilsBean implements Serializable {
 		}
 	}
 
+	/**
+	 * Permite obtener y definir la información de nombres y tipos de objeto para el
+	 * nodo seleccionado y el padre de este
+	 * 
+	 * @param command
+	 *            Cadena de texto que permite diferenciar el tipo de operación a
+	 *            realizar
+	 */
 	public void setDatafromNode(String command) {
 		if (selectedNode != null) {
 			try {
@@ -377,160 +561,293 @@ public class CollectionBean extends UtilsBean implements Serializable {
 		}
 	}
 
+	/**
+	 * @return Permite obtener el nodo principal, y abrirlo si existe algún nodo
+	 *         seleccionado
+	 */
 	public TreeNode getCollectionRoot() {
 		if (selectedNode != null)
 			openBranch(selectedNode);
 		return root;
 	}
 
+	/**
+	 * @param collectionRoot
+	 *            Nodo principal del árbol jerárquico a definir
+	 */
 	public void setCollectionRoot(TreeNode collectionRoot) {
 		this.root = collectionRoot;
 	}
 
+	/**
+	 * @return Nodo seleccionado desde la interfaz
+	 */
 	public TreeNode getSelectedNode() {
 		return selectedNode;
 	}
 
+	/**
+	 * @return Objeto que permite editar un catálogo
+	 */
 	public Catalog getCatalog() {
 		return catalog;
 	}
 
+	/**
+	 * @param catalog
+	 *            Objeto que permite editar un catálogo a definir
+	 */
 	public void setCatalog(Catalog catalog) {
 		this.catalog = catalog;
 	}
 
+	/**
+	 * @return Objeto que permite editar una colección
+	 */
 	public Collection getCollection() {
 		return collection;
 	}
 
+	/**
+	 * @param collection
+	 *            Objeto que permite editar una colección a definir
+	 */
 	public void setCollection(Collection collection) {
 		this.collection = collection;
 	}
 
+	/**
+	 * @param selectedNode
+	 *            Nodo seleccionado desde la interfaz
+	 */
 	public void setSelectedNode(TreeNode selectedNode) {
 		this.selectedNode = selectedNode;
 	}
 
+	/**
+	 * @return Lista de especímenes de una colección
+	 */
 	public List<Specimen> getCollectionSpecimens() {
 		return collectionSpecimens;
 	}
 
+	/**
+	 * @param collectionSpecimens
+	 *            Lista de especímenes de una colección a definir
+	 */
 	public void setCollectionSpecimens(List<Specimen> collectionSpecimens) {
 		this.collectionSpecimens = collectionSpecimens;
 	}
 
+	/**
+	 * @return Permite obtener un objeto de tipo de muestra desde la clave primaria
+	 */
 	public SampleType getSampleType() {
 		if (sampleTypeId != null)
 			return ObjectRetriever.getObjectFromId(SampleType.class, sampleTypeId);
 		return null;
 	}
 
+	/**
+	 * @return Permite obtener un objeto de tipo de registro desde la clave primaria
+	 */
 	public RegType getRegType() {
 		if (regTypeId != null)
 			return ObjectRetriever.getObjectFromId(RegType.class, regTypeId);
 		return null;
 	}
 
+	/**
+	 * @return Clave primaria de un tipo de ejemplar
+	 */
 	public Integer getSampleTypeId() {
 		return sampleTypeId;
 	}
 
+	/**
+	 * @param sampleTypeId
+	 *            Clave primaria de un tipo de ejemplar a definir
+	 */
 	public void setSampleTypeId(Integer sampleTypeId) {
 		this.sampleTypeId = sampleTypeId;
 	}
 
+	/**
+	 * @return Clave primaria de un tipo de registro
+	 */
 	public Integer getRegTypeId() {
 		return regTypeId;
 	}
 
+	/**
+	 * @param regTypeId
+	 *            Clave primaria de un tipo de registro a definir
+	 */
 	public void setRegTypeId(Integer regTypeId) {
 		this.regTypeId = regTypeId;
 	}
 
+	/**
+	 * @return Permite tener acceso a todas las instituciones
+	 */
 	public List<Institution> getAllInstitutions() {
 		return DataWarehouse.getInstance().allInstitutions;
 	}
 
+	/**
+	 * @return Permite tener acceso a todas las colecciones
+	 */
 	public List<Collection> getAllCollections() {
 		return DataWarehouse.getInstance().allCollections;
 	}
 
+	/**
+	 * @return Permite tener acceso a todas los catalogos
+	 */
 	public List<Catalog> getAllCatalogs() {
 		return DataWarehouse.getInstance().allCatalogs;
 	}
 
+	/**
+	 * @return Permite tener acceso a todas los tipos de muestra
+	 */
 	public List<SampleType> getAllSampleTypes() {
 		return DataWarehouse.getInstance().allSampleTypes;
 	}
 
+	/**
+	 * @return Permite tener acceso a todas los tipos de registro
+	 */
 	public List<RegType> getAllRegTypes() {
 		return DataWarehouse.getInstance().allRegTypes;
 	}
 
+	/**
+	 * @return Cadena de texto que guarda la clave primaria de una institución
+	 */
 	public String getSelectedInstitution() {
 		return selectedInstitution;
 	}
 
+	/**
+	 * @param selectedInstitution
+	 *            Cadena de texto que guarda la clave primaria de una institución a
+	 *            definir
+	 */
 	public void setSelectedInstitution(String selectedInstitution) {
 		this.selectedInstitution = selectedInstitution;
 	}
 
+	/**
+	 * @return Cadena de texto que guarda la clave primaria de una colección
+	 */
 	public String getSelectedCollection() {
 		return selectedCollection;
 	}
 
+	/**
+	 * @param selectedCollection
+	 *            Cadena de texto que guarda la clave primaria de una colección a
+	 *            definir
+	 */
 	public void setSelectedCollection(String selectedCollection) {
 		this.selectedCollection = selectedCollection;
 	}
 
+	/**
+	 * @return Cadenta de texto que guarda la clave primaria de un catálogo
+	 */
 	public String getSelectedCatalog() {
 		return selectedCatalog;
 	}
 
+	/**
+	 * @param selectedCatalog
+	 *            Cadenta de texto que guarda la clave primaria de un catálogo a
+	 *            definir
+	 */
 	public void setSelectedCatalog(String selectedCatalog) {
 		this.selectedCatalog = selectedCatalog;
 	}
 
+	/**
+	 * @return Lista de colecciones disponibles
+	 */
 	public List<Collection> getAvalCollections() {
 		return avalCollections;
 	}
 
+	/**
+	 * @param avalCollections
+	 *            Lista de colecciones disponibles a definir
+	 */
 	public void setAvalCollections(List<Collection> avalCollections) {
 		this.avalCollections = avalCollections;
 	}
 
+	/**
+	 * @return Lista de catálogos disponibles
+	 */
 	public List<Catalog> getAvalCatalogs() {
 		return avalCatalogs;
 	}
 
+	/**
+	 * @param avalCatalogs
+	 *            Lista de catálogos disponibles a definir
+	 */
 	public void setAvalCatalogs(List<Catalog> avalCatalogs) {
 		this.avalCatalogs = avalCatalogs;
 	}
 
+	/**
+	 * @return Cadena de texto que guarda el nombre del tipo del objeto
+	 */
 	public String getObjectType() {
 		return objectType;
 	}
 
+	/**
+	 * @return Cadena de texto que guarda el nombre del objeto
+	 */
 	public String getObjectName() {
 		return objectName;
 	}
 
+	/**
+	 * @return Objeto que guarda el nombre del objeto padre
+	 */
 	public String getObjectFatherName() {
 		return objectFatherName;
 	}
 
+	/**
+	 * @return Objeto que guarda el nombre del tipo del objeto padre
+	 */
 	public String getObjectFatherType() {
 		return objectFatherType;
 	}
 
+	/**
+	 * @param objectType
+	 *            Cadena de texto que guarda el nombre del tipo del objeto a definir
+	 */
 	public void setObjectType(String objectType) {
 		this.objectType = objectType;
 	}
 
+	/**
+	 * @param objectName
+	 *            Cadena de texto que guarda el nombre del objeto a definir
+	 */
 	public void setObjectName(String objectName) {
 		this.objectName = objectName;
 	}
 
+	/**
+	 * @param objectFatherType
+	 *            Objeto que guarda el nombre del tipo del objeto padre
+	 */
 	public void setObjectFatherType(String objectFatherType) {
 		this.objectFatherType = objectFatherType;
 	}

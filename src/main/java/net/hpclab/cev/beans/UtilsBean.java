@@ -1,3 +1,14 @@
+/*
+ * Colección Entomológica Virtual
+ * Universidad Central
+ * High Performance Computing Laboratory
+ * Grupo COMMONS.
+ * 
+ * Sebastián Motavita Medellín
+ * 
+ * 2017 - 2018
+ */
+
 package net.hpclab.cev.beans;
 
 import java.io.ByteArrayInputStream;
@@ -27,6 +38,14 @@ import net.hpclab.cev.model.UserSession;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.SessionService;
 import net.hpclab.cev.services.Util;
+
+/**
+ * Este servicio permite la gestión de operaciones comunes entre los demas Bean.
+ * 
+ * @author Sebasir
+ * @since 1.0
+ * @see DataBaseService
+ */
 
 public class UtilsBean implements Serializable {
 

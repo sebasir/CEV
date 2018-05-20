@@ -1,3 +1,14 @@
+/*
+ * Colección Entomológica Virtual
+ * Universidad Central
+ * High Performance Computing Laboratory
+ * Grupo COMMONS.
+ * 
+ * Sebastián Motavita Medellín
+ * 
+ * 2017 - 2018
+ */
+
 package net.hpclab.cev.beans;
 
 import java.io.Serializable;
@@ -32,31 +43,113 @@ import net.hpclab.cev.services.DataBaseService;
 import net.hpclab.cev.services.DataWarehouse;
 import net.hpclab.cev.services.ParseExceptionService;
 
+/**
+ * Este servicio permite la interacción con el servicio de
+ * <tt>DataBaseService</tt> para la gestión de clasificaciones taxonómicas que
+ * componen un espécimen. Principalmente expone métodos de creación, edición,
+ * consulta y eliminación, validando la posibilidad de estas operaciones contra
+ * el servicio de <tt>AccessesService</tt>, el cual valida el usuario que
+ * realiza la operación.
+ * 
+ * @author Sebasir
+ * @since 1.0
+ * @see DataBaseService
+ * @see Taxonomy
+ * @see TaxonomyLevel
+ * @see TreeHierachyModel
+ */
+
 @ManagedBean
 @ViewScoped
 public class TaxonomyBean extends UtilsBean implements Serializable {
 
 	private static final long serialVersionUID = -2452341929369884578L;
+
+	/**
+	 * Objeto que parametriza el servicio <tt>DataBaseService</tt> con la clase
+	 * <tt>Taxonomy</tt>, lo cual permite extender todas las operaciones del
+	 * servicio para esta clase.
+	 */
 	private DataBaseService<Taxonomy> taxonomyService;
+
+	/**
+	 * Cadena de texto que guarda la clave primaria de un nivel de clasificación
+	 */
 	private String selectedLevel;
+
+	/**
+	 * Objeto que permite editar una clasificación
+	 */
 	private Taxonomy taxonomy;
+
+	/**
+	 * Objeto que permite referenciar una clasificación padre
+	 */
 	private Taxonomy parentTaxonomy;
+
+	/**
+	 * Nodo principal del árbol jerárquico
+	 */
 	private TreeNode root;
+
+	/**
+	 * Nodo seleccionado desde la interfaz
+	 */
 	private TreeNode selectedNode;
+
+	/**
+	 * Mapa que permite obtener un nodo a partir de la clave primaria
+	 */
 	private HashMap<Integer, TreeNode> tree;
+
+	/**
+	 * Mapa que permite obtener un nodo abstracto a partir de la clave primaria
+	 */
 	private HashMap<Integer, TreeHierachyModel> abstractMap;
+
+	/**
+	 * Mapa que permite obtener un espécimen a partir de la clave primaria
+	 */
 	private HashMap<Integer, Specimen> specimenTaxonomy;
+
+	/**
+	 * Mapa que permite obtener un nivel de clasificación a partir de la clave
+	 * primaria
+	 */
 	private HashMap<Integer, TaxonomyLevel> levelMap;
+
+	/**
+	 * Arbol abstracto que permite referenciar el arbol jerárquico
+	 */
 	private TreeHierachyModel abstractTree;
+
+	/**
+	 * Lista de niveles disponibles
+	 */
 	private List<TaxonomyLevel> avalLevels;
+
+	/**
+	 * Lista de especímenes disponibles para una clasificación
+	 */
 	private List<Specimen> taxonomySpecimens;
 
+	/**
+	 * Mantiene una manera de identificar los orígenes de impresiones de mensajes de
+	 * log, a través del nombre de la clase, centralizando estos mensajes en el log
+	 * del servidor de despliegue.
+	 */
 	private static final Logger LOGGER = Logger.getLogger(TaxonomyBean.class.getSimpleName());
 
+	/**
+	 * Constructor que permite inicializar los servicios de <tt>DataBaseService</tt>
+	 */
 	public TaxonomyBean() throws Exception {
 		taxonomyService = new DataBaseService<>(Taxonomy.class, Constant.UNLIMITED_QUERY_RESULTS);
 	}
 
+	/**
+	 * Permite inicializar los filtros de creación y búsqueda
+	 */
 	@PostConstruct
 	public void init() {
 		try {
@@ -66,6 +159,9 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 		}
 	}
 
+	/**
+	 * Permite limpiar los objetos
+	 */
 	public void limpiarFiltros() {
 		selectedLevel = null;
 		taxonomy = null;
@@ -74,6 +170,10 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 		createTree();
 	}
 
+	/**
+	 * Permite guardar un objeto de tipo clasificación que se haya definido en la
+	 * interfáz validando el permiso de escritura
+	 */
 	public void persist() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		OutcomeEnum outcomeEnum = OutcomeEnum.CREATE_ERROR;
@@ -104,6 +204,10 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 		selectedLevel = null;
 	}
 
+	/**
+	 * Permite editar un objeto de tipo clasificación que se haya redefinido en la
+	 * interfáz validando el permiso de modificación
+	 */
 	public void edit() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		OutcomeEnum outcomeEnum = OutcomeEnum.UPDATE_ERROR;
@@ -129,6 +233,9 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
 
+	/**
+	 * Permite eliminar una clasificación, validando el permiso de eliminación
+	 */
 	public void delete() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		OutcomeEnum outcomeEnum = OutcomeEnum.DELETE_ERROR;
@@ -153,6 +260,14 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 		showMessage(facesContext, outcomeEnum, transactionMessage);
 	}
 
+	/**
+	 * Permite obtener una lista de niveles permitidos para la edición o creación
+	 * 
+	 * @param tax
+	 *            Objeto de tipo clasificación
+	 * @param command
+	 *            Permite diferenciar los distintos niveles dependiendo de la accion
+	 */
 	private void updateAvalLevels(Taxonomy tax, String command) {
 		selectedLevel = tax.getIdTaxlevel().getIdTaxlevel().toString();
 		avalLevels = new ArrayList<>();
@@ -175,6 +290,9 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 		}
 	}
 
+	/**
+	 * Permite crear los árboles y mapas de la jerarquía de clasificaciones
+	 */
 	public void createTree() {
 		tree = new HashMap<>();
 		abstractMap = new HashMap<>();
@@ -233,6 +351,12 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 		}
 	}
 
+	/**
+	 * Permite abrir una rama del arbol
+	 * 
+	 * @param node
+	 *            Nodo final de la rama a abrir
+	 */
 	private void openBranch(TreeNode node) {
 		if (node == null) {
 			return;
@@ -245,6 +369,9 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 		}
 	}
 
+	/**
+	 * Permite deseleccionar todos los nodos del arbol
+	 */
 	public void deselectAll() {
 		for (TreeNode t : tree.values()) {
 			t.setSelected(false);
@@ -252,6 +379,12 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 		}
 	}
 
+	/**
+	 * Permite obtener un nodo de una seleccion
+	 * 
+	 * @param event
+	 *            Evento del cual se obtiene el nodo
+	 */
 	public void onNodeSelect(NodeSelectEvent event) {
 		selectedNode = event.getTreeNode();
 		showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.GENERIC_INFO,
@@ -259,6 +392,13 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 		taxonomy = (Taxonomy) selectedNode.getData();
 	}
 
+	/**
+	 * Permite obtener y definir la información de la clasificación
+	 * 
+	 * @param command
+	 *            Cadena de texto que permite diferenciar el tipo de operación a
+	 *            realizar
+	 */
 	public void setDatafromNode(String command) {
 		if (selectedNode != null) {
 			try {
@@ -288,76 +428,145 @@ public class TaxonomyBean extends UtilsBean implements Serializable {
 		}
 	}
 
+	/**
+	 * Permite obtener la clasificación a partir de un nodo
+	 * 
+	 * @return Objeto de la clasificación
+	 */
 	public Taxonomy getNodeName() {
 		return (Taxonomy) selectedNode.getData();
 	}
 
+	/**
+	 * Permite obtener el nombre del nivel de la clasificación
+	 * 
+	 * @param node
+	 *            Node del cual se extre el nombre
+	 * @return Nombre del nivel
+	 */
 	public String getLevelName(Object node) {
 		return ((Taxonomy) node).getIdTaxlevel().getTaxlevelName();
 	}
 
+	/**
+	 * @return Objeto que permite editar una clasificación
+	 */
 	public Taxonomy getTaxonomy() {
 		return taxonomy;
 	}
 
+	/**
+	 * @param taxonomy
+	 *            Objeto que permite editar una clasificación a definir
+	 */
 	public void setTaxonomy(Taxonomy taxonomy) {
 		this.taxonomy = taxonomy;
 	}
 
+	/**
+	 * @return Permite tener acceso a todas las clasificaciones
+	 */
 	public List<Taxonomy> getAllTaxonomys() {
 		return DataWarehouse.getInstance().allTaxonomys;
 	}
 
+	/**
+	 * @return Cadena de texto que guarda la clave primaria de un nivel de
+	 *         clasificación
+	 */
 	public String getSelectedLevel() {
 		return selectedLevel;
 	}
 
+	/**
+	 * @param selectedLevel
+	 *            Cadena de texto que guarda la clave primaria de un nivel de
+	 *            clasificación a definir
+	 */
 	public void setSelectedLevel(String selectedLevel) {
 		this.selectedLevel = selectedLevel;
 	}
 
+	/**
+	 * @return Permite tener acceso a todas los niveles de clasificación
+	 */
 	public List<TaxonomyLevel> getAllLevels() {
 		return DataWarehouse.getInstance().allTaxonomyLevels;
 	}
 
+	/**
+	 * @return Nodo principal del árbol jerárquico abierto
+	 */
 	public TreeNode getTaxRoot() {
 		if (selectedNode != null)
 			openBranch(selectedNode);
 		return root;
 	}
 
+	/**
+	 * @param taxRoot
+	 *            Nodo principal del árbol jerárquico a definir
+	 */
 	public void setTaxRoot(TreeNode taxRoot) {
 		this.root = taxRoot;
 	}
 
+	/**
+	 * @return Nodo seleccionado desde la interfaz
+	 */
 	public TreeNode getSelectedNode() {
 		return selectedNode;
 	}
 
+	/**
+	 * @param selectedNode
+	 *            Nodo seleccionado desde la interfaz a definir
+	 */
 	public void setSelectedNode(TreeNode selectedNode) {
 		this.selectedNode = selectedNode;
 	}
 
+	/**
+	 * @return Lista de especímenes disponibles para una clasificación
+	 */
 	public List<Specimen> getTaxonomySpecimens() {
 		return taxonomySpecimens;
 	}
 
+	/**
+	 * @param taxonomySpecimens
+	 *            Lista de especímenes disponibles para una clasificación a definir
+	 */
 	public void setTaxonomySpecimens(List<Specimen> taxonomySpecimens) {
 		this.taxonomySpecimens = taxonomySpecimens;
 	}
 
+	/**
+	 * @return Lista de niveles disponibles
+	 */
 	public List<TaxonomyLevel> getAvalLevels() {
 		return avalLevels;
 	}
 
+	/**
+	 * @param avalLevels
+	 *            Lista de niveles disponibles a definir
+	 */
 	public void setAvalLevels(List<TaxonomyLevel> avalLevels) {
 		this.avalLevels = avalLevels;
 	}
 
+	/**
+	 * @return Objeto que permite referenciar una clasificación padre
+	 */
 	public Taxonomy getParentTaxonomy() {
 		return parentTaxonomy;
 	}
 
+	/**
+	 * @param parentTaxonomy
+	 *            Objeto que permite referenciar una clasificación padre a definir
+	 */
 	public void setParentTaxonomy(Taxonomy parentTaxonomy) {
 		this.parentTaxonomy = parentTaxonomy;
 	}
