@@ -20,6 +20,9 @@ import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
 import javax.persistence.PersistenceUnit;
 
+import org.hibernate.Cache;
+import org.hibernate.Session;
+
 /**
  * Es un servicio creado para la encapsulación del servicio de inicio de
  * transacción con la base de datos. El servicio ofrece una manera de acceso
@@ -59,7 +62,7 @@ public class EntityResourcer {
 	 * caso de no ser inyectado.
 	 */
 	public void initService() {
-		LOGGER.log(Level.INFO, "Obteniendo EntityManager");
+		LOGGER.log(Level.INFO, "Obteniendo EntityManagerFactory");
 		if (entityManagerFactory == null) {
 			LOGGER.log(Level.INFO, "entityManagerFactory is null");
 			entityManagerFactory = Persistence.createEntityManagerFactory(Constant.PERSISTENCE_UNIT);
@@ -89,6 +92,33 @@ public class EntityResourcer {
 	public EntityManager getEntityManager() {
 		initService();
 		return entityManagerFactory.createEntityManager();
+	}
+
+	/**
+	 * Permite desconectar el administrador de persistencia de la base de datos
+	 */
+	public void disconnect() {
+		if (entityManagerFactory != null) {
+			clearCache();
+			entityManagerFactory.close();
+			entityManagerFactory = null;
+			LOGGER.log(Level.INFO, "entityManagerFactory is closed");
+		}
+	}
+
+	private void clearCache() {
+		try {
+			Session s = (Session) getEntityManager().getDelegate();
+			s.clear();
+			Cache cache = s.getSessionFactory().getCache();
+
+			if (cache != null)
+				cache.evictAllRegions();
+
+			LOGGER.log(Level.INFO, "Session cleared");
+		} catch (Exception e) {
+			LOGGER.log(Level.SEVERE, "Error trying to clear session", e);
+		}
 	}
 
 	/**

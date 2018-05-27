@@ -43,6 +43,7 @@ import net.hpclab.cev.services.AccessService;
 import net.hpclab.cev.services.Constant;
 import net.hpclab.cev.services.DataBaseService;
 import net.hpclab.cev.services.DataWarehouse;
+import net.hpclab.cev.services.EntityResourcer;
 import net.hpclab.cev.services.MessagesService;
 import net.hpclab.cev.services.ParseExceptionService;
 
@@ -171,12 +172,23 @@ public class AccessesBean extends UtilsBean implements Serializable {
 	 * <tt>DataWarehouse</tt>
 	 */
 	public void restartDomainLists() {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
 		try {
+			EntityResourcer.getInstance().disconnect();
 			DataWarehouse.getInstance().initLists();
-			showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.GENERIC_INFO,
+			
+			super.getExternalBean(facesContext, TaxonomyBean.class).limpiarFiltros();
+			super.getExternalBean(facesContext, LocationBean.class).limpiarFiltros();
+			super.getExternalBean(facesContext, CollectionBean.class).limpiarFiltros();
+			super.getExternalBean(facesContext, AuthorBean.class).restartAuthorTypes();
+			super.getExternalBean(facesContext, SpecimenBean.class).limpiarFiltros();
+			super.getExternalBean(facesContext, SpecimenContentBean.class).limpiarFiltros();
+			super.getExternalBean(facesContext, UsersBean.class).limpiarFiltros();
+			
+			showMessage(facesContext, OutcomeEnum.GENERIC_INFO,
 					"Listas de datos reiniciadas correctamente");
 		} catch (Exception e) {
-			showMessage(FacesContext.getCurrentInstance(), OutcomeEnum.GENERIC_ERROR,
+			showMessage(facesContext, OutcomeEnum.GENERIC_ERROR,
 					"Error reiniciando las listas: " + e.getMessage());
 		}
 	}

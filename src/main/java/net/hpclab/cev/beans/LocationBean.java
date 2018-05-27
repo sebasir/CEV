@@ -432,7 +432,7 @@ public class LocationBean extends UtilsBean implements Serializable {
 	public String setMapCenter() {
 		JSONObject json = new JSONObject();
 		try {
-			location = getNodeName();
+			Location location = getNodeName();
 			json.put("latitude", location.getLatitude());
 			json.put("longitude", location.getLongitude());
 			json.put("name", location.getLocationName());
